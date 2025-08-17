@@ -55,8 +55,8 @@ fi
 path=("$HOME/.local/bin" "$HOME/bin" $path)
 
 # Dotfiles bin directory
-if [[ -d "$HOME/workspaces/mac-dotfiles-secrets/dotfiles/bin" ]]; then
-    path=("$HOME/workspaces/mac-dotfiles-secrets/dotfiles/bin" $path)
+if [[ -d "$HOME/dotfiles/bin" ]]; then
+    path=("$HOME/dotfiles/bin" $path)
 fi
 
 # Development tools
@@ -305,93 +305,16 @@ function pcp() {
 # AI Tools Integration
 # =============================================================================
 
-# Kimi AI assistant integration
-function kimi() {
-    local prompt="$*"
-    local api_key
-    
-    if [[ -z "$prompt" ]]; then
-        echo "Usage: kimi <your question or prompt>"
-        echo "Example: kimi 'Explain how to use git rebase'"
-        return 1
-    fi
-    
-    # Get API key from pass store
-    if command_exists pass; then
-        api_key=$(pass show api/kimi 2>/dev/null | head -1)
-    fi
-    
-    # Fallback to environment variable
-    if [[ -z "$api_key" ]]; then
-        api_key="$KIMI_API_KEY"
-    fi
-    
-    if [[ -z "$api_key" ]]; then
-        echo "Error: Kimi API key not found"
-        echo "Store it with: pass insert api/kimi"
-        echo "Or set KIMI_API_KEY environment variable"
-        return 1
-    fi
-    
-    # Make API call to Kimi (Moonshot AI)
-    echo "🌙 Asking Kimi AI..."
-    echo ""
-    
-    curl -s "https://api.moonshot.cn/v1/chat/completions" \
-        -H "Content-Type: application/json" \
-        -H "Authorization: Bearer $api_key" \
-        -d "{
-            \"model\": \"moonshot-v1-8k\",
-            \"messages\": [
-                {\"role\": \"user\", \"content\": \"$prompt\"}
-            ],
-            \"temperature\": 0.3
-        }" | jq -r '.choices[0].message.content // "Error: Failed to get response"'
-}
+# Kimi and GLM AI assistants are provided by the bin/ scripts
+# These should be available in PATH via: stow bin
+# The scripts set appropriate environment variables and call Claude CLI
 
-# GLM (ChatGLM) integration
-function glm() {
-    local prompt="$*"
-    local api_key
-    
-    if [[ -z "$prompt" ]]; then
-        echo "Usage: glm <your question or prompt>"
-        echo "Example: glm 'Write a Python function to calculate fibonacci'"
-        return 1
-    fi
-    
-    # Get API key from pass store
-    if command_exists pass; then
-        api_key=$(pass show api/glm 2>/dev/null | head -1)
-    fi
-    
-    # Fallback to environment variable
-    if [[ -z "$api_key" ]]; then
-        api_key="$GLM_API_KEY"
-    fi
-    
-    if [[ -z "$api_key" ]]; then
-        echo "Error: GLM API key not found"
-        echo "Store it with: pass insert api/glm"
-        echo "Or set GLM_API_KEY environment variable"
-        return 1
-    fi
-    
-    # Make API call to GLM
-    echo "🤖 Asking ChatGLM..."
-    echo ""
-    
-    curl -s "https://open.bigmodel.cn/api/paas/v4/chat/completions" \
-        -H "Content-Type: application/json" \
-        -H "Authorization: Bearer $api_key" \
-        -d "{
-            \"model\": \"glm-4\",
-            \"messages\": [
-                {\"role\": \"user\", \"content\": \"$prompt\"}
-            ],
-            \"temperature\": 0.3
-        }" | jq -r '.choices[0].message.content // "Error: Failed to get response"'
-}
+# Remove any old aliases that might interfere and set correct ones
+unalias kimi glm 2>/dev/null || true
+
+# Override any existing aliases with the correct dotfiles bin scripts
+alias kimi='~/dotfiles/bin/kimi'
+alias glm='~/dotfiles/bin/glm'
 
 # AI assistant chooser function
 function ai() {
@@ -416,14 +339,19 @@ function ai() {
             ;;
         help|--help|-h)
             echo "AI Assistant Tool"
-            echo "Usage: ai <service> <prompt>"
+            echo "Usage: ai <service> [prompt]"
             echo ""
             echo "Available services:"
             echo "  kimi, moonshot   - Kimi AI (Moonshot)"
             echo "  glm, chatglm     - ChatGLM"
             echo "  claude           - Claude Code CLI"
             echo ""
-            echo "Examples:"
+            echo "Interactive mode (no prompt):"
+            echo "  kimi             - Start Kimi interactive session"
+            echo "  glm              - Start ChatGLM interactive session"
+            echo "  ai kimi          - Start Kimi via ai wrapper"
+            echo ""
+            echo "One-shot examples:"
             echo "  ai kimi 'Explain git branches'"
             echo "  ai glm 'Write a Python script'"
             echo "  ai claude 'Review this code'"
@@ -746,6 +674,10 @@ alias cl="/opt/homebrew/bin/claude"
 alias cld="cl --dangerously-skip-permissions"
 alias cldr="cl --dangerously-skip-permissions --resume"
 
+# Force override AI tool aliases to use dotfiles bin scripts
+alias kimi='~/dotfiles/bin/kimi'
+alias glm='~/dotfiles/bin/glm'
+
 # History management
 alias savehist='save_history'
 
@@ -844,8 +776,10 @@ function dotfiles_welcome() {
         echo "   Type 'sysinfo' for system information"
         echo ""
         echo "🤖 AI Tools Available:"
-        echo "   kimi 'your question'    - Kimi AI assistant"
-        echo "   glm 'your question'     - ChatGLM assistant"
+        echo "   kimi                    - Kimi AI assistant (interactive)"
+        echo "   glm                     - ChatGLM assistant (interactive)"
+        echo "   kimi 'your question'    - One-shot Kimi query"
+        echo "   glm 'your question'     - One-shot ChatGLM query"
         echo "   ai help                 - Show all AI options"
         echo ""
     fi

@@ -4,5 +4,5 @@
 export ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic
 export ANTHROPIC_AUTH_TOKEN=$(pass show llm/glm_api_key 2>/dev/null | head -1)
 
-# Use the absolute path to claude
-exec /Users/smian/.claude/local/claude "$@"
+# Use claude from PATH (dynamically found)
+exec claude "$@"
