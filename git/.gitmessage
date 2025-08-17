@@ -1,0 +1,22 @@
+# <type>: <subject> (50 chars max)
+#
+# <body> (72 chars max per line)
+#
+# Types:
+# feat:     New feature
+# fix:      Bug fix
+# docs:     Documentation changes
+# style:    Code style changes (formatting, etc)
+# refactor: Code refactoring
+# test:     Adding or updating tests
+# chore:    Maintenance tasks
+# security: Security improvements
+#
+# Example:
+# feat: add password manager integration
+#
+# - Integrate pass for secure API key storage
+# - Add helper scripts for key retrieval
+# - Update documentation with setup instructions
+#
+# Resolves: #123

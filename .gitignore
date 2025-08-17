@@ -1,0 +1,80 @@
+# Environment and secrets
+.env
+.env.*
+*.env
+!.env.example
+
+# Local overrides
+*.local
+*.local.*
+settings.local.json
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.Spotlight-V100
+.Trashes
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-*
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.cache
+.cache/
+
+# Password store (if accidentally placed here)
+.password-store/
+
+# GPG
+*.gpg
+*.asc
+secring.*
+*.key
+*.pem
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+
+# Claude IDE lock files
+claude-user/.claude/ide/*.lock
+
+# Test artifacts
+tests/docker/exports/
+tests/docker/volumes/
+tests/logs/
+tests/reports/
+tests/review/
+
+# Docker
+.dockerignore
+*.pid
+
+# Temporary test files
+test-*.sh.tmp
+cleanup-*.sh

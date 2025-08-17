@@ -1,0 +1,7 @@
+git
+vim
+zsh
+tmux
+direnv
+claude-default
+claude-experimental

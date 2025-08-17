@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Basic developer setup - what most users need
+  dotfiles-basic:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-basic
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - ./exports:/exports
+    environment:
+      - TEST_SCENARIO=basic
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '🚀 Testing basic developer setup...' &&
+        ./tests/docker/e2e-test.sh basic &&
+        echo '✅ Basic setup works!'
+      "
+
+  # Full installation - everything
+  dotfiles-full:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-full
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - ./exports:/exports
+    environment:
+      - TEST_SCENARIO=full
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '🎯 Testing full installation...' &&
+        ./tests/docker/e2e-test.sh full &&
+        echo '✅ Full installation works!'
+      "
+
+  # Claude-only setup - for Claude Code users
+  dotfiles-claude:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-claude
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - ./exports:/exports
+    environment:
+      - TEST_SCENARIO=claude
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '🤖 Testing Claude setup...' &&
+        ./tests/docker/e2e-test.sh claude &&
+        echo '✅ Claude setup works!'
+      "
+
+  # Profile switching - test upgrades
+  dotfiles-switch:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-switch
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - ./exports:/exports
+    environment:
+      - TEST_SCENARIO=switch
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '🔄 Testing profile switching...' &&
+        ./tests/docker/e2e-test.sh switch &&
+        echo '✅ Profile switching works!'
+      "

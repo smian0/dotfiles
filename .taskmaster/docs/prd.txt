@@ -1,0 +1,220 @@
+# Product Requirements Document: Dual-Repository Dotfiles & Secrets Management System
+
+## Executive Summary
+Implement a dual-repository system for managing configuration files (dotfiles) and secrets across multiple personal machines (macOS and Ubuntu Linux). The system will use GNU Stow for symlink management, pass for password management, and Git for version control, ensuring consistent development environments while maintaining security best practices.
+
+## Project Goals
+1. Create reproducible development environments across all personal machines
+2. Securely manage and sync secrets/passwords separately from configurations  
+3. Enable quick setup of new machines with minimal manual intervention
+4. Support multiple Claude Code CLI configuration profiles for A/B testing
+5. Maintain clean separation between public configurations and private secrets
+
+## System Architecture
+
+### Repository Structure
+Two separate private GitHub repositories under user "smian0":
+1. **dotfiles repository** - Configuration files, scripts, and non-sensitive settings
+2. **pass-store repository** - GPG-encrypted passwords and secrets managed by pass
+
+### Technology Stack
+- **Symlink Management**: GNU Stow
+- **Password Manager**: pass (with GPG encryption)
+- **Version Control**: Git
+- **Shell**: Zsh (primary), Bash (compatibility)
+- **Supported OS**: macOS, Ubuntu Linux
+
+## Functional Requirements
+
+### 1. Dotfiles Repository Setup
+- Initialize repository at ~/.dotfiles with proper directory structure
+- Implement Stow-based package organization for modular configuration management
+- Create automated installation script for new machine setup
+- Support both macOS and Linux with OS-specific handling where needed
+
+### 2. Claude Code CLI Configuration Management
+- Set up multiple Claude profiles (claude-default, claude-experimental, etc.)
+- Configure context7 as the global MCP server
+- Implement API key helper script using pass integration
+- Create reusable Claude commands and agents
+- Support profile switching for A/B testing and versioning
+
+### 3. Pass Password Store Setup
+- Initialize separate Git repository for password store
+- Configure GPG key generation and management
+- Implement secure API key storage (starting with OpenAI)
+- Create helper scripts for Claude Code and other tools to retrieve secrets
+- Set up automatic sync between machines
+
+### 4. Installation and Bootstrap Process
+- Create master installation script that handles both repositories
+- Implement dependency checking and installation (Stow, pass, GPG, etc.)
+- Automate GPG key import/export process
+- Provide clear setup documentation and troubleshooting guides
+
+### 5. Security Implementation
+- Never commit plain text secrets to any repository
+- Use GPG encryption for all passwords in pass store
+- Implement .gitignore patterns to prevent accidental secret commits
+- Create secure transfer mechanism for GPG keys between machines
+- Add validation scripts to check for exposed secrets
+
+### 6. Cross-Platform Compatibility
+- Detect OS and adjust installation commands accordingly
+- Handle platform-specific paths and configurations
+- Ensure all scripts work on both macOS and Ubuntu
+- Provide platform-specific package installation (brew vs apt)
+
+## Non-Functional Requirements
+
+### Performance
+- Installation process should complete within 5 minutes on a new machine
+- Configuration changes should propagate instantly via Git pull/push
+- Pass queries should return results in under 1 second
+
+### Usability
+- Single command installation for new machines
+- Clear documentation with examples
+- Intuitive directory structure
+- Helpful error messages and validation
+
+### Maintainability
+- Modular package structure for easy updates
+- Version control for all configurations
+- Rollback capability through Git history
+- Self-documenting scripts with clear comments
+
+### Security
+- All secrets encrypted at rest
+- Secure key exchange protocols
+- No hardcoded credentials
+- Regular security audit capability
+
+## Implementation Phases
+
+### Phase 1: Foundation (Week 1)
+1. Create and initialize both GitHub repositories
+2. Set up basic directory structure for dotfiles
+3. Implement core Stow packages (git, zsh, vim)
+4. Create initial installation script
+5. Document basic setup process
+
+### Phase 2: Claude Code Integration (Week 1-2)
+1. Migrate existing claude-default-setup configuration
+2. Create multiple Claude profile packages
+3. Implement context7 MCP server configuration
+4. Set up Claude command library
+5. Create profile switching mechanism
+
+### Phase 3: Pass Integration (Week 2)
+1. Initialize pass password store repository
+2. Generate and configure GPG keys
+3. Create API key helper scripts
+4. Integrate pass with Claude Code
+5. Add initial secrets (OpenAI API key)
+
+### Phase 4: Automation & Polish (Week 2-3)
+1. Enhance installation script with OS detection
+2. Add dependency auto-installation
+3. Create validation and testing scripts
+4. Implement backup and recovery procedures
+5. Write comprehensive documentation
+
+### Phase 5: Testing & Refinement (Week 3)
+1. Test on fresh macOS installation
+2. Test on fresh Ubuntu installation
+3. Verify cross-machine synchronization
+4. Perform security audit
+5. Refine based on testing results
+
+## Success Criteria
+- Successfully provision a new machine in under 5 minutes
+- All secrets remain encrypted and never exposed in Git history
+- Claude Code works seamlessly with multiple profiles
+- Pass integration provides secure, convenient secret access
+- Documentation is clear enough for future self to understand
+- System works identically on macOS and Ubuntu
+
+## File Structure Overview
+
+### Dotfiles Repository (~/.dotfiles)
+```
+~/.dotfiles/
+├── README.md
+├── install.sh
+├── .stow-global-ignore
+├── scripts/
+│   ├── validate-config.sh
+│   ├── backup.sh
+│   └── os-detect.sh
+├── claude-default/
+│   ├── .claude/
+│   │   ├── settings.json
+│   │   ├── CLAUDE.md
+│   │   ├── commands/
+│   │   ├── agents/
+│   │   └── anthropic_key_helper.sh
+│   └── .claude.json
+├── claude-experimental/
+│   └── .claude/
+├── git/
+│   └── .gitconfig
+├── zsh/
+│   ├── .zshrc
+│   └── .zsh/
+├── vim/
+│   └── .vimrc
+└── pass/
+    └── scripts/
+        └── pass-sync.sh
+```
+
+### Pass Store Repository (~/.password-store)
+```
+~/.password-store/
+├── .git/
+├── api/
+│   ├── openai.gpg
+│   ├── anthropic.gpg
+│   └── github.gpg
+├── services/
+│   └── github.com/
+└── personal/
+```
+
+## Dependencies
+- Git (version control)
+- GNU Stow (symlink management)
+- Pass (password management)
+- GPG (encryption)
+- Zsh/Bash (shell)
+- Node.js (for Claude Code and MCP servers)
+
+## Risks and Mitigations
+- **Risk**: GPG key loss → **Mitigation**: Secure backup of GPG keys
+- **Risk**: Accidental secret exposure → **Mitigation**: Git hooks, validation scripts
+- **Risk**: Repository corruption → **Mitigation**: Regular backups, multiple clones
+- **Risk**: Complex setup → **Mitigation**: Detailed documentation, automation
+
+## Future Enhancements
+- Add more MCP servers as needed
+- Integrate with 1Password or Bitwarden as alternative to pass
+- Create GUI for configuration management
+- Add automated testing for configuration changes
+- Implement configuration profiles for different work contexts
+
+## Acceptance Criteria
+- [ ] Both repositories created and properly structured
+- [ ] Installation script successfully provisions new machines
+- [ ] Claude Code works with multiple profiles
+- [ ] Pass integration provides secure API key access
+- [ ] Documentation covers all common scenarios
+- [ ] System tested on both macOS and Ubuntu
+- [ ] No secrets exposed in repository history
+- [ ] All team conventions and best practices followed
+
+## Notes
+- Start simple, iterate based on actual usage
+- Prioritize security without sacrificing usability
+- Keep documentation up-to-date with any changes
+- Regular security audits recommended quarterly

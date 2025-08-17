@@ -1,0 +1,24 @@
+{
+  "model": "claude-3-5-sonnet-20241022",
+  "cleanupPeriodDays": 7,
+  "includeCoAuthoredBy": false,
+  "env": {
+    "CLAUDE_CODE_DISABLE_TELEMETRY": "1",
+    "BASH_DEFAULT_TIMEOUT_MS": "300000"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)"
+    ],
+    "deny": [],
+    "defaultMode": "acceptEdits"
+  },
+  "hooks": {},
+  "statusLine": {
+    "type": "simple",
+    "text": "experimental"
+  }
+}

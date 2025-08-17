@@ -1,0 +1,170 @@
+# Example .envrc file for direnv
+# Copy this to your project root and customize as needed
+# Documentation: https://direnv.net/
+
+# =============================================================================
+# Node.js / JavaScript Projects
+# =============================================================================
+
+# Use specific Node.js version (requires nvm)
+# use nvm 20.11.0
+
+# Or use node from PATH
+# use node
+
+# Load .env file if it exists
+# dotenv_if_exists
+
+# Add node_modules/.bin to PATH
+# PATH_add node_modules/.bin
+
+# =============================================================================
+# Python Projects
+# =============================================================================
+
+# Use specific Python version (requires pyenv)
+# use python 3.12.1
+
+# Or use Python virtualenv
+# layout python3
+
+# Activate existing virtualenv
+# source venv/bin/activate
+
+# =============================================================================
+# Ruby Projects
+# =============================================================================
+
+# Use specific Ruby version (requires rbenv/rvm)
+# use ruby 3.3.0
+
+# Or use bundler
+# layout ruby
+
+# =============================================================================
+# Go Projects
+# =============================================================================
+
+# Set GOPATH for this project
+# layout go
+
+# Or use Go modules
+# export GO111MODULE=on
+
+# =============================================================================
+# Rust Projects
+# =============================================================================
+
+# Add cargo bin to PATH
+# PATH_add target/release
+# PATH_add target/debug
+
+# =============================================================================
+# Docker / Container Projects
+# =============================================================================
+
+# Set Docker build context
+# export DOCKER_BUILDKIT=1
+# export COMPOSE_DOCKER_CLI_BUILD=1
+
+# Use specific docker-compose file
+# export COMPOSE_FILE=docker-compose.dev.yml
+
+# =============================================================================
+# Cloud / AWS Projects
+# =============================================================================
+
+# Set AWS profile
+# export AWS_PROFILE=development
+# export AWS_REGION=us-west-2
+
+# Load AWS credentials from pass
+# export AWS_ACCESS_KEY_ID=$(pass aws/access-key-id)
+# export AWS_SECRET_ACCESS_KEY=$(pass aws/secret-access-key)
+
+# =============================================================================
+# Database Projects
+# =============================================================================
+
+# PostgreSQL connection
+# export DATABASE_URL="postgresql://user:pass@localhost:5432/mydb"
+
+# MySQL connection
+# export MYSQL_HOST=localhost
+# export MYSQL_PORT=3306
+# export MYSQL_DATABASE=mydb
+# export MYSQL_USER=root
+# export MYSQL_PASSWORD=$(pass db/mysql/password)
+
+# Redis connection
+# export REDIS_URL="redis://localhost:6379/0"
+
+# =============================================================================
+# API Keys and Secrets
+# =============================================================================
+
+# Load from pass password manager
+# export OPENAI_API_KEY=$(pass api/openai)
+# export ANTHROPIC_API_KEY=$(pass api/anthropic)
+# export GITHUB_TOKEN=$(pass services/github/token)
+
+# Or load from .env file (less secure)
+# dotenv_if_exists .env.local
+
+# =============================================================================
+# Project-Specific Environment
+# =============================================================================
+
+# Set project name
+# export PROJECT_NAME=$(basename $PWD)
+
+# Set environment
+# export ENV=development
+# export NODE_ENV=development
+# export RAILS_ENV=development
+
+# Custom PATH additions
+# PATH_add bin
+# PATH_add scripts
+# PATH_add .bin
+
+# Editor configuration
+# export EDITOR=vim
+# export VISUAL=$EDITOR
+
+# =============================================================================
+# Shell Customization
+# =============================================================================
+
+# Change prompt to show project
+# export PS1="[${PROJECT_NAME}] $PS1"
+
+# Add project-specific aliases
+# alias test="npm test"
+# alias build="npm run build"
+# alias dev="npm run dev"
+
+# =============================================================================
+# Security Checks
+# =============================================================================
+
+# Ensure we're in a git repository
+# [[ -d .git ]] || { echo "Warning: Not a git repository"; }
+
+# Check for required tools
+# has node || { echo "Error: node not found"; return 1; }
+# has docker || { echo "Warning: docker not found"; }
+
+# =============================================================================
+# Hooks
+# =============================================================================
+
+# Run on entering directory
+# echo "Entering project: $(basename $PWD)"
+# echo "Environment: ${ENV:-not set}"
+
+# Check for updates
+# [[ -f package.json ]] && npm audit || true
+
+# Show TODO items
+# [[ -f TODO.md ]] && head -5 TODO.md || true

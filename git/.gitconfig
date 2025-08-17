@@ -1,0 +1,95 @@
+[user]
+	name = Shoaib Mian
+	email = smian0@users.noreply.github.com
+
+[core]
+	editor = vim
+	excludesfile = ~/.gitignore_global
+	autocrlf = input
+	safecrlf = true
+
+[init]
+	defaultBranch = main
+	templatedir = /Users/smian/.git-templates
+
+[pull]
+	rebase = false
+
+[push]
+	default = simple
+	autoSetupRemote = true
+
+[merge]
+	tool = vimdiff
+
+[diff]
+	tool = vimdiff
+
+[alias]
+	# Quick shortcuts
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+	
+	# Useful commands
+	last = log -1 HEAD
+	unstage = reset HEAD --
+	visual = !gitk
+	
+	# Pretty logging
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit
+	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	
+	# Show changed files
+	changed = show --pretty="format:" --name-only
+	
+	# Amend last commit
+	amend = commit --amend --no-edit
+	
+	# Clean merged branches
+	cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master' | xargs -n 1 git branch -d"
+
+[color]
+	ui = auto
+	branch = auto
+	diff = auto
+	status = auto
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+# Security settings
+[commit]
+	gpgsign = false  # Set to true if you want GPG signing
+	template = /Users/smian/.gitmessage
+
+[tag]
+	gpgsign = false  # Set to true if you want GPG signing
+
+# GitHub specific
+[github]
+	user = smian0
+
+# Merge tool configuration (inherited from existing setup)
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true

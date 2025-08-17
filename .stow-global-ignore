@@ -1,0 +1,45 @@
+# Git files
+\.git
+\.gitignore
+\.gitmodules
+^/README.*
+^/readme.*
+^/LICENSE.*
+^/COPYING
+
+# Build and package files
+^/Makefile
+^/configure
+^/install.*
+^/setup.*
+
+# Documentation
+^/docs
+^/CHANGELOG.*
+^/HISTORY.*
+^/NEWS.*
+^/TODO.*
+
+# OS-specific files
+\.DS_Store
+Thumbs\.db
+
+# Editor files
+\#.*\#
+\.#.*
+.*~
+\.swp
+\.swo
+
+# Stow metadata
+\.stow-local-ignore
+
+# Misc (excluding important dotdirs like .claude)
+^/\.git
+^/\.DS_Store
+^/\.env
+^/\.cache
+\.\#.*
+\#.*\#
+.*\.orig
+\..*\.swp

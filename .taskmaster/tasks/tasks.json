@@ -1,0 +1,226 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize GitHub Repositories Structure",
+        "description": "Create and configure two separate private GitHub repositories for dotfiles and password store management",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "details": "Create two private repositories on GitHub under user 'smian0': 1) 'dotfiles' for configuration files and scripts (using generic name for cross-platform compatibility), 2) 'pass-store' for GPG-encrypted passwords. Set up proper README files, .gitignore patterns, and initial repository structure. Ensure both repositories are private and properly configured with branch protection rules.",
+        "testStrategy": "Verify repositories are created and accessible, confirm privacy settings, test clone operations, validate .gitignore prevents secret exposure",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create dotfiles GitHub repository with initial structure",
+            "description": "Create a private GitHub repository named 'dotfiles' under user 'smian0' and initialize it with proper directory structure following GNU Stow conventions",
+            "status": "done",
+            "dependencies": [],
+            "details": "Use gh CLI to create private repository 'smian0/dotfiles'. Initialize with README.md, .gitignore, and .stow-global-ignore files. Create package directories: claude/, zsh/, git/, vim/, scripts/. Add install.sh script for automated setup. Configure repository settings including branch protection rules for main branch. Use generic 'dotfiles' name for cross-platform compatibility (Linux and Mac).",
+            "testStrategy": "Verify repository is created as private, test clone operation, confirm directory structure matches specification, validate .gitignore excludes secrets"
+          },
+          {
+            "id": 2,
+            "title": "Create pass-store GitHub repository for password management",
+            "description": "Create a separate private GitHub repository named 'pass-store' under user 'smian0' specifically for GPG-encrypted password storage",
+            "status": "done",
+            "dependencies": [],
+            "details": "Use gh CLI to create private repository 'smian0/pass-store'. Initialize with README.md explaining password store usage and security practices. Create directory structure: api/, services/, personal/. Add .gitignore to exclude any temporary GPG files. Configure strict branch protection rules and enable security features like signed commits.",
+            "testStrategy": "Verify repository is private and accessible, test clone operation, confirm no plain-text secrets can be committed, validate repository security settings"
+          },
+          {
+            "id": 3,
+            "title": "Configure repository security and access controls",
+            "description": "Set up comprehensive security configurations for both repositories including branch protection, access controls, and security policies",
+            "status": "done",
+            "dependencies": [],
+            "details": "Configure branch protection rules for both repositories requiring pull request reviews and status checks. Enable security features: vulnerability alerts, dependency scanning, secret scanning. Set up repository access permissions and collaboration settings. Configure commit signing requirements and merge policies.",
+            "testStrategy": "Verify branch protection rules are active, test that direct pushes to main are blocked, confirm security scanning is enabled, validate access controls work correctly"
+          },
+          {
+            "id": 4,
+            "title": "Set up .gitignore patterns and security exclusions",
+            "description": "Create comprehensive .gitignore files for both repositories to prevent accidental exposure of sensitive data",
+            "status": "done",
+            "dependencies": [],
+            "details": "For dotfiles repository: exclude .env files, local settings overrides, temporary files, OS-specific files (.DS_Store), and any password-store directory. For pass-store repository: exclude GPG temporary files, backup files, and any unencrypted content. Add .stow-global-ignore for dotfiles repository to exclude Git metadata and temporary files from stowing.",
+            "testStrategy": "Test that sensitive files are ignored by Git, verify .stow-global-ignore prevents unwanted files from being stowed, confirm no secrets can be accidentally committed"
+          },
+          {
+            "id": 5,
+            "title": "Create initial documentation and setup instructions",
+            "description": "Develop comprehensive README files and documentation for both repositories with setup, usage, and security guidelines",
+            "status": "done",
+            "dependencies": [],
+            "details": "Create detailed README.md for dotfiles with installation instructions using Stow, package organization explanation, and security best practices. Include cross-platform compatibility notes for Linux and Mac environments. Create README.md for pass-store with GPG setup instructions, password management workflows, and backup procedures. Include troubleshooting guides, multi-machine sync instructions, and security audit checklists.",
+            "testStrategy": "Validate documentation by following setup instructions on a clean environment, verify all links and commands work correctly, confirm security guidelines are comprehensive and actionable"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Set up Core Directory Structure and Stow Configuration",
+        "description": "Create the foundational directory structure for dotfiles with GNU Stow package organization",
+        "details": "Initialize ~/.dotfiles directory with modular package structure for Stow. Create base packages: git/, zsh/, vim/, claude-default/, claude-experimental/, pass/scripts/. Set up .stow-global-ignore file to exclude unwanted files. Create scripts/ directory for utility scripts including os-detect.sh, validate-config.sh, and backup.sh.",
+        "testStrategy": "Verify directory structure matches specification, test Stow operations on sample packages, confirm .stow-global-ignore works correctly",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Implement OS Detection and Dependency Management",
+        "description": "Create cross-platform compatibility layer for macOS and Ubuntu Linux environments",
+        "details": "Develop os-detect.sh script that identifies the operating system and sets appropriate variables. Create package installation functions for both macOS (brew) and Ubuntu (apt). Implement dependency checking for required tools: Git, GNU Stow, pass, GPG, Zsh, Node.js. Add automatic installation capabilities with user confirmation prompts.",
+        "testStrategy": "Test OS detection on both macOS and Ubuntu, verify package installation functions work correctly, confirm dependency resolution",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Create Master Installation Script",
+        "description": "Develop automated installation script for new machine setup with both repositories",
+        "details": "Create install.sh that orchestrates the complete setup process: 1) Detect OS and install dependencies, 2) Clone both dotfiles and pass-store repositories, 3) Initialize GPG if needed, 4) Set up pass password store, 5) Deploy dotfiles packages using Stow, 6) Configure Git and other essential tools. Include error handling, rollback capabilities, and progress indicators.",
+        "testStrategy": "Test complete installation on fresh macOS and Ubuntu systems, verify rollback functionality, confirm 5-minute completion target",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Configure GPG Key Management and Pass Password Store",
+        "description": "Set up GPG encryption and pass password manager with secure key handling",
+        "details": "Generate GPG key pair for password encryption, initialize pass password store in separate repository, create secure key backup and transfer mechanisms. Implement GPG key import/export scripts for multi-machine sync. Set up pass-store repository with proper Git configuration and automatic sync capabilities. Create directory structure: api/, services/, personal/.",
+        "testStrategy": "Verify GPG key generation and import/export, test pass store initialization and Git sync, confirm encryption/decryption works correctly",
+        "priority": "high",
+        "dependencies": [
+          1,
+          4
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Implement Claude Code Multi-Profile Configuration",
+        "description": "Create multiple Claude Code CLI profiles with Stow-based management",
+        "details": "Set up claude-default/ and claude-experimental/ packages containing .claude/ directories with settings.json, CLAUDE.md, commands/, and agents/. Configure context7 as global MCP server in both profiles. Create profile switching mechanism and API key integration with pass. Implement anthropic_key_helper.sh script to retrieve API keys securely from pass store.",
+        "testStrategy": "Test profile switching between default and experimental, verify MCP server configuration, confirm API key retrieval from pass works",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          5
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Create API Key Management and Helper Scripts",
+        "description": "Implement secure API key storage and retrieval system using pass integration for third-party services",
+        "status": "done",
+        "dependencies": [
+          5,
+          6
+        ],
+        "priority": "medium",
+        "details": "Store API keys in pass store under api/ directory (openai.gpg, github.gpg, etc.) for third-party tools and services. Create helper scripts for general API key storage and retrieval operations. Implement validation scripts to ensure no plain-text secrets exist in repositories. Add automatic key rotation reminders and security audit capabilities. Focus on GitHub tokens, OpenAI keys for other tools, and general service API management - exclude Claude Code integration since it uses different authentication.",
+        "testStrategy": "Test API key storage and retrieval for various services, verify no plain-text exposure, confirm pass integration works with GitHub tokens and OpenAI keys, validate security audit scripts detect potential exposures",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create API Key Storage Helper Scripts",
+            "description": "Develop helper scripts for storing, retrieving, and managing API keys in the pass store",
+            "dependencies": [],
+            "details": "Create scripts/api-key-manager.sh script that provides functions for storing API keys in the pass store under api/ directory. Include functions: store_api_key() for adding new keys with validation, get_api_key() for retrieving keys, list_api_keys() for showing available keys, and rotate_api_key() for key rotation. Support multiple services like GitHub, OpenAI, Anthropic, etc. Include proper error handling and validation.",
+            "status": "done",
+            "testStrategy": "Test storing and retrieving keys for different services, verify keys are properly encrypted, confirm no plain-text exposure"
+          },
+          {
+            "id": 2,
+            "title": "Implement API Key Validation and Security Audit",
+            "description": "Create validation scripts to ensure no plain-text API keys exist in repositories",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Extend the existing pre-commit hook in dotfiles/git/hooks/pre-commit to include additional API key patterns. Create scripts/security-audit.sh that scans the entire repository for potential secret exposure, validates pass store integrity, and checks for proper encryption. Include patterns for more services and implement recursive directory scanning with exclusion rules for encrypted files.",
+            "status": "done",
+            "testStrategy": "Test detection of various API key formats, verify encrypted files are properly excluded, confirm audit detects intentional test secrets"
+          },
+          {
+            "id": 5,
+            "title": "Integrate API Key Management with Validation System",
+            "description": "Enhance validate-config.sh to include API key management verification",
+            "dependencies": [
+              "7.2",
+              "7.4"
+            ],
+            "details": "Extend the existing validate-config.sh script to include API key management validation. Add functions to check pass store structure for api/ directory, verify no plain-text keys in repositories, validate key management scripts are properly installed, and confirm security audit capabilities. Include checks for proper GPG key access and pass store synchronization.",
+            "status": "done",
+            "testStrategy": "Test validation detects missing API directories, verify security checks catch plain-text exposures, confirm integration with existing validation framework"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Develop Git Configuration and Version Control Integration",
+        "description": "Configure Git settings and establish version control workflows for both repositories",
+        "details": "Create git package with .gitconfig containing user information, aliases, and security settings. Set up Git hooks for both repositories to prevent accidental secret commits. Configure automatic sync mechanisms for pass-store. Implement Git worktree support for parallel development contexts. Add commit message templates and security scanning hooks.",
+        "testStrategy": "Verify Git configuration deployment, test hooks prevent secret commits, confirm sync mechanisms work reliably",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Implement Shell Configuration and Environment Setup",
+        "description": "Configure Zsh and Bash environments with consistent settings across machines",
+        "details": "Create zsh package with .zshrc, custom functions, aliases, and environment variables. Set up shell integration with pass for convenient secret access. Configure PATH settings for installed tools. Add bash compatibility layer. Implement shell completion for custom scripts and tools. Include environment validation and troubleshooting commands.",
+        "testStrategy": "Test shell configuration deployment, verify environment variables and PATH settings, confirm pass integration works in shell",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          7
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Create Validation, Testing, and Documentation Suite",
+        "description": "Develop comprehensive testing framework and documentation for the entire system",
+        "details": "Create validate-config.sh script to check system integrity, verify no secret exposure, and confirm all components work correctly. Develop comprehensive README.md with setup instructions, troubleshooting guides, and usage examples. Implement backup and recovery procedures. Create test suite for both macOS and Ubuntu environments. Add security audit checklist and regular maintenance procedures.",
+        "testStrategy": "Run validation script on complete installation, verify documentation accuracy through fresh machine setup, confirm backup/recovery procedures work",
+        "priority": "medium",
+        "dependencies": [
+          4,
+          7,
+          8,
+          9
+        ],
+        "status": "done",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-16T21:26:58.617Z",
+      "updated": "2025-08-17T02:05:47.605Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

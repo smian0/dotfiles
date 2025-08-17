@@ -1,0 +1,184 @@
+version: '3.8'
+
+services:
+  # =============================================================================
+  # Quick Test - Basic validation (30 seconds)
+  # =============================================================================
+  dotfiles-quick:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-quick
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - quick-test-home:/home/testuser
+    environment:
+      - TEST_LEVEL=quick
+      - DOTFILES_PROFILE=minimal
+      - DRY_RUN=true
+      - CI=true
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '🚀 Running Quick Tests...' &&
+        echo '📦 Installing claude-user package...' &&
+        stow -t /home/testuser claude-user &&
+        echo '✅ Claude user installed' &&
+        ls -la /home/testuser/.claude* &&
+        ./tests/docker/test-cases/makefile-validation.sh &&
+        echo '✅ Quick tests completed!'
+      "
+
+  # =============================================================================
+  # Unit Tests - Individual components (2-3 minutes)
+  # =============================================================================
+  dotfiles-unit:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-unit
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - unit-test-home:/home/testuser
+    environment:
+      - TEST_LEVEL=unit
+      - DOTFILES_PROFILE=minimal
+      - DRY_RUN=false
+      - CI=true
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '🧪 Running Unit Tests...' &&
+        ./tests/docker/test-cases/installation-validation.sh &&
+        ./tests/docker/test-cases/security-validation.sh &&
+        ./scripts/validate-config.sh &&
+        make check-secrets &&
+        echo '✅ Unit tests completed!'
+      "
+
+  # =============================================================================
+  # Integration Tests - Package installation (5-10 minutes)
+  # =============================================================================
+  dotfiles-integration:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-integration
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - integration-test-home:/home/testuser
+    environment:
+      - TEST_LEVEL=integration
+      - DOTFILES_PROFILE=development
+      - DRY_RUN=false
+      - CI=true
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '🔧 Running Integration Tests...' &&
+        ./tests/docker/test-cases/backup-restore-test.sh &&
+        ./tests/docker/test-cases/profile-switching.sh &&
+        make status &&
+        echo '✅ Integration tests completed!'
+      "
+
+  # =============================================================================
+  # E2E Tests - Full profile installation (10-15 minutes)
+  # =============================================================================
+  dotfiles-e2e:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-e2e
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - e2e-test-home:/home/testuser
+      - e2e-test-gpg:/home/testuser/.gnupg
+    environment:
+      - TEST_LEVEL=e2e
+      - DOTFILES_PROFILE=development
+      - DRY_RUN=false
+      - CI=true
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '🎯 Running E2E Tests...' &&
+        make install &&
+        make status &&
+        make test &&
+        make backup &&
+        make docs &&
+        make audit &&
+        echo '✅ E2E tests completed!'
+      "
+
+  # =============================================================================
+  # Stress Tests - All profiles and edge cases (20+ minutes)
+  # =============================================================================
+  dotfiles-stress:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-stress
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - stress-test-home:/home/testuser
+      - stress-test-gpg:/home/testuser/.gnupg
+      - stress-test-pass:/home/testuser/.password-store
+    environment:
+      - TEST_LEVEL=stress
+      - DOTFILES_PROFILE=full
+      - DRY_RUN=false
+      - CI=true
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '💪 Running Stress Tests...' &&
+        make install-minimal &&
+        make install-development &&
+        make install-full &&
+        make backup &&
+        make clean &&
+        make restore &&
+        make test-integration &&
+        make docker-test &&
+        echo '✅ Stress tests completed!'
+      "
+
+  # =============================================================================
+  # Security Tests - Security validation (5 minutes)
+  # =============================================================================
+  dotfiles-security:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-security
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - security-test-home:/home/testuser
+    environment:
+      - TEST_LEVEL=security
+      - DOTFILES_PROFILE=minimal
+      - DRY_RUN=false
+      - CI=true
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '🔒 Running Security Tests...' &&
+        make check-secrets &&
+        make audit &&
+        ./scripts/validate-config.sh --audit &&
+        make install-hooks &&
+        echo '✅ Security tests completed!'
+      "
+
+volumes:
+  quick-test-home:
+  unit-test-home:
+  integration-test-home:
+  e2e-test-home:
+  e2e-test-gpg:
+  stress-test-home:
+  stress-test-gpg:
+  stress-test-pass:
+  security-test-home:

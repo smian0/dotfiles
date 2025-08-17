@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  dotfiles-test:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-test
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - test-home:/home/testuser
+      - test-gpg:/home/testuser/.gnupg
+      - test-pass:/home/testuser/.password-store
+    environment:
+      - DOTFILES_PROFILE=development
+      - INSTALL_MODE=automatic
+      - DRY_RUN=false
+      - CI=true
+    working_dir: /home/testuser/dotfiles-source
+    command: tail -f /dev/null  # Keep container running
+
+  # Minimal profile testing
+  dotfiles-minimal:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-minimal
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - test-home-minimal:/home/testuser
+    environment:
+      - DOTFILES_PROFILE=minimal
+      - INSTALL_MODE=automatic
+      - DRY_RUN=false
+      - CI=true
+    command: tail -f /dev/null
+
+  # Development profile testing
+  dotfiles-development:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-development
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - test-home-development:/home/testuser
+    environment:
+      - DOTFILES_PROFILE=development
+      - INSTALL_MODE=automatic
+      - DRY_RUN=false
+      - CI=true
+    command: tail -f /dev/null
+
+  # Full profile testing
+  dotfiles-full:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-full
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - test-home-full:/home/testuser
+      - test-gpg-full:/home/testuser/.gnupg
+      - test-pass-full:/home/testuser/.password-store
+    environment:
+      - DOTFILES_PROFILE=full
+      - INSTALL_MODE=automatic
+      - DRY_RUN=false
+      - CI=true
+    command: tail -f /dev/null
+
+volumes:
+  test-home:
+  test-gpg:
+  test-pass:
+  test-home-minimal:
+  test-home-development:
+  test-home-full:
+  test-gpg-full:
+  test-pass-full:

@@ -1,0 +1,33 @@
+# GPG temporary files
+*.gpg~
+*.gpg.tmp
+*.asc~
+.#*
+
+# Backup files
+*.backup
+*.bak
+*.orig
+*~
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Never commit unencrypted files
+*.txt
+*.json
+*.yaml
+*.yml
+*.env
+!README.md
+
+# Temporary directories
+tmp/
+temp/

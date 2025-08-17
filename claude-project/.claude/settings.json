@@ -1,0 +1,16 @@
+{
+  "env": {
+    "PROJECT_NAME": "${PWD##*/}"
+  },
+  "permissions": {
+    "allow": [
+      "Edit",
+      "MultiEdit",
+      "Write",
+      "TodoWrite",
+      "Bash(npm:*)",
+      "Bash(git:*)",
+      "Bash(test:*)"
+    ]
+  }
+}

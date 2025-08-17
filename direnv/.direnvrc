@@ -1,0 +1,314 @@
+# Global direnv configuration
+# This file is sourced by direnv before .envrc files
+# Place in ~/.config/direnv/direnvrc or ~/.direnvrc
+
+# =============================================================================
+# Logging Functions
+# =============================================================================
+
+log_status() {
+    echo -e "\033[0;32m[direnv]\033[0m $1"
+}
+
+log_error() {
+    echo -e "\033[0;31m[direnv]\033[0m $1" >&2
+}
+
+log_warning() {
+    echo -e "\033[1;33m[direnv]\033[0m $1" >&2
+}
+
+# =============================================================================
+# Node.js Support
+# =============================================================================
+
+# Use specific Node.js version with nvm
+use_nvm() {
+    local version=$1
+    local nvm_dir="${NVM_DIR:-$HOME/.nvm}"
+    
+    if [[ -s "$nvm_dir/nvm.sh" ]]; then
+        source "$nvm_dir/nvm.sh"
+        nvm use $version
+    else
+        log_error "nvm not found at $nvm_dir"
+        return 1
+    fi
+}
+
+# Use Node.js from .nvmrc file
+use_nvmrc() {
+    if [[ -f .nvmrc ]]; then
+        use_nvm $(cat .nvmrc)
+    else
+        log_warning "No .nvmrc file found"
+    fi
+}
+
+# =============================================================================
+# Python Support
+# =============================================================================
+
+# Use specific Python version with pyenv
+use_pyenv() {
+    local version=$1
+    
+    if has pyenv; then
+        local python_root=$(pyenv prefix $version)
+        load_prefix "$python_root"
+    else
+        log_error "pyenv not found"
+        return 1
+    fi
+}
+
+# Create and use Python virtualenv
+layout_python() {
+    local python=${1:-python3}
+    [[ $# -gt 0 ]] && shift
+    
+    local old_env="${VIRTUAL_ENV:-}"
+    unset PYTHONHOME
+    
+    if [[ -d .venv ]]; then
+        VIRTUAL_ENV=$(pwd)/.venv
+    else
+        log_status "Creating virtualenv with $python"
+        $python -m venv .venv
+        VIRTUAL_ENV=$(pwd)/.venv
+    fi
+    
+    export VIRTUAL_ENV
+    PATH_add "$VIRTUAL_ENV/bin"
+    
+    if [[ -f requirements.txt ]]; then
+        log_status "Installing requirements.txt"
+        pip install -q -r requirements.txt
+    fi
+}
+
+# =============================================================================
+# Ruby Support
+# =============================================================================
+
+# Use specific Ruby version with rbenv
+use_rbenv() {
+    local version=$1
+    
+    if has rbenv; then
+        local ruby_root=$(rbenv prefix $version)
+        load_prefix "$ruby_root"
+        layout_ruby
+    else
+        log_error "rbenv not found"
+        return 1
+    fi
+}
+
+# =============================================================================
+# Go Support
+# =============================================================================
+
+# Modern Go modules layout
+layout_go() {
+    export GOPATH="$(pwd)/.go"
+    PATH_add "$GOPATH/bin"
+    PATH_add "$(pwd)/bin"
+    export GO111MODULE=on
+}
+
+# =============================================================================
+# Rust Support
+# =============================================================================
+
+# Rust project layout
+layout_rust() {
+    PATH_add "$(pwd)/target/release"
+    PATH_add "$(pwd)/target/debug"
+    
+    if [[ -f Cargo.toml ]]; then
+        export CARGO_TARGET_DIR="$(pwd)/target"
+    fi
+}
+
+# =============================================================================
+# Docker Support
+# =============================================================================
+
+# Docker development environment
+use_docker() {
+    export DOCKER_BUILDKIT=1
+    export COMPOSE_DOCKER_CLI_BUILD=1
+    
+    if [[ -f docker-compose.yml ]]; then
+        export COMPOSE_FILE=docker-compose.yml
+    elif [[ -f docker-compose.yaml ]]; then
+        export COMPOSE_FILE=docker-compose.yaml
+    fi
+    
+    if [[ -f .env.docker ]]; then
+        dotenv .env.docker
+    fi
+}
+
+# =============================================================================
+# AWS Support
+# =============================================================================
+
+# Use AWS profile
+use_aws() {
+    local profile=${1:-default}
+    export AWS_PROFILE=$profile
+    
+    # Set region if specified
+    if [[ -n "${2:-}" ]]; then
+        export AWS_REGION=$2
+    fi
+    
+    log_status "Using AWS profile: $AWS_PROFILE"
+}
+
+# Load AWS credentials from pass
+use_aws_pass() {
+    local profile=${1:-default}
+    
+    export AWS_ACCESS_KEY_ID=$(pass aws/$profile/access-key-id 2>/dev/null)
+    export AWS_SECRET_ACCESS_KEY=$(pass aws/$profile/secret-access-key 2>/dev/null)
+    
+    if [[ -z "$AWS_ACCESS_KEY_ID" ]] || [[ -z "$AWS_SECRET_ACCESS_KEY" ]]; then
+        log_error "Failed to load AWS credentials from pass"
+        return 1
+    fi
+    
+    log_status "Loaded AWS credentials from pass"
+}
+
+# =============================================================================
+# Kubernetes Support
+# =============================================================================
+
+# Use specific kubectl context
+use_kubectl() {
+    local context=$1
+    
+    if has kubectl; then
+        kubectl config use-context $context
+        export KUBECONFIG="$(pwd)/.kube/config"
+    else
+        log_error "kubectl not found"
+        return 1
+    fi
+}
+
+# =============================================================================
+# Secret Management
+# =============================================================================
+
+# Load secrets from pass
+load_pass_secret() {
+    local key=$1
+    local var_name=${2:-$(echo $key | tr '[:lower:]' '[:upper:]' | tr '/' '_')}
+    
+    local value=$(pass $key 2>/dev/null)
+    if [[ -n "$value" ]]; then
+        export $var_name="$value"
+        log_status "Loaded $var_name from pass"
+    else
+        log_warning "Failed to load $key from pass"
+    fi
+}
+
+# Load .env file with logging
+dotenv_if_exists() {
+    local env_file=${1:-.env}
+    
+    if [[ -f $env_file ]]; then
+        dotenv $env_file
+        log_status "Loaded $env_file"
+    fi
+}
+
+# =============================================================================
+# Utility Functions
+# =============================================================================
+
+# Check if command exists
+has() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Add multiple paths
+PATH_add_multiple() {
+    for path in "$@"; do
+        if [[ -d "$path" ]]; then
+            PATH_add "$path"
+        fi
+    done
+}
+
+# Ensure required commands exist
+require() {
+    for cmd in "$@"; do
+        if ! has "$cmd"; then
+            log_error "Required command not found: $cmd"
+            return 1
+        fi
+    done
+}
+
+# Set project name from directory
+set_project_name() {
+    export PROJECT_NAME=${1:-$(basename $PWD)}
+    log_status "Project: $PROJECT_NAME"
+}
+
+# =============================================================================
+# Security Functions
+# =============================================================================
+
+# Check for sensitive files
+check_sensitive_files() {
+    local sensitive_files=(.env .env.local .env.production secrets.yml)
+    
+    for file in "${sensitive_files[@]}"; do
+        if [[ -f "$file" ]]; then
+            local perms=$(stat -f "%A" "$file" 2>/dev/null || stat -c "%a" "$file" 2>/dev/null)
+            if [[ "$perms" != "600" ]]; then
+                log_warning "$file has permissions $perms (should be 600)"
+            fi
+        fi
+    done
+}
+
+# =============================================================================
+# Development Helpers
+# =============================================================================
+
+# Show project info on enter
+show_project_info() {
+    log_status "Entering: $(basename $PWD)"
+    
+    # Show git branch if in repo
+    if [[ -d .git ]]; then
+        local branch=$(git branch --show-current 2>/dev/null)
+        [[ -n "$branch" ]] && log_status "Git branch: $branch"
+    fi
+    
+    # Show node version if package.json exists
+    if [[ -f package.json ]]; then
+        local node_version=$(node --version 2>/dev/null)
+        [[ -n "$node_version" ]] && log_status "Node: $node_version"
+    fi
+    
+    # Show Python version if requirements.txt exists
+    if [[ -f requirements.txt ]] || [[ -f setup.py ]] || [[ -f pyproject.toml ]]; then
+        local python_version=$(python --version 2>/dev/null)
+        [[ -n "$python_version" ]] && log_status "Python: $python_version"
+    fi
+}
+
+# Watch for file changes
+watch_file() {
+    local file=$1
+    watch_file $file
+}

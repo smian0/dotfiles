@@ -1,0 +1,135 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  test:
+    runs-on: macos-latest
+    
+    strategy:
+      matrix:
+        os: [macos-13, macos-14]  # Test on multiple macOS versions
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Homebrew
+      run: |
+        brew update
+        echo "Homebrew version: $(brew --version)"
+
+    - name: Install dependencies
+      run: |
+        # Install test dependencies
+        brew install shellspec bash stow gpg pass
+        
+        # Install Ruby for coverage (optional)
+        # brew install ruby
+        # gem install bashcov simplecov
+        
+        # Show versions
+        echo "Bash version: $(bash --version | head -1)"
+        echo "ShellSpec version: $(shellspec --version)"
+        echo "Stow version: $(stow --version | head -1)"
+
+    - name: Validate scripts are executable
+      run: |
+        chmod +x install-master.sh
+        chmod +x dotfiles/install.sh
+        chmod +x dotfiles/scripts/*.sh
+        chmod +x tests/run-tests.sh
+        chmod +x tests/generate-coverage.sh
+
+    - name: Run ShellSpec tests
+      run: |
+        shellspec --format documentation
+      env:
+        SHELLSPEC_TMPBASE: /tmp
+        CI: true
+
+    - name: Test dry-run installation
+      run: |
+        ./install-master.sh --dry-run --automatic
+      timeout-minutes: 5
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ matrix.os }}
+        path: |
+          tests/test-environment/
+          tests/coverage/
+        retention-days: 7
+
+    - name: Check test environment cleanup
+      if: always()
+      run: |
+        echo "Test environment contents:"
+        ls -la tests/test-environment/ 2>/dev/null || echo "Test environment cleaned up"
+
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Validate shell scripts
+      run: |
+        # Install shellcheck
+        sudo apt-get update
+        sudo apt-get install -y shellcheck
+        
+        # Check all shell scripts
+        find . -name "*.sh" -type f -not -path "./tests/test-environment/*" \
+          -not -path "./.git/*" -not -path "./node_modules/*" \
+          -exec shellcheck {} \; || true  # Don't fail on warnings
+
+    - name: Check file permissions
+      run: |
+        # Ensure scripts are executable
+        for script in install-master.sh dotfiles/install.sh; do
+          if [[ -f "$script" && ! -x "$script" ]]; then
+            echo "ERROR: $script is not executable"
+            exit 1
+          fi
+        done
+
+  coverage:
+    runs-on: macos-latest
+    if: github.event_name == 'push'  # Only on push to main
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+        bundler-cache: false
+
+    - name: Install coverage tools
+      run: |
+        gem install bashcov simplecov
+        brew install shellspec bash
+
+    - name: Generate coverage report
+      run: |
+        cd tests
+        ./generate-coverage.sh || echo "Coverage generation completed with warnings"
+      continue-on-error: true
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: tests/coverage/
+        retention-days: 30
