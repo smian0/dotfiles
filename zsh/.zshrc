@@ -573,6 +573,11 @@ function ai-status() {
 # Custom Functions
 # =============================================================================
 
+# Helper function to check if command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
 # Extract various archive formats
 function extract() {
     if [[ -f "$1" ]]; then
@@ -665,20 +670,20 @@ function netinfo() {
 # =============================================================================
 
 # Dotfiles aliases
-alias dotfiles='cd ~/workspaces/mac-dotfiles-secrets/dotfiles'
+alias dotfiles='cd ~/dotfiles'
 alias dots='dotfiles'
-alias dotstow='cd ~/workspaces/mac-dotfiles-secrets/dotfiles && stow --target=$HOME'
-alias dotunstow='cd ~/workspaces/mac-dotfiles-secrets/dotfiles && stow --delete --target=$HOME'
+alias dotstow='cd ~/dotfiles && stow --target=$HOME'
+alias dotunstow='cd ~/dotfiles && stow --delete --target=$HOME'
 
 # Quick dotfiles management functions
 function dotadd() {
     if [[ $# -eq 0 ]]; then
         echo "Usage: dotadd <package>"
         echo "Available packages:"
-        ls ~/workspaces/mac-dotfiles-secrets/dotfiles/
+        ls ~/dotfiles/
         return 1
     fi
-    cd ~/workspaces/mac-dotfiles-secrets/dotfiles && stow --target=$HOME "$1"
+    cd ~/dotfiles && stow --target=$HOME "$1"
 }
 
 function dotremove() {
@@ -686,13 +691,13 @@ function dotremove() {
         echo "Usage: dotremove <package>"
         return 1
     fi
-    cd ~/workspaces/mac-dotfiles-secrets/dotfiles && stow --delete --target=$HOME "$1"
+    cd ~/dotfiles && stow --delete --target=$HOME "$1"
 }
 
 function dotstatus() {
     echo "Dotfiles Status:"
     echo "==============="
-    cd ~/workspaces/mac-dotfiles-secrets/dotfiles
+    cd ~/dotfiles
     
     echo "Available packages:"
     ls -1 | grep -v README.md | while read -r package; do
@@ -757,8 +762,18 @@ fi
 
 # NVM (Node Version Manager)
 export NVM_DIR="$HOME/.nvm"
+# Temporarily unset NPM_CONFIG_PREFIX for NVM compatibility
+if [[ -n "$NPM_CONFIG_PREFIX" ]]; then
+    export NPM_CONFIG_PREFIX_BACKUP="$NPM_CONFIG_PREFIX"
+    unset NPM_CONFIG_PREFIX
+fi
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+# Restore NPM_CONFIG_PREFIX after NVM loads
+if [[ -n "$NPM_CONFIG_PREFIX_BACKUP" ]]; then
+    export NPM_CONFIG_PREFIX="$NPM_CONFIG_PREFIX_BACKUP"
+    unset NPM_CONFIG_PREFIX_BACKUP
+fi
 
 # Memory Bank
 export MEMORY_BANK_ROOT=/Users/smian/memory-bank
@@ -795,7 +810,7 @@ if [[ -d "$HOME/.ssh" ]]; then
     if ! pgrep -u "$USER" ssh-agent > /dev/null; then
         ssh-agent > "$HOME/.ssh/ssh-agent-thing"
     fi
-    if [[ "$SSH_AGENT_PID" == "" ]]; then
+    if [[ "$SSH_AGENT_PID" == "" ]] && [[ -f "$HOME/.ssh/ssh-agent-thing" ]]; then
         eval "$(<$HOME/.ssh/ssh-agent-thing)" > /dev/null
     fi
 fi
