@@ -164,7 +164,7 @@ setopt PROMPT_SUBST              # Enable prompt substitution
 export ZSH="$HOME/.oh-my-zsh"
 
 # Theme configuration
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="robbyrussell"
 
 # Plugin configuration
 plugins=(
@@ -670,13 +670,17 @@ if command -v go >/dev/null 2>&1; then
 fi
 
 # Claude Code aliases
-alias cl="/opt/homebrew/bin/claude"
+alias cl="/Users/smian/.nvm/versions/node/v20.19.1/bin/claude"
 alias cld="cl --dangerously-skip-permissions"
 alias cldr="cl --dangerously-skip-permissions --resume"
 
 # Force override AI tool aliases to use dotfiles bin scripts
 alias kimi='~/dotfiles/bin/kimi'
 alias glm='~/dotfiles/bin/glm'
+
+# Use faster alternatives
+alias grep='rg'
+alias find='fd'
 
 # History management
 alias savehist='save_history'
@@ -792,8 +796,3 @@ if [[ -z "$DOTFILES_WELCOME_SHOWN" ]]; then
 fi
 
 # =============================================================================
-# Powerlevel10k Configuration
-# =============================================================================
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
