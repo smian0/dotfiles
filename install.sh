@@ -99,6 +99,7 @@ INSTALL_ALL=false
 DRY_RUN=false
 PROFILE=""
 NON_INTERACTIVE=false
+INSTALL_CLAUDE=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -168,6 +169,11 @@ if [[ -n "$PROFILE" ]]; then
     PROFILE_FILE="profiles/${PROFILE}.txt"
     if [[ -f "$PROFILE_FILE" ]]; then
         log "Installing profile: $PROFILE"
+        # Install Claude Code with default profile
+        if [[ "$PROFILE" == "default" ]]; then
+            INSTALL_CLAUDE=true
+            install_claude_code
+        fi
         PACKAGES=()
         while IFS= read -r package; do
             [[ -n "$package" ]] && PACKAGES+=("$package")
@@ -177,10 +183,12 @@ if [[ -n "$PROFILE" ]]; then
     fi
 elif [[ $INSTALL_ALL == true ]]; then
     log "Installing all packages and Claude Code..."
+    INSTALL_CLAUDE=true
     install_claude_code
-    PACKAGES=("bin" "ccstatusline" "git" "pass-store" "vim" "zsh")
+    PACKAGES=(".claude" ".cursor" ".taskmaster" ".windsurf" "bin" "ccstatusline" "claude-project" "direnv" "git" "pass-store" "vim" "zsh")
 elif [[ ${#PACKAGES[@]} -eq 0 ]]; then
     log "Installing default profile and Claude Code..."
+    INSTALL_CLAUDE=true
     install_claude_code
     # Load default profile
     PROFILE_FILE="profiles/default.txt"
@@ -239,7 +247,7 @@ show_installation_plan() {
     
     # Show additional installations
     echo "🔧 Additional installations:"
-    if [[ $INSTALL_ALL == true ]] || [[ ${#PACKAGES[@]} -eq 0 ]]; then
+    if [[ $INSTALL_CLAUDE == true ]]; then
         echo "   ✓ Claude Code (npm global package)"
         echo "     AI-powered code assistant CLI"
     else
