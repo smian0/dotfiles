@@ -39,8 +39,12 @@ Desktop.ini
 !pass-store/*/
 !pass-store/*/.gitkeep
 
-# GPG
+# Allow GPG files in pass-store (they're encrypted)
+!pass-store/**/*.gpg
+
+# GPG (but allow encrypted files in pass-store)
 *.gpg
+!pass-store/**/*.gpg
 *.asc
 secring.*
 *.key
