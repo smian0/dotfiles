@@ -678,9 +678,13 @@ alias cldr="cl --dangerously-skip-permissions --resume"
 alias kimi='~/dotfiles/bin/kimi'
 alias glm='~/dotfiles/bin/glm'
 
-# Use faster alternatives
-alias grep='rg'
-alias find='fd'
+# Use faster alternatives when available
+if command -v rg &> /dev/null; then
+    alias grep='rg'
+fi
+if command -v fd &> /dev/null; then
+    alias find='fd'
+fi
 
 # History management
 alias savehist='save_history'
