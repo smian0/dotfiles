@@ -178,7 +178,7 @@ if [[ -n "$PROFILE" ]]; then
 elif [[ $INSTALL_ALL == true ]]; then
     log "Installing all packages and Claude Code..."
     install_claude_code
-    PACKAGES=("bin" "ccstatusline" "direnv" "git" "pass-store" "vim" "zsh")
+    PACKAGES=("bin" "ccstatusline" "git" "pass-store" "vim" "zsh")
 elif [[ ${#PACKAGES[@]} -eq 0 ]]; then
     log "Installing default profile and Claude Code..."
     install_claude_code

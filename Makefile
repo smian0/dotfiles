@@ -96,9 +96,6 @@ install-claude: ## Install Claude Code configurations
 	@echo -e "$(GREEN)[INFO]$(NC) Installing Claude configurations..."
 	./install.sh claude-default claude-experimental
 
-install-direnv: ## Install direnv configuration
-	@echo -e "$(GREEN)[INFO]$(NC) Installing direnv configuration..."
-	./direnv/install.sh
 
 # Backup and restore
 backup: ## Create a backup of current configurations
