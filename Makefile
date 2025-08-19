@@ -52,7 +52,7 @@ help: ## Show this help message
 	@echo "  make install              # Install default profile"
 	@echo "  make backup               # Create backup of configurations"
 	@echo "  make status               # Show current status"
-	@echo "  make test                 # Run test suite (developers)"
+	@echo "  make test                 # Run E2E tests (developers)"
 
 # Installation targets
 install: ## Install default profile with Claude Code
@@ -126,7 +126,7 @@ profile-check: ## Validate profile configurations
 	./scripts/profile-manager.sh check
 
 # Testing
-test: ## Run all tests
+test-suite: ## Run shell test suite
 	@echo -e "$(GREEN)[INFO]$(NC) Running test suite..."
 	./tests/run-tests.sh
 
