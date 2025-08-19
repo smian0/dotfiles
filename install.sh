@@ -54,14 +54,14 @@ install_dependencies() {
         fi
         
         # Install required packages
-        brew install stow pass gnupg pinentry-mac git
+        brew install stow pass gnupg pinentry-mac git node
         
     elif [[ "$OS" == "ubuntu" ]]; then
         # Update package list
         sudo apt-get update
         
         # Install required packages
-        sudo apt-get install -y stow pass gnupg2 git curl
+        sudo apt-get install -y stow pass gnupg2 git curl nodejs npm
         
     else
         warn "Unknown OS. Please install manually: stow, pass, gpg, git"
@@ -72,7 +72,7 @@ install_dependencies() {
 check_requirements() {
     local missing_tools=()
     
-    for tool in git stow; do
+    for tool in git stow npm; do
         if ! command -v "$tool" >/dev/null 2>&1; then
             missing_tools+=("$tool")
         fi
@@ -92,14 +92,13 @@ check_requirements() {
 
 # Core packages to install
 CORE_PACKAGES=("git" "zsh" "vim")
-CLAUDE_PACKAGE="claude-default"
 
 # Parse command line arguments
 PACKAGES=()
 INSTALL_ALL=false
-CLAUDE_PROFILE="default"
 DRY_RUN=false
 PROFILE=""
+NON_INTERACTIVE=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -115,24 +114,25 @@ while [[ $# -gt 0 ]]; do
             DRY_RUN=true
             shift
             ;;
-        --claude-profile)
-            CLAUDE_PROFILE="$2"
-            CLAUDE_PACKAGE="claude-$2"
-            shift 2
+        --non-interactive|--yes|-y)
+            NON_INTERACTIVE=true
+            shift
             ;;
         --help)
             echo "Usage: $0 [options] [packages...]"
             echo "Options:"
             echo "  --all              Install all available packages"
-            echo "  --profile NAME     Install specific profile (minimal, development, full, work, personal)"
-            echo "  --claude-profile   Select Claude profile (default, experimental)"
+            echo "  --profile NAME     Install specific profile (default, minimal)"
             echo "  --dry-run          Show what would be installed without making changes"
+            echo "  --non-interactive  Skip confirmation prompts (for automation)"
+            echo "  --yes, -y          Same as --non-interactive"
             echo "  --help             Show this help message"
             echo ""
             echo "Examples:"
-            echo "  $0                 # Install core packages"
-            echo "  $0 --all           # Install everything"
-            echo "  $0 --profile development  # Install development profile"
+            echo "  $0                 # Install default profile + Claude Code"
+            echo "  $0 --all           # Install everything + Claude Code"
+            echo "  $0 --profile minimal      # Install minimal profile (git, vim, zsh)"
+            echo "  $0 --profile default      # Install default profile (explicit)"
             echo "  $0 git zsh         # Install specific packages"
             exit 0
             ;;
@@ -142,6 +142,22 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Install Claude Code globally
+install_claude_code() {
+    if command -v npm >/dev/null 2>&1; then
+        if npm list -g @anthropic-ai/claude-code >/dev/null 2>&1; then
+            log "Claude Code is already installed globally"
+        else
+            log "Installing Claude Code globally via npm..."
+            npm install -g @anthropic-ai/claude-code
+            log "Claude Code installed successfully"
+        fi
+    else
+        warn "npm not available, skipping Claude Code installation"
+        warn "Install Node.js first: brew install node"
+    fi
+}
 
 # Check requirements
 check_requirements
@@ -160,19 +176,152 @@ if [[ -n "$PROFILE" ]]; then
         error "Profile not found: $PROFILE"
     fi
 elif [[ $INSTALL_ALL == true ]]; then
-    log "Installing all packages..."
-    PACKAGES=($(find . -maxdepth 1 -type d -not -path '.' -not -path './.git' -not -path './scripts' -not -path './profiles' | sed 's|^\./||'))
+    log "Installing all packages and Claude Code..."
+    install_claude_code
+    PACKAGES=("bin" "ccstatusline" "direnv" "git" "pass-store" "vim" "zsh")
 elif [[ ${#PACKAGES[@]} -eq 0 ]]; then
-    log "Installing core packages and Claude profile: $CLAUDE_PROFILE..."
-    PACKAGES=("${CORE_PACKAGES[@]}" "$CLAUDE_PACKAGE")
+    log "Installing default profile and Claude Code..."
+    install_claude_code
+    # Load default profile
+    PROFILE_FILE="profiles/default.txt"
+    if [[ -f "$PROFILE_FILE" ]]; then
+        PACKAGES=()
+        while IFS= read -r package; do
+            [[ -n "$package" ]] && PACKAGES+=("$package")
+        done < "$PROFILE_FILE"
+    else
+        warn "Default profile not found, using core packages"
+        PACKAGES=("${CORE_PACKAGES[@]}")
+    fi
 fi
+
+# Show installation plan and ask for confirmation
+show_installation_plan() {
+    echo ""
+    echo "============================================="
+    echo "           DOTFILES INSTALLATION PLAN"
+    echo "============================================="
+    echo ""
+    
+    # Show system info
+    echo "🖥️  System Information:"
+    echo "   OS: $OS"
+    echo "   Shell: $SHELL"
+    echo "   User: $USER"
+    echo "   Home: $HOME"
+    echo ""
+    
+    # Show what will be installed
+    echo "📦 Packages to install:"
+    for package in "${PACKAGES[@]}"; do
+        if [[ -d "$package" ]]; then
+            echo "   ✓ $package"
+            # Show package contents
+            if [[ -f "$package/.description" ]]; then
+                echo "     $(cat "$package/.description")"
+            else
+                case "$package" in
+                    git) echo "     Git configuration with aliases and colors" ;;
+                    zsh) echo "     Zsh with Oh My Zsh, plugins, and custom config" ;;
+                    vim) echo "     Vim configuration and settings" ;;
+                    bin) echo "     Custom utility scripts" ;;
+                    direnv) echo "     Directory environment management" ;;
+                    pass-store) echo "     Password store configuration" ;;
+                    ccstatusline) echo "     Claude Code status line configuration" ;;
+                    *) echo "     Package configuration files" ;;
+                esac
+            fi
+        else
+            echo "   ✗ $package (not found)"
+        fi
+    done
+    echo ""
+    
+    # Show additional installations
+    echo "🔧 Additional installations:"
+    if [[ $INSTALL_ALL == true ]] || [[ ${#PACKAGES[@]} -eq 0 ]]; then
+        echo "   ✓ Claude Code (npm global package)"
+        echo "     AI-powered code assistant CLI"
+    else
+        echo "   • Claude Code installation skipped (specific packages selected)"
+    fi
+    
+    # Show dependencies that might be installed
+    echo ""
+    echo "📋 Dependencies (will be installed if missing):"
+    echo "   • GNU Stow (for symlink management)"
+    echo "   • Pass (password store)"
+    echo "   • GPG (encryption)"
+    echo "   • Git (version control)"
+    echo "   • Node.js & npm (for Claude Code)"
+    
+    if [[ "$OS" == "macos" ]]; then
+        echo "   • Homebrew (package manager for macOS)"
+    fi
+    echo ""
+    
+    # Show what files will be backed up
+    echo "💾 Files that will be backed up (if they exist):"
+    for package in "${PACKAGES[@]}"; do
+        case "$package" in
+            zsh) echo "   • ~/.zshrc → ~/.zshrc.backup" ;;
+            git) echo "   • ~/.gitconfig → ~/.gitconfig.backup" ;;
+            vim) echo "   • ~/.vimrc → ~/.vimrc.backup" ;;
+        esac
+    done
+    echo ""
+    
+    echo "⚡ Installation will:"
+    echo "   1. Check and install missing dependencies"
+    echo "   2. Backup existing configuration files"
+    echo "   3. Run package-specific setup scripts (if needed)"
+    echo "   4. Create symlinks using GNU Stow"
+    echo "   5. Install Claude Code globally via npm"
+    echo ""
+}
+
+# Ask for user confirmation
+ask_confirmation() {
+    if [[ $NON_INTERACTIVE == true ]]; then
+        log "Non-interactive mode: skipping confirmation"
+        return 0
+    fi
+    
+    show_installation_plan
+    
+    echo "❓ Do you want to proceed with this installation? [y/N]"
+    echo -n "   Enter your choice: "
+    read -r response
+    
+    case "$response" in
+        [yY]|[yY][eE][sS])
+            echo ""
+            log "Installation confirmed. Proceeding..."
+            return 0
+            ;;
+        *)
+            echo ""
+            warn "Installation cancelled by user."
+            echo "💡 Tips:"
+            echo "   • Use --dry-run to see what would be installed"
+            echo "   • Use --help to see all available options"
+            echo "   • Use --non-interactive to skip this prompt"
+            exit 0
+            ;;
+    esac
+}
 
 # Handle dry run mode
 if [[ $DRY_RUN == true ]]; then
     log "DRY RUN MODE - No changes will be made"
-    log "Would install packages: ${PACKAGES[*]}"
+    show_installation_plan
+    echo "🏃 This was a dry run. No actual changes were made."
+    echo "   Remove --dry-run to perform the actual installation."
     exit 0
 fi
+
+# Ask for confirmation before proceeding
+ask_confirmation
 
 # Backup existing configurations
 backup_existing() {
@@ -189,12 +338,18 @@ for package in "${PACKAGES[@]}"; do
     if [[ -d "$package" ]]; then
         log "Stowing $package..."
         
-        # Handle special cases
-        if [[ "$package" == claude-* ]]; then
-            backup_existing ".claude"
-            backup_existing ".claude.json"
-        elif [[ "$package" == "zsh" ]]; then
+        # Handle special cases and run package-specific setup
+        if [[ "$package" == "zsh" ]]; then
             backup_existing ".zshrc"
+            # Run zsh package setup BEFORE stowing
+            if [[ -f "$package/install.sh" ]]; then
+                log "Running zsh package setup..."
+                (cd "$package" && bash install.sh)
+                # Clean up any conflicting files that Oh My Zsh might have created
+                if [[ -f "$HOME/.zshrc" ]] && [[ ! -L "$HOME/.zshrc" ]]; then
+                    mv "$HOME/.zshrc" "$HOME/.zshrc.oh-my-zsh-template"
+                fi
+            fi
         elif [[ "$package" == "git" ]]; then
             backup_existing ".gitconfig"
         elif [[ "$package" == "vim" ]]; then
@@ -207,15 +362,6 @@ for package in "${PACKAGES[@]}"; do
     fi
 done
 
-# Special setup for Claude
-if [[ " ${PACKAGES[@]} " =~ " $CLAUDE_PACKAGE " ]]; then
-    if [[ -x "$HOME/.claude/anthropic_key_helper.sh" ]]; then
-        log "API key helper is executable"
-    else
-        warn "Making API key helper executable..."
-        chmod +x "$HOME/.claude/anthropic_key_helper.sh"
-    fi
-fi
 
 # Clone pass-store repository if it doesn't exist
 if [[ ! -d "$HOME/.password-store" ]]; then

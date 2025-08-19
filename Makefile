@@ -55,12 +55,12 @@ help: ## Show this help message
 	@echo "  make test                 # Run test suite (developers)"
 
 # Installation targets
-install: ## Install dotfiles with development profile
-	@echo -e "$(GREEN)[INFO]$(NC) Installing dotfiles with development profile..."
-	./install.sh --profile development
+install: ## Install default profile with Claude Code
+	@echo -e "$(GREEN)[INFO]$(NC) Installing default profile with Claude Code..."
+	./install.sh
 
-install-all: ## Install all packages and configurations
-	@echo -e "$(GREEN)[INFO]$(NC) Installing all dotfiles packages..."
+install-all: ## Install all packages and configurations with Claude Code
+	@echo -e "$(GREEN)[INFO]$(NC) Installing all dotfiles packages with Claude Code..."
 	./install.sh --all
 
 install-minimal: ## Install minimal profile (essential tools only)

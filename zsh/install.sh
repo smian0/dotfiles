@@ -82,21 +82,7 @@ install_oh_my_zsh() {
     success "Oh My Zsh installed successfully"
 }
 
-# Install Powerlevel10k theme
-install_powerlevel10k() {
-    local p10k_dir="$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
-    
-    if [[ -d "$p10k_dir" ]]; then
-        success "Powerlevel10k is already installed"
-        return 0
-    fi
-    
-    log "Installing Powerlevel10k theme..."
-    
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir"
-    
-    success "Powerlevel10k installed successfully"
-}
+# Note: Powerlevel10k theme removed - using robbyrussell default theme
 
 # Install Zsh plugins
 install_zsh_plugins() {
@@ -146,52 +132,7 @@ set_default_shell() {
     success "Zsh set as default shell (restart terminal to take effect)"
 }
 
-# Install fonts for Powerlevel10k
-install_fonts() {
-    case "$OS_TYPE" in
-        macos)
-            log "Installing Meslo Nerd Font for Powerlevel10k..."
-            if command_exists brew; then
-                brew tap homebrew/cask-fonts
-                brew install --cask font-meslo-lg-nerd-font
-                success "Meslo Nerd Font installed"
-            else
-                warn "Homebrew not available, install fonts manually"
-                info "Download from: https://github.com/romkatv/powerlevel10k#fonts"
-            fi
-            ;;
-        linux)
-            log "Installing fonts for Powerlevel10k..."
-            local font_dir="$HOME/.local/share/fonts"
-            mkdir -p "$font_dir"
-            
-            # Download MesloLGS NF fonts
-            local fonts=(
-                "MesloLGS%20NF%20Regular.ttf"
-                "MesloLGS%20NF%20Bold.ttf"
-                "MesloLGS%20NF%20Italic.ttf"
-                "MesloLGS%20NF%20Bold%20Italic.ttf"
-            )
-            
-            for font in "${fonts[@]}"; do
-                local url="https://github.com/romkatv/powerlevel10k-media/raw/master/${font}"
-                local filename="${font//%20/ }"
-                if [[ ! -f "$font_dir/$filename" ]]; then
-                    curl -fsSL "$url" -o "$font_dir/$filename"
-                fi
-            done
-            
-            # Refresh font cache
-            fc-cache -fv
-            success "Fonts installed"
-            ;;
-        *)
-            warn "Automatic font installation not supported on this OS"
-            info "Install MesloLGS NF fonts manually from:"
-            info "https://github.com/romkatv/powerlevel10k#fonts"
-            ;;
-    esac
-}
+# Note: Font installation removed - no longer needed without Powerlevel10k
 
 # Install AI tools dependencies
 install_ai_dependencies() {
@@ -245,19 +186,16 @@ main() {
     # Install components
     install_zsh
     install_oh_my_zsh
-    install_powerlevel10k
     install_zsh_plugins
-    install_fonts
     install_ai_dependencies
     
     # Backup existing configuration
     backup_existing_zshrc
     
-    # Set as default shell
-    echo ""
-    echo "Would you like to set Zsh as your default shell? (y/n)"
-    read -r response
-    if [[ "$response" == "y" ]]; then
+    # Set as default shell automatically if not already set
+    if [[ "$SHELL" != "$(command -v zsh)" ]]; then
+        echo ""
+        echo "Setting Zsh as default shell automatically..."
         set_default_shell
     fi
     
@@ -267,9 +205,8 @@ main() {
     info "Next steps:"
     echo "  1. Use stow to deploy: stow --target=\$HOME zsh"
     echo "  2. Restart your terminal"
-    echo "  3. Run 'p10k configure' to set up Powerlevel10k"
-    echo "  4. Run 'ai-setup' to configure AI assistants (Kimi & GLM)"
-    echo "  5. Enjoy your enhanced shell with AI tools!"
+    echo "  3. Run 'ai-setup' to configure AI assistants (Kimi & GLM)"
+    echo "  4. Enjoy your enhanced shell with AI tools!"
 }
 
 # Run main function if script is executed directly
