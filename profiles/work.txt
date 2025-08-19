@@ -1,6 +1,0 @@
-git
-vim
-zsh
-tmux
-claude-default
-ssh
