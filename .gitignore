@@ -34,6 +34,11 @@ Desktop.ini
 # Password store (if accidentally placed here)
 .password-store/
 
+# Keep pass-store directory structure visible
+!pass-store/
+!pass-store/*/
+!pass-store/*/.gitkeep
+
 # GPG
 *.gpg
 *.asc
