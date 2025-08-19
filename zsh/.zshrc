@@ -1,12 +1,7 @@
 # Zsh Configuration for Dotfiles Management
 # Auto-managed by dotfiles system
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# Zsh Configuration - Clean startup without theme prompts
 
 # =============================================================================
 # Environment Configuration
@@ -163,8 +158,16 @@ setopt PROMPT_SUBST              # Enable prompt substitution
 # Oh My Zsh installation path
 export ZSH="$HOME/.oh-my-zsh"
 
-# Theme configuration
+# Theme configuration - with auto-install fallback
 ZSH_THEME="robbyrussell"
+
+# Theme management functions
+_check_theme_health() {
+    # Simple theme health check - just verify Oh My Zsh is working
+    if [[ ! -f "$ZSH/oh-my-zsh.sh" ]]; then
+        echo "⚠️  Oh My Zsh not found - theme functionality may be limited"
+    fi
+}
 
 # Plugin configuration
 plugins=(
@@ -196,13 +199,62 @@ COMPLETION_WAITING_DOTS="true"
 DISABLE_UNTRACKED_FILES_DIRTY="false"
 HIST_STAMPS="yyyy-mm-dd"
 
-# Load Oh My Zsh if available
+# Auto-install Oh My Zsh and dependencies if missing
+if [[ ! -f "$ZSH/oh-my-zsh.sh" ]]; then
+    echo "🔧 Oh My Zsh not found. Auto-installing..."
+    
+    # Install Oh My Zsh
+    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    
+    # Install required plugins
+    local custom_plugins_dir="$ZSH/custom/plugins"
+    
+    # zsh-autosuggestions
+    if [[ ! -d "$custom_plugins_dir/zsh-autosuggestions" ]]; then
+        echo "📦 Installing zsh-autosuggestions..."
+        git clone https://github.com/zsh-users/zsh-autosuggestions "$custom_plugins_dir/zsh-autosuggestions"
+    fi
+    
+    # zsh-syntax-highlighting
+    if [[ ! -d "$custom_plugins_dir/zsh-syntax-highlighting" ]]; then
+        echo "📦 Installing zsh-syntax-highlighting..."
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$custom_plugins_dir/zsh-syntax-highlighting"
+    fi
+    
+    echo "✅ Oh My Zsh and plugins installed successfully!"
+    echo "💡 Restart your terminal for full functionality"
+fi
+
+# Load Oh My Zsh
 if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
     source "$ZSH/oh-my-zsh.sh"
-else
-    echo "Warning: Oh My Zsh not found. Install with:"
-    echo "sh -c \"\$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\""
 fi
+
+# Run one-time setup checks
+_run_setup_checks() {
+    # Only run setup checks once per day to avoid spam
+    local setup_check_file="$HOME/.cache/zsh-setup-check"
+    local today=$(date +%Y-%m-%d)
+    
+    if [[ -f "$setup_check_file" ]]; then
+        local last_check=$(cat "$setup_check_file" 2>/dev/null)
+        if [[ "$last_check" == "$today" ]]; then
+            return 0
+        fi
+    fi
+    
+    # Create cache directory if needed
+    mkdir -p "$(dirname "$setup_check_file")"
+    
+    # Run checks
+    _check_theme_health
+    
+    # Record that we ran checks today
+    echo "$today" > "$setup_check_file"
+}
+
+# Run setup checks (only once per day)
+_run_setup_checks
 
 # =============================================================================
 # Aliases
