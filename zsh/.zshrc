@@ -67,3 +67,10 @@ alias kimir="kimi --dangerously-skip-permissions --resume"
 alias glm='~/dotfiles/bin/glm'
 alias glmd="glm --dangerously-skip-permissions"
 alias glmr="glm --dangerously-skip-permissions --resume"
+
+# Chrome Keeper Management Aliases
+alias chrome-status="/Users/smian/chrome_commands.sh status"
+alias chrome-start="/Users/smian/chrome_commands.sh start"
+alias chrome-stop="/Users/smian/chrome_commands.sh stop"
+alias chrome-logs="/Users/smian/chrome_commands.sh logs"
+
