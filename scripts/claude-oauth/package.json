@@ -1,0 +1,18 @@
+{
+  "name": "claude-code-login",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "generate-token": "bun run scripts/quick-token.js",
+    "oauth": "bun run scripts/quick-token.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

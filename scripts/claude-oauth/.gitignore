@@ -1,0 +1,14 @@
+# Node modules
+node_modules/
+
+# OAuth state and credentials files
+claude_oauth_state.json
+credentials.json
+claude_credentials.json
+
+# Bun lockfile
+bun.lock
+
+# Temporary files
+*.tmp
+*.temp

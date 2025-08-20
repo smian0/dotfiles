@@ -28,9 +28,10 @@ export XAUTHORITY="$HOME/.Xauthority"
 # Ensure browser opens in local environment
 export BROWSER_FORWARDING_ENABLED=1
 
-# Claude Code OAuth Token (for SSH sessions)
-export CLAUDE_CODE_OAUTH_TOKEN="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"
-
+# Claude Code OAuth Token (for SSH sessions only)
+if [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" || -n "$SSH_CONNECTION" ]]; then
+    export CLAUDE_CODE_OAUTH_TOKEN="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"
+fi
 # Claude Code Authentication Protection
 # Prevent empty ANTHROPIC_API_KEY from blocking OAuth authentication
 claude_auth_protection() {
