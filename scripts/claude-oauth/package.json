@@ -8,7 +8,9 @@
     "test:watch": "bun test --watch",
     "generate-token": "bun run scripts/quick-token.js",
     "oauth": "bun run scripts/quick-token.js",
-    "test-oauth-bug": "./test_oauth_model_access.sh"
+    "test-oauth-bug": "./test_oauth_model_access.sh",
+    "keychain": "./quick-reference.sh keychain",
+    "keychain-help": "./quick-reference.sh help"
   },
   "devDependencies": {
     "@types/bun": "latest"

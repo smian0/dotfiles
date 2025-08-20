@@ -222,6 +222,9 @@ bunx tsc --noEmit
 - `action.yml` - GitHub Action definition
 - `CLAUDE.md` - Development guidelines for Claude Code
 - `scripts/` - Automation scripts for release management
+- `USAGE.md` - Quick usage instructions
+- `KNOWN_ISSUES.md` - Bug tracking and workarounds
+- `KEYCHAIN_ACCESS.md` - Guide for finding Claude credentials in macOS Keychain
 
 ## Development
 
