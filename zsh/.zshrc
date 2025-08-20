@@ -721,10 +721,81 @@ if command -v go >/dev/null 2>&1; then
     export GOBIN="$GOPATH/bin"
 fi
 
+# =============================================================================
+# Claude Code Configuration
+# =============================================================================
+
 # Claude Code aliases
-alias cl="/Users/smian/.nvm/versions/node/v20.19.1/bin/claude"
+alias cl="/Users/smian/.claude/local/claude"
 alias cld="cl --dangerously-skip-permissions"
 alias cldr="cl --dangerously-skip-permissions --resume"
+
+# Claude Code Authentication Protection
+# IMPORTANT: Never set ANTHROPIC_API_KEY="" (empty) as it blocks OAuth authentication
+# This protection ensures Claude Code works properly in both local and SSH sessions
+
+claude_auth_protection() {
+    # Detect and fix empty ANTHROPIC_API_KEY that blocks OAuth
+    if [[ -n "$ANTHROPIC_API_KEY" && -z "$ANTHROPIC_API_KEY" ]]; then
+        echo "⚠️  Warning: Empty ANTHROPIC_API_KEY detected, unsetting to allow OAuth"
+        unset ANTHROPIC_API_KEY
+    fi
+}
+
+# Run protection check on shell startup
+claude_auth_protection
+
+# Convenience function to diagnose and fix Claude auth issues
+fix_claude_auth() {
+    echo "🔧 Fixing Claude Code authentication..."
+    
+    # Remove any conflicting empty API keys
+    unset ANTHROPIC_API_KEY
+    
+    # Check OAuth token status
+    if [[ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]]; then
+        echo "💡 No OAuth token found. Run 'claude /login' to authenticate."
+        echo "📝 For SSH sessions, you may need to export the token manually."
+    else
+        echo "✅ OAuth token present: ${CLAUDE_CODE_OAUTH_TOKEN:0:20}..."
+    fi
+    
+    echo "✅ Authentication environment fixed!"
+    echo "💡 Test manually with: claude -p 'test'"
+    echo "🔧 If still not working, run: ~/dotfiles/scripts/fix-claude-ssh-auth.sh"
+}
+
+# Quick Claude Code status check
+claude_status() {
+    echo "🤖 Claude Code Status"
+    echo "===================="
+    
+    if command_exists claude; then
+        echo "✅ Claude Code CLI: Available"
+    else
+        echo "❌ Claude Code CLI: Not installed"
+        return 1
+    fi
+    
+    if [[ -n "$ANTHROPIC_API_KEY" ]]; then
+        if [[ -z "$ANTHROPIC_API_KEY" ]]; then
+            echo "❌ ANTHROPIC_API_KEY: Empty (will block OAuth)"
+            echo "💡 Run 'fix_claude_auth' to fix"
+        else
+            echo "✅ ANTHROPIC_API_KEY: Set (${ANTHROPIC_API_KEY:0:10}...)"
+        fi
+    else
+        echo "✅ ANTHROPIC_API_KEY: Not set (good for OAuth)"
+    fi
+    
+    if [[ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]]; then
+        echo "✅ CLAUDE_CODE_OAUTH_TOKEN: Present (${CLAUDE_CODE_OAUTH_TOKEN:0:20}...)"
+        echo "✅ Authentication: Ready for both local and SSH sessions"
+    else
+        echo "⚠️  CLAUDE_CODE_OAUTH_TOKEN: Not found"
+        echo "💡 Run 'claude /login' to authenticate"
+    fi
+}
 
 # Force override AI tool aliases to use dotfiles bin scripts
 alias kimi='~/dotfiles/bin/kimi'
@@ -836,6 +907,9 @@ function dotfiles_welcome() {
         echo "   Type 'sysinfo' for system information"
         echo ""
         echo "🤖 AI Tools Available:"
+        echo "   claude                  - Claude Code CLI (local/SSH)"
+        echo "   claude_status           - Check Claude authentication"
+        echo "   fix_claude_auth         - Fix Claude auth issues"
         echo "   kimi                    - Kimi AI assistant (interactive)"
         echo "   glm                     - ChatGLM assistant (interactive)"
         echo "   kimi 'your question'    - One-shot Kimi query"
