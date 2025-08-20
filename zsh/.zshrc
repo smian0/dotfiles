@@ -55,3 +55,14 @@ fix_claude_auth() {
     echo "✅ Authentication environment fixed!"
     echo "💡 Test manually with: claude -p 'test'"
 }
+
+# AI Tool Aliases
+alias cl="/Users/smian/.claude/local/claude"
+alias cld="cl --dangerously-skip-permissions"
+alias clr="cl --dangerously-skip-permissions --resume"
+alias kimi='~/dotfiles/bin/kimi'
+alias kimid="kimi --dangerously-skip-permissions"
+alias kimir="kimi --dangerously-skip-permissions --resume"
+alias glm='~/dotfiles/bin/glm'
+alias glmd="glm --dangerously-skip-permissions"
+alias glmr="glm --dangerously-skip-permissions --resume"
