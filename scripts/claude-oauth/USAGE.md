@@ -69,3 +69,12 @@ After generating tokens, you'll have a `credentials.json` file with:
 ```
 
 Use these tokens for Claude API authentication or with Claude Code's OAuth mode.
+
+## ⚠️ Known Issues
+
+**OAuth + Max Plan Bug**: Currently there's a bug where OAuth tokens don't properly recognize Max plan subscriptions, causing Opus model access to be denied. See `KNOWN_ISSUES.md` for details and workarounds.
+
+To test if this bug is fixed, run:
+```bash
+./test_oauth_model_access.sh
+```
