@@ -732,7 +732,37 @@ alias glm='~/dotfiles/bin/glm'
 
 # Use faster alternatives when available
 if command -v rg &> /dev/null; then
-    alias grep='rg'
+    # Smart grep alias that uses rg when safe, falls back to grep otherwise
+    alias grep='_smart_grep'
+    
+    _smart_grep() {
+        # Check if any grep-specific flags are used that rg doesn't support well
+        local args=("$@")
+        local use_rg=true
+        
+        for arg in "${args[@]}"; do
+            case "$arg" in
+                -E|-F|-G|-P|-e|-f|-i|-v|-w|-x|-A|-B|-C|-D|-d|-H|-h|-L|-l|-m|-n|-o|-q|-r|-s|-U|-u|-V|-y|-Z)
+                    # These are grep flags that might not work the same in rg
+                    use_rg=false
+                    break
+                    ;;
+                --help|--version)
+                    # Help and version should use original grep
+                    use_rg=false
+                    break
+                    ;;
+            esac
+        done
+        
+        if [[ "$use_rg" == true ]]; then
+            # Use rg with smart defaults
+            rg --no-heading --line-number --color=auto "$@"
+        else
+            # Fall back to original grep
+            command grep "$@"
+        fi
+    }
 fi
 if command -v fd &> /dev/null; then
     alias find='fd'
@@ -852,3 +882,7 @@ if [[ -z "$DOTFILES_WELCOME_SHOWN" ]]; then
 fi
 
 # =============================================================================
+
+
+
+
