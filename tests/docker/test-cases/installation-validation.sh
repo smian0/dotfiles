@@ -142,7 +142,7 @@ run_tests() {
         log "Found $profile_count profile(s)"
         
         # Test each profile exists
-        for profile in minimal development full work personal; do
+        for profile in minimal default; do
             if [[ -f "profiles/${profile}.txt" ]]; then
                 success "Profile '$profile' exists"
                 TESTS_PASSED=$((TESTS_PASSED + 1))

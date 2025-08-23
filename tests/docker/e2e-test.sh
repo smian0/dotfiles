@@ -27,9 +27,9 @@ case "$SCENARIO" in
         echo "========================================"
         
         # What a new developer would do
-        log "1. Installing development profile..."
+        log "1. Installing default profile..."
         # Use stow directly to avoid conflicts
-        for package in git vim zsh claude-default; do
+        for package in git vim zsh bin; do
             if [[ -d "$package" ]]; then
                 stow -t "$HOME" "$package" 2>/dev/null || true
             fi
@@ -44,9 +44,9 @@ case "$SCENARIO" in
             cat ~/.gitconfig | head -5
         fi
         
-        log "4. Verifying Claude is configured..."
-        if [[ -L "$HOME/.claude" ]]; then
-            success "Claude config installed"
+        log "4. Verifying bin scripts are available..."
+        if [[ -L "$HOME/glm" ]] || [[ -L "$HOME/kimi" ]]; then
+            success "Bin scripts installed"
         fi
         
         success "Basic setup complete!"
@@ -116,8 +116,8 @@ case "$SCENARIO" in
         minimal_count=$(find ~ -maxdepth 2 -type l 2>/dev/null | wc -l)
         success "Minimal: $minimal_count symlinks"
         
-        log "2. Upgrading to development..."
-        ./install.sh --profile development
+        log "2. Upgrading to default profile..."
+        ./install.sh --profile default
         dev_count=$(find ~ -maxdepth 2 -type l 2>/dev/null | wc -l)
         success "Development: $dev_count symlinks"
         

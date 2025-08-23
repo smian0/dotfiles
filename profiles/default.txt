@@ -1,5 +1,4 @@
 git
 vim
 zsh
-direnv
 bin

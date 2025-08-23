@@ -24,7 +24,7 @@ error() { echo -e "${RED}❌ [${TEST_NAME}]${NC} $1"; }
 warn() { echo -e "${YELLOW}⚠️  [${TEST_NAME}]${NC} $1"; }
 
 # Profile configurations
-PROFILES=("minimal" "development" "full" "work" "personal")
+PROFILES=("minimal" "default")
 INSTALLED_PACKAGES=()
 
 # Cleanup function
@@ -130,16 +130,16 @@ run_test() {
     fi
     
     # =================================================================
-    # Test 4: Switch to development profile
+    # Test 4: Switch to default profile
     # =================================================================
-    log "Test 4: Switching to development profile"
+    log "Test 4: Switching to default profile"
     
     # Note current state
     before_switch=$(count_symlinks)
     
-    # Install development profile (should add more packages)
-    if ./install.sh --profile development 2>&1 | grep -E "(install|Install|stow)" >/dev/null; then
-        success "Development profile installation executed"
+    # Install default profile (should add more packages)
+    if ./install.sh --profile default 2>&1 | grep -E "(install|Install|stow)" >/dev/null; then
+        success "Default profile installation executed"
         
         after_switch=$(count_symlinks)
         log "Development profile has $after_switch symlinks (was $before_switch)"
@@ -210,9 +210,9 @@ run_test() {
     # =================================================================
     log "Test 8: Testing profile-specific packages"
     
-    # Check if development profile includes specific tools
-    if [[ -f "profiles/development.txt" ]]; then
-        dev_packages=$(cat "profiles/development.txt")
+    # Check if default profile includes specific tools
+    if [[ -f "profiles/default.txt" ]]; then
+        dev_packages=$(cat "profiles/default.txt")
         log "Development profile includes: $(echo $dev_packages | tr '\n' ' ')"
         
         # Verify at least some expected packages

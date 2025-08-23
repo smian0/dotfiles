@@ -1,7 +1,10 @@
 # Zsh Configuration for Dotfiles Management
 # Auto-managed by dotfiles system
 
-# Zsh Configuration - Clean startup without theme prompts
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 # =============================================================================
 # Environment Configuration
@@ -33,10 +36,43 @@ export PAGER="less"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
-# History configuration (using larger values from personal config)
-export HISTFILE="$HOME/.zsh_history"
-export HISTSIZE=100000
-export SAVEHIST=100000
+# Browser forwarding configuration for VS Code Remote SSH
+export BROWSER="open"
+export DISPLAY=":0"
+export XAUTHORITY="$HOME/.Xauthority"
+
+# Ensure browser opens in local environment
+export BROWSER_FORWARDING_ENABLED=1
+
+# Claude Code OAuth Token (for SSH sessions only)
+if [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" || -n "$SSH_CONNECTION" ]]; then
+    export CLAUDE_CODE_OAUTH_TOKEN="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"
+fi
+
+# Claude Code Authentication Protection
+# Prevent empty ANTHROPIC_API_KEY from blocking OAuth authentication
+claude_auth_protection() {
+    if [[ -n "$ANTHROPIC_API_KEY" && -z "$ANTHROPIC_API_KEY" ]]; then
+        echo "⚠️  Warning: Empty ANTHROPIC_API_KEY detected, unsetting to allow OAuth"
+        unset ANTHROPIC_API_KEY
+    fi
+}
+
+# Run protection check on shell startup
+claude_auth_protection
+
+# Convenience function to fix Claude auth issues
+fix_claude_auth() {
+    echo "🔧 Fixing Claude Code authentication..."
+    unset ANTHROPIC_API_KEY
+    if [[ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]]; then
+        echo "💡 No OAuth token found. Run 'claude /login' to authenticate."
+    else
+        echo "✅ OAuth token present: ${CLAUDE_CODE_OAUTH_TOKEN:0:20}..."
+    fi
+    echo "✅ Authentication environment fixed!"
+    echo "💡 Test manually with: claude -p 'test'"
+}
 
 # PATH Management
 typeset -U path  # Keep unique entries in PATH
@@ -265,9 +301,50 @@ alias ls='ls -G'
 alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
-alias grep='grep --color=auto'
+
+# Use faster alternatives when available
+if command -v rg &> /dev/null; then
+    # Smart grep alias that uses rg when safe, falls back to grep otherwise
+    alias grep='_smart_grep'
+    
+    _smart_grep() {
+        # Check if any grep-specific flags are used that rg doesn't support well
+        local args=("$@")
+        local use_rg=true
+        
+        for arg in "${args[@]}"; do
+            case "$arg" in
+                -E|-F|-G|-P|-e|-f|-i|-v|-w|-x|-A|-B|-C|-D|-d|-H|-h|-L|-l|-m|-n|-o|-q|-r|-s|-U|-u|-V|-y|-Z)
+                    # These are grep flags that might not work the same in rg
+                    use_rg=false
+                    break
+                    ;;
+                --help|--version)
+                    # Help and version should use original grep
+                    use_rg=false
+                    break
+                    ;;
+            esac
+        done
+        
+        if [[ "$use_rg" == true ]]; then
+            # Use rg with smart defaults
+            rg --no-heading --line-number --color=auto "$@"
+        else
+            # Fall back to original grep
+            command grep "$@"
+        fi
+    }
+else
+    alias grep='grep --color=auto'
+fi
+
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
+
+if command -v fd &> /dev/null; then
+    alias find='fd'
+fi
 
 # Navigation
 alias ..='cd ..'
@@ -357,9 +434,10 @@ function pcp() {
 # AI Tools Integration
 # =============================================================================
 
-# Kimi and GLM AI assistants are provided by the bin/ scripts
-# These should be available in PATH via: stow bin
-# The scripts set appropriate environment variables and call Claude CLI
+# AI Tool Aliases
+alias cl="/Users/smian/.claude/local/claude"
+alias cld="cl --dangerously-skip-permissions"
+alias clr="cl --dangerously-skip-permissions --resume"
 
 # Remove any old aliases that might interfere and set correct ones
 unalias kimi glm 2>/dev/null || true
@@ -367,6 +445,10 @@ unalias kimi glm 2>/dev/null || true
 # Override any existing aliases with the correct dotfiles bin scripts
 alias kimi='~/dotfiles/bin/kimi'
 alias glm='~/dotfiles/bin/glm'
+alias kimid="kimi --dangerously-skip-permissions"
+alias kimir="kimi --dangerously-skip-permissions --resume"
+alias glmd="glm --dangerously-skip-permissions"
+alias glmr="glm --dangerously-skip-permissions --resume"
 
 # AI assistant chooser function
 function ai() {
@@ -721,53 +803,6 @@ if command -v go >/dev/null 2>&1; then
     export GOBIN="$GOPATH/bin"
 fi
 
-# Claude Code aliases
-alias cl="/Users/smian/.nvm/versions/node/v20.19.1/bin/claude"
-alias cld="cl --dangerously-skip-permissions"
-alias cldr="cl --dangerously-skip-permissions --resume"
-
-# Force override AI tool aliases to use dotfiles bin scripts
-alias kimi='~/dotfiles/bin/kimi'
-alias glm='~/dotfiles/bin/glm'
-
-# Use faster alternatives when available
-if command -v rg &> /dev/null; then
-    # Smart grep alias that uses rg when safe, falls back to grep otherwise
-    alias grep='_smart_grep'
-    
-    _smart_grep() {
-        # Check if any grep-specific flags are used that rg doesn't support well
-        local args=("$@")
-        local use_rg=true
-        
-        for arg in "${args[@]}"; do
-            case "$arg" in
-                -E|-F|-G|-P|-e|-f|-i|-v|-w|-x|-A|-B|-C|-D|-d|-H|-h|-L|-l|-m|-n|-o|-q|-r|-s|-U|-u|-V|-y|-Z)
-                    # These are grep flags that might not work the same in rg
-                    use_rg=false
-                    break
-                    ;;
-                --help|--version)
-                    # Help and version should use original grep
-                    use_rg=false
-                    break
-                    ;;
-            esac
-        done
-        
-        if [[ "$use_rg" == true ]]; then
-            # Use rg with smart defaults
-            rg --no-heading --line-number --color=auto "$@"
-        else
-            # Fall back to original grep
-            command grep "$@"
-        fi
-    }
-fi
-if command -v fd &> /dev/null; then
-    alias find='fd'
-fi
-
 # History management
 alias savehist='save_history'
 
@@ -883,6 +918,10 @@ fi
 
 # =============================================================================
 
+# Chrome Keeper Management Aliases
+alias chrome-status="/Users/smian/chrome_commands.sh status"
+alias chrome-start="/Users/smian/chrome_commands.sh start"
+alias chrome-stop="/Users/smian/chrome_commands.sh stop"
+alias chrome-logs="/Users/smian/chrome_commands.sh logs"
 
-
-
+# =============================================================================

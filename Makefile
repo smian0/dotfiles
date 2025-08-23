@@ -49,10 +49,10 @@ help: ## Show this help message
 	@echo
 	@echo -e "$(BOLD)Examples:$(NC)"
 	@echo "  make bootstrap            # Complete setup for new machines"
-	@echo "  make install              # Install development profile"
+	@echo "  make install              # Install default profile"
 	@echo "  make backup               # Create backup of configurations"
 	@echo "  make status               # Show current status"
-	@echo "  make test                 # Run test suite (developers)"
+	@echo "  make test                 # Run E2E tests (developers)"
 
 # Installation targets
 install: ## Install default profile with Claude Code
@@ -67,17 +67,6 @@ install-minimal: ## Install minimal profile (essential tools only)
 	@echo -e "$(GREEN)[INFO]$(NC) Installing minimal dotfiles profile..."
 	./install.sh --profile minimal
 
-install-full: ## Install full profile (all packages and tools)
-	@echo -e "$(GREEN)[INFO]$(NC) Installing full dotfiles profile..."
-	./install.sh --profile full
-
-install-work: ## Install work profile (corporate environment)
-	@echo -e "$(GREEN)[INFO]$(NC) Installing work dotfiles profile..."
-	./install.sh --profile work
-
-install-personal: ## Install personal profile (home setup)
-	@echo -e "$(GREEN)[INFO]$(NC) Installing personal dotfiles profile..."
-	./install.sh --profile personal
 
 # Package-specific installations
 install-git: ## Install git configuration only
@@ -96,9 +85,6 @@ install-claude: ## Install Claude Code configurations
 	@echo -e "$(GREEN)[INFO]$(NC) Installing Claude configurations..."
 	./install.sh claude-default claude-experimental
 
-install-direnv: ## Install direnv configuration
-	@echo -e "$(GREEN)[INFO]$(NC) Installing direnv configuration..."
-	./direnv/install.sh
 
 # Backup and restore
 backup: ## Create a backup of current configurations
@@ -140,7 +126,7 @@ profile-check: ## Validate profile configurations
 	./scripts/profile-manager.sh check
 
 # Testing
-test: ## Run all tests
+test-suite: ## Run shell test suite
 	@echo -e "$(GREEN)[INFO]$(NC) Running test suite..."
 	./tests/run-tests.sh
 
@@ -345,7 +331,7 @@ docs: ## Update README with Makefile commands
 	@echo "### Quick Start" >> /tmp/makefile_commands.md
 	@echo "" >> /tmp/makefile_commands.md
 	@echo "\`\`\`bash" >> /tmp/makefile_commands.md
-	@echo "make install          # Install with development profile" >> /tmp/makefile_commands.md
+	@echo "make install          # Install with default profile" >> /tmp/makefile_commands.md
 	@echo "make install-minimal  # Install minimal profile" >> /tmp/makefile_commands.md
 	@echo "make backup           # Create backup" >> /tmp/makefile_commands.md
 	@echo "make test             # Run tests" >> /tmp/makefile_commands.md
