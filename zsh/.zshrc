@@ -49,30 +49,7 @@ if [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" || -n "$SSH_CONNECTION" ]]; then
     export CLAUDE_CODE_OAUTH_TOKEN="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"
 fi
 
-# Claude Code Authentication Protection
-# Prevent empty ANTHROPIC_API_KEY from blocking OAuth authentication
-claude_auth_protection() {
-    if [[ -n "$ANTHROPIC_API_KEY" && -z "$ANTHROPIC_API_KEY" ]]; then
-        echo "⚠️  Warning: Empty ANTHROPIC_API_KEY detected, unsetting to allow OAuth"
-        unset ANTHROPIC_API_KEY
-    fi
-}
 
-# Run protection check on shell startup
-claude_auth_protection
-
-# Convenience function to fix Claude auth issues
-fix_claude_auth() {
-    echo "🔧 Fixing Claude Code authentication..."
-    unset ANTHROPIC_API_KEY
-    if [[ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]]; then
-        echo "💡 No OAuth token found. Run 'claude /login' to authenticate."
-    else
-        echo "✅ OAuth token present: ${CLAUDE_CODE_OAUTH_TOKEN:0:20}..."
-    fi
-    echo "✅ Authentication environment fixed!"
-    echo "💡 Test manually with: claude -p 'test'"
-}
 
 # PATH Management
 typeset -U path  # Keep unique entries in PATH
