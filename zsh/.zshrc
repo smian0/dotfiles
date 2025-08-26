@@ -400,11 +400,6 @@ function pcp() {
 # AI Tools Integration
 # =============================================================================
 
-# AI Tool Aliases
-alias cl="/Users/smian/.claude/local/claude"
-alias cld="cl --dangerously-skip-permissions"
-alias clr="cl --dangerously-skip-permissions --resume"
-
 # Source LLM tools configuration
 if [[ -f "$HOME/dotfiles/zsh/llm-tools.zsh" ]]; then
     source "$HOME/dotfiles/zsh/llm-tools.zsh"
@@ -760,8 +755,6 @@ function dotfiles_welcome() {
         echo "🏠 Dotfiles Environment Ready"
         echo "   Type 'dotstatus' to see package status"
         echo "   Type 'pls' to see stored passwords"
-        echo "   Type 'ai-status' to check AI tools"
-        echo "   Type 'ai-setup' to configure AI assistants"
         echo "   Type 'sysinfo' for system information"
         echo ""
         echo "🤖 AI Tools Available:"
@@ -799,6 +792,3 @@ export PATH="$PATH:/Users/smian/.cache/lm-studio/bin"
 
 # # Claude Code Router configuration
 # export ANTHROPIC_BASE_URL="http://127.0.0.1:8080"
-
-
-alias claude="/Users/smian/.claude/local/claude"
