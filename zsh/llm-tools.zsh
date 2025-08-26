@@ -63,62 +63,7 @@ alias glmr="ai_env_setup glm ~/dotfiles/bin/glm --dangerously-skip-permissions -
 alias deepd="ai_env_setup deep ~/dotfiles/bin/deep --dangerously-skip-permissions"
 alias deepr="ai_env_setup deep ~/dotfiles/bin/deep --dangerously-skip-permissions --resume"
 
-# AI assistant chooser function
-function ai() {
-    local service="$1"
-    shift
-    local prompt="$*"
-    
-    case "$service" in
-        kimi|moonshot)
-            ai_env_setup kimi ~/dotfiles/bin/kimi "$prompt"
-            ;;
-        glm|chatglm)
-            ai_env_setup glm ~/dotfiles/bin/glm "$prompt"
-            ;;
-        deep|deepseek)
-            ai_env_setup deep ~/dotfiles/bin/deep "$prompt"
-            ;;
-        claude)
-            if command_exists claude; then
-                ai_env_setup claude claude "$prompt"
-            else
-                echo "Claude CLI not available. Install Claude Code first."
-                return 1
-            fi
-            ;;
-        help|--help|-h)
-            echo "AI Assistant Tool"
-            echo "Usage: ai <service> [prompt]"
-            echo ""
-            echo "Available services:"
-            echo "  kimi, moonshot   - Kimi AI (Moonshot)"
-            echo "  glm, chatglm     - ChatGLM"
-            echo "  deep, deepseek   - DeepSeek AI"
-            echo "  claude           - Claude Code CLI"
-            echo ""
-            echo "Interactive mode (no prompt):"
-            echo "  kimi             - Start Kimi interactive session"
-            echo "  glm              - Start ChatGLM interactive session"
-            echo "  deep             - Start DeepSeek interactive session"
-            echo "  ai kimi          - Start Kimi via ai wrapper"
-            echo ""
-            echo "One-shot examples:"
-            echo "  ai kimi 'Explain git branches'"
-            echo "  ai glm 'Write a Python script'"
-            echo "  ai deep 'Solve this problem'"
-            echo "  ai claude 'Review this code'"
-            ;;
-        *)
-            echo "Unknown AI service: $service"
-            echo "Run 'ai help' for available services"
-            return 1
-            ;;
-    esac
-}
-
-# Quick AI aliases
-alias ask='ai'
+# Quick LLM tool aliases
 alias askimi='kimi'
 alias askglm='glm'
 alias askdeep='deep'
@@ -197,7 +142,7 @@ function ai-setup() {
     echo "  kimi 'Hello, how are you?'"
     echo "  glm 'Write a hello world in Python'"
     echo "  deep 'Explain quantum computing'"
-    echo "  ai help"
+    echo "  claude 'Review this code'"
 }
 
 # AI status checker

@@ -771,7 +771,7 @@ function dotfiles_welcome() {
         echo "   kimi 'your question'    - One-shot Kimi query"
         echo "   glm 'your question'     - One-shot ChatGLM query"
         echo "   deep 'your question'    - One-shot DeepSeek query"
-        echo "   ai help                 - Show all AI options"
+        echo "   claude 'your question'  - One-shot Claude query"
         echo ""
     fi
 }
