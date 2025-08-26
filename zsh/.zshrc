@@ -770,14 +770,14 @@ function dotstatus() {
         if [[ -d "$package" ]]; then
             # Check if package is stowed by looking for symlinks
             local stowed=false
-            find "$HOME" -maxdepth 2 -type l 2>/dev/null | while read -r link; do
-                if [[ "$(readlink "$link")" == *"$PWD/$package"* ]]; then
+            while read -r link; do
+                if [[ "$(readlink "$link" 2>/dev/null)" == *"$PWD/$package"* ]]; then
                     stowed=true
                     break
                 fi
-            done
+            done < <(find "$HOME" -maxdepth 2 -type l 2>/dev/null)
             
-            if $stowed; then
+            if [[ "$stowed" == "true" ]]; then
                 echo "  ✓ $package (stowed)"
             else
                 echo "  ○ $package (not stowed)"
@@ -1025,3 +1025,5 @@ export PATH="$PATH:/Users/smian/.cache/lm-studio/bin"
 # # Claude Code Router configuration
 # export ANTHROPIC_BASE_URL="http://127.0.0.1:8080"
 
+
+alias claude="/Users/smian/.claude/local/claude"
