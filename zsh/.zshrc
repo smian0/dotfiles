@@ -302,42 +302,8 @@ alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
 
-# Use faster alternatives when available
-if command -v rg &> /dev/null; then
-    # Smart grep alias that uses rg when safe, falls back to grep otherwise
-    alias grep='_smart_grep'
-    
-    _smart_grep() {
-        # Check if any grep-specific flags are used that rg doesn't support well
-        local args=("$@")
-        local use_rg=true
-        
-        for arg in "${args[@]}"; do
-            case "$arg" in
-                -E|-F|-G|-P|-e|-f|-i|-v|-w|-x|-A|-B|-C|-D|-d|-H|-h|-L|-l|-m|-n|-o|-q|-r|-s|-U|-u|-V|-y|-Z)
-                    # These are grep flags that might not work the same in rg
-                    use_rg=false
-                    break
-                    ;;
-                --help|--version)
-                    # Help and version should use original grep
-                    use_rg=false
-                    break
-                    ;;
-            esac
-        done
-        
-        if [[ "$use_rg" == true ]]; then
-            # Use rg with smart defaults
-            rg --no-heading --line-number --color=auto "$@"
-        else
-            # Fall back to original grep
-            command grep "$@"
-        fi
-    }
-else
-    alias grep='grep --color=auto'
-fi
+# Standard grep with color support
+alias grep='grep --color=auto'
 
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
@@ -440,15 +406,18 @@ alias cld="cl --dangerously-skip-permissions"
 alias clr="cl --dangerously-skip-permissions --resume"
 
 # Remove any old aliases that might interfere and set correct ones
-unalias kimi glm 2>/dev/null || true
+unalias kimi glm deep 2>/dev/null || true
 
 # Override any existing aliases with the correct dotfiles bin scripts
 alias kimi='~/dotfiles/bin/kimi'
 alias glm='~/dotfiles/bin/glm'
+alias deep='~/dotfiles/bin/deep'
 alias kimid="kimi --dangerously-skip-permissions"
 alias kimir="kimi --dangerously-skip-permissions --resume"
 alias glmd="glm --dangerously-skip-permissions"
 alias glmr="glm --dangerously-skip-permissions --resume"
+alias deepd="deep --dangerously-skip-permissions"
+alias deepr="deep --dangerously-skip-permissions --resume"
 
 # AI assistant chooser function
 function ai() {
@@ -462,6 +431,9 @@ function ai() {
             ;;
         glm|chatglm)
             glm "$prompt"
+            ;;
+        deep|deepseek)
+            deep "$prompt"
             ;;
         claude)
             if command_exists claude; then
@@ -478,16 +450,19 @@ function ai() {
             echo "Available services:"
             echo "  kimi, moonshot   - Kimi AI (Moonshot)"
             echo "  glm, chatglm     - ChatGLM"
+            echo "  deep, deepseek   - DeepSeek AI"
             echo "  claude           - Claude Code CLI"
             echo ""
             echo "Interactive mode (no prompt):"
             echo "  kimi             - Start Kimi interactive session"
             echo "  glm              - Start ChatGLM interactive session"
+            echo "  deep             - Start DeepSeek interactive session"
             echo "  ai kimi          - Start Kimi via ai wrapper"
             echo ""
             echo "One-shot examples:"
             echo "  ai kimi 'Explain git branches'"
             echo "  ai glm 'Write a Python script'"
+            echo "  ai deep 'Solve this problem'"
             echo "  ai claude 'Review this code'"
             ;;
         *)
@@ -502,6 +477,7 @@ function ai() {
 alias ask='ai'
 alias askimi='kimi'
 alias askglm='glm'
+alias askdeep='deep'
 
 # AI setup helper
 function ai-setup() {
@@ -519,7 +495,7 @@ function ai-setup() {
     fi
     
     # Setup Kimi API key
-    if ! pass show api/kimi >/dev/null 2>&1; then
+    if ! pass show llm/kimi_api_key >/dev/null 2>&1; then
         echo "🌙 Setting up Kimi AI (Moonshot):"
         echo "1. Visit: https://platform.moonshot.cn/"
         echo "2. Create account and get API key"
@@ -528,7 +504,7 @@ function ai-setup() {
         echo -n "Do you want to store Kimi API key now? (y/n): "
         read -r response
         if [[ "$response" == "y" ]]; then
-            pass insert api/kimi
+            pass insert llm/kimi_api_key
         fi
     else
         echo "✓ Kimi API key already configured"
@@ -553,11 +529,30 @@ function ai-setup() {
     fi
     
     echo ""
+    
+    # Setup DeepSeek API key
+    if ! pass show api/deepseek >/dev/null 2>&1; then
+        echo "🧠 Setting up DeepSeek AI:"
+        echo "1. Visit: https://platform.deepseek.com/"
+        echo "2. Create account and get API key"
+        echo "3. Enter your API key when prompted"
+        echo ""
+        echo -n "Do you want to store DeepSeek API key now? (y/n): "
+        read -r response
+        if [[ "$response" == "y" ]]; then
+            pass insert api/deepseek
+        fi
+    else
+        echo "✓ DeepSeek API key already configured"
+    fi
+    
+    echo ""
     echo "AI Tools Setup Complete!"
     echo ""
     echo "Test your setup:"
     echo "  kimi 'Hello, how are you?'"
     echo "  glm 'Write a hello world in Python'"
+    echo "  deep 'Explain quantum computing'"
     echo "  ai help"
 }
 
@@ -612,6 +607,15 @@ function ai-status() {
         echo "✓ GLM API key: configured in environment"
     else
         echo "✗ GLM API key: not configured"
+        echo "  Run 'ai-setup' to configure"
+    fi
+    
+    if command_exists pass && pass show api/deepseek >/dev/null 2>&1; then
+        echo "✓ DeepSeek API key: configured in pass"
+    elif [[ -n "$DEEPSEEK_API_KEY" ]]; then
+        echo "✓ DeepSeek API key: configured in environment"
+    else
+        echo "✗ DeepSeek API key: not configured"
         echo "  Run 'ai-setup' to configure"
     fi
     
@@ -839,19 +843,104 @@ export MEMORY_BANK_ROOT=/Users/smian/memory-bank
 # Completion Configuration
 # =============================================================================
 
-# Enable completion for custom functions
+# Add Homebrew completions to fpath before loading compinit
 if [[ -d "/opt/homebrew/share/zsh/site-functions" ]]; then
     fpath=("/opt/homebrew/share/zsh/site-functions" $fpath)
 fi
 
-# Docker completion
-if command -v docker >/dev/null 2>&1; then
-    complete -o default -F __docker_complete docker
+# Add custom completions directory
+if [[ -d "$HOME/.zsh/completions" ]]; then
+    fpath=("$HOME/.zsh/completions" $fpath)
 fi
 
-# Git completion
-if [[ -f "/opt/homebrew/etc/bash_completion.d/git-completion.bash" ]]; then
-    source "/opt/homebrew/etc/bash_completion.d/git-completion.bash"
+# Initialize Zsh completion system
+autoload -Uz compinit
+# Only regenerate dump once a day for faster startup
+if [[ -n "$HOME/.zcompdump" ]]; then
+    if [[ ! -f "$HOME/.zcompdump" || "$HOME/.zcompdump" -ot /usr/share/zsh ]]; then
+        compinit
+    else
+        compinit -C
+    fi
+else
+    compinit
+fi
+
+# Enable bash completion compatibility mode
+autoload -Uz bashcompinit
+bashcompinit
+
+# Completion styling
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format '%B%F{yellow}--- %d ---%f%b'
+zstyle ':completion:*:warnings' format '%B%F{red}No matches for: %d%f%b'
+zstyle ':completion:*:messages' format '%B%F{purple} -- %d --%f%b'
+zstyle ':completion:*:corrections' format '%B%F{green}!- %d (errors: %e) -!%f%b'
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$HOME/.zsh/cache"
+zstyle ':completion:*' completer _complete _match _approximate
+zstyle ':completion:*:match:*' original only
+zstyle ':completion:*:approximate:*' max-errors 1 numeric
+zstyle ':completion:*:functions' ignored-patterns '_*'
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:kill:*' force-list always
+
+# Faster completion for directories
+zstyle ':completion:*' accept-exact-dirs true
+zstyle ':completion:*' path-completion true
+
+# Better SSH/SCP/rsync completions
+zstyle ':completion:*:(ssh|scp|rsync):*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
+zstyle ':completion:*:(scp|rsync):*' group-order users files all-files hosts-domain hosts-host hosts-ipaddr
+zstyle ':completion:*:ssh:*' group-order users hosts-domain hosts-host users hosts-ipaddr
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' loopback ip6-loopback localhost ip6-localhost broadcasthost
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
+
+# Docker completion
+if command -v docker >/dev/null 2>&1; then
+    # Try to load Docker's native completion if available
+    if [[ -f "/opt/homebrew/share/zsh/site-functions/_docker" ]]; then
+        # Docker completion should be loaded automatically via fpath
+        :
+    elif command -v docker-compose >/dev/null 2>&1; then
+        # Try loading docker-compose completion
+        if [[ -f "/opt/homebrew/share/zsh/site-functions/_docker-compose" ]]; then
+            :
+        fi
+    fi
+fi
+
+# Git completion (native Zsh version is better than bash version)
+# Git completion should be automatically loaded from fpath
+
+# Additional completions for common tools
+# Kubectl
+if command -v kubectl >/dev/null 2>&1; then
+    source <(kubectl completion zsh 2>/dev/null) || true
+fi
+
+# Helm
+if command -v helm >/dev/null 2>&1; then
+    source <(helm completion zsh 2>/dev/null) || true
+fi
+
+# npm completion
+if command -v npm >/dev/null 2>&1; then
+    source <(npm completion 2>/dev/null) || true
+fi
+
+# pip completion
+if command -v pip >/dev/null 2>&1; then
+    source <(pip completion --zsh 2>/dev/null) || true
+fi
+
+# AWS CLI completion
+if [[ -f "/opt/homebrew/share/zsh/site-functions/aws_zsh_completer.sh" ]]; then
+    source "/opt/homebrew/share/zsh/site-functions/aws_zsh_completer.sh"
 fi
 
 # =============================================================================
@@ -903,8 +992,10 @@ function dotfiles_welcome() {
         echo "🤖 AI Tools Available:"
         echo "   kimi                    - Kimi AI assistant (interactive)"
         echo "   glm                     - ChatGLM assistant (interactive)"
+        echo "   deep                    - DeepSeek AI assistant (interactive)"
         echo "   kimi 'your question'    - One-shot Kimi query"
         echo "   glm 'your question'     - One-shot ChatGLM query"
+        echo "   deep 'your question'    - One-shot DeepSeek query"
         echo "   ai help                 - Show all AI options"
         echo ""
     fi
@@ -925,3 +1016,12 @@ alias chrome-stop="/Users/smian/chrome_commands.sh stop"
 alias chrome-logs="/Users/smian/chrome_commands.sh logs"
 
 # =============================================================================
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/smian/.cache/lm-studio/bin"
+# End of LM Studio CLI section
+
+
+# # Claude Code Router configuration
+# export ANTHROPIC_BASE_URL="http://127.0.0.1:8080"
+
