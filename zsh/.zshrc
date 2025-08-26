@@ -405,9 +405,9 @@ alias cl="/Users/smian/.claude/local/claude"
 alias cld="cl --dangerously-skip-permissions"
 alias clr="cl --dangerously-skip-permissions --resume"
 
-# Source AI tools configuration
-if [[ -f "$HOME/dotfiles/zsh/ai-tools.zsh" ]]; then
-    source "$HOME/dotfiles/zsh/ai-tools.zsh"
+# Source LLM tools configuration
+if [[ -f "$HOME/dotfiles/zsh/llm-tools.zsh" ]]; then
+    source "$HOME/dotfiles/zsh/llm-tools.zsh"
 fi
 
 # =============================================================================

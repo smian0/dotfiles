@@ -1,7 +1,7 @@
 # =============================================================================
-# AI Tools Configuration
+# LLM Tools Configuration
 # =============================================================================
-# This file contains all AI tool related aliases, functions, and configuration
+# This file contains all LLM tool related aliases, functions, and configuration
 # Sourced from .zshrc for better organization
 
 # AI Tool Environment Management
