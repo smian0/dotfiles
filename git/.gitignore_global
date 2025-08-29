@@ -103,7 +103,6 @@ yarn.lock
 package-lock.json
 
 # Claude Code specific
-.claude/
 claude.json
 
 # Docker

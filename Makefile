@@ -403,3 +403,15 @@ debug: ## Show debug information
 	@echo
 	@echo "File Permissions:"
 	@ls -la install*.sh scripts/*.sh 2>/dev/null | head -5
+# Cursor Project Management
+cursor-life:
+	@echo "Opening shoaib-life-hub in Cursor..."
+	open -a "Cursor" "$(LIFE_HUB_PATH)"
+
+cursor-dotfiles:
+	@echo "Opening dotfiles in Cursor..."
+	open -a "Cursor" ~/dotfiles
+
+cursor-projects:
+	@echo "Opening projects folder in Cursor..."
+	open -a "Cursor" ~/projects
