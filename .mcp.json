@@ -19,11 +19,6 @@
         "AZURE_OPENAI_API_KEY": "${AZURE_OPENAI_API_KEY}",
         "OLLAMA_API_KEY": "${OLLAMA_API_KEY}"
       }
-    },
-    "chrome-mcp-server": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["/Users/smian/github/mcp-chrome/app/native-server/dist/mcp/mcp-server-stdio.js"]
     }
   }
 }
