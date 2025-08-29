@@ -738,6 +738,14 @@ if [[ -f "$HOME/.zshrc.work" ]]; then
 fi
 
 # =============================================================================
+# AGENTS.md Standardization Support
+# =============================================================================
+# Source the AGENTS.md configuration for AI agent standardization
+if [[ -f "$HOME/dotfiles/zsh/agents-md.zsh" ]]; then
+    source "$HOME/dotfiles/zsh/agents-md.zsh"
+fi
+
+# =============================================================================
 # Welcome Message
 # =============================================================================
 

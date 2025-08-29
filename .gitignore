@@ -24,6 +24,9 @@ Desktop.ini
 .idea/
 *.sublime-*
 
+# AI Agent configuration
+# Both AGENTS.md and CLAUDE.md symlink are tracked by Git
+
 # Temporary files
 *.tmp
 *.temp
@@ -87,3 +90,4 @@ tests/review/
 # Temporary test files
 test-*.sh.tmp
 cleanup-*.sh
+tests/test-runs
