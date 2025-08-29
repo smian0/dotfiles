@@ -2,7 +2,7 @@
 
 ## Agent Triggers
 ### agents-md-manager
-Launch this subagent when user mentions:
+Launch this subagent agents-md-manager when user mentions:
 - Creating/updating AGENTS.md files
 - Setting up agent configuration for directories
 - Adding/modifying agent rules
@@ -32,5 +32,6 @@ Launch this subagent when user mentions:
 
 ## Code Guidelines
 - NO docstrings unless explicitly requested
+- NO extra comments in the code unless explicitly requested
 - NO print statements unless explicitly requested
 - Keep code clean and minimal 
