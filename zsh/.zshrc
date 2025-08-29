@@ -49,6 +49,20 @@ if [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" || -n "$SSH_CONNECTION" ]]; then
     export CLAUDE_CODE_OAUTH_TOKEN="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"
 fi
 
+# =============================================================================
+# SSH Agent Configuration
+# =============================================================================
+
+# Start SSH agent if not running
+if [[ -z "$SSH_AUTH_SOCK" ]]; then
+    eval "$(ssh-agent -s)" > /dev/null 2>&1
+fi
+
+# Add GitHub SSH key automatically
+if [[ -f "$HOME/.ssh/id_ed25519_github_smian0" ]]; then
+    ssh-add -l | grep -q "id_ed25519_github_smian0" || ssh-add "$HOME/.ssh/id_ed25519_github_smian0" > /dev/null 2>&1
+fi
+
 
 
 # PATH Management
