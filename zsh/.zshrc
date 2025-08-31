@@ -294,6 +294,9 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
+# Python development tools
+alias pyt='pytest'
+
 if command -v fd &> /dev/null; then
     alias find='fd'
 fi
