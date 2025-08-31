@@ -15,14 +15,25 @@ Launch this subagent agents-md-manager when user mentions:
 - Avoid unsolicited improvements or refactoring
 
 ## File Operations
-### Priority Order
-1. **EDIT** existing files whenever possible
-2. **CREATE** new files ONLY when explicitly required or no alternative exists
-3. **NEVER** generate documentation (*.md, README) unless specifically requested
+### Priority Order - STRICTLY ENFORCE
+1. **ALWAYS EDIT** existing files first - scan for existing files that serve the same purpose
+2. **ANALYZE EXISTING** - before creating anything new, thoroughly check what already exists
+3. **UPDATE/EXTEND** existing test files rather than creating new test suites
+4. **CREATE** new files ONLY when:
+   - No existing file serves the same purpose
+   - Explicitly requested by user
+   - Completely different functionality/domain
+5. **NEVER** generate documentation (*.md, README) unless specifically requested
+
+### File Creation Rules
+- **Test Files**: Always extend existing test files unless testing completely unrelated functionality
+- **Configuration**: Update existing config files rather than creating new ones
+- **Scripts**: Extend existing scripts with new functions rather than new files
+- **Components**: Check for similar existing components to extend before creating new ones
 
 ### Temporary Files
-- Debug/research files: append `-debug` or `-temp` suffix for easy cleanup
-- Example: `analysis-temp.json`, `test-debug.log`
+- When debugging a specific file: use same filename + `-debug` or `-temp` before extension (e.g., `user-service.js` → `user-service-debug.js`)
+- For general debug files: use descriptive names with `-debug` or `-temp` suffix
 
 ## Response Behavior
 - Be direct and concise
