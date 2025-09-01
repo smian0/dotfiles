@@ -43,6 +43,7 @@ Launch this subagent agents-md-manager when user mentions:
 - Skip explanations unless asked
 - Assume user awareness of their own actions
 - Trust user intent without questioning
+- **ALWAYS use full absolute paths** when referencing any files in responses
 
 ## Output Constraints
 ### ALWAYS Do
@@ -93,3 +94,25 @@ Launch this subagent agents-md-manager when user mentions:
 - Parallelize independent tasks
 - NO commits without explicit request
 - Include task IDs in commit messages when applicable
+
+# ═══════════════════════════════════════════════════
+# SuperClaude Framework Components
+# ═══════════════════════════════════════════════════
+
+# Core Framework
+@FLAGS.md
+@PRINCIPLES.md
+@RULES.md
+
+# Behavioral Modes
+@MODE_Brainstorming.md
+@MODE_Introspection.md
+@MODE_Orchestration.md
+@MODE_Task_Management.md
+@MODE_Token_Efficiency.md
+
+# MCP Documentation
+@MCP_Context7.md
+@MCP_Playwright.md
+@MCP_Sequential.md
+@MCP_Serena.md
