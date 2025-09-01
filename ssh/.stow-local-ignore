@@ -1,0 +1,18 @@
+# SSH Stow Ignore File
+# This ensures sensitive SSH files are NEVER stowed
+
+# Ignore the .ssh directory entirely
+\.ssh
+
+# Also ignore any actual SSH files if they exist
+id_.*
+known_hosts.*
+authorized_keys
+config
+.*\.pem
+.*\.key
+.*\.ppk
+
+# Git files
+\.git
+\.gitignore
