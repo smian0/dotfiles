@@ -47,7 +47,7 @@ bun run index.ts <authorization_code>
 ```
 
 ## update-v1-release.sh
-s
+
 Automatically updates the `v1` release to point to the latest commit on the `main` branch.
 
 ### Usage
@@ -73,31 +73,6 @@ Automatically updates the `v1` release to point to the latest commit on the `mai
 - `gh` - GitHub CLI for release management
 - Write access to the repository
 - Clean working directory (no uncommitted changes)
-
-### Output
-
-The script provides colored output showing:
-- ✅ Success messages in green
-- ℹ️ Info messages in blue  
-- ⚠️ Warning messages in yellow
-- ❌ Error messages in red
-
-### Example Output
-
-```
-🚀 Updating v1 release to latest main commit...
-[INFO] Latest commit: abc1234 - fix action configuration
-[SUCCESS] ✅ v1 release successfully updated!
-[SUCCESS] 🎯 Users can now use: grll/claude-code-login@v1
-```
-
-### When to Use
-
-Run this script whenever you want to:
-- Include latest bug fixes in v1 release
-- Update the marketplace version
-- Ensure users get the latest stable code
-- After merging important changes to main
 
 ### Safety Features
 

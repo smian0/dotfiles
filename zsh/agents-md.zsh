@@ -158,9 +158,20 @@ function agents-sync() {
     fi
 }
 
-# Hook into directory changes to auto-check for AGENTS.md
+# Combined function to check both AGENTS.md and MCP configuration
+function _check_and_link_all() {
+    _check_and_link_agents
+    
+    # Source MCP configuration script and run MCP auto-link
+    if [[ -f "$HOME/dotfiles/zsh/mcp-config.zsh" ]]; then
+        source "$HOME/dotfiles/zsh/mcp-config.zsh"
+        mcp_auto_link
+    fi
+}
+
+# Hook into directory changes to auto-check for AGENTS.md and MCP configuration
 autoload -U add-zsh-hook
-add-zsh-hook chpwd _check_and_link_agents
+add-zsh-hook chpwd _check_and_link_all
 
 # Also check on shell initialization for current directory
-_check_and_link_agents
+_check_and_link_all

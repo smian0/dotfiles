@@ -1,6 +1,6 @@
 # CC Status Line Configuration
 
-This directory preserves ccstatusline configuration files.
+ccstatusline configuration files for status line customization.
 
 ## Setup
 
@@ -8,9 +8,8 @@ This directory preserves ccstatusline configuration files.
    ```bash
    npx ccstatusline@latest
    ```
-   This creates `~/.config/ccstatusline/settings.json` with your preferences.
 
-2. After configuring, copy your settings to dotfiles:
+2. Copy your settings to dotfiles:
    ```bash
    cp ~/.config/ccstatusline/settings.json ~/dotfiles/ccstatusline/.config/ccstatusline/
    ```

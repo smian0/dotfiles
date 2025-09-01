@@ -1,8 +1,6 @@
 # claude-code-login
 
-A minimal OAuth 2.0 authentication tool for Claude Code using TypeScript and Bun.
-
-![claude_code_login-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/0bae9ef9-b357-43ac-9d8c-f2515d625741)
+OAuth 2.0 authentication tool for Claude Code using TypeScript and Bun.
 
 ## Features
 
@@ -21,8 +19,6 @@ bun install
 ```
 
 #### Quick OAuth Token Generation
-
-Use the convenient npm scripts for interactive token generation:
 
 ```bash
 # Generate login URL and exchange code interactively
@@ -46,20 +42,13 @@ Exchange authorization code for tokens:
 bun run index.ts <authorization_code>
 ```
 
-#### Alternative Scripts
-
-Interactive shell script:
-```bash
-./scripts/generate-token.sh
-```
-
 ### GitHub Actions
 
 This repository includes a GitHub Action for easy OAuth authentication in CI/CD workflows.
 
 #### Prerequisites: Setting up SECRETS_ADMIN_PAT
 
-This action requires a Personal Access Token (PAT) to securely store OAuth credentials as GitHub secrets. Follow these steps:
+This action requires a Personal Access Token (PAT) to securely store OAuth credentials as GitHub secrets.
 
 ##### 1. Create a Fine-grained Personal Access Token
 
@@ -68,12 +57,11 @@ This action requires a Personal Access Token (PAT) to securely store OAuth crede
 2. Configure the token:
    - **Resource owner**: Choose the organization or user that owns the repository
    - **Repository access**: Select "Only select repositories" and choose the repository/repositories that will run this action
-   - **Permissions**: 
-     - Repository → **Secrets**: Write (this automatically includes read permission)
-   - **Expiration**: Set the shortest practical lifetime (30-60 days) and add a calendar reminder to renew it
+   - **Permissions**: Repository → **Secrets**: Write
+   - **Expiration**: Set the shortest practical lifetime (30-60 days)
    - **Name**: Give it a descriptive name like `actions-secret-sync-<repo>`
 
-3. Click **"Generate token"** and copy the value immediately (GitHub will never show it again)
+3. Click **"Generate token"** and copy the value immediately
 
 ##### 2. Store the PAT as a Repository Secret
 
@@ -83,8 +71,6 @@ This action requires a Personal Access Token (PAT) to securely store OAuth crede
    - **Name**: `SECRETS_ADMIN_PAT`
    - **Value**: Paste your PAT from step 1
 4. Click **"Add secret"**
-
-> **Note**: You do NOT need the wide-open `repo` scope of a classic token. Fine-grained tokens with only `secrets:write` permission are more secure.
 
 #### Quick Setup (Marketplace)
 
@@ -114,30 +100,6 @@ jobs:
           secrets_admin_pat: ${{ secrets.SECRETS_ADMIN_PAT }}
 ```
 
-#### Local Development Setup
-
-For local development or customization:
-
-```yaml
-name: Claude OAuth
-on:
-  workflow_dispatch:
-    inputs:
-      code:
-        description: 'Authorization code (leave empty for step 1)'
-        required: false
-
-jobs:
-  auth:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./
-        with:
-          code: ${{ inputs.code }}
-          secrets_admin_pat: ${{ secrets.SECRETS_ADMIN_PAT }}
-```
-
 #### Usage Steps
 
 1. **Step 1 - Generate Login URL**
@@ -158,50 +120,6 @@ After successful authentication, the OAuth tokens are stored as repository secre
 - `CLAUDE_ACCESS_TOKEN` - OAuth access token for Claude API
 - `CLAUDE_REFRESH_TOKEN` - OAuth refresh token for token renewal  
 - `CLAUDE_EXPIRES_AT` - Token expiration timestamp (milliseconds)
-
-To use these credentials in other workflows:
-
-```yaml
-name: Claude PR Assistant
-
-on:
-  issue_comment:
-    types: [created]
-  pull_request_review_comment:
-    types: [created]
-  issues:
-    types: [opened, assigned]
-  pull_request_review:
-    types: [submitted]
-
-jobs:
-  claude-code-action:
-    if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && contains(github.event.issue.body, '@claude'))
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-      issues: read
-      id-token: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Run Claude PR Action
-        uses: grll/claude-code-action@beta
-        with:
-          use_oauth: true
-          claude_access_token: ${{ secrets.CLAUDE_ACCESS_TOKEN }}
-          claude_refresh_token: ${{ secrets.CLAUDE_REFRESH_TOKEN }}
-          claude_expires_at: ${{ secrets.CLAUDE_EXPIRES_AT }}
-          timeout_minutes: "60"
-```
 
 ## Testing
 

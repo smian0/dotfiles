@@ -83,9 +83,8 @@ validate_directory_structure() {
         "git"
         "zsh"
         "vim"
-        "claude-default"
-        "claude-experimental"
-        "pass/scripts"
+        "claude"
+        "claude-project"
         "scripts"
     )
     
@@ -175,10 +174,10 @@ validate_claude_config() {
     
     # Check for Claude settings files
     local claude_configs=(
-        "claude-default/.claude/settings.json"
-        "claude-default/.claude.json"
-        "claude-experimental/.claude/settings.json"
-        "claude-experimental/.claude.json"
+        "claude/.claude/settings.json"
+        "claude/.claude/CLAUDE.md"
+        "claude-project/CLAUDE.md"
+        "claude-project/.claude/settings.json"
     )
     
     for config in "${claude_configs[@]}"; do
@@ -199,7 +198,7 @@ validate_claude_config() {
     done
     
     # Check for MCP configuration
-    if [[ -f "$DOTFILES_ROOT/claude-default/.mcp.json" ]] || [[ -f "$DOTFILES_ROOT/claude-experimental/.mcp.json" ]]; then
+    if [[ -f "$DOTFILES_ROOT/claude/.claude/.mcp.json" ]] || [[ -f "$DOTFILES_ROOT/.cursor/mcp.json" ]]; then
         record_result "Claude MCP" "PASS" "MCP configuration found"
     else
         record_result "Claude MCP" "WARN" "No MCP configuration found"

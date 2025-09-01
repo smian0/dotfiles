@@ -730,11 +730,16 @@ if [[ -f "$HOME/.zshrc.work" ]]; then
 fi
 
 # =============================================================================
-# AGENTS.md Standardization Support
+# AI Agent Configuration Support
 # =============================================================================
-# Source the AGENTS.md configuration for AI agent standardization
+# Source AGENTS.md configuration for AI agent standardization
 if [[ -f "$HOME/dotfiles/zsh/agents-md.zsh" ]]; then
     source "$HOME/dotfiles/zsh/agents-md.zsh"
+fi
+
+# Source MCP configuration management
+if [[ -f "$HOME/dotfiles/zsh/mcp-config.zsh" ]]; then
+    source "$HOME/dotfiles/zsh/mcp-config.zsh"
 fi
 
 # =============================================================================
@@ -757,6 +762,12 @@ function dotfiles_welcome() {
         echo "   glm 'your question'     - One-shot ChatGLM query"
         echo "   deep 'your question'    - One-shot DeepSeek query"
         echo "   claude 'your question'  - One-shot Claude query"
+        echo ""
+        echo "🔧 MCP Configuration Tools:"
+        echo "   mcpls                   - List available MCP servers"
+        echo "   mcps                    - Quick MCP setup (global servers)"
+        echo "   mcpm                    - Interactive MCP extraction menu"
+        echo "   mcp-status              - Show MCP configuration status"
         echo ""
     fi
 }

@@ -1,6 +1,6 @@
 # Docker Test Cases
 
-This directory contains individual test cases that can be added to the Docker testing infrastructure.
+Individual test cases for Docker testing infrastructure.
 
 ## Test Case Structure
 
@@ -12,25 +12,25 @@ Each test case should be a bash script that:
 
 ## Test Categories
 
-### 📦 End User Tests
+### End User Tests
 - Installation workflows
 - Backup and restore
 - Basic commands
 - Profile switching
 
-### ⚙️ Configuration Tests
+### Configuration Tests
 - Package installation
 - Symlink creation
 - Configuration validation
 - API key management
 
-### 🛠️ Developer Tests
+### Developer Tests
 - Code quality (lint, format)
 - Documentation sync
 - Git hooks
 - CI/CD workflows
 
-### 🔒 Security Tests
+### Security Tests
 - Secret detection
 - Permission validation
 - GPG operations

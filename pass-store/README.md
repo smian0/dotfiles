@@ -2,7 +2,7 @@
 
 GPG-encrypted password store for secure credential management across machines.
 
-## ⚠️ Security Notice
+## Security Notice
 
 This repository contains **GPG-encrypted passwords only**. Never commit unencrypted secrets.
 
