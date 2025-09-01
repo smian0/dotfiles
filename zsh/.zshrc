@@ -297,9 +297,6 @@ alias egrep='egrep --color=auto'
 # Python development tools
 alias pyt='pytest'
 
-if command -v fd &> /dev/null; then
-    alias find='fd'
-fi
 
 # Navigation
 alias ..='cd ..'
@@ -432,12 +429,9 @@ function mkcd() {
 
 # Find files and directories
 function ff() {
-    find . -name "*$1*" -type f
+    command find . -name "*$1*" -type f
 }
 
-function fd() {
-    find . -name "*$1*" -type d
-}
 
 # Quick grep in files
 function fif() {
