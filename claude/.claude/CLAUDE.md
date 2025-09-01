@@ -34,6 +34,14 @@ Launch this subagent agents-md-manager when user mentions:
 - **Scripts**: Extend existing scripts with new functions rather than new files
 - **Components**: Check for similar existing components to extend before creating new ones
 
+### README.md Content Guidelines
+When creating or updating README.md files:
+- **ONLY INCLUDE**: Permanent, architectural information that won't change frequently
+- **ESSENTIAL CONTENT**: Core purpose, key architecture, installation steps, basic usage
+- **EXCLUDE TRANSIENT INFO**: Current status, temporary notes, version-specific details, changelog items
+- **FOCUS ON PERMANENCE**: Information that will remain relevant for months/years
+- **AVOID**: Development notes, current todos, temporary configurations, ephemeral details
+
 ### Temporary Files
 - When debugging a specific file: use same filename + `-debug` or `-temp` before extension (e.g., `user-service.js` → `user-service-debug.js`)
 - For general debug files: use descriptive names with `-debug` or `-temp` suffix
