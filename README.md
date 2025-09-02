@@ -53,11 +53,25 @@ make test             # Run test suite
 
 ## Documentation
 
-- **[Setup Guide](docs/SETUP.md)** - Detailed installation instructions
-- **[Claude Configuration](docs/CLAUDE.md)** - Multi-level Claude Code setup
-- **[MCP + Pass Integration](scripts/mcp-env/README.md)** - Quick start guide for secure MCP credentials
-- **[Security Guide](docs/SECURITY.md)** - GPG and pass management
-- **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+### 📚 Complete Documentation Suite
+
+| Document | Purpose | Audience |
+|----------|---------|----------|
+| **[📋 Project Overview](docs/PROJECT-OVERVIEW.md)** | Architecture and comprehensive guide | All users |
+| **[🚀 Setup Guide](docs/SETUP.md)** | Detailed installation instructions | New users |
+| **[📦 Package Guide](docs/PACKAGE-GUIDE.md)** | Configuration package details | Configuration users |
+| **[👨‍💻 Developer Workflow](docs/DEVELOPER-WORKFLOW.md)** | Development and contribution guide | Contributors |
+| **[📖 API Reference](docs/API-REFERENCE.md)** | Command and script reference | Power users |
+| **[🤖 Claude Configuration](docs/CLAUDE.md)** | AI integration setup | AI developers |
+| **[🔐 Security Guide](docs/SECURITY.md)** | Security best practices | Security-conscious users |
+| **[🆘 Troubleshooting](docs/TROUBLESHOOTING.md)** | Problem resolution | Support |
+
+### 📂 Specialized Guides
+
+- **[MCP + Pass Integration](scripts/mcp-env/README.md)** - Secure MCP credentials setup
+- **[GPG Setup](docs/GPG-SETUP.md)** - GPG key management
+- **[Profile System](PROFILES.md)** - Installation profile details
+- **[CI/CD Guide](docs/CI.md)** - Continuous integration setup
 
 ## License
 
