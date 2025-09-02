@@ -1,0 +1,19 @@
+{
+  "gitRepoPath": "/Users/smian",
+  "verbose": true,
+  "anthropicApiKey": "",
+  "systemPromptAppend": "Always think hard before you act.",
+  "defaultPermissionMode": "ignore",
+  "defaultModel": "sonnet",
+  "stravuServerUrl": "https://api.stravu.com",
+  "notifications": {
+    "enabled": true,
+    "playSound": true,
+    "notifyOnStatusChange": true,
+    "notifyOnWaiting": true,
+    "notifyOnComplete": true
+  },
+  "claudeExecutablePath": "/Users/smian/.claude/local/claude",
+  "autoCheckUpdates": true,
+  "devMode": true
+}

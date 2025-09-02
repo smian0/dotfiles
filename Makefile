@@ -85,6 +85,10 @@ install-claude: ## Install Claude Code configurations
 	@echo -e "$(GREEN)[INFO]$(NC) Installing Claude configurations..."
 	./install.sh claude-default claude-experimental
 
+install-crystal: ## Install Crystal configuration
+	@echo -e "$(GREEN)[INFO]$(NC) Installing Crystal configuration..."
+	stow crystal
+
 
 # Backup and restore
 backup: ## Create a backup of current configurations

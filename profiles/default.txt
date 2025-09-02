@@ -3,3 +3,4 @@ vim
 zsh
 bin
 cursor
+crystal
