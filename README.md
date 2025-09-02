@@ -47,6 +47,7 @@ make test             # Run test suite
 ├── claude-project/      # Project Claude settings
 ├── direnv/             # Directory environment management
 ├── scripts/            # Utility and management scripts
+│   └── mcp-env/       # MCP environment management (self-contained)
 └── Makefile           # Command interface (source of truth)
 ```
 
@@ -54,6 +55,7 @@ make test             # Run test suite
 
 - **[Setup Guide](docs/SETUP.md)** - Detailed installation instructions
 - **[Claude Configuration](docs/CLAUDE.md)** - Multi-level Claude Code setup
+- **[MCP + Pass Integration](scripts/mcp-env/README.md)** - Quick start guide for secure MCP credentials
 - **[Security Guide](docs/SECURITY.md)** - GPG and pass management
 - **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
 
