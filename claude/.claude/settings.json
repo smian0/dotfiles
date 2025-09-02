@@ -1,4 +1,6 @@
 {
+  "includeCoAuthoredBy": false,
+  "enableAllProjectMcpServers": true,
   "permissions": {
     "allow": [
       "Bash(npm run lint)",
