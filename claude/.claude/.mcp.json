@@ -1,48 +1,69 @@
 {
   "mcpServers": {
+    "MCP_DOCKER": {
+      "args": [
+        "mcp",
+        "gateway",
+        "run"
+      ],
+      "command": "docker"
+    },
     "context7": {
-      "type": "stdio",
-      "command": "npx",
       "args": [
         "-y",
         "@upstash/context7-mcp"
       ],
-      "env": {}
-    },
-    "MCP_DOCKER": {
-      "env": {}
-    },
-    "sequential-thinking": {
-      "type": "stdio",
       "command": "npx",
+      "env": {},
+      "type": "stdio"
+    },
+    "linear": {
       "args": [
         "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
+        "mcp-remote",
+        "https://mcp.linear.app/sse"
       ],
-      "env": {}
+      "command": "npx"
     },
     "magic": {
-      "type": "stdio",
-      "command": "npx",
       "args": [
         "-y",
         "@21st-dev/magic"
       ],
-      "env": {}
+      "command": "npx",
+      "env": {},
+      "type": "stdio"
     },
     "playwright": {
-      "env": {}
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "command": "npx"
+    },
+    "sequential-thinking": {
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "command": "npx",
+      "env": {},
+      "type": "stdio"
     },
     "serena": {
-      "env": {}
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server"
+      ],
+      "command": "uvx"
     },
     "time": {
-      "type": "stdio",
-      "command": "uvx",
       "args": [
         "mcp-server-time"
       ],
-      "env": {}
+      "command": "uvx",
+      "type": "stdio"
     }
   }
 }

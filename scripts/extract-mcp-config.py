@@ -1,20 +1,10 @@
 #!/usr/bin/env python3
 """
-⚠️  DEPRECATED: This script is being superseded by Claude CLI-based MCP extraction.
-
-For new installations, use the Claude CLI approach via:
-- zsh/mcp-config.zsh functions (mcpg, mcpls, etc.)
-- Direct Claude CLI commands (claude mcp list, claude mcp get)
-
-This script is maintained for backward compatibility only.
-
 Extract MCP server configurations from Claude Code's global configuration
-and generate a well-formed mcp.json file.
+and sync them to .mcp.json files.
 
-This script reads ~/.claude.json and extracts:
-1. Global MCP servers (from root level)
-2. Project-specific MCP servers (optionally)
-3. Merges them into a standard mcp.json format
+This script reads ~/.claude.json and extracts MCP server configurations,
+then syncs them to the appropriate .mcp.json files.
 
 Usage:
     python extract-mcp-config.py [options]
@@ -106,6 +96,49 @@ def generate_mcp_json(mcp_servers: Dict[str, Any],
     return mcp_config
 
 
+def sync_mcp_config(source_path: Path, target_path: Path, verbose: bool = False) -> bool:
+    """Sync MCP configuration from claude.json to .mcp.json."""
+    try:
+        # Load source configuration
+        with open(source_path, 'r', encoding='utf-8') as f:
+            claude_config = json.load(f)
+        
+        # Extract MCP servers
+        mcp_servers = claude_config.get('mcpServers', {})
+        
+        if not mcp_servers:
+            if verbose:
+                print(f"No MCP servers found in {source_path}")
+            return False
+        
+        # Generate .mcp.json structure
+        mcp_config = {"mcpServers": mcp_servers}
+        
+        # Check if target exists and compare
+        if target_path.exists():
+            with open(target_path, 'r', encoding='utf-8') as f:
+                existing_config = json.load(f)
+            
+            if existing_config == mcp_config:
+                if verbose:
+                    print(f"✓ {target_path} is already up to date")
+                return True
+        
+        # Write updated configuration
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(target_path, 'w', encoding='utf-8') as f:
+            json.dump(mcp_config, f, indent=2, sort_keys=True)
+        
+        if verbose:
+            print(f"✓ Updated {target_path} with {len(mcp_servers)} MCP servers")
+        
+        return True
+        
+    except Exception as e:
+        print(f"Error syncing MCP config: {e}")
+        return False
+
+
 def list_available_servers(config: Dict[str, Any]) -> None:
     """List all available MCP servers in the configuration."""
     print("Available MCP servers in Claude configuration:")
@@ -144,15 +177,18 @@ def list_available_servers(config: Dict[str, Any]) -> None:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Extract MCP server configurations from Claude Code config",
+        description="Extract and sync MCP server configurations",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
+  # Sync MCP servers from ~/.claude.json to .mcp.json
+  python extract-mcp-config.py --sync
+  
+  # Sync to a specific location
+  python extract-mcp-config.py --sync -o ~/dotfiles/claude/.claude/.mcp.json
+  
   # Extract global servers only
   python extract-mcp-config.py --global-only
-  
-  # Extract all servers and save to custom file
-  python extract-mcp-config.py -o custom-mcp.json
   
   # List available servers without extraction
   python extract-mcp-config.py --list-only
@@ -218,7 +254,26 @@ Examples:
         help='Show what would be extracted without writing file'
     )
     
+    parser.add_argument(
+        '--sync',
+        action='store_true',
+        help='Sync MCP servers from ~/.claude.json to .mcp.json'
+    )
+    
+    parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='Enable verbose output'
+    )
+    
     args = parser.parse_args()
+    
+    # Handle sync mode
+    if args.sync:
+        source = args.claude_config
+        target = args.output if args.output != Path('.cursor/mcp.json') else Path.home() / '.dotfiles/claude/.claude/.mcp.json'
+        success = sync_mcp_config(source, target, verbose=args.verbose)
+        sys.exit(0 if success else 1)
     
     # Load Claude configuration
     config = load_claude_config(args.claude_config)
