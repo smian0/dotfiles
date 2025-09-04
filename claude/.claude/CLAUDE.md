@@ -107,6 +107,11 @@ When creating or updating README.md files:
 - **Glob tool** for pattern matching (*.js, **/*.tsx) when available
 - **fd advantages**: Speed, .gitignore respect, colored output, parallel execution
 
+### Markdown Frontmatter Queries - MANDATORY
+- **ALWAYS use fd + jq** (with yq preprocessing) for markdown frontmatter queries - most powerful for complex operations
+- **Example**: `fd -e md -x sh -c 'yq -o=json eval .frontmatter {} | jq ".title"'` for title extraction
+- **jq advantages**: SQL-like capabilities, advanced functions (map, select, group_by), complex transformations, widely available
+
 ### General Performance
 - Batch file operations when possible
 - Parallelize independent tasks
