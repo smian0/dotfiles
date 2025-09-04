@@ -102,11 +102,10 @@ When creating or updating README.md files:
 - Clean, minimal, modern syntax
 
 ## Performance & Tools
-### Search Tools Priority - MANDATORY
-- **ALWAYS use Grep tool** over bash grep commands - it's built on ripgrep and optimized
-- **NEVER use bash grep/rg** - use the Grep tool instead for all search operations
-- **Ripgrep advantages**: Faster, respects .gitignore, better regex support, file type filtering
-- **Glob tool** for file pattern matching (*.js, **/*.tsx) over bash find commands
+### File Search Priority - MANDATORY
+- **ALWAYS use fd** over find for file searching - faster, respects .gitignore, better defaults
+- **Glob tool** for pattern matching (*.js, **/*.tsx) when available
+- **fd advantages**: Speed, .gitignore respect, colored output, parallel execution
 
 ### General Performance
 - Batch file operations when possible
