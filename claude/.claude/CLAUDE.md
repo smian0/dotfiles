@@ -57,6 +57,7 @@ When creating or updating README.md files:
 - Assume user awareness of their own actions
 - Trust user intent without questioning
 - **ALWAYS use full absolute paths** when referencing any files in responses
+- **USE file:// URLs for paths with spaces** to ensure clickability: `file:///path/with%20spaces/file.ext`
 
 ## Output Constraints
 ### ALWAYS Do
