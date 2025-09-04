@@ -46,6 +46,11 @@ When creating or updating README.md files:
 - When debugging a specific file: use same filename + `-debug` or `-temp` before extension (e.g., `user-service.js` → `user-service-debug.js`)
 - For general debug files: use descriptive names with `-debug` or `-temp` suffix
 
+### Automatic Cleanup - MANDATORY
+- **AFTER TASK COMPLETION**: Automatically remove all temporary files, debug files, and documentation created during task execution
+- **CLEANUP SCOPE**: Delete `-debug`, `-temp`, test documentation, and any files created solely for task completion
+- **PRESERVE**: Only keep files explicitly requested by user or essential to final solution
+
 ## Response Behavior
 - Be direct and concise
 - Skip explanations unless asked
@@ -97,7 +102,13 @@ When creating or updating README.md files:
 - Clean, minimal, modern syntax
 
 ## Performance & Tools
-- Use ripgrep (rg) > grep for searching
+### Search Tools Priority - MANDATORY
+- **ALWAYS use Grep tool** over bash grep commands - it's built on ripgrep and optimized
+- **NEVER use bash grep/rg** - use the Grep tool instead for all search operations
+- **Ripgrep advantages**: Faster, respects .gitignore, better regex support, file type filtering
+- **Glob tool** for file pattern matching (*.js, **/*.tsx) over bash find commands
+
+### General Performance
 - Batch file operations when possible
 - Parallelize independent tasks
 - NO commits without explicit request
