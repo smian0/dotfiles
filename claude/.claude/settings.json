@@ -34,6 +34,21 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"\nThink hard.\n\""
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/you_are_not_right.sh"
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
