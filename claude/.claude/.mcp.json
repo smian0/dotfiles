@@ -6,14 +6,32 @@
         "@upstash/context7-mcp"
       ],
       "command": "npx",
+      "description": "Official library documentation lookup - curated docs, framework patterns",
       "env": {},
+      "purpose": "documentation",
+      "scope": "library",
       "type": "stdio"
+    },
+    "memory": {
+      "args": [
+        "-y",
+        "mcp-knowledge-graph",
+        "--memory-path",
+        "/Users/smian/.aim"
+      ],
+      "command": "npx",
+      "description": "Personal knowledge graph storage - cross-project memory, notes, general knowledge",
+      "purpose": "personal-knowledge",
+      "scope": "global"
     },
     "playwright": {
       "args": [
         "@playwright/mcp@latest"
       ],
-      "command": "npx"
+      "command": "npx",
+      "description": "Browser automation & E2E testing - real browser interaction, visual testing",
+      "purpose": "browser-testing",
+      "scope": "ui"
     },
     "sequential-thinking": {
       "args": [
@@ -21,7 +39,10 @@
         "@modelcontextprotocol/server-sequential-thinking"
       ],
       "command": "npx",
+      "description": "Multi-step reasoning engine - complex analysis, systematic problem solving",
       "env": {},
+      "purpose": "analysis",
+      "scope": "reasoning",
       "type": "stdio"
     },
     "serena": {
@@ -35,13 +56,19 @@
         "--enable-gui-log-window",
         "false"
       ],
-      "command": "uvx"
+      "command": "uvx",
+      "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence",
+      "purpose": "code-analysis",
+      "scope": "project"
     },
     "time": {
       "args": [
         "mcp-server-time"
       ],
       "command": "uvx",
+      "description": "Time zone utilities - current time, time conversion across zones",
+      "purpose": "time-utilities",
+      "scope": "utility",
       "type": "stdio"
     }
   }

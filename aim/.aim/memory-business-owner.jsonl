@@ -1,0 +1,4 @@
+{"type":"_aim","source":"mcp-knowledge-graph"}
+{"type":"entity","name":"Business_Owner_Role","entityType":"role","observations":["Strategic business planning and operations","Business development and growth initiatives","Revenue generation and profit optimization","Market analysis and competitive positioning","Business process optimization and automation"]}
+{"type":"entity","name":"Business_Operations","entityType":"process","observations":["Daily business management activities","Strategic planning and execution","Financial planning and analysis","Customer relationship management","Business performance monitoring"]}
+{"type":"entity","name":"Growth_Initiatives","entityType":"domain","observations":["Market expansion opportunities","Product development and innovation","Strategic partnerships and alliances","Business model optimization","Scaling and operational efficiency"]}

@@ -1,0 +1,4 @@
+{"type":"_aim","source":"mcp-knowledge-graph"}
+{"type":"entity","name":"Engineer_Role","entityType":"role","observations":["Technical development and system architecture","Local development environment setup and configuration","Mac configuration and life-hub app development","Software engineering best practices","Development tools and workflow optimization"]}
+{"type":"entity","name":"Development_Environment","entityType":"system","observations":["Mac-specific configuration management","Local setup hub for development tools","Life-hub application development and documentation","Development workflow automation","Engineering resource management"]}
+{"type":"entity","name":"Technical_Projects","entityType":"domain","observations":["Life-hub app creation and maintenance","Local development setup automation","System configuration and optimization","Engineering documentation and knowledge base","Technical skill development and learning"]}

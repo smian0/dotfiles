@@ -1,0 +1,4 @@
+{"type":"_aim","source":"mcp-knowledge-graph"}
+{"type":"entity","name":"Life_Architect_Role","entityType":"role","observations":["Holistic life design and optimization","Personal development and growth planning","Life systems architecture and integration","Goal setting and achievement tracking","Work-life balance and wellness management"]}
+{"type":"entity","name":"Life_Systems","entityType":"process","observations":["Personal productivity systems","Health and wellness frameworks","Relationship and social connection management","Financial planning and wealth building","Learning and skill development systems"]}
+{"type":"entity","name":"Personal_Development","entityType":"domain","observations":["Self-improvement and growth initiatives","Mindfulness and mental health practices","Life vision and purpose alignment","Habit formation and behavior change","Personal effectiveness and optimization"]}
