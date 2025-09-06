@@ -28,7 +28,6 @@ command_exists() {
 
 # Global npm packages list
 GLOBAL_PACKAGES=(
-    "ccstatusline"  # sirmalloc/ccstatusline for Claude Code status lines
     "npm-check-updates"  # Check for package updates
     "http-server"  # Simple HTTP server for development
     "nodemon"  # Auto-restart server on file changes

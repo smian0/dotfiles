@@ -13,7 +13,7 @@ Essential tools only - perfect for servers or CI environments
 ### 🔸 **development** (default)
 Development tools with Claude Code enhancements
 - **Packages**: git, zsh, claude-default, claude-experimental, npm-configs, config, bin
-- **npm packages**: claude-cli, ccstatusline, npm-check-updates, nodemon, http-server, typescript, ts-node
+- **npm packages**: claude-cli, npm-check-updates, nodemon, http-server, typescript, ts-node
 - **Use case**: Development machines, coding work
 
 ### 🔹 **full**

@@ -10,7 +10,7 @@ DOTFILES_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # Available profiles
 declare -A PROFILES=(
     ["minimal"]="Essential tools only (git, zsh, claude-cli)"
-    ["development"]="Development tools + ccstatusline + basic npm packages"
+    ["development"]="Development tools + basic npm packages"
     ["full"]="Complete setup with all packages and configurations"
     ["work"]="Work-specific configuration (no personal tools)"
     ["personal"]="Personal machine setup with all customizations"

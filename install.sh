@@ -185,7 +185,7 @@ elif [[ $INSTALL_ALL == true ]]; then
     log "Installing all packages and Claude Code..."
     INSTALL_CLAUDE=true
     install_claude_code
-    PACKAGES=(".claude" ".cursor" ".taskmaster" ".windsurf" "bin" "ccstatusline" "claude-project" "direnv" "git" "pass-store" "vim" "zsh")
+    PACKAGES=(".claude" ".cursor" ".taskmaster" ".windsurf" "bin" "claude-project" "direnv" "git" "pass-store" "vim" "zsh")
 elif [[ ${#PACKAGES[@]} -eq 0 ]]; then
     log "Installing default profile and Claude Code..."
     INSTALL_CLAUDE=true

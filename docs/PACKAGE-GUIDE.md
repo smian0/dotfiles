@@ -437,7 +437,6 @@ npm-configs/
 | Package | Minimal | Development | Full | Purpose |
 |---------|---------|-------------|------|---------|
 | **@anthropic-ai/claude-cli** | ✅ | ✅ | ✅ | Claude Code CLI |
-| **ccstatusline** | ❌ | ✅ | ✅ | Status line for Claude |
 | **typescript** | ❌ | ✅ | ✅ | TypeScript support |
 | **nodemon** | ❌ | ✅ | ✅ | Development server |
 | **http-server** | ❌ | ✅ | ✅ | Simple HTTP server |

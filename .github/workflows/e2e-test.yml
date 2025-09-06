@@ -79,7 +79,6 @@ jobs:
             test -f ~/.gitconfig
             test -f ~/.zshrc
             test -f ~/.npmrc
-            command -v ccstatusline
             ;;
           "full")
             test -f ~/.gitconfig
@@ -160,8 +159,7 @@ jobs:
         
         # Test npm packages if development profile
         if [ "${{ matrix.profile }}" = "development" ]; then
-          command -v ccstatusline
-          test -f ~/.config/ccstatusline/settings.json
+          # Additional npm package tests can be added here
         fi
 
   test-docker:

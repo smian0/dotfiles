@@ -459,22 +459,6 @@ gpt4 "Complex reasoning task requiring advanced model"
 **Commands**: make docs, markdown-toc, spell-check
 ```
 
-### 📊 Status Line Integration (`ccstatusline`)
-
-**Purpose**: Claude Code status line enhancement
-
-**Installation**:
-```bash
-npm install -g ccstatusline
-```
-
-**Configuration** (automatically set up):
-```bash
-# Enable status line
-export CLAUDE_STATUS_LINE=true
-export CLAUDE_STATUS_FORMAT="compact"
-```
-
 ---
 
 ## Security Commands
