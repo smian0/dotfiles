@@ -1,34 +1,9 @@
 {
   "mcpServers": {
-    "MCP_DOCKER": {
-      "args": [
-        "mcp",
-        "gateway",
-        "run"
-      ],
-      "command": "docker"
-    },
     "context7": {
       "args": [
         "-y",
         "@upstash/context7-mcp"
-      ],
-      "command": "npx",
-      "env": {},
-      "type": "stdio"
-    },
-    "linear": {
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://mcp.linear.app/sse"
-      ],
-      "command": "npx"
-    },
-    "magic": {
-      "args": [
-        "-y",
-        "@21st-dev/magic"
       ],
       "command": "npx",
       "env": {},
