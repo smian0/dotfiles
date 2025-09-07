@@ -97,6 +97,13 @@ When creating or updating README.md files:
 - < 90% confidence = STOP and ASK
 - State uncertainty explicitly, propose alternatives
 
+## Magic Keywords
+### *vtree Command
+When user types `*vtree`, generate comprehensive ASCII tree visualization.  
+**Format specifications**: `@formats/vtree-format.md`
+
+The system automatically detects hierarchical content and suggests simplified vtree diagrams. Use `*vtree` for detailed diagrams with performance metrics, security annotations, error handlers, and infrastructure details.
+
 ## Code Guidelines
 - NO docstrings/comments/print unless requested
 - Match existing patterns

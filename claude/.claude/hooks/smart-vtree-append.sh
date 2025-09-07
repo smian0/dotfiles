@@ -37,7 +37,7 @@ if [[ -n "$last_user_messages" ]]; then
     while IFS= read -r user_msg; do
         if [[ "$(jq -r '.message.content[0].type // empty' <<< "$user_msg")" == "text" ]]; then
             user_text=$(jq -r '.message.content[0].text' <<< "$user_msg")
-            if [[ "$user_text" =~ (show[[:space:]]full[[:space:]]vtree|detailed[[:space:]]vtree|vtree.*full|vtree.*detailed|comprehensive[[:space:]]vtree|expand[[:space:]]vtree|vtree.*complete|vtree.*all[[:space:]]details) ]]; then
+            if [[ "$user_text" =~ (\*vtree|show[[:space:]]full[[:space:]]vtree|detailed[[:space:]]vtree|vtree.*full|vtree.*detailed|comprehensive[[:space:]]vtree|expand[[:space:]]vtree|vtree.*complete|vtree.*all[[:space:]]details) ]]; then
                 FULL_VTREE_REQUESTED=true
                 break
             fi
@@ -479,87 +479,67 @@ else
 fi
 
 # Generate system reminder based on mode
-if [[ "$VTREE_MODE" == "simplified" ]]; then
-    cat <<EOF
+generate_vtree_system_reminder() {
+    local mode="$1"
+    local template="$2"
+    
+    # Find the formats directory relative to this script
+    local script_dir="$(dirname "${BASH_SOURCE[0]}")"
+    local formats_file="$script_dir/../formats/vtree-format.md"
+    
+    # Check if the format file exists
+    if [[ ! -f "$formats_file" ]]; then
+        # Fallback to basic format if file doesn't exist
+        echo "<system-reminder>Generate a vtree diagram for the hierarchical content.</system-reminder>"
+        return
+    fi
+    
+    # Extract appropriate format instructions based on mode
+    local format_instructions=""
+    if [[ "$mode" == "simplified" ]]; then
+        # Extract simplified format section (exclude the ending header)
+        format_instructions=$(sed -n '/## Simplified Format/,/## Comprehensive Format/p' "$formats_file" | sed '$d')
+        # Add introduction and template
+        cat <<EOF
 <system-reminder>
 The response you just provided describes a hierarchical structure, workflow, or system that would benefit from ASCII tree visualization.
 
 Please append a vtree diagram at the end of your response using this format:
 
 \`\`\`
-$vtree_template
+$template
 \`\`\`
 
-Use these formatting rules:
+$format_instructions
 
-**Core Structure:**
-- Node IDs: [1], [2], [2.1] for reference tracking
-- Connections: Use ├─ └─ for tree structure  
-- Data Flow: → (node_id) for outputs, ← (node_id) for inputs
-- Multiple outputs: → (A,B,C) for distribution to multiple nodes
-
-**Visual Indicators:**
-- Minimal emojis: 📥 input, 📤 output only
-- Clear component names describing function
-- Simple connections showing data flow
-
-**Spacing:**
-- 3-5 spaces per indentation level
-- Keep lines concise and readable
-
-For detailed vtree with performance metrics, security annotations, error handlers, and infrastructure details, say "show full vtree" in your next message.
+For detailed vtree with performance metrics, security annotations, error handlers, and infrastructure details, type "*vtree" in your next message.
 
 Add a brief note: "Simplified vtree for quick understanding" after the diagram.
 </system-reminder>
 EOF
-else
-    cat <<EOF
+    else
+        # Extract comprehensive format section (exclude the ending header)
+        format_instructions=$(sed -n '/## Comprehensive Format/,/## Usage Guidelines/p' "$formats_file" | sed '$d')
+        # Add introduction and template
+        cat <<EOF
 <system-reminder>
 The response you just provided describes a hierarchical structure, workflow, or system that would benefit from comprehensive ASCII tree visualization.
 
 Please append a comprehensive vtree diagram at the end of your response using this exact format:
 
 \`\`\`
-$vtree_template
+$template
 \`\`\`
 
-Use these comprehensive formatting rules:
-
-**Core Structure:**
-- Node IDs: [1], [1.1], [1.2.1] for explicit reference tracking
-- Connections: Use ├─ │ └─ for tree structure
-- Data Flow: → (node_id) for outputs, ← (node_id) for inputs
-- Multiple I/O: ← (A)+(B) for combined inputs, → (A,B) for split outputs
-
-**Advanced Notation:**
-- Conditional Logic: if(condition) → (success) else → (error)
-- Parallel Processing: → (1.1||1.2||1.3) for concurrent execution
-- Error Handlers: [1.1.E] suffix for error handling nodes
-
-**Visual Indicators:**
-- Priority: 🔴 Critical/P0, 🟡 Important/P1, 🟢 Normal/P2
-- Status: ⚡ Active/Fast, ⏸️ Paused/Waiting, 🐌 Slow/Bottleneck
-- Operations: 📥 input, 📤 output, 🔄 process, 📊 analyze, 💾 store, 🌐 external
-- Security: 🔒 Secure, 🛡️ Protected, [Auth: level]
-
-**Organization:**
-- System Grouping: # =========== LAYER NAME ===========
-- Infrastructure: [@deployment-target, resources]
-- Comments: # Inline explanatory comments
-- Performance: [2.3ms, 99.9% uptime] metrics
-
-**Text Styling:**
-- *italics* for optional/async/external elements
-- **bold** for critical paths and main processes
-- Normal text for standard required operations
-
-**Spacing:**
-- 3-7 spaces per indentation level for readability
-- Keep under 120 characters per line when possible
+$format_instructions
 
 Add a brief note: "Comprehensive vtree optimized for terminal display with advanced semantic indicators" after the diagram.
 </system-reminder>
 EOF
-fi
+    fi
+}
+
+# Call the function to generate the system reminder
+generate_vtree_system_reminder "$VTREE_MODE" "$vtree_template"
 
 exit 0
