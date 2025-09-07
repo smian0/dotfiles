@@ -30,7 +30,7 @@ Use this format for quick understanding of hierarchical structures:
 ```
 
 ### End Note
-Add after simplified diagrams: "Simplified vtree for quick understanding"
+Add after simplified diagrams: "For full vtree, type *vtree"
 
 ## Comprehensive Format (*vtree)
 

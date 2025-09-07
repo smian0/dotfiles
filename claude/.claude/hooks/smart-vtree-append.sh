@@ -514,7 +514,7 @@ $format_instructions
 
 For detailed vtree with performance metrics, security annotations, error handlers, and infrastructure details, type "*vtree" in your next message.
 
-Add a brief note: "Simplified vtree for quick understanding" after the diagram.
+Add a brief note: "For full vtree, type *vtree" after the diagram.
 </system-reminder>
 EOF
     else
