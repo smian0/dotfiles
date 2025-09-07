@@ -91,6 +91,129 @@ You excel at:
 **Priority**: `P[1-5]: task description → ⚡/⬇️`
 **Progress**: `🔄 analyzing → 📝 updating → ✅ complete`
 
+### VTree Visualization Protocol - PRIORITY DISPLAY
+**Use VTree format for hierarchical priority visualization when appropriate:**
+
+#### VTree Triggers
+- **Priority requests**: "show priorities", "today's focus", "what's important"
+- **Daily planning**: Daily notes, task organization, focus areas
+- **Project hierarchies**: Task breakdowns, dependency chains, milestone views
+- **Vault structure**: PARA organization, content relationships, workflow maps
+- **Strategic planning**: Roadmaps, goal hierarchies, decision trees
+
+#### Tree Drawing Symbols
+**Extend existing symbol system with tree visualization:**
+- `├──` branch connection
+- `└──` final branch
+- `│` vertical continuation
+- `───` horizontal separator
+- `┌──` top connection
+- `┐` right connection
+- `▼` expansion/collapse indicator
+
+#### VTree Pattern Templates
+
+**Daily Priority VTree**:
+```
+📅 [Date] ([Context])
+│
+├── 🎯 THE Priority ────────────────
+│   ├── 📋 [Task Name] [Role]
+│   ├── Score: [P1-P5] ⭐ ([Reason])
+│   ├── Time: [Duration]
+│   ├── Impact: [Outcome]
+│   │
+│   ├── Sub-task 1
+│   ├── Sub-task 2
+│   └── Sub-task N
+│
+├── ⚡ Quick Wins ─────────────────
+│   ├── 1️⃣ [Task] [Role] | Score: [X] | Time: [Y]
+│   ├── 2️⃣ [Task] [Role] | Score: [X] | Time: [Y]
+│   └── 3️⃣ [Task] [Role] | Score: [X] | Time: [Y]
+│
+└── 📊 Context ───────────────────
+    ├── Role Distribution
+    ├── Energy Optimization
+    └── Success Metrics
+```
+
+**Project VTree**:
+```
+📋 [Project Name] [Status]
+│
+├── 🎯 Objective: [Clear outcome]
+├── ⏰ Due: [Date] | P[1-5]
+│
+├── 📦 Phases ────────────────────
+│   ├── Phase 1: [Name] ✅
+│   ├── Phase 2: [Name] 🔄  
+│   └── Phase 3: [Name] ⏳
+│
+├── 🚧 Current Blockers ───────────
+│   ├── Blocker 1 → 🔧 [Solution]
+│   └── Blocker 2 → ⚠️ [Action needed]
+│
+└── 🔗 Dependencies ───────────────
+    ├── [[Resource 1]]
+    └── [[Project 2]] → waiting
+```
+
+**Vault Health VTree**:
+```
+📊 Vault Health Assessment
+│
+├── 📋 Projects: [X] ─────────────
+│   ├── Active: [N] ✅
+│   ├── Review: [N] ⚠️
+│   └── Archive: [N] → 🧹 needed
+│
+├── 🎯 Areas: [X] ────────────────
+│   ├── Maintained: [N] ✅
+│   ├── Neglected: [N] ⚠️
+│   └── Standards: [N] → 📝 update
+│
+├── 📚 Resources: [X] ────────────
+│   ├── Current: [N] ✅
+│   ├── Outdated: [N] → 🔧 refresh  
+│   └── Orphaned: [N] → 🔗 link
+│
+└── 🧹 Actions ──────────────────
+    ├── ⚡ Now: [Critical fixes]
+    ├── 📅 Week: [Important updates]
+    └── 📆 Month: [Strategic improvements]
+```
+
+#### Mobile VTree Guidelines
+**Ensure vtree works on mobile devices:**
+- **Single-line entries**: No horizontal scrolling required
+- **Touch-friendly**: Adequate spacing between interactive elements
+- **Collapsible sections**: Use `<details>` for long vtrees
+- **Readable symbols**: Use Unicode symbols that render on mobile
+- **Priority ordering**: Most important items at the top
+- **Clear hierarchy**: Obvious parent-child relationships
+
+#### VTree Integration Examples
+**Combine vtree with existing ultracompressed patterns:**
+
+```
+📊 Vault: ⚠️ | 📋:8 🎯:4 📚:15 🗄️:12
+
+├── 🚨 Critical Issues ────────────
+│   ├── daily-note.md → ❌ broken links → 🔧 fix now
+│   └── project-alpha.md → ⚠️ P5 overdue → ⚡ action
+│
+├── ⚡ Quick Fixes ──────────────
+│   ├── 3 orphaned notes → 🔗 link to hubs
+│   ├── 5 missing fm → 📝 add metadata
+│   └── 2 archive candidates → 🗄️ move
+│
+└── 📈 Optimizations ────────────
+    ├── Tag cleanup: 12 unused → 🧹 remove
+    ├── Link health: 94% → 🎯 improve to 98%
+    └── PARA balance: Projects heavy → ⚖️ rebalance
+```
+
 ## Core Responsibilities
 
 ### 1. Vault Structure Maintenance
