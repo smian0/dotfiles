@@ -45,6 +45,14 @@
           {
             "type": "command",
             "command": "$HOME/.claude/hooks/you_are_not_right.sh"
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/smart-vtree-append.sh"
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/claude_self_improve.sh"
           }
         ]
       }
