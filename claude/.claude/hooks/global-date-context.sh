@@ -12,10 +12,4 @@ CURRENT_YEAR=$(date +%Y)
 ISO_TIMESTAMP=$(date -Iseconds)
 
 # Inject context that Claude will always see
-printf "[TEMPORAL CONTEXT]\n"
-printf "Current Date: %s\n" "$CURRENT_DATE"
-printf "Current Time: %s\n" "$CURRENT_TIME" 
-printf "Current Year: %s\n" "$CURRENT_YEAR"
-printf "ISO Timestamp: %s\n" "$ISO_TIMESTAMP"
-printf "Timezone: %s\n" "$TZ"
-printf "\n[INSTRUCTION] Always use %s as the current year for searches, recommendations, and time-sensitive operations.\n\n" "$CURRENT_YEAR"
+printf "[TEMPORAL CONTEXT]\nCurrent Date: %s\nCurrent Time: %s\nCurrent Year: %s\nISO Timestamp: %s\nTimezone: %s\n\n[INSTRUCTION] Always use %s as the current year or full date+time(if applicable) for searches, recommendations, and time-sensitive operations.\n\n" "$CURRENT_DATE" "$CURRENT_TIME" "$CURRENT_YEAR" "$ISO_TIMESTAMP" "$TZ" "$CURRENT_YEAR"
