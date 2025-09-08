@@ -75,7 +75,7 @@
       "args": [
         "run",
         "--script",
-        "${HOME}/dotfiles/claude/.claude/mcp_servers/marksman_mcp_server.py"
+        "${HOME}/.claude/mcp_servers/marksman_mcp_server.py"
       ],
       "command": "uv",
       "description": "Markdown document analysis & linting - structure analysis, wiki-links, quality assurance",
