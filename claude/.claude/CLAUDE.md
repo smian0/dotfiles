@@ -33,6 +33,8 @@ Launch this subagent agents-md-manager when user mentions:
 - **Configuration**: Update existing config files rather than creating new ones
 - **Scripts**: Extend existing scripts with new functions rather than new files
 - **Components**: Check for similar existing components to extend before creating new ones
+- **MANDATORY: NO MOCKS OR UNIT TESTS** - Never create mock objects, unit tests, or test files unless explicitly requested by user
+- **PREFER REAL TESTS** - When testing is appropriate, favor integration tests, e2e tests, or real system testing over mocks
 
 ### README.md Content Guidelines
 When creating or updating README.md files:
@@ -56,7 +58,7 @@ When creating or updating README.md files:
 - Skip explanations unless asked
 - Assume user awareness of their own actions
 - Trust user intent without questioning
-- **ALWAYS use full absolute paths** when referencing any files in responses
+- **ALWAYS use full paths from the project root** when referencing any files in responses
 - **USE file:// URLs for paths with spaces** to ensure clickability: `file:///path/with%20spaces/file.ext`
 
 ## Output Constraints
@@ -67,6 +69,7 @@ When creating or updating README.md files:
 - **VALIDATE IMPORTS/DEPENDENCIES** - ensure all required modules are available
 - **TEST LOGIC MENTALLY** - walk through code execution path before finalizing
 - **PROVIDE WORKING SOLUTIONS** - code must be syntactically correct and functional
+- **PREFER REAL TESTING** - When testing is needed, use integration tests, e2e tests, or real system validation over mocks
 
 ### NEVER Do
 - **BREAK EXISTING FUNCTIONALITY** - modifications must maintain backward compatibility
@@ -75,6 +78,7 @@ When creating or updating README.md files:
 - **USE DEPRECATED FEATURES** - prefer modern, supported APIs and patterns
 - **IGNORE ERROR HANDLING** - anticipate and handle potential failure cases
 - **MAKE UNVERIFIED ASSUMPTIONS** - ask for clarification if requirements are unclear
+- **CREATE MOCKS OR UNIT TESTS** - Never generate mock objects, unit tests, or test files without explicit user request
 
 ## Verification Protocol - MANDATORY
 ### Before Finalizing ANY Response
