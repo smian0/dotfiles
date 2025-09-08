@@ -12,18 +12,6 @@
       "scope": "library",
       "type": "stdio"
     },
-    "memory": {
-      "args": [
-        "-y",
-        "mcp-knowledge-graph",
-        "--memory-path",
-        "/Users/smian/.aim"
-      ],
-      "command": "npx",
-      "description": "Personal knowledge graph storage - cross-project memory, notes, general knowledge",
-      "purpose": "personal-knowledge",
-      "scope": "global"
-    },
     "playwright": {
       "args": [
         "@playwright/mcp@latest"
@@ -60,16 +48,6 @@
       "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence",
       "purpose": "code-analysis",
       "scope": "project"
-    },
-    "time": {
-      "args": [
-        "mcp-server-time"
-      ],
-      "command": "uvx",
-      "description": "Time zone utilities - current time, time conversion across zones",
-      "purpose": "time-utilities",
-      "scope": "utility",
-      "type": "stdio"
     },
     "marksman": {
       "args": [
