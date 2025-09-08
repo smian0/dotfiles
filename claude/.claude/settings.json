@@ -4,7 +4,8 @@
     "allow": [
       "Bash(npm run lint)",
       "Bash(npm run test:*)",
-      "Read(~/.zshrc)"
+      "Read(~/.zshrc)",
+      "Read(./.env.example)"
     ],
     "deny": [
       "Read(./.env)",
@@ -53,6 +54,38 @@
           {
             "type": "command",
             "command": "$HOME/.claude/hooks/claude_self_improve.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$TOOL_PARAMS\" =~ \\.md$ ]] || [[ \"$TOOL_PARAMS\" =~ \\.mdx$ ]] || [[ \"$TOOL_PARAMS\" =~ \\.markdown$ ]]; then $HOME/.claude/hooks/post-edit-markdown.sh . check; fi",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "MultiEdit", 
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$TOOL_PARAMS\" =~ \\.md ]] || [[ \"$TOOL_PARAMS\" =~ \\.mdx ]] || [[ \"$TOOL_PARAMS\" =~ \\.markdown ]]; then $HOME/.claude/hooks/post-edit-markdown.sh . check; fi",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command", 
+            "command": "if [[ \"$TOOL_PARAMS\" =~ \\.md$ ]] || [[ \"$TOOL_PARAMS\" =~ \\.mdx$ ]] || [[ \"$TOOL_PARAMS\" =~ \\.markdown$ ]]; then $HOME/.claude/hooks/post-edit-markdown.sh . check; fi",
+            "timeout": 10
           }
         ]
       }

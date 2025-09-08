@@ -158,6 +158,54 @@ install_claude_code() {
         warn "npm not available, skipping Claude Code installation"
         warn "Install Node.js first: brew install node"
     fi
+    
+    # Install dependencies for markdown linting system
+    install_markdown_linting_deps
+}
+
+install_markdown_linting_deps() {
+    log "Installing markdown linting dependencies..."
+    
+    # Install uv (Python package manager) if not present
+    if ! command -v uv >/dev/null 2>&1; then
+        log "Installing uv (Python package manager)..."
+        if [[ "$OS" == "macos" ]]; then
+            if command -v brew >/dev/null 2>&1; then
+                brew install uv
+            else
+                curl -LsSf https://astral.sh/uv/install.sh | sh
+            fi
+        else
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+        fi
+        
+        # Add to PATH for current session
+        export PATH="$HOME/.cargo/bin:$PATH"
+    else
+        log "uv already installed"
+    fi
+    
+    # Install fswatch for file monitoring (optional)
+    if [[ "$OS" == "macos" ]] && command -v brew >/dev/null 2>&1; then
+        if ! command -v fswatch >/dev/null 2>&1; then
+            log "Installing fswatch for markdown file monitoring..."
+            brew install fswatch
+        else
+            log "fswatch already installed"
+        fi
+    fi
+    
+    # Verify marksman MCP server can run
+    if [[ -f "claude/.claude/mcp_servers/marksman_mcp_server.py" ]]; then
+        log "Testing marksman MCP server..."
+        if uv run --script claude/.claude/mcp_servers/marksman_mcp_server.py --help >/dev/null 2>&1; then
+            log "✅ Marksman MCP server is working"
+        else
+            warn "⚠️  Marksman MCP server test failed - check dependencies"
+        fi
+    else
+        warn "⚠️  Marksman MCP server not found at expected location"
+    fi
 }
 
 # Check requirements

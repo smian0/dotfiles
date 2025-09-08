@@ -126,6 +126,39 @@ The system automatically detects hierarchical content and suggests simplified vt
 - NO commits without explicit request
 - Include task IDs in commit messages when applicable
 
+## Markdown File Operations
+- **ALWAYS use Marksman MCP** for ANY markdown file operations (.md, .mdx, .markdown)
+- **Automatic activation**: Marksman activates when working with documentation
+- **Document navigation**: Use Marksman for headers, sections, wiki-links
+- **Content extraction**: Use Marksman for code blocks, frontmatter, task lists
+- **Never use Serena** for markdown files - Serena is for code symbols only
+
+### Markdown Linting - MANDATORY
+**Post-Edit Linting Protocol:**
+- **ALWAYS run `lint_document()`** after ANY markdown file modification
+- **Review all reported issues** - both auto-fixable and review-required
+- **Apply deterministic fixes** using `auto_fix_document()` for structural issues
+- **Address review-required issues** intelligently based on context
+- **Never skip linting** - markdown consistency is non-negotiable
+
+**Issue Handling Priority:**
+1. **Auto-fix first**: Headers, whitespace, task formatting
+2. **Review context-dependent**: Broken links, missing languages, frontmatter
+3. **Preserve semantic content**: Never alter meaning during formatting fixes
+4. **Validate corrections**: Ensure fixes maintain document integrity
+
+**Linting Triggers:**
+- Any Edit, MultiEdit, or Write operation on `.md`, `.mdx`, `.markdown` files
+- Document reorganization or structural changes
+- Header level modifications or content reordering
+- Wiki-link additions or cross-reference updates
+
+**Quality Gates:**
+- Zero auto-fixable issues before task completion
+- All review-required issues addressed or documented
+- Consistent markdown formatting across all project documentation
+- Preserved cross-references and internal link integrity
+
 # ═══════════════════════════════════════════════════
 # SuperClaude Framework Components
 # ═══════════════════════════════════════════════════
