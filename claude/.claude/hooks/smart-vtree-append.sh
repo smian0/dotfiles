@@ -327,219 +327,29 @@ apply_comprehensive_styling() {
     echo "$styled_name"
 }
 
-# Simplified vtree template generation - minimal emojis, clean structure
-generate_simplified_template() {
-    local content_type="$1"
-    local template=""
-    
-    case "$content_type" in
-        "workflow"|"process")
-            template="[1]  Process_Flow [📥 request] → (2)
-[2]  ├─ Validation → (3)
-     ├─ Processing → (3)
-     └─ Output_Generation → (3)
-[3]  Final_Result [📤 response]"
-            ;;
-        "architecture"|"system")
-            template="[1]  System_Architecture [📥 input] → (2.1,2.2,2.3)
-[2]  ├─ Frontend_Layer → (3)
-     ├─ API_Layer → (3)
-     └─ Backend_Layer → (3)
-[3]  Response_Handler [📤 output]"
-            ;;
-        "components"|"agents")
-            template="[1]  Orchestrator [📥 request] → (2.1,2.2,2.3)
-[2]  ├─ Agent_Research → (3)
-     ├─ Agent_Analysis → (3)
-     └─ Agent_Execution → (3)
-[3]  Result_Combiner [📤 final]"
-            ;;
-        "files"|"directory")
-            template="[1]  Project_Structure [📥 files] → (2.1,2.2)
-[2]  ├─ Source_Code → (3)
-     └─ Tests → (3)
-[3]  Build_Output [📤 artifacts]"
-            ;;
-        "decision")
-            template="[1]  Decision_Point [📥 criteria] → (2,3,4)
-[2]  ├─ Option_A → (END)
-[3]  ├─ Option_B → (END)
-[4]  └─ Default → (END)"
-            ;;
-        *)
-            template="[1]  Main_Component [📥 input] → (2.1,2.2)
-[2]  ├─ Sub_Component_A → (3)
-     └─ Sub_Component_B → (3)
-[3]  Output_Handler [📤 result]"
-            ;;
-    esac
-    
-    echo "$template"
-}
 
-# Enhanced vtree template generation with emojis, node IDs, and intelligent styling
-generate_enhanced_template() {
-    local content_type="$1"
-    local template=""
-    
-    # Analyze content for comprehensive patterns
-    detect_advanced_patterns "$text_content"
-    
-    case "$content_type" in
-        "workflow"|"process")
-            if [[ "$HAS_CONDITIONAL" == "true" && "$HAS_ERROR_HANDLING" == "true" ]]; then
-                template="# =========== PROCESSING LAYER ===========
-[1]     🔴 **Workflow_Orchestrator** [📥 request] → [🚀 result ← (1.1)+(1.2)]
-[1.1]   ├─ Validator [📥 data ← (1)] → [if(valid) → (1.2) else → (1.1.E)]
-[1.1.1] │  ├─ Schema_Check [⚡ 2.1ms] → [✅ → (1.1)]
-[1.1.2] │  └─ Rate_Limiter [@redis-cluster] → [✅ → (1.1)]
-[1.1.E] │  └─ ❌ Error_Handler → [📤 error → (1)]
-[1.2]   └─ Async_Processor [⏳ background] → [📤 → (1)]  # ML Pipeline"
-            else
-                template="[1]     **Process_Orchestrator** [📥 request] → [🚀 result → (END)]
-[1.1]   ├─ Step_1 [📥 raw ← (1)] → [🔄 processed → (1.2)]
-[1.2]   ├─ Step_2 [📊 data ← (1.1)] → [✅ validated → (1.3)]
-[1.3]   └─ Step_3 [💾 validated ← (1.2)] → [📤 final → (1)]"
-            fi
-            ;;
-        "architecture"|"system")
-            if [[ "$HAS_INFRASTRUCTURE" == "true" && "$HAS_SECURITY" == "true" ]]; then
-                template="# =========== FRONTEND LAYER ===========
-[1]     🌐 **Load_Balancer** [@nginx-ingress] → [🎯 → (1.1,1.2,1.3)]
-[1.1]   ├─ Web_Server_1 [⚡ 1.2ms, 99.9% uptime] → [📤 → (2)]
-[1.2]   ├─ Web_Server_2 [⚡ 1.4ms, 99.8% uptime] → [📤 → (2)]
-[1.3]   └─ Web_Server_3 [🐌 5.2ms, 95% uptime] → [📤 → (2)]
+# Generate minimal hint based on content type
+case "$content_type" in
+    "workflow"|"process")
+        hint="📊 Workflow detected. Type '*vtree' for process visualization."
+        ;;
+    "architecture"|"system")
+        hint="🏗️ Architecture described. Use '*vtree' for system diagram."
+        ;;
+    "components"|"agents")
+        hint="🔧 Multi-component system. Consider '*vtree' visualization."
+        ;;
+    "files"|"directory")
+        hint="📁 File structure detected. Type '*vtree' for directory tree."
+        ;;
+    "decision")
+        hint="🎯 Decision tree identified. Use '*vtree' for visualization."
+        ;;
+    *)
+        hint="💡 Type '*vtree' to visualize this hierarchical structure."
+        ;;
+esac
 
-# =========== API LAYER ===========
-[2]     🔒 **API_Gateway** [Auth: oauth2] → [if(authenticated) → (3) else → (2.E)]
-[2.E]   └─ ❌ Auth_Failure → [📤 401_error]
-
-# =========== DATA LAYER ===========
-[3]     💾 Database_Cluster [@kubernetes-prod, CPU: 16 cores] → [📤 data]"
-            else
-                template="[1]     **System_Orchestrator** [📥 user_request] → [📤 response → (END)]
-[1.1]   ├─ Frontend_Layer [📥 UI_events ← (1)] → [🎯 API_calls → (1.2)]
-[1.2]   ├─ API_Layer [📥 requests ← (1.1)] → [🔄 data → (1.3)]
-[1.3]   └─ Backend_Layer [📥 queries ← (1.2)] → [💾 results → (1.2)]"
-            fi
-            ;;
-        "components"|"agents")
-            if [[ "$HAS_PARALLEL" == "true" ]]; then
-                template="# =========== ORCHESTRATION LAYER ===========
-[1]     🔴 **Master_Controller** [📥 request] → [🎯 → (2.1||2.2||2.3)]
-[2.1]   ├─ ⚡ Research_Agent [@aws-lambda, 4GB] → [📊 analysis → (3)]
-[2.2]   ├─ ⚡ Code_Agent [🔒 Auth: service] → [💻 code → (3)]
-[2.3]   └─ ⚡ QA_Agent [⏸️ Rate: 100/min] → [✅ validated → (3)]
-
-# =========== AGGREGATION LAYER ===========
-[3]     🟡 **Result_Combiner** [📥 ← (2.1)+(2.2)+(2.3)] → [🚀 final]
-[3.E]   Emergency_Fallback ← (2.1,2.2,2.3) → [🔧 recovery]  # Auto-retry logic"
-            else
-                template="[1]     **Agent_Orchestrator** [📥 request] → [🎯 distribute → (2.1,2.2,2.3)]
-[2.1]   ├─ Agent_A [📥 task ← (1)] → [⚡ result_a → (3)]
-[2.2]   ├─ Agent_B [📥 data ← (1)] → [🔄 result_b → (3)]
-[2.3]   └─ Agent_C [⏳ task ← (1)] → [📤 result_c → (3)]
-[3]     **Result_Coordinator** [📥 results ← (2.1)+(2.2)+(2.3)] → [📤 final]"
-            fi
-            ;;
-        "files"|"directory")
-            template="# =========== PROJECT STRUCTURE ===========
-[1]     **Project_Organizer** [📥 files] → [📤 organized → (END)]
-[1.1]   ├─ src/ [📥 source ← (1)] → [💻 compiled → (1.3)]
-[1.1.1] │  ├─ components/ [📥 ← (1.1)] → [🔄 → (1.1)]  # React Components
-[1.1.2] │  └─ utils/ [📥 ← (1.1)] → [🔄 → (1.1)]  # Helper Functions
-[1.2]   └─ tests/ [📥 specs ← (1)] → [✅ validated → (1.3)]
-[1.3]   Build_Output [📥 ← (1.1)+(1.2)] → [📤 ← (1)]"
-            ;;
-        "decision")
-            template="[1]     **Decision_Controller** [📥 criteria] → [🎯 choice → (2,3,4)]
-[2]     Condition_A [📥 check ← (1)] → [if(passes) → (END) else → (3)]
-[3]     Condition_B [📥 check ← (1)] → [if(passes) → (END) else → (4)]
-[4]     🟡 Default_Handler [📥 fallback ← (1)] → [📤 default_action → (END)]
-[4.E]   ❌ Error_State ← (2,3,4) → [🔧 emergency_stop]  # Circuit breaker"
-            ;;
-        *)
-            template="[1]     🟢 **System_Orchestrator** [📥 params] → [📤 results → (END)]
-[1.1]   ├─ Component_1 [📥 data ← (1)] → [🔄 processed → (1.2)]
-[1.2]   ├─ Component_2 [📥 processed ← (1.1)] → [⚡ enhanced → (1.3)]
-[1.3]   └─ Component_3 [📥 enhanced ← (1.2)] → [📤 final → (1)]"
-            ;;
-    esac
-    
-    echo "$template"
-}
-
-# Generate the appropriate template based on request type
-if [[ "$FULL_VTREE_REQUESTED" == "true" ]]; then
-    vtree_template=$(generate_enhanced_template "$content_type")
-    VTREE_MODE="full"
-else
-    vtree_template=$(generate_simplified_template "$content_type")
-    VTREE_MODE="simplified"
-fi
-
-# Generate system reminder based on mode
-generate_vtree_system_reminder() {
-    local mode="$1"
-    local template="$2"
-    
-    # Find the formats directory relative to this script
-    local script_dir="$(dirname "${BASH_SOURCE[0]}")"
-    local formats_file="$script_dir/../formats/vtree-format.md"
-    
-    # Check if the format file exists
-    if [[ ! -f "$formats_file" ]]; then
-        # Fallback to basic format if file doesn't exist
-        echo "<system-reminder>Generate a vtree diagram for the hierarchical content.</system-reminder>"
-        return
-    fi
-    
-    # Extract appropriate format instructions based on mode
-    local format_instructions=""
-    if [[ "$mode" == "simplified" ]]; then
-        # Extract simplified format section (exclude the ending header)
-        format_instructions=$(sed -n '/## Simplified Format/,/## Comprehensive Format/p' "$formats_file" | sed '$d')
-        # Add introduction and template
-        cat <<EOF
-<system-reminder>
-The response you just provided describes a hierarchical structure, workflow, or system that would benefit from ASCII tree visualization.
-
-Please append a vtree diagram at the end of your response using this format:
-
-\`\`\`
-$template
-\`\`\`
-
-$format_instructions
-
-For detailed vtree with performance metrics, security annotations, error handlers, and infrastructure details, type "*vtree" in your next message.
-
-Add a brief note: "For full vtree, type *vtree" after the diagram.
-</system-reminder>
-EOF
-    else
-        # Extract comprehensive format section (exclude the ending header)
-        format_instructions=$(sed -n '/## Comprehensive Format/,/## Usage Guidelines/p' "$formats_file" | sed '$d')
-        # Add introduction and template
-        cat <<EOF
-<system-reminder>
-The response you just provided describes a hierarchical structure, workflow, or system that would benefit from comprehensive ASCII tree visualization.
-
-Please append a comprehensive vtree diagram at the end of your response using this exact format:
-
-\`\`\`
-$template
-\`\`\`
-
-$format_instructions
-
-Add a brief note: "Comprehensive vtree optimized for terminal display with advanced semantic indicators" after the diagram.
-</system-reminder>
-EOF
-    fi
-}
-
-# Call the function to generate the system reminder
-generate_vtree_system_reminder "$VTREE_MODE" "$vtree_template"
+echo "<system-reminder>$hint</system-reminder>"
 
 exit 0
