@@ -1,0 +1,32 @@
+[projects."/Users/smian/github-smian0/SuperClaude-CK"]
+trust_level = "trusted"
+
+[projects."/Users/smian/Library/Mobile Documents/iCloud~md~obsidian/Documents/shoaib-life-hub"]
+trust_level = "trusted"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+
+disable_response_storage = true
+show_reasoning_content = true
+
+[model_providers.ollama_local]
+name = "ollama_local"
+base_url = "http://localhost:11434/v1"
+#base_url = "http://localhost:3304/v1"
+
+[model_providers.ollama_turbo]
+name = "ollama_turbo"
+#base_url = "http://localhost:11434/v1"
+base_url = "http://localhost:3304/v1"
+
+[profiles.oss]
+model = "gpt-oss:20b"
+model_provider = "ollama_local"
+streaming = false
+stream = false
+
+[profiles.deep]
+model = "deepseek-v3.1:671b"
+model_provider = "ollama_turbo"
+streaming = false
+stream = false
