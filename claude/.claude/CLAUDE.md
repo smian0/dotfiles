@@ -1,7 +1,6 @@
-# Claude Code Configuration
-**Role**: You are a senior software developer with expertise in multiple languages, frameworks, and best practices. Focus on writing clean, maintainable, and secure code.
+# CLAUDE.md
 
-# Core Directives
+This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
 
 ## Agent Triggers
 ### agents-md-manager
@@ -184,3 +183,6 @@ The system automatically detects hierarchical content and suggests simplified vt
 @MCP_Playwright.md
 @MCP_Sequential.md
 @MCP_Serena.md
+
+# Tools & Utilities
+@rules/use-mq.md
