@@ -12,18 +12,6 @@
       "scope": "library",
       "type": "stdio"
     },
-    "markdown": {
-      "args": [
-        "run",
-        "--script",
-        "/Users/smian/.claude/mcp_servers/mcp_markdown/server.py"
-      ],
-      "command": "uv",
-      "description": "Unified markdown processing - MQ selectors, Obsidian features, intelligent caching, document linting",
-      "purpose": "document-analysis",
-      "scope": "documentation",
-      "type": "stdio"
-    },
     "playwright": {
       "args": [
         "@playwright/mcp@latest"
@@ -60,6 +48,18 @@
       "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence",
       "purpose": "code-analysis",
       "scope": "project"
+    },
+    "markdown": {
+      "args": [
+        "run",
+        "--script",
+        "/Users/smian/.claude/mcp_servers/mcp_markdown/server.py"
+      ],
+      "command": "uv",
+      "description": "Unified markdown processing - MQ selectors, Obsidian features, intelligent caching, document linting",
+      "purpose": "document-quality",
+      "scope": "documentation",
+      "type": "stdio"
     }
   }
 }
