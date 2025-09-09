@@ -91,3 +91,12 @@ tests/review/
 test-*.sh.tmp
 cleanup-*.sh
 tests/test-runs
+
+# MCP API Keys and configurations
+scripts/mcp-env/.env
+.mcp.json
+
+# Cursor MCP configuration (contains API keys)
+cursor/.cursor/mcp.json
+cursor/.cursor/mcp.json.backup*
+**/mcp.json

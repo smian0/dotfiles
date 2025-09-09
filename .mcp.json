@@ -1,5 +1,69 @@
 {
   "mcpServers": {
-
+    "streamable-mcp-server": {
+      "type": "http",
+      "url": "http://127.0.0.1:12306/mcp"
+    },
+    "context7": {
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "command": "npx",
+      "description": "Official library documentation lookup - curated docs, framework patterns",
+      "env": {},
+      "purpose": "documentation",
+      "scope": "library",
+      "type": "stdio"
+    },
+    "playwright": {
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "command": "npx",
+      "description": "Browser automation & E2E testing - real browser interaction, visual testing",
+      "purpose": "browser-testing",
+      "scope": "ui"
+    },
+    "sequential-thinking": {
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "command": "npx",
+      "description": "Multi-step reasoning engine - complex analysis, systematic problem solving",
+      "env": {},
+      "purpose": "analysis",
+      "scope": "reasoning",
+      "type": "stdio"
+    },
+    "serena": {
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--enable-web-dashboard",
+        "false",
+        "--enable-gui-log-window",
+        "false"
+      ],
+      "command": "uvx",
+      "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence",
+      "purpose": "code-analysis",
+      "scope": "project"
+    },
+    "marksman": {
+      "args": [
+        "run",
+        "--script",
+        "${HOME}/.claude/mcp_servers/marksman_mcp_server.py"
+      ],
+      "command": "uv",
+      "description": "Markdown document analysis & linting - structure analysis, wiki-links, quality assurance",
+      "purpose": "document-quality",
+      "scope": "documentation",
+      "type": "stdio"
+    }
   }
 }

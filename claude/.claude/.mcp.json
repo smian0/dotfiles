@@ -12,6 +12,18 @@
       "scope": "library",
       "type": "stdio"
     },
+    "marksman": {
+      "args": [
+        "run",
+        "--script",
+        "${HOME}/dotfiles/claude/.claude/mcp_servers/marksman_mcp_server.py"
+      ],
+      "command": "uv",
+      "description": "Markdown document analysis & linting - structure analysis, wiki-links, quality assurance",
+      "purpose": "document-quality",
+      "scope": "documentation",
+      "type": "stdio"
+    },
     "playwright": {
       "args": [
         "@playwright/mcp@latest"
@@ -48,18 +60,6 @@
       "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence",
       "purpose": "code-analysis",
       "scope": "project"
-    },
-    "marksman": {
-      "args": [
-        "run",
-        "--script",
-        "${HOME}/.claude/mcp_servers/marksman_mcp_server.py"
-      ],
-      "command": "uv",
-      "description": "Markdown document analysis & linting - structure analysis, wiki-links, quality assurance",
-      "purpose": "document-quality",
-      "scope": "documentation",
-      "type": "stdio"
     }
   }
 }
