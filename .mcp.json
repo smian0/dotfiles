@@ -53,15 +53,15 @@
       "purpose": "code-analysis",
       "scope": "project"
     },
-    "marksman": {
+    "markdown": {
       "args": [
         "run",
         "--script",
-        "${HOME}/.claude/mcp_servers/marksman_mcp_server.py"
+        "/Users/smian/.claude/mcp_servers/mcp_markdown/server.py"
       ],
       "command": "uv",
-      "description": "Markdown document analysis & linting - structure analysis, wiki-links, quality assurance",
-      "purpose": "document-quality",
+      "description": "Unified markdown processing - MQ selectors, Obsidian features, intelligent caching, document linting",
+      "purpose": "document-analysis",
       "scope": "documentation",
       "type": "stdio"
     }

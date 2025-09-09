@@ -130,10 +130,10 @@ The system automatically detects hierarchical content and suggests simplified vt
 - Include task IDs in commit messages when applicable
 
 ## Markdown File Operations
-- **ALWAYS use Marksman MCP** for ANY markdown file operations (.md, .mdx, .markdown)
-- **Automatic activation**: Marksman activates when working with documentation
-- **Document navigation**: Use Marksman for headers, sections, wiki-links
-- **Content extraction**: Use Marksman for code blocks, frontmatter, task lists
+- **ALWAYS use Markdown MCP** for ANY markdown file operations (.md, .mdx, .markdown)
+- **Automatic activation**: Markdown activates when working with documentation
+- **Document navigation**: Use Markdown for headers, sections, wiki-links
+- **Content extraction**: Use Markdown for code blocks, frontmatter, task lists
 - **Never use Serena** for markdown files - Serena is for code symbols only
 
 ### Markdown Linting - MANDATORY
@@ -180,9 +180,8 @@ The system automatically detects hierarchical content and suggests simplified vt
 
 # MCP Documentation
 @MCP_Context7.md
+@MCP_Markdown.md
 @MCP_Playwright.md
 @MCP_Sequential.md
 @MCP_Serena.md
 
-# Tools & Utilities
-@rules/use-mq.md

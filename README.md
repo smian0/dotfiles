@@ -16,11 +16,11 @@ Personal dotfiles for consistent environment setup across macOS and Ubuntu Linux
 ## Quick Start
 
 ```bash
-# Clone repository
+## Clone repository
 git clone git@github.com:smian0/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
-# One-command setup
+## One-command setup
 make bootstrap      # Complete setup for new machines
 make install        # Development profile
 make install-minimal # Essential tools only
@@ -41,7 +41,7 @@ make test             # Run test suite
 ```
 ~/.dotfiles/
 ├── git/                 # Git configuration
-├── zsh/                 # Zsh shell configuration  
+├── zsh/                 # Zsh shell configuration
 ├── vim/                 # Vim editor configuration
 ├── claude-user/         # Global Claude Code settings
 ├── claude-project/      # Project Claude settings
