@@ -80,7 +80,7 @@
       "Read(./secrets/**)"
     ]
   },
-  "model": "opus",
+  "model": "opusplan",
   "enableAllProjectMcpServers": true,
   "hooks": {
     "SessionStart": [
