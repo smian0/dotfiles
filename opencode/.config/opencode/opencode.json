@@ -29,15 +29,6 @@
         "baseURL": "https://ollama.com/api",
         "headers": {
           "Authorization": "Bearer {env:OLLAMA_API_KEY}"
-        },
-        "options": {
-          "seed": 42,
-          "num_ctx": 32768,
-          "repeat_penalty": 1.1,
-          "top_k": 40,
-          "min_p": 0.05,
-          "temperature": 0.7,
-          "think": true
         }
       },
       "models": {
@@ -45,31 +36,23 @@
           "name": "GPT-OSS 20B (Turbo)"
         },
         "gpt-oss:120b": {
-          "name": "GPT-OSS 120B (Turbo)",
-          "system": "Reasoning: medium\n\nALWAYS show your reasoning process in <reasoning></reasoning> tags with moderate detail before providing your final response. For every query, first think through the problem step-by-step in reasoning tags, then give your answer. Balance thoroughness with clarity.",
-          "thinking": {
-            "type": "enabled",
-            "budgetTokens": 4096
-          },
-          "textVerbosity": "medium",
-          "reasoningSummary": "auto",
-          "options": {
-            "seed": 42,
-            "num_ctx": 24576,
-            "repeat_penalty": 1.1,
-            "top_k": 35,
-            "min_p": 0.07,
-            "temperature": 0.65,
-            "think": true,
-            "reasoning.display": true,
-            "reasoning.format": "tags"
-          }
+          "name": "GPT-OSS 120B (Turbo)"
         },
         "deepseek-v3.1:671b": {
           "name": "DeepSeek V3.1 671B (Turbo)"
         }
       }
     }
+  },
+  "mcp": {
+    "markdown": {
+      "type": "local",
+      "command": ["uv", "run", "/Users/smian/dotfiles/claude/.claude/mcp_servers/mcp_markdown/server.py"],
+      "enabled": true
+    }
+  },
+  "tools": {
+    "mcp__markdown__*": false
   },
   "agent": {
     "plan": {
@@ -80,6 +63,22 @@
     },
     "general": {
       "model": "ollamat/gpt-oss:120b"
-    }
+    },
+     "reasoning": {
+       "model": "ollamat/gpt-oss:120b",
+       "system": "You are a high‑quality reasoning assistant. Always provide step-by-step <reasoning></reasoning> tags before the final answer."
+     },
+     "websearch": {
+       "model": "ollamat/gpt-oss:120b",
+       "system": "You are a concise web-search assistant. Retrieve the most relevant information for the given query and return a short factual summary (max 3 sentences). Cite the source URL at the end."
+     },
+     "markdown-pro": {
+       "model": "ollamat/gpt-oss:120b",
+       "temperature": 0.1,
+       "system": "You are an expert markdown specialist with access to advanced markdown processing tools. You can analyze document structure, extract content using MQ-style selectors, work with Obsidian vault features, and provide document linting and optimization suggestions.",
+       "tools": {
+         "mcp__markdown__*": true
+       }
+     }
   }
 }
