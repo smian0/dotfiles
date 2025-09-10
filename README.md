@@ -38,7 +38,7 @@ make test             # Run test suite
 
 ## Package Structure
 
-```
+```text
 ~/.dotfiles/
 ├── git/                 # Git configuration
 ├── zsh/                 # Zsh shell configuration
@@ -76,5 +76,7 @@ make test             # Run test suite
 ## License
 
 MIT
+
+_Last updated: 2025-09-10_
 
 

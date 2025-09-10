@@ -4,3 +4,5 @@ zsh
 bin
 cursor
 crystal
+opencode
+mcp-launcher
