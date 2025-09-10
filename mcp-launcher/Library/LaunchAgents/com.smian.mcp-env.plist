@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.smian.mcp-env</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/smian/dotfiles/scripts/mcp-env/mcp-env/set-mcp-env-system.sh</string>
+    </array>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>KeepAlive</key>
+    <false/>
+    
+    <key>StandardOutPath</key>
+    <string>/tmp/mcp-env.out</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/tmp/mcp-env.err</string>
+    
+    <key>StartInterval</key>
+    <integer>3600</integer>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
+    </dict>
+    
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>

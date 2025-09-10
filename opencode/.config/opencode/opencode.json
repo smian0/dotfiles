@@ -1,0 +1,58 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "opencode",
+  "model": "ollamat/gpt-oss:120b",
+  "autoupdate": true,
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "http://localhost:3304/v1"
+      },
+      "models": {
+        "gpt-oss:20b": {
+          "name": "GPT-OSS 20B (Local)"
+        },
+        "gpt-oss:120b": {
+          "name": "GPT-OSS 120B (Local)"
+        },
+        "deepseek-v3.1:671b": {
+          "name": "DeepSeek V3.1 671B (Local)"
+        }
+      }
+    },
+    "ollamat": {
+      "npm": "ollama-ai-provider-v2",
+      "name": "Ollama (turbo)",
+      "options": {
+        "baseURL": "https://ollama.com/api",
+        "headers": {
+          "Authorization": "Bearer $OLLAMA_API_KEY"
+        }
+      },
+      "models": {
+        "gpt-oss:20b": {
+          "name": "GPT-OSS 20B (Turbo)"
+        },
+        "gpt-oss:120b": {
+          "name": "GPT-OSS 120B (Turbo)"
+        },
+        "deepseek-v3.1:671b": {
+          "name": "DeepSeek V3.1 671B (Turbo)"
+        }
+      }
+    }
+  },
+  "agent": {
+    "plan": {
+      "model": "ollamat/gpt-oss:120b"
+    },
+    "build": {
+      "model": "ollamat/gpt-oss:120b"
+    },
+    "general": {
+      "model": "ollamat/gpt-oss:120b"
+    }
+  }
+}
