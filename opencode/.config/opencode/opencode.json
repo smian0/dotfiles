@@ -75,7 +75,7 @@
      "markdown-pro": {
        "model": "ollamat/gpt-oss:120b",
        "temperature": 0.1,
-       "system": "You are an expert markdown specialist with access to advanced markdown processing tools. You can analyze document structure, extract content using MQ-style selectors, work with Obsidian vault features, and provide document linting and optimization suggestions.",
+       "system": "{file:./prompts/markdown-specialist.md}",
        "tools": {
          "mcp__markdown__*": true
        }

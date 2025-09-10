@@ -1,0 +1,40 @@
+#!/bin/bash
+# Secure OpenCode Launcher (oc)
+# This script loads environment variables from launchctl and launches opencode
+# Usage: oc [opencode arguments...]
+
+# Debug mode - uncomment to see what's being loaded
+DEBUG_MODE=false
+
+# Load environment variables from system (launchctl)
+load_env_var() {
+    local var_name="$1"
+    local var_value=$(launchctl getenv "$var_name" 2>/dev/null || echo "")
+    if [[ -n "$var_value" ]]; then
+        export "$var_name"="$var_value"
+        [[ "$DEBUG_MODE" == "true" ]] && echo "Loaded $var_name: ${var_value:0:10}..."
+    else
+        [[ "$DEBUG_MODE" == "true" ]] && echo "Warning: $var_name not found in launchctl"
+    fi
+}
+
+# Load all API keys from system environment
+load_env_var "OLLAMA_API_KEY"
+load_env_var "OPENAI_API_KEY" 
+load_env_var "ANTHROPIC_API_KEY"
+load_env_var "GITHUB_TOKEN"
+load_env_var "DEEPSEEK_API_KEY"
+load_env_var "GLM_API_KEY"
+load_env_var "KIMI_API_KEY"
+load_env_var "BRAVE_API_KEY"
+
+# Debug: Show final environment before launching
+if [[ "$DEBUG_MODE" == "true" ]]; then
+    echo "Final environment check:"
+    echo "OLLAMA_API_KEY in env: ${OLLAMA_API_KEY:0:10}..."
+    echo "Environment passed to opencode:"
+    env | grep -E "(OLLAMA|OPENAI|ANTHROPIC|GITHUB|DEEPSEEK)" | sed 's/=.*/=***/'
+fi
+
+# Launch opencode with environment variables available
+exec /opt/homebrew/bin/opencode "$@"
