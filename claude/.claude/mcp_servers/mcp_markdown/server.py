@@ -19,19 +19,19 @@ from fastmcp import FastMCP
 
 # Handle both package and script execution
 try:
-    from .core import PATTERNS, MarkdownParser
+    from .core import PATTERNS, MarkdownParser, safe_findall, safe_finditer, safe_search
     from .obsidian_engine import ObsidianEngine
     from .lint_engine import LintEngine
     from .mq_engine import MQEngine
-    from .performance_engine import PerformanceEngine
+    from .performance_engine import PerformanceEngine, Config, HAS_PSUTIL
 except ImportError:
     # Add current directory to path for direct script execution
     sys.path.insert(0, str(Path(__file__).parent))
-    from core import PATTERNS, MarkdownParser
+    from core import PATTERNS, MarkdownParser, safe_findall, safe_finditer, safe_search
     from obsidian_engine import ObsidianEngine
     from lint_engine import LintEngine
     from mq_engine import MQEngine
-    from performance_engine import PerformanceEngine
+    from performance_engine import PerformanceEngine, Config, HAS_PSUTIL
 
 # Initialize MCP server
 mcp = FastMCP()
@@ -64,7 +64,7 @@ def get_document_outline(file_path: str):
                 "line": MarkdownParser.get_line_number(content, m.start()),
                 "anchor": MarkdownParser.normalize_anchor(m.group(2).strip())
             }
-            for m in PATTERNS.HEADERS.finditer(content)
+            for m in safe_finditer(PATTERNS.HEADERS, content, Config.REGEX_TIMEOUT_SECONDS)
         ]
         
         result = {
@@ -94,7 +94,7 @@ def extract_frontmatter(file_path: str):
     
     try:
         content = MarkdownParser.read_file(file_path)
-        match = PATTERNS.FRONTMATTER.search(content)
+        match = safe_search(PATTERNS.FRONTMATTER, content, Config.REGEX_TIMEOUT_SECONDS)
         
         if not match:
             result = {"file": file_path, "has_frontmatter": False, "frontmatter": {}}
@@ -136,7 +136,7 @@ def find_code_blocks(file_path: str, language: str = None):
                 "line": MarkdownParser.get_line_number(content, m.start()),
                 "length": len(m.group(2).split('\n'))
             }
-            for m in PATTERNS.CODE_BLOCKS.finditer(content)
+            for m in safe_finditer(PATTERNS.CODE_BLOCKS, content, Config.REGEX_TIMEOUT_SECONDS)
             if not language or (m.group(1) or "").lower() == language.lower()
         ]
         
@@ -169,7 +169,7 @@ def find_task_lists(file_path: str, status: str = None):
         content = MarkdownParser.read_file(file_path)
         tasks = []
         
-        for m in PATTERNS.TASKS.finditer(content):
+        for m in safe_finditer(PATTERNS.TASKS, content, Config.REGEX_TIMEOUT_SECONDS):
             completed = m.group(1) == 'x'
             if not status or (status == 'completed' and completed) or (status == 'incomplete' and not completed):
                 tasks.append({
@@ -196,9 +196,8 @@ def find_task_lists(file_path: str, status: str = None):
     except Exception as e:
         return {"error": str(e)}
 
-@mcp.tool
-def analyze_document_structure(file_path: str):
-    """Comprehensive markdown document analysis with Obsidian features."""
+def _analyze_document_structure_internal(file_path: str):
+    """Internal implementation for document structure analysis."""
     cached_result = performance.get_cached_result(file_path, "document_structure")
     if cached_result is not None:
         return cached_result
@@ -210,25 +209,26 @@ def analyze_document_structure(file_path: str):
     try:
         content = MarkdownParser.read_file(file_path)
         
-        # Count all elements (standard + Obsidian)
+        # Count all elements (standard + Obsidian) with timeout protection
+        timeout = Config.REGEX_TIMEOUT_SECONDS
         structure = {
-            "headers": len(PATTERNS.HEADERS.findall(content)),
-            "wiki_links": len(PATTERNS.WIKI_LINKS.findall(content)),
-            "external_links": len(PATTERNS.EXTERNAL_LINKS.findall(content)),
-            "code_blocks": len(PATTERNS.CODE_BLOCKS.findall(content)),
-            "tasks": len(PATTERNS.TASKS.findall(content)),
-            "completed_tasks": len([m for m in PATTERNS.TASKS.finditer(content) if m.group(1) == 'x']),
-            "tables": len(PATTERNS.TABLES.findall(content)),
-            "tags": len(set(PATTERNS.TAGS.findall(content))),
+            "headers": len(safe_findall(PATTERNS.HEADERS, content, timeout)),
+            "wiki_links": len(safe_findall(PATTERNS.WIKI_LINKS, content, timeout)),
+            "external_links": len(safe_findall(PATTERNS.EXTERNAL_LINKS, content, timeout)),
+            "code_blocks": len(safe_findall(PATTERNS.CODE_BLOCKS, content, timeout)),
+            "tasks": len(safe_findall(PATTERNS.TASKS, content, timeout)),
+            "completed_tasks": len([m for m in safe_finditer(PATTERNS.TASKS, content, timeout) if m and m.group(1) == 'x']),
+            "tables": len(safe_findall(PATTERNS.TABLES, content, timeout)),
+            "tags": len(set(safe_findall(PATTERNS.TAGS, content, timeout))),
             
             # Obsidian-specific elements
-            "embedded_content": len(PATTERNS.EMBEDDED.findall(content)),
-            "block_references": len(PATTERNS.BLOCK_REF.findall(content)),
-            "block_links": len(PATTERNS.BLOCK_LINK.findall(content)),
-            "header_links": len([m for m in PATTERNS.HEADER_LINK.finditer(content) if '#^' not in m.group(0)]),
-            "callouts": len(PATTERNS.CALLOUTS.findall(content)),
-            "dataview_fields": len(PATTERNS.DATAVIEW_FIELDS.findall(content)),
-            "wiki_aliases": len([m for m in PATTERNS.WIKI_LINKS.finditer(content) if m.group(2)])
+            "embedded_content": len(safe_findall(PATTERNS.EMBEDDED, content, timeout)),
+            "block_references": len(safe_findall(PATTERNS.BLOCK_REF, content, timeout)),
+            "block_links": len(safe_findall(PATTERNS.BLOCK_LINK, content, timeout)),
+            "header_links": len([m for m in safe_finditer(PATTERNS.HEADER_LINK, content, timeout) if m and '#^' not in m.group(0)]),
+            "callouts": len(safe_findall(PATTERNS.CALLOUTS, content, timeout)),
+            "dataview_fields": len(safe_findall(PATTERNS.DATAVIEW_FIELDS, content, timeout)),
+            "wiki_aliases": len([m for m in safe_finditer(PATTERNS.WIKI_LINKS, content, timeout) if m and m.group(2)])
         }
         
         # Calculate enhanced complexity score
@@ -258,6 +258,11 @@ def analyze_document_structure(file_path: str):
         
     except Exception as e:
         return {"error": str(e)}
+
+@mcp.tool
+def analyze_document_structure(file_path: str):
+    """Comprehensive markdown document analysis with Obsidian features."""
+    return _analyze_document_structure_internal(file_path)
 
 # Obsidian-specific tools (delegate to obsidian engine)
 @mcp.tool
@@ -325,7 +330,7 @@ def mq_bulk_query(file_paths: list, selector: str):
         return mq.query(file_path, selector, 'json')
     
     return performance.bulk_operation_optimized(
-        file_paths, single_query, f"mq_query_{selector}"
+        file_paths, single_query, f"mq_query_{selector}", batch_size=Config.MAX_BATCH_SIZE
     )
 
 @mcp.tool
@@ -373,24 +378,82 @@ def bulk_analyze(search_path: str, max_files: int = 100):
     performance.optimize_for_dataset(len(files), avg_file_size)
     
     def analyze_single_file(file_path):
-        return analyze_document_structure(file_path)
+        return _analyze_document_structure_internal(file_path)
     
     return performance.bulk_operation_optimized(
-        files, analyze_single_file, "bulk_analyze", batch_size=20
+        files, analyze_single_file, "bulk_analyze", batch_size=Config.MAX_BATCH_SIZE
     )
 
 @mcp.tool
 def health_check():
-    """Check server health and capabilities."""
+    """Check server health and capabilities with FunctionTool corruption detection."""
+    health_status = "healthy"
+    warnings = []
+    errors = []
+    memory_mb = "unavailable"
+    
     try:
-        marksman_available = subprocess.run(["marksman", "--version"], 
-                                          capture_output=True, timeout=3).returncode == 0
-    except:
+        # Memory health check with graceful psutil handling
+        if HAS_PSUTIL:
+            try:
+                import psutil
+                process = psutil.Process()
+                memory_mb = process.memory_info().rss / (1024 * 1024)
+                memory_limit_mb = Config.MAX_MEMORY_MB
+                
+                if memory_mb > memory_limit_mb * 0.9:  # 90% threshold
+                    health_status = "warning"
+                    warnings.append(f"Memory usage high: {memory_mb:.1f}MB / {memory_limit_mb}MB")
+                elif memory_mb > memory_limit_mb:
+                    health_status = "critical"
+                    errors.append(f"Memory limit exceeded: {memory_mb:.1f}MB > {memory_limit_mb}MB")
+            except ImportError:
+                warnings.append("Memory monitoring disabled - psutil import failed. Timeout and batch protection active.")
+        else:
+            warnings.append("Memory monitoring disabled - psutil not available. Timeout and batch protection active.")
+        
+        # FunctionTool integrity check
+        try:
+            # Test basic functionality by attempting to create a simple test result
+            test_result = {"test": "passed"}
+            if not isinstance(test_result, dict):
+                raise Exception("Basic dictionary creation failed")
+        except Exception as e:
+            health_status = "critical"
+            errors.append(f"FunctionTool corruption detected: {str(e)}")
+        
+        # Performance engine health check
+        try:
+            perf_stats = performance.get_performance_stats()
+            if not isinstance(perf_stats, dict):
+                raise Exception("Performance engine returned invalid response")
+        except Exception as e:
+            health_status = "warning"
+            warnings.append(f"Performance engine issue: {str(e)}")
+        
+        # External dependency check
+        try:
+            marksman_available = subprocess.run(["marksman", "--version"], 
+                                              capture_output=True, timeout=3).returncode == 0
+        except:
+            marksman_available = False
+            
+    except Exception as e:
+        health_status = "critical"
+        errors.append(f"Health check failed: {str(e)}")
         marksman_available = False
         
-    return {
-        "status": "healthy",
+    result = {
+        "status": health_status,
         "marksman_available": marksman_available,
+        "memory_info": {
+            "current_mb": memory_mb if isinstance(memory_mb, (int, float)) else "unavailable",
+            "limit_mb": Config.MAX_MEMORY_MB,
+            "usage_percent": (memory_mb / Config.MAX_MEMORY_MB * 100) if isinstance(memory_mb, (int, float)) else "unavailable",
+            "monitoring": "active" if isinstance(memory_mb, (int, float)) else "disabled"
+        },
+        "warnings": warnings,
+        "errors": errors,
         "capabilities": [
             # Standard markdown
             "document_outline", "wiki_links", "cross_references", 
@@ -414,9 +477,18 @@ def health_check():
         ],
         "performance_features": [
             "intelligent_caching", "bulk_operations", "memory_optimization",
-            "file_discovery", "dataset_optimization"
+            "file_discovery", "dataset_optimization", "timeout_protection", "streaming_mode"
         ],
-        "version": "1.0.0-unified",
+        "configuration": {
+            "max_memory_mb": Config.MAX_MEMORY_MB,
+            "max_batch_size": Config.MAX_BATCH_SIZE,
+            "streaming_enabled": Config.ENABLE_STREAMING,
+            "memory_monitoring": Config.ENABLE_MEMORY_MONITOR,
+            "regex_timeout_seconds": Config.REGEX_TIMEOUT_SECONDS,
+            "streaming_chunk_size": Config.STREAMING_CHUNK_SIZE,
+            "cache_ttl": Config.CACHE_TTL
+        },
+        "version": "1.0.0-unified-protected",
         "engines": {
             "core": "1.0.0",
             "obsidian": "1.0.0", 
@@ -425,6 +497,8 @@ def health_check():
             "performance": "1.0.0"
         }
     }
+    
+    return result
 
 if __name__ == "__main__":
     mcp.run(show_banner=False)

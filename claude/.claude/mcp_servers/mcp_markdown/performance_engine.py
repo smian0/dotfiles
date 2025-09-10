@@ -5,16 +5,37 @@ This module provides caching, bulk operations, and performance optimizations
 to address the performance penalties of process-based markdown tools.
 """
 
+import gc
 import hashlib
+import os
 import time
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Union, Any, Callable
 
+# Memory monitoring imports
+try:
+    import psutil
+    HAS_PSUTIL = True
+except ImportError:
+    HAS_PSUTIL = False
+    print("Warning: psutil not available. Memory monitoring disabled.")
+
 try:
     from .core import PATTERNS, MarkdownParser, MarkdownError
 except ImportError:
     from core import PATTERNS, MarkdownParser, MarkdownError
+
+
+class Config:
+    """Configuration for performance engine with memory protection."""
+    MAX_MEMORY_MB = int(os.environ.get('MCP_MAX_MEMORY_MB', '2048'))
+    MAX_BATCH_SIZE = int(os.environ.get('MCP_MAX_BATCH_SIZE', '100'))
+    ENABLE_STREAMING = os.environ.get('MCP_ENABLE_STREAMING', 'true').lower() == 'true'
+    CACHE_TTL = int(os.environ.get('MCP_CACHE_TTL', '3600'))
+    ENABLE_MEMORY_MONITOR = os.environ.get('MCP_ENABLE_MEMORY_MONITOR', 'true').lower() == 'true'
+    REGEX_TIMEOUT_SECONDS = int(os.environ.get('MCP_REGEX_TIMEOUT', '5'))
+    STREAMING_CHUNK_SIZE = int(os.environ.get('MCP_STREAMING_CHUNK_SIZE', '100'))
 
 
 class CacheEntry:
@@ -150,6 +171,28 @@ class PerformanceEngine:
         cache_hits = 0
         cache_misses = 0
         
+        # Memory protection - initialize monitoring
+        process = None
+        memory_limit_mb = Config.MAX_MEMORY_MB
+        
+        if HAS_PSUTIL and Config.ENABLE_MEMORY_MONITOR:
+            process = psutil.Process()
+            initial_memory = process.memory_info().rss / (1024 * 1024)  # MB
+            
+            if initial_memory > memory_limit_mb * 0.8:  # 80% threshold
+                return {
+                    "error": f"Memory usage {initial_memory:.1f}MB exceeds safety threshold ({memory_limit_mb * 0.8:.1f}MB)",
+                    "suggestion": "Reduce batch size or use streaming mode"
+                }
+        
+        # Adaptive batch sizing based on file count and memory constraints
+        if len(file_paths) > 100:
+            batch_size = min(batch_size, Config.MAX_BATCH_SIZE)
+        
+        # Enable streaming mode for very large datasets
+        if Config.ENABLE_STREAMING and len(file_paths) > Config.STREAMING_CHUNK_SIZE * 2:
+            return self._stream_bulk_operation(file_paths, operation_func, operation_name)
+        
         # Check for bulk cache hit
         files_hash = self._hash_file_list(file_paths)
         bulk_cache_key = f"{files_hash}_{operation_name}"
@@ -163,6 +206,23 @@ class PerformanceEngine:
         # Process files in batches for memory efficiency
         for i in range(0, len(file_paths), batch_size):
             batch = file_paths[i:i + batch_size]
+            
+            # Memory monitoring during processing
+            if HAS_PSUTIL and Config.ENABLE_MEMORY_MONITOR and i % (batch_size * 2) == 0:
+                current_memory = process.memory_info().rss / (1024 * 1024)
+                if current_memory > memory_limit_mb:
+                    # Force garbage collection and cache cleanup
+                    gc.collect()
+                    self._cleanup_expired_cache()
+                    
+                    # Check again after cleanup
+                    current_memory = process.memory_info().rss / (1024 * 1024)
+                    if current_memory > memory_limit_mb:
+                        return {
+                            "error": f"Memory limit exceeded: {current_memory:.1f}MB > {memory_limit_mb}MB",
+                            "processed_files": len(results),
+                            "suggestion": "Reduce batch size or increase memory limit"
+                        }
             
             for file_path in batch:
                 try:
@@ -226,6 +286,57 @@ class PerformanceEngine:
                 # Periodic cache cleanup during long operations
                 if i % (chunk_size * 10) == 0:
                     self._cleanup_expired_cache()
+    
+    def _stream_bulk_operation(self, file_paths: List[str], operation_func: Callable, 
+                             operation_name: str) -> Dict[str, Any]:
+        """Stream processing for large bulk operations with memory protection."""
+        results = {}
+        processed_count = 0
+        error_count = 0
+        
+        if HAS_PSUTIL and Config.ENABLE_MEMORY_MONITOR:
+            process = psutil.Process()
+            memory_limit_mb = Config.MAX_MEMORY_MB
+        
+        chunk_size = Config.STREAMING_CHUNK_SIZE
+        
+        for i in range(0, len(file_paths), chunk_size):
+            chunk = file_paths[i:i + chunk_size]
+            
+            # Memory check before each chunk
+            if HAS_PSUTIL and Config.ENABLE_MEMORY_MONITOR:
+                current_memory = process.memory_info().rss / (1024 * 1024)
+                if current_memory > memory_limit_mb * 0.9:  # 90% threshold for streaming
+                    gc.collect()
+                    self._cleanup_expired_cache()
+            
+            # Process chunk
+            for file_path in chunk:
+                try:
+                    # Try cache first
+                    cached_result = self.get_cached_result(file_path, operation_name)
+                    if cached_result is not None:
+                        results[file_path] = cached_result
+                    else:
+                        result = operation_func(file_path)
+                        results[file_path] = result
+                        self.cache_result(file_path, operation_name, result)
+                    
+                    processed_count += 1
+                    
+                except Exception as e:
+                    results[file_path] = {"error": str(e)}
+                    error_count += 1
+        
+        return {
+            "results": results,
+            "streaming_stats": {
+                "total_files": len(file_paths),
+                "processed": processed_count,
+                "errors": error_count,
+                "chunk_size": chunk_size
+            }
+        }
     
     def intelligent_file_discovery(self, search_path: str, pattern: str = "*.md", 
                                  max_size_mb: int = 100) -> List[str]:

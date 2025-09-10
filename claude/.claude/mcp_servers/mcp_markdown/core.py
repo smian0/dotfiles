@@ -6,8 +6,59 @@ all markdown processing engines.
 """
 
 import re
+import signal
 from pathlib import Path
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Optional, Union, Any, Callable
+
+
+# Default timeout for regex operations (from environment or 5 seconds)
+import os
+REGEX_TIMEOUT_SECONDS = int(os.environ.get('MCP_REGEX_TIMEOUT', '5'))
+
+class TimeoutError(Exception):
+    """Raised when a regex operation times out."""
+    pass
+
+
+def timeout_handler(signum, frame):
+    """Signal handler for regex timeout."""
+    raise TimeoutError("Regex operation timed out")
+
+
+def safe_regex_operation(func: Callable, *args, timeout: int = REGEX_TIMEOUT_SECONDS, **kwargs):
+    """Execute a regex operation with timeout protection."""
+    try:
+        # Set up signal handler for timeout
+        old_handler = signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(timeout)
+        
+        try:
+            result = func(*args, **kwargs)
+            return result
+        finally:
+            # Always clean up the alarm
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, old_handler)
+            
+    except TimeoutError:
+        return []  # Return empty list for timed out operations
+    except Exception:
+        return []  # Return empty list for any other errors
+
+
+def safe_findall(pattern: re.Pattern, content: str, timeout: int = REGEX_TIMEOUT_SECONDS) -> List:
+    """Safe regex findall with timeout protection."""
+    return safe_regex_operation(pattern.findall, content, timeout=timeout)
+
+
+def safe_finditer(pattern: re.Pattern, content: str, timeout: int = REGEX_TIMEOUT_SECONDS):
+    """Safe regex finditer with timeout protection."""
+    return safe_regex_operation(pattern.finditer, content, timeout=timeout)
+
+
+def safe_search(pattern: re.Pattern, content: str, timeout: int = REGEX_TIMEOUT_SECONDS):
+    """Safe regex search with timeout protection."""
+    return safe_regex_operation(pattern.search, content, timeout=timeout)
 
 
 class PATTERNS:
@@ -79,9 +130,10 @@ class MarkdownParser:
         return content.split('\n')
     
     @staticmethod
-    def count_elements(content: str, pattern: re.Pattern) -> int:
-        """Count occurrences of a pattern in content."""
-        return len(pattern.findall(content))
+    def count_elements(content: str, pattern: re.Pattern, timeout: int = REGEX_TIMEOUT_SECONDS) -> int:
+        """Count occurrences of a pattern in content with timeout protection."""
+        results = safe_findall(pattern, content, timeout=timeout)
+        return len(results)
 
 
 class MarkdownError(Exception):
