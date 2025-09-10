@@ -37,17 +37,14 @@ Desktop.ini
 # Password store (if accidentally placed here)
 .password-store/
 
-# Keep pass-store directory structure visible
-!pass-store/
-!pass-store/*/
-!pass-store/*/.gitkeep
+# Keep pass directory structure visible
+!pass/
+!pass/*/
+!pass/*/.gitkeep
 
-# Allow GPG files in pass-store (they're encrypted)
-!pass-store/**/*.gpg
-
-# GPG (but allow encrypted files in pass-store)
+# GPG (but allow encrypted files in pass)
 *.gpg
-!pass-store/**/*.gpg
+!pass/**/*.gpg
 *.asc
 secring.*
 *.key
