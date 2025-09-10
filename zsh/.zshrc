@@ -355,6 +355,11 @@ alias pgen='pass generate'
 alias pedit='pass edit'
 alias pgit='pass git'
 
+# Environment debugging aliases
+alias envdebug='env-debug'
+alias envsync='env-sync'
+alias envcheck='env-check'
+
 # Helper functions for common pass operations
 function papi() {
     if [[ $# -eq 0 ]]; then
@@ -398,6 +403,46 @@ fi
 # Helper function to check if command exists
 command_exists() {
     command -v "$1" >/dev/null 2>&1
+}
+
+# Environment debugging and synchronization
+function env-debug() {
+    if [[ -x "$HOME/dotfiles/scripts/env-debug.sh" ]]; then
+        "$HOME/dotfiles/scripts/env-debug.sh"
+    else
+        echo "env-debug.sh not found or not executable"
+    fi
+}
+
+function env-sync() {
+    echo "🔄 Syncing shell environment with system (launchctl)..."
+    local synced=0
+    
+    # Key environment variables to sync
+    local vars=("GITHUB_TOKEN" "OPENAI_API_KEY" "ANTHROPIC_API_KEY" "BRAVE_API_KEY" "OLLAMA_API_KEY" "DEEPSEEK_API_KEY" "GLM_API_KEY" "KIMI_API_KEY")
+    
+    for var in "${vars[@]}"; do
+        local system_val=$(launchctl getenv "$var" 2>/dev/null || echo "")
+        local shell_val=$(printenv "$var" 2>/dev/null || echo "")
+        
+        if [[ -n "$system_val" && "$system_val" != "$shell_val" ]]; then
+            export "$var"="$system_val"
+            echo "✓ Synced $var"
+            ((synced++))
+        fi
+    done
+    
+    if [[ $synced -eq 0 ]]; then
+        echo "✅ No sync needed - all variables match"
+    else
+        echo "✅ Synced $synced environment variables"
+    fi
+}
+
+function env-check() {
+    local var="${1:-GITHUB_TOKEN}"
+    echo "System (launchctl): $(launchctl getenv "$var" 2>/dev/null | head -c 20)..."
+    echo "Shell (current):    $(printenv "$var" 2>/dev/null | head -c 20)..."
 }
 
 # Extract various archive formats
@@ -768,6 +813,11 @@ function dotfiles_welcome() {
         echo "   mcps                    - Quick MCP setup (global servers)"
         echo "   mcpm                    - Interactive MCP extraction menu"
         echo "   mcp-status              - Show MCP configuration status"
+        echo ""
+        echo "🔍 Environment Debugging:"
+        echo "   envcheck                - Compare system vs shell environment"
+        echo "   envdebug                - Full environment diagnostic"
+        echo "   envsync                 - Sync shell to system values"
         echo ""
     fi
 }

@@ -1,166 +1,5 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
-
-## Agent Triggers
-### agents-md-manager
-Launch this subagent agents-md-manager when user mentions:
-- Creating/updating AGENTS.md files
-- Setting up agent configuration for directories
-- Adding/modifying agent rules
-- Configuring long-term memory for agents
-- Directory-specific agent behaviors
-
-## Scope Control
-- Execute EXACTLY what was requested - no more, no less
-- Stay focused on the specific task without expanding scope
-- Avoid unsolicited improvements or refactoring
-
-## File Operations
-### Priority Order - STRICTLY ENFORCE
-1. **ALWAYS EDIT** existing files first - scan for existing files that serve the same purpose
-2. **ANALYZE EXISTING** - before creating anything new, thoroughly check what already exists
-3. **UPDATE/EXTEND** existing test files rather than creating new test suites
-4. **CREATE** new files ONLY when:
-   - No existing file serves the same purpose
-   - Explicitly requested by user
-   - Completely different functionality/domain
-5. **NEVER** generate documentation (*.md, README) unless specifically requested
-
-### File Creation Rules
-- **Test Files**: Always extend existing test files unless testing completely unrelated functionality
-- **Configuration**: Update existing config files rather than creating new ones
-- **Scripts**: Extend existing scripts with new functions rather than new files
-- **Components**: Check for similar existing components to extend before creating new ones
-- **MANDATORY: NO MOCKS OR UNIT TESTS** - Never create mock objects, unit tests, or test files unless explicitly requested by user
-- **PREFER REAL TESTS** - When testing is appropriate, favor integration tests, e2e tests, or real system testing over mocks
-
-### README.md Content Guidelines
-When creating or updating README.md files:
-- **ONLY INCLUDE**: Permanent, architectural information that won't change frequently
-- **ESSENTIAL CONTENT**: Core purpose, key architecture, installation steps, basic usage
-- **EXCLUDE TRANSIENT INFO**: Current status, temporary notes, version-specific details, changelog items
-- **FOCUS ON PERMANENCE**: Information that will remain relevant for months/years
-- **AVOID**: Development notes, current todos, temporary configurations, ephemeral details
-
-### Temporary Files
-- When debugging a specific file: use same filename + `-debug` or `-temp` before extension (e.g., `user-service.js` → `user-service-debug.js`)
-- For general debug files: use descriptive names with `-debug` or `-temp` suffix
-
-### Automatic Cleanup - MANDATORY
-- **AFTER TASK COMPLETION**: Automatically remove all temporary files, debug files, and documentation created during task execution
-- **CLEANUP SCOPE**: Delete `-debug`, `-temp`, test documentation, and any files created solely for task completion
-- **PRESERVE**: Only keep files explicitly requested by user or essential to final solution
-
-## Response Behavior
-- Be direct and concise
-- Skip explanations unless asked
-- Assume user awareness of their own actions
-- Trust user intent without questioning
-- **ALWAYS use full paths from the project root** when referencing any files in responses
-- **USE file:// URLs for paths with spaces** to ensure clickability: `file:///path/with%20spaces/file.ext`
-
-## Output Constraints
-### ALWAYS Do
-- **READ EXISTING CODE** before making changes to understand context
-- **USE CONSISTENT NAMING** conventions throughout the project
-- **FOLLOW PROJECT PATTERNS** - match existing code style and architecture
-- **VALIDATE IMPORTS/DEPENDENCIES** - ensure all required modules are available
-- **TEST LOGIC MENTALLY** - walk through code execution path before finalizing
-- **PROVIDE WORKING SOLUTIONS** - code must be syntactically correct and functional
-- **PREFER REAL TESTING** - When testing is needed, use integration tests, e2e tests, or real system validation over mocks
-
-### NEVER Do
-- **BREAK EXISTING FUNCTIONALITY** - modifications must maintain backward compatibility
-- **INTRODUCE SECURITY VULNERABILITIES** - validate all inputs and handle errors
-- **CREATE CIRCULAR DEPENDENCIES** - check import chains and module relationships
-- **USE DEPRECATED FEATURES** - prefer modern, supported APIs and patterns
-- **IGNORE ERROR HANDLING** - anticipate and handle potential failure cases
-- **MAKE UNVERIFIED ASSUMPTIONS** - ask for clarification if requirements are unclear
-- **CREATE MOCKS OR UNIT TESTS** - Never generate mock objects, unit tests, or test files without explicit user request
-
-## Verification Protocol - MANDATORY
-### Before Finalizing ANY Response
-1. **VERIFY CODE SYNTAX** - Check all code for syntax errors and typos
-2. **TEST LOGIC** - Walk through the logic step-by-step to ensure it works
-3. **VALIDATE ASSUMPTIONS** - Question your own assumptions about how things work
-4. **CHECK FILE PATHS** - Verify all file paths and references are correct
-5. **CONFIRM COMPATIBILITY** - Ensure code works with existing codebase/dependencies
-
-### Self-Check: Syntax ✓ Logic ✓ Paths ✓ Dependencies ✓ Assumptions ✓
-
-### When Uncertain (< 90% confidence)
-- **STOP** and explicitly state uncertainty
-- **ASK** for clarification or additional context
-- **SUGGEST** testing steps for the user
-- **NEVER** present uncertain solutions as definitive
-
-## Problem-Solving Approach
-- Break down → Analyze patterns → Implement → Verify
-- < 90% confidence = STOP and ASK
-- State uncertainty explicitly, propose alternatives
-
-## Magic Keywords
-### *vtree Command
-When user types `*vtree`, generate comprehensive ASCII tree visualization.  
-**Format specifications**: `@formats/vtree-format.md`
-
-The system automatically detects hierarchical content and suggests simplified vtree diagrams. Use `*vtree` for detailed diagrams with performance metrics, security annotations, error handlers, and infrastructure details.
-
-## Code Guidelines
-- NO docstrings/comments/print unless requested
-- Match existing patterns
-- Clean, minimal, modern syntax
-
-## Performance & Tools
-### File Search Priority - MANDATORY
-- **ALWAYS use fd** over find for file searching - faster, respects .gitignore, better defaults
-- **Glob tool** for pattern matching (*.js, **/*.tsx) when available
-- **fd advantages**: Speed, .gitignore respect, colored output, parallel execution
-
-### Markdown Frontmatter Queries - MANDATORY
-- **ALWAYS use fd + jq** (with yq preprocessing) for markdown frontmatter queries - most powerful for complex operations
-- **Example**: `fd -e md -x sh -c 'yq -o=json eval .frontmatter {} | jq ".title"'` for title extraction
-- **jq advantages**: SQL-like capabilities, advanced functions (map, select, group_by), complex transformations, widely available
-
-### General Performance
-- Batch file operations when possible
-- Parallelize independent tasks
-- NO commits without explicit request
-- Include task IDs in commit messages when applicable
-
-## Markdown File Operations
-- **ALWAYS use Markdown MCP** for ANY markdown file operations (.md, .mdx, .markdown)
-- **Automatic activation**: Markdown activates when working with documentation
-- **Document navigation**: Use Markdown for headers, sections, wiki-links
-- **Content extraction**: Use Markdown for code blocks, frontmatter, task lists
-- **Never use Serena** for markdown files - Serena is for code symbols only
-
-### Markdown Linting - MANDATORY
-**Post-Edit Linting Protocol:**
-- **ALWAYS run `lint_document()`** after ANY markdown file modification
-- **Review all reported issues** - both auto-fixable and review-required
-- **Apply deterministic fixes** using `auto_fix_document()` for structural issues
-- **Address review-required issues** intelligently based on context
-- **Never skip linting** - markdown consistency is non-negotiable
-
-**Issue Handling Priority:**
-1. **Auto-fix first**: Headers, whitespace, task formatting
-2. **Review context-dependent**: Broken links, missing languages, frontmatter
-3. **Preserve semantic content**: Never alter meaning during formatting fixes
-4. **Validate corrections**: Ensure fixes maintain document integrity
-
-**Linting Triggers:**
-- Any Edit, MultiEdit, or Write operation on `.md`, `.mdx`, `.markdown` files
-- Document reorganization or structural changes
-- Header level modifications or content reordering
-- Wiki-link additions or cross-reference updates
-
-**Quality Gates:**
-- Zero auto-fixable issues before task completion
-- All review-required issues addressed or documented
-- Consistent markdown formatting across all project documentation
-- Preserved cross-references and internal link integrity
+# Dual System Configuration: SuperClaude + CCPM
+# Generated by SC-CCPM Integration
 
 # ═══════════════════════════════════════════════════
 # SuperClaude Framework Components
@@ -172,16 +11,45 @@ The system automatically detects hierarchical content and suggests simplified vt
 @RULES.md
 
 # Behavioral Modes
-@MODE_Brainstorming.md
-@MODE_Introspection.md
-@MODE_Orchestration.md
-@MODE_Task_Management.md
-@MODE_Token_Efficiency.md
+@modes/MODE_Brainstorming.md
+@modes/MODE_Introspection.md
+@modes/MODE_Orchestration.md
+@modes/MODE_Task_Management.md
+@modes/MODE_Token_Efficiency.md
+@modes/MODE_Business_Panel.md
 
 # MCP Documentation
-@MCP_Context7.md
-@MCP_Markdown.md
-@MCP_Playwright.md
-@MCP_Sequential.md
-@MCP_Serena.md
+@mcp/MCP_Context7.md
+@mcp/MCP_Magic.md
+@mcp/MCP_Morphllm.md
+@mcp/MCP_Playwright.md
+@mcp/MCP_Sequential.md
+@mcp/MCP_Serena.md
 
+# ═══════════════════════════════════════════════════
+# System Detection and Routing
+# ═══════════════════════════════════════════════════
+
+## Command Routing
+When user types a command, route as follows:
+- `/sc:*` → SuperClaude agent/command (full analysis mode)
+- `/pm:*` → CCPM agent/command (project management mode)
+- Unprefixed → Error with guidance to use proper prefix
+
+## Agent Resolution
+All agents are prefixed for safety:
+- `sc-*` → SuperClaude behavior (comprehensive analysis)
+- `pm-*` → CCPM behavior (efficient project management)
+
+## System Modes
+- **SuperClaude Mode**: Comprehensive analysis, multiple perspectives, deep exploration
+- **CCPM Mode**: Efficient execution, project management, streamlined workflows
+- **Hybrid Mode**: Intelligent routing based on task context
+
+# ═══════════════════════════════════════════════════
+# Installation Metadata
+# ═══════════════════════════════════════════════════
+
+Installation completed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+Integration method: Analysis-based combination
+Systems combined: SuperClaude Framework + Claude Code PM
