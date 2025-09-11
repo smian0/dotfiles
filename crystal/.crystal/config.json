@@ -13,7 +13,7 @@
     "notifyOnWaiting": true,
     "notifyOnComplete": true
   },
-  "claudeExecutablePath": "/Users/smian/.claude/local/claude",
+  "claudeExecutablePath": "/Users/smian/.npm-global/bin/claude",
   "autoCheckUpdates": true,
   "devMode": true
 }
