@@ -90,15 +90,15 @@ This repository includes an AI-powered GitHub bot that responds to commands in i
 
 | Agent | Trigger | Description |
 |-------|---------|-------------|
-| 🏗️ **uuild** | `/oc @build` | Build automation and deployment assistance |
-| 🎯 **general** | `/oc @general` | General-purpose AI assistance |
-| 📝 **markdown pro** | `/oc @markdown-pro` | Specialized markdown formatting and documentation |
-| 📰 **news** | `/oc @news` | Aggregates and summarizes latest news from multiple sources |
-| 📋 **plan** | `/oc @plan` | Strategic planning and project organization |
-| 🧠 **reasoning** | `/oc @reasoning` | Provides step-by-step reasoning for complex problems |
-| 🔍 **weusearch** | `/oc @websearch` | Searches the web and provides concise summaries |
-| 🛠️ **helper** | `/oc @helper` | General assistance and utility functions |
-| 👁️ **review** | `/oc @review` | Code review and analysis capabilities |
+| 🏗️ **Build** | `/oc @build` | Build automation and deployment assistance |
+| 🎯 **General** | `/oc @general` | General-purpose AI assistance |
+| 📝 **Markdown Pro** | `/oc @markdown-pro` | Specialized markdown formatting and documentation |
+| 📰 **News** | `/oc @news` | Aggregates and summarizes latest news from multiple sources |
+| 📋 **Plan** | `/oc @plan` | Strategic planning and project organization |
+| 🧠 **Reasoning** | `/oc @reasoning` | Provides step-by-step reasoning for complex problems |
+| 🔍 **Websearch** | `/oc @websearch` | Searches the web and provides concise summaries |
+| 🛠️ **Helper** | `/oc @helper` | General assistance and utility functions |
+| 👁️ **Review** | `/oc @review` | Code review and analysis capabilities |
 
 ### Usage Examples
 
