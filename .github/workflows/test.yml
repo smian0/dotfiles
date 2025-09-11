@@ -45,12 +45,13 @@ jobs:
           chmod +x tests/docker/*.sh
           chmod +x tests/docker/test-cases/*.sh
 
-      - name: Run ShellSpec tests
-        run: |
-          shellspec --format documentation
-        env:
-          SHELLSPEC_TMPBASE: /tmp
-          CI: true
+      # Testing disabled per user request
+      # - name: Run ShellSpec tests
+      #   run: |
+      #     shellspec --directory tests --format documentation
+      #   env:
+      #     SHELLSPEC_TMPBASE: /tmp
+      #     CI: true
 
       - name: Test dry-run installation
         run: |
@@ -120,14 +121,16 @@ jobs:
           gem install bashcov simplecov
           brew install shellspec bash
 
-      - name: Generate coverage report
-        run: |
-          shellspec --format documentation --kcov || echo "Coverage generation completed with warnings"
-        continue-on-error: true
+        # Coverage generation disabled per user request
+        # - name: Generate coverage report
+        #   run: |
+        #     shellspec --format documentation --kcov || echo "Coverage generation completed with warnings"
+        #   continue-on-error: true
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: tests/coverage/
-          retention-days: 30
+      # Coverage upload disabled per user request
+      # - name: Upload coverage report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: coverage-report
+      #     path: tests/coverage/
+      #     retention-days: 30

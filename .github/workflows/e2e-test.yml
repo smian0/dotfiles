@@ -195,17 +195,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run integration tests
-        run: |
-          # Run existing ShellSpec tests
-          shellspec --format documentation
+      # Testing disabled per user request
+      # - name: Run integration tests
+      #   run: |
+      #     # Run existing ShellSpec tests
+      #     shellspec --directory tests --format documentation
 
-      - name: Generate coverage report
-        run: |
-          shellspec --format documentation --kcov || echo "Coverage generation completed with warnings"
+      # Coverage generation disabled per user request
+      # - name: Generate coverage report
+      #   run: |
+      #     shellspec --directory tests --format documentation --kcov || echo "Coverage generation completed with warnings"
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          file: tests/coverage/coverage.xml
-          fail_ci_if_error: false
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v4
+      #   with:
+      #     file: tests/coverage/coverage.xml
+      #     fail_ci_if_error: false
