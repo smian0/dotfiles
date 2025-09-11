@@ -42,18 +42,29 @@ jobs:
           COMMENT_BODY: ${{ github.event.comment.body }}
         run: |
           echo "OpenCode version:"
-          opencode --version || true
+          opencode --version
           
           # Extract the command from the comment
           COMMAND=$(echo "$COMMENT_BODY" | grep -oE '(/oc |/opencode ).*' | sed 's/^\/[^ ]* //')
           echo "Command: $COMMAND"
           
-          # Try to run OpenCode with the command
-          opencode github run || echo "Direct run failed, trying alternative approach"
+          # Get response from OpenCode
+          echo "Getting AI response..."
+          RESPONSE=$(opencode run "$COMMAND" --model "$MODEL" 2>&1 || echo "Error: Could not get response")
           
-          # Alternative: Create a response manually
-          if [ $? -ne 0 ]; then
-            echo "Attempting alternative OpenCode execution..."
-            # You might need to adjust this based on OpenCode's CLI interface
-            opencode chat "$COMMAND" --model "$MODEL" || true
+          echo "Response: $RESPONSE"
+          
+          # Post response back to GitHub issue
+          if [ -n "$RESPONSE" ]; then
+            cat > comment.md << EOF
+          ### OpenCode Response
+          
+          $RESPONSE
+          
+          ---
+          *Powered by OpenCode with $MODEL*
+          EOF
+            gh issue comment "$ISSUE_NUMBER" --body-file comment.md
+          else
+            echo "No response generated"
           fi
