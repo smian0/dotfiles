@@ -19,9 +19,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run opencode  
-        uses: sst/opencode/github@github-v1.0.5
+      - name: Run opencode
+        uses: sst/opencode/github@latest
         env:
-          MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         with:
-          model: moonshot/kimi-k2
+          model: deepseek/deepseek-chat
