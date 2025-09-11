@@ -593,6 +593,13 @@ if command -v node >/dev/null 2>&1; then
     export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 fi
 
+# Pyenv configuration
+if command -v pyenv >/dev/null 2>&1; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init - zsh)"
+fi
+
 # Python configuration
 if command -v python3 >/dev/null 2>&1; then
     alias python='python3'
