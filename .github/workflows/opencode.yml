@@ -57,15 +57,47 @@ jobs:
           
           # Post response back to GitHub issue
           if [ -n "$RESPONSE" ]; then
+            # Get current timestamp
+            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            
             cat > comment.md << EOF
-          ### OpenCode Response
+          ## 🤖 OpenCode Response
+          
+          > **Query**: $COMMAND
+          
+          ### 💬 Answer
           
           $RESPONSE
           
           ---
-          *Powered by OpenCode with $MODEL*
+          
+          <details>
+          <summary>📊 Response Details</summary>
+          
+          - **Model**: \`$MODEL\` 
+          - **Timestamp**: $TIMESTAMP
+          - **Workflow Run**: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          - **Triggered by**: @${{ github.actor }}
+          
+          </details>
+          
+          ---
+          
+          <div align="center">
+          
+          ✨ **Powered by [OpenCode](https://opencode.ai) with Google Gemini** ✨
+          
+          </div>
           EOF
             gh issue comment "$ISSUE_NUMBER" --body-file comment.md
           else
-            echo "No response generated"
+            echo "❌ No response generated"
+            gh issue comment "$ISSUE_NUMBER" --body "## ❌ OpenCode Error
+          
+          Unable to generate a response for your query. Please check:
+          - The API key is configured correctly
+          - The model is available
+          - Your query is properly formatted
+          
+          **Debug Info**: Check [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
           fi
