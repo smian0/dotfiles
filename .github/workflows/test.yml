@@ -11,10 +11,6 @@ jobs:
   test:
     runs-on: macos-latest
 
-    strategy:
-      matrix:
-        os: [macos-13, macos-14] # Test on multiple macOS versions
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,8 +22,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # Install test dependencies
-          brew install shellspec bash stow gpg pass
+          # Install test dependencies  
+          brew install shellspec bash stow gnupg pass
 
           # Install Ruby for coverage (optional)
           # brew install ruby
@@ -62,7 +58,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.os }}
+          name: test-results-macos-latest
           path: |
             tests/test-environment/
             tests/coverage/
