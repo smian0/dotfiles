@@ -82,13 +82,38 @@ make test             # Run test suite
 **Want to contribute?** See [👨‍💻 Developer Workflow](docs/DEVELOPER-WORKFLOW.md)
 
 ## License
+## OpenCode GitHub Bot
 
-MIT License - see [LICENSE](LICENSE) file for details
+This repository includes an AI-powered GitHub bot that responds to commands in issue comments. Trigger it using `/oc` or `/opencode` in any issue or PR comment.
 
----
+### Available Agents
 
-> **✨ Pro Tip:** Use `make help` to discover all available commands and shortcuts
+| Agent | Trigger | Description |
+|-------|---------|-------------|
+| 🏗️ **uuild** | `/oc @build` | Build automation and deployment assistance |
+| 🎯 **general** | `/oc @general` | General-purpose AI assistance |
+| 📝 **markdown pro** | `/oc @markdown-pro` | Specialized markdown formatting and documentation |
+| 📰 **news** | `/oc @news` | Aggregates and summarizes latest news from multiple sources |
+| 📋 **plan** | `/oc @plan` | Strategic planning and project organization |
+| 🧠 **reasoning** | `/oc @reasoning` | Provides step-by-step reasoning for complex problems |
+| 🔍 **weusearch** | `/oc @websearch` | Searches the web and provides concise summaries |
+| 🛠️ **helper** | `/oc @helper` | General assistance and utility functions |
+| 👁️ **review** | `/oc @review` | Code review and analysis capabilities |
 
-_Last updated: 2025-01-27_
+### Usage Examples
 
+```bash
+# Get latest news
+/oc @news get latest tech news
 
+# Reasoning through a problem
+/oc @reasoning explain the halting problem
+
+# Search the web
+/oc @websearch latest AI developments
+
+# General query (no agent)
+/oc what is the capital of France?
+```
+
+## License

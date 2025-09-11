@@ -502,6 +502,38 @@ debug: ## Show debug information
 	@echo
 	@echo "File Permissions:"
 	@ls -la install*.sh scripts/*.sh 2>/dev/null | head -5
+# OpenCode Agents Documentation
+update-agents: ## Update README with latest OpenCode agents
+	@echo -e "$(GREEN)[INFO]$(NC) Updating OpenCode agents documentation..."
+	@if [ -f scripts/update-agents-readme.sh ]; then \
+		bash scripts/update-agents-readme.sh; \
+	else \
+		echo -e "$(RED)[ERROR]$(NC) Agent update script not found"; \
+		exit 1; \
+	fi
+	@if [ -f scripts/generate-agents-json.sh ]; then \
+		bash scripts/generate-agents-json.sh; \
+		echo -e "$(GREEN)[INFO]$(NC) Generated agents.json"; \
+	fi
+	@echo -e "$(GREEN)[INFO]$(NC) OpenCode agents documentation updated"
+
+agents-json: ## Generate agents.json file
+	@echo -e "$(GREEN)[INFO]$(NC) Generating agents.json..."
+	@if [ -f scripts/generate-agents-json.sh ]; then \
+		bash scripts/generate-agents-json.sh; \
+	else \
+		echo -e "$(RED)[ERROR]$(NC) JSON generation script not found"; \
+		exit 1; \
+	fi
+
+agents-html: ## Open agents HTML dashboard
+	@echo -e "$(GREEN)[INFO]$(NC) Opening agents dashboard..."
+	@if [ -f docs/agents.html ]; then \
+		open docs/agents.html 2>/dev/null || xdg-open docs/agents.html 2>/dev/null || echo "Please open docs/agents.html in your browser"; \
+	else \
+		echo -e "$(YELLOW)[WARN]$(NC) Agents dashboard not found at docs/agents.html"; \
+	fi
+
 # Cursor Project Management
 cursor-life:
 	@echo "Opening shoaib-life-hub in Cursor..."

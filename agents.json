@@ -1,0 +1,54 @@
+{
+  "updated": "2025-09-11T20:52:19Z",
+  "agents": [
+    {
+      "name": "build",
+      "emoji": "🏗️",
+      "trigger": "/oc @build",
+      "description": "Build automation and deployment assistance"
+    }
+,
+    {
+      "name": "general",
+      "emoji": "🎯",
+      "trigger": "/oc @general",
+      "description": "General-purpose AI assistance"
+    }
+,
+    {
+      "name": "markdown-pro",
+      "emoji": "📝",
+      "trigger": "/oc @markdown-pro",
+      "description": "Specialized markdown formatting and documentation"
+    }
+,
+    {
+      "name": "news",
+      "emoji": "📰",
+      "trigger": "/oc @news",
+      "description": "Aggregates and summarizes latest news from multiple sources"
+    }
+,
+    {
+      "name": "plan",
+      "emoji": "📋",
+      "trigger": "/oc @plan",
+      "description": "Strategic planning and project organization"
+    }
+,
+    {
+      "name": "reasoning",
+      "emoji": "🧠",
+      "trigger": "/oc @reasoning",
+      "description": "Provides step-by-step reasoning for complex problems"
+    }
+,
+    {
+      "name": "websearch",
+      "emoji": "🔍",
+      "trigger": "/oc @websearch",
+      "description": "Searches the web and provides concise summaries"
+    }
+
+  ]
+}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenCode Agents - Dynamic Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .agent-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .agent-emoji {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .agent-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .agent-trigger {
+            background: #f0f0f0;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+        .agent-description {
+            color: #666;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .last-updated {
+            text-align: center;
+            color: white;
+            opacity: 0.9;
+            margin-top: 2rem;
+        }
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 OpenCode Agents Dashboard</h1>
+        <div id="agents-container" class="agents-grid">
+            <div class="loading">Loading agents...</div>
+        </div>
+        <div id="last-updated" class="last-updated"></div>
+    </div>
+
+    <script>
+        // This would normally fetch from agents.json
+        // For GitHub Pages, you'd fetch from the generated JSON file
+        const agents = [
+            {
+                name: "news",
+                emoji: "📰",
+                trigger: "/oc @news",
+                description: "Aggregates and summarizes latest news from multiple sources"
+            },
+            {
+                name: "reasoning",
+                emoji: "🧠",
+                trigger: "/oc @reasoning",
+                description: "Provides step-by-step reasoning for complex problems"
+            },
+            {
+                name: "websearch",
+                emoji: "🔍",
+                trigger: "/oc @websearch",
+                description: "Searches the web and provides concise summaries"
+            },
+            {
+                name: "markdown-pro",
+                emoji: "📝",
+                trigger: "/oc @markdown-pro",
+                description: "Specialized markdown formatting and documentation"
+            },
+            {
+                name: "helper",
+                emoji: "🛠️",
+                trigger: "/oc @helper",
+                description: "General assistance and utility functions"
+            },
+            {
+                name: "review",
+                emoji: "👁️",
+                trigger: "/oc @review",
+                description: "Code review and analysis capabilities"
+            },
+            {
+                name: "plan",
+                emoji: "📋",
+                trigger: "/oc @plan",
+                description: "Strategic planning and project organization"
+            },
+            {
+                name: "build",
+                emoji: "🏗️",
+                trigger: "/oc @build",
+                description: "Build automation and deployment assistance"
+            },
+            {
+                name: "general",
+                emoji: "🎯",
+                trigger: "/oc @general",
+                description: "General-purpose AI assistance"
+            }
+        ];
+
+        function displayAgents(agentsList) {
+            const container = document.getElementById('agents-container');
+            container.innerHTML = '';
+            
+            agentsList.forEach(agent => {
+                const card = document.createElement('div');
+                card.className = 'agent-card';
+                card.innerHTML = `
+                    <div class="agent-emoji">${agent.emoji}</div>
+                    <div class="agent-name">${agent.name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                    <div class="agent-trigger">${agent.trigger}</div>
+                    <div class="agent-description">${agent.description}</div>
+                `;
+                card.onclick = () => {
+                    navigator.clipboard.writeText(agent.trigger);
+                    alert(`Copied "${agent.trigger}" to clipboard!`);
+                };
+                container.appendChild(card);
+            });
+            
+            document.getElementById('last-updated').textContent = 
+                `Last updated: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`;
+        }
+
+        // Try to fetch dynamic data
+        fetch('../agents.json')
+            .then(response => response.json())
+            .then(data => {
+                displayAgents(data.agents);
+                document.getElementById('last-updated').textContent = 
+                    `Last updated: ${new Date(data.updated).toLocaleDateString()} at ${new Date(data.updated).toLocaleTimeString()}`;
+            })
+            .catch(error => {
+                console.log('Using static data:', error);
+                // Fall back to static data
+                displayAgents(agents);
+            });
+    </script>
+</body>
+</html>

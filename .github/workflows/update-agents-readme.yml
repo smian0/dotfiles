@@ -1,0 +1,131 @@
+name: Update Agents in README
+
+on:
+  push:
+    paths:
+      - 'opencode/.config/opencode/opencode.json'
+      - 'opencode/.config/opencode/agent/*.md'
+      - '.github/workflows/update-agents-readme.yml'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+      
+      - name: Extract and Update Agents in README
+        run: |
+          # Make scripts executable
+          chmod +x scripts/update-agents-readme.sh scripts/generate-agents-json.sh || true
+          
+          # Run the update script if it exists
+          if [ -f scripts/update-agents-readme.sh ]; then
+            cd /home/runner/work/dotfiles/dotfiles
+            HOME=/home/runner/work/dotfiles/dotfiles bash scripts/update-agents-readme.sh
+          else
+            echo "Update script not found, using inline version"
+            
+            # Extract agents from opencode.json
+            AGENTS=$(jq -r '.agent | keys[]' opencode/.config/opencode/opencode.json | sort)
+            
+            # Create temporary file for agents section
+            TEMP_FILE=$(mktemp)
+            
+            echo "## OpenCode GitHub Bot" > "$TEMP_FILE"
+            echo "" >> "$TEMP_FILE"
+            echo "This repository includes an AI-powered GitHub bot that responds to commands in issue comments. Trigger it using \`/oc\` or \`/opencode\` in any issue or PR comment." >> "$TEMP_FILE"
+            echo "" >> "$TEMP_FILE"
+            echo "### Available Agents" >> "$TEMP_FILE"
+            echo "" >> "$TEMP_FILE"
+            echo "| Agent | Trigger | Description |" >> "$TEMP_FILE"
+            echo "|-------|---------|-------------|" >> "$TEMP_FILE"
+            
+            for agent in $AGENTS; do
+              case "$agent" in
+                news) emoji="📰"; desc="Aggregates and summarizes latest news from multiple sources" ;;
+                reasoning) emoji="🧠"; desc="Provides step-by-step reasoning for complex problems" ;;
+                websearch) emoji="🔍"; desc="Searches the web and provides concise summaries" ;;
+                markdown-pro) emoji="📝"; desc="Specialized markdown formatting and documentation" ;;
+                helper) emoji="🛠️"; desc="General assistance and utility functions" ;;
+                review) emoji="👁️"; desc="Code review and analysis capabilities" ;;
+                plan) emoji="📋"; desc="Strategic planning and project organization" ;;
+                build) emoji="🏗️"; desc="Build automation and deployment assistance" ;;
+                general) emoji="🎯"; desc="General-purpose AI assistance" ;;
+                *) emoji="🤖"; desc="Custom agent for specialized tasks" ;;
+              esac
+              
+              agent_display=$(echo "$agent" | sed 's/-/ /g' | sed 's/\b\(.\)/\u\1/g')
+              echo "| $emoji **${agent_display}** | \`/oc @${agent}\` | ${desc} |" >> "$TEMP_FILE"
+            done
+            
+            echo "" >> "$TEMP_FILE"
+            echo "### Usage Examples" >> "$TEMP_FILE"
+            echo "" >> "$TEMP_FILE"
+            echo '```bash' >> "$TEMP_FILE"
+            echo "# Get latest news" >> "$TEMP_FILE"
+            echo "/oc @news get latest tech news" >> "$TEMP_FILE"
+            echo "" >> "$TEMP_FILE"
+            echo "# Reasoning through a problem" >> "$TEMP_FILE"
+            echo "/oc @reasoning explain the halting problem" >> "$TEMP_FILE"
+            echo "" >> "$TEMP_FILE"
+            echo "# Search the web" >> "$TEMP_FILE"
+            echo "/oc @websearch latest AI developments" >> "$TEMP_FILE"
+            echo "" >> "$TEMP_FILE"
+            echo "# General query (no agent)" >> "$TEMP_FILE"
+            echo "/oc what is the capital of France?" >> "$TEMP_FILE"
+            echo '```' >> "$TEMP_FILE"
+            
+            # Update README - remove old section and insert new
+            awk '
+            BEGIN { in_section = 0; printed = 0 }
+            /^## OpenCode GitHub Bot/ { in_section = 1; next }
+            /^## / && in_section { in_section = 0 }
+            !in_section && !printed { print }
+            /^## License/ && !printed { 
+                while ((getline line < "'"$TEMP_FILE"'") > 0) {
+                    print line
+                }
+                print ""
+                printed = 1
+                print
+            }
+            ' README.md > README.tmp
+            
+            mv README.tmp README.md
+            rm -f "$TEMP_FILE"
+          fi
+          
+          # Generate agents.json
+          if [ -f scripts/generate-agents-json.sh ]; then
+            HOME=/home/runner/work/dotfiles/dotfiles bash scripts/generate-agents-json.sh
+          fi
+      
+      - name: Check for changes
+        id: verify
+        run: |
+          if [[ -n $(git status -s) ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push if changed
+        if: steps.verify.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add README.md agents.json || true
+          git commit -m "🤖 Auto-update OpenCode agents in README"
+          git push
