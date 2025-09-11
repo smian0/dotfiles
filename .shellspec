@@ -1,5 +1,4 @@
 --require spec_helper
---directory tests
 --pattern "**/*_spec.sh"
 --jobs 4
 --shell bash

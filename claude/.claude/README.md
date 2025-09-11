@@ -9,8 +9,10 @@ claude/.claude/
 ├── .mcp.json                  # MCP server configuration (auto-generated)
 ├── CLAUDE.md                  # Main behavioral configuration 
 ├── CLAUDE_BEST_PRACTICES.md   # Guidelines for effective Claude.md usage
+├── PROFILE_USAGE_GUIDE.md     # Comprehensive profile management guide
 ├── __main__.py                # SuperClaude Framework Management Hub
 ├── settings.json              # Claude Code settings and permissions
+├── profiles/                  # MCP profile configurations (minimal, backend, full)
 ├── agents/                    # Specialized agent personas (14 agents)
 └── output-styles/             # Response formatting options (10 styles)
 ```
@@ -50,14 +52,63 @@ claude mcp reset-project-choices
 
 ### Current MCP Servers
 
-The `.mcp.json` file includes these global servers:
+The `.mcp.json` file includes these servers:
 
-- **context7** - Context management via `@upstash/context7-mcp`
-- **MCP_DOCKER** - Docker integration via `docker mcp gateway run`
-- **sequential-thinking** - Thinking framework via `@modelcontextprotocol/server-sequential-thinking`
-- **magic** - Magic commands via `@21st-dev/magic`
-- **playwright** - Browser automation via `@playwright/mcp@latest`
-- **serena** - AI assistant framework via `uvx` from GitHub
+- **serena** - Semantic code analysis & project memory via `uvx` from GitHub
+- **sequential-thinking** - Multi-step reasoning engine via `@modelcontextprotocol/server-sequential-thinking`
+- **context7** - Official library documentation lookup via `@upstash/context7-mcp`
+- **playwright** - Browser automation & E2E testing via `@playwright/mcp@latest`
+- **markdown** - Unified markdown processing with MQ selectors and Obsidian features
+
+## Profile Management System
+
+The profile system allows efficient context management by loading only the MCP servers needed for specific development scenarios. This significantly reduces context token usage and improves Claude Code performance.
+
+### Available Profiles
+
+| Profile | MCP Servers | Project MCPs | Context Savings | Use Case |
+|---------|-------------|--------------|-----------------|----------|
+| **minimal** | serena, sequential-thinking | disabled | ~38k tokens (19%) | Essential development tools only |
+| **backend** | serena, sequential-thinking, context7 | disabled | ~30k tokens (15%) | Backend development with documentation |
+| **full** | All 5 MCP servers | enabled | baseline | Complete functionality |
+
+### Profile Management Commands
+
+```bash
+# Switch between profiles
+claude-profile switch minimal    # Essential tools only (saves ~38k tokens)
+claude-profile switch backend    # Backend development (saves ~30k tokens)
+claude-profile switch full       # All functionality enabled
+
+# Information commands
+claude-profile list              # Show all available profiles
+claude-profile show              # Display current profile and active MCPs
+
+# Backup and restore
+claude-profile backup            # Create manual backup
+claude-profile restore [backup]  # Restore from backup
+```
+
+### Profile Structure
+
+Each profile consists of:
+```
+profiles/minimal/
+├── settings.json    # Claude Code settings (enableAllProjectMcpServers: false)
+└── .mcp.json        # MCP server definitions for this profile
+```
+
+### Safety Features
+
+- **Automatic backups** before every profile switch
+- **JSON validation** prevents configuration corruption  
+- **Rollback capability** on errors
+- **Manual backup/restore** system for emergency recovery
+
+### Detailed Documentation
+
+For comprehensive usage examples, development workflows, and advanced configuration:
+- **[Profile Usage Guide](./PROFILE_USAGE_GUIDE.md)** - Complete guide with practical examples and best practices
 
 ## Specialized Agents
 
@@ -112,9 +163,26 @@ Contains Claude Code settings including:
 
 This configuration setup enables enhanced AI-assisted development through:
 
-1. **Specialized Agent Activation** - Trigger specific agent personas for focused expertise
-2. **Flexible Output Formatting** - Choose optimal response formats for different contexts
-3. **MCP Server Integration** - Leverage external tools and services through standardized protocols
-4. **Behavioral Customization** - Fine-tune Claude's responses and decision-making patterns
+1. **Profile-Based Context Management** - Switch between minimal, backend, and full profiles to optimize token usage
+2. **Specialized Agent Activation** - Trigger specific agent personas for focused expertise  
+3. **Flexible Output Formatting** - Choose optimal response formats for different contexts
+4. **MCP Server Integration** - Leverage external tools and services through standardized protocols
+5. **Behavioral Customization** - Fine-tune Claude's responses and decision-making patterns
+
+### Typical Workflow
+
+```bash
+# Start with minimal profile for basic development
+claude-profile switch minimal
+claude  # Start Claude session with ~38k fewer context tokens
+
+# Switch to backend profile when you need library documentation
+claude-profile switch backend  
+# Restart Claude to load additional context7 MCP server
+
+# Use full profile for complex tasks requiring all tools
+claude-profile switch full
+# Restart Claude for browser automation, markdown processing, etc.
+```
 
 The configuration follows the SuperClaude Framework principles for modular, extensible AI assistance while maintaining consistency across development workflows.

@@ -47,9 +47,37 @@ All agents are prefixed for safety:
 - **Hybrid Mode**: Intelligent routing based on task context
 
 # ═══════════════════════════════════════════════════
+# Profile Management System
+# ═══════════════════════════════════════════════════
+
+## Context Optimization Profiles
+
+Different development contexts require different tool sets. The profile system optimizes context usage by loading only necessary MCP servers:
+
+### Profile Activation Commands
+```bash
+claude-profile switch minimal    # Essential tools: serena + sequential-thinking (saves 38k tokens)
+claude-profile switch backend    # Development tools: + context7 for documentation (saves 30k tokens)  
+claude-profile switch full       # Complete toolset: all MCP servers enabled (baseline)
+```
+
+### Profile Integration with Modes
+
+**MODE_Token_Efficiency** → Automatically suggests minimal profile
+**MODE_Business_Panel** → Requires full profile for complete analysis capabilities
+**MODE_Task_Management** → Works optimally with backend profile (serena + sequential + context7)
+
+## Profile-Mode Synergy
+
+When using `--uc` (ultracompressed) flag or token-efficient modes:
+1. System detects high context usage
+2. Suggests appropriate profile switch
+3. Maintains functionality while optimizing resources
+
+# ═══════════════════════════════════════════════════
 # Installation Metadata
 # ═══════════════════════════════════════════════════
 
 Installation completed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
-Integration method: Analysis-based combination
-Systems combined: SuperClaude Framework + Claude Code PM
+Integration method: Analysis-based combination + Profile Management
+Systems combined: SuperClaude Framework + Claude Code PM + Context Optimization

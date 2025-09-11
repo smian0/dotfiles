@@ -1,0 +1,328 @@
+#!/bin/bash
+#
+# claude-profile - Switch between Claude Code MCP profiles
+#
+# Usage:
+#   claude-profile switch <profile>   # Switch to profile
+#   claude-profile show               # Display current profile
+#   claude-profile list               # List available profiles
+#   claude-profile backup             # Manual backup of ~/.claude.json
+#   claude-profile restore [backup]   # Restore from backup
+#
+
+set -e
+
+# Configuration
+PROFILES_DIR="$HOME/dotfiles/claude/.claude/profiles"
+CLAUDE_CONFIG="$HOME/.claude.json"
+SETTINGS_FILE="$HOME/dotfiles/claude/.claude/settings.json"
+CURRENT_PROFILE_FILE="$HOME/.claude/.current-profile"
+BACKUP_DIR="$HOME/.claude/backups"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Logging function
+log() {
+    local level="$1"
+    shift
+    case "$level" in
+        "INFO")  echo -e "${GREEN}[INFO]${NC} $*" ;;
+        "WARN")  echo -e "${YELLOW}[WARN]${NC} $*" ;;
+        "ERROR") echo -e "${RED}[ERROR]${NC} $*" >&2 ;;
+        "DEBUG") echo -e "${BLUE}[DEBUG]${NC} $*" ;;
+    esac
+}
+
+# Check dependencies
+check_dependencies() {
+    if ! command -v jq &> /dev/null; then
+        log "ERROR" "jq is required but not installed. Install with: brew install jq"
+        exit 1
+    fi
+}
+
+# Create backup directory if it doesn't exist
+init_backup_dir() {
+    mkdir -p "$BACKUP_DIR"
+}
+
+# Validate JSON file
+validate_json() {
+    local file="$1"
+    if ! jq empty "$file" 2>/dev/null; then
+        log "ERROR" "Invalid JSON in file: $file"
+        return 1
+    fi
+}
+
+# Create backup of current configuration
+create_backup() {
+    local backup_name="${1:-$(date +%Y%m%d_%H%M%S)}"
+    local backup_file="$BACKUP_DIR/claude-${backup_name}.json"
+    
+    log "INFO" "Creating backup: $backup_file"
+    cp "$CLAUDE_CONFIG" "$backup_file"
+    
+    # Also backup current profile info if it exists
+    if [[ -f "$CURRENT_PROFILE_FILE" ]]; then
+        echo "$(cat "$CURRENT_PROFILE_FILE")" > "$backup_file.profile"
+    fi
+    
+    echo "$backup_file"
+}
+
+# List available profiles
+list_profiles() {
+    log "INFO" "Available profiles:"
+    for profile_dir in "$PROFILES_DIR"/*; do
+        if [[ -d "$profile_dir" ]]; then
+            local profile_name=$(basename "$profile_dir")
+            local mcp_count=$(jq 'keys | length' "$profile_dir/.mcp.json" 2>/dev/null || echo "0")
+            local project_mcps=$(jq -r '.enableAllProjectMcpServers' "$profile_dir/settings.json" 2>/dev/null || echo "unknown")
+            
+            echo "  • $profile_name ($mcp_count MCPs, project MCPs: $project_mcps)"
+        fi
+    done
+}
+
+# Show current profile
+show_current_profile() {
+    if [[ -f "$CURRENT_PROFILE_FILE" ]]; then
+        local current=$(cat "$CURRENT_PROFILE_FILE")
+        log "INFO" "Current profile: $current"
+        
+        # Show active MCPs
+        local active_mcps=$(jq -r '.mcpServers | keys[]' "$CLAUDE_CONFIG" 2>/dev/null | wc -l | tr -d ' ')
+        local project_mcps=$(jq -r '.enableAllProjectMcpServers' "$SETTINGS_FILE" 2>/dev/null)
+        
+        echo "  Active MCPs: $active_mcps"
+        echo "  Project MCPs enabled: $project_mcps"
+        
+        # Show MCP list
+        echo "  MCP servers:"
+        jq -r '.mcpServers | keys[]' "$CLAUDE_CONFIG" 2>/dev/null | sed 's/^/    • /' || echo "    (none)"
+    else
+        log "WARN" "No current profile recorded. Run 'claude-profile switch <profile>' to set one."
+    fi
+}
+
+# Switch to a profile
+switch_profile() {
+    local profile="$1"
+    local profile_dir="$PROFILES_DIR/$profile"
+    
+    # Validate profile exists
+    if [[ ! -d "$profile_dir" ]]; then
+        log "ERROR" "Profile '$profile' does not exist."
+        log "INFO" "Available profiles:"
+        list_profiles
+        exit 1
+    fi
+    
+    # Validate profile files
+    if [[ ! -f "$profile_dir/settings.json" ]] || [[ ! -f "$profile_dir/.mcp.json" ]]; then
+        log "ERROR" "Profile '$profile' is incomplete. Missing settings.json or .mcp.json"
+        exit 1
+    fi
+    
+    # Validate JSON files
+    validate_json "$profile_dir/settings.json" || exit 1
+    validate_json "$profile_dir/.mcp.json" || exit 1
+    
+    log "INFO" "Switching to profile: $profile"
+    
+    # Create backup before making changes
+    local backup_file=$(create_backup "pre-switch-$profile")
+    
+    # Update ~/.claude.json with new MCP servers
+    log "INFO" "Updating MCP servers in $CLAUDE_CONFIG"
+    local temp_file=$(mktemp)
+    jq --slurpfile mcp "$profile_dir/.mcp.json" '.mcpServers = $mcp[0]' "$CLAUDE_CONFIG" > "$temp_file"
+    
+    # Validate the result
+    if validate_json "$temp_file"; then
+        mv "$temp_file" "$CLAUDE_CONFIG"
+        log "INFO" "Successfully updated MCP servers"
+    else
+        rm -f "$temp_file"
+        log "ERROR" "Generated invalid JSON. Restoring from backup."
+        cp "$backup_file" "$CLAUDE_CONFIG"
+        exit 1
+    fi
+    
+    # Update settings.json symlink
+    log "INFO" "Updating settings.json"
+    rm -f "$SETTINGS_FILE"
+    ln -sf "profiles/$profile/settings.json" "$SETTINGS_FILE"
+    
+    # Record current profile
+    echo "$profile" > "$CURRENT_PROFILE_FILE"
+    
+    log "INFO" "Successfully switched to profile: $profile"
+    
+    # Show what changed
+    local mcp_count=$(jq 'keys | length' "$profile_dir/.mcp.json")
+    local project_mcps=$(jq -r '.enableAllProjectMcpServers' "$profile_dir/settings.json")
+    echo "  • $mcp_count MCP servers loaded"
+    echo "  • Project MCPs: $project_mcps"
+    
+    log "INFO" "Restart any running Claude Code sessions to apply changes"
+}
+
+# List available backups
+list_backups() {
+    log "INFO" "Available backups:"
+    if [[ -d "$BACKUP_DIR" ]] && [[ -n "$(ls -A "$BACKUP_DIR" 2>/dev/null)" ]]; then
+        ls -lt "$BACKUP_DIR"/claude-*.json | head -10 | while read -r line; do
+            local file=$(echo "$line" | awk '{print $9}')
+            local basename=$(basename "$file" .json)
+            local profile_file="$file.profile"
+            local profile_info=""
+            if [[ -f "$profile_file" ]]; then
+                profile_info=" ($(cat "$profile_file"))"
+            fi
+            echo "  • $basename$profile_info"
+        done
+    else
+        echo "  No backups found"
+    fi
+}
+
+# Restore from backup
+restore_backup() {
+    local backup_name="$1"
+    
+    if [[ -z "$backup_name" ]]; then
+        log "INFO" "No backup specified. Available backups:"
+        list_backups
+        exit 0
+    fi
+    
+    local backup_file="$BACKUP_DIR/claude-$backup_name.json"
+    
+    if [[ ! -f "$backup_file" ]]; then
+        log "ERROR" "Backup not found: $backup_file"
+        list_backups
+        exit 1
+    fi
+    
+    # Validate backup file
+    validate_json "$backup_file" || exit 1
+    
+    log "INFO" "Restoring from backup: $backup_name"
+    
+    # Create backup of current state before restoring
+    create_backup "pre-restore-$(date +%H%M%S)"
+    
+    # Restore the backup
+    cp "$backup_file" "$CLAUDE_CONFIG"
+    
+    # Restore profile info if available
+    local profile_file="$backup_file.profile"
+    if [[ -f "$profile_file" ]]; then
+        cp "$profile_file" "$CURRENT_PROFILE_FILE"
+        local restored_profile=$(cat "$CURRENT_PROFILE_FILE")
+        log "INFO" "Restored profile: $restored_profile"
+        
+        # Update settings.json symlink if profile exists
+        if [[ -d "$PROFILES_DIR/$restored_profile" ]]; then
+            rm -f "$SETTINGS_FILE"
+            ln -sf "profiles/$restored_profile/settings.json" "$SETTINGS_FILE"
+        fi
+    else
+        rm -f "$CURRENT_PROFILE_FILE"
+        log "WARN" "No profile information in backup"
+    fi
+    
+    log "INFO" "Successfully restored from backup: $backup_name"
+    log "INFO" "Restart any running Claude Code sessions to apply changes"
+}
+
+# Manual backup
+manual_backup() {
+    local backup_file=$(create_backup)
+    log "INFO" "Backup created: $(basename "$backup_file")"
+}
+
+# Usage information
+usage() {
+    cat << EOF
+Claude Profile Management
+
+USAGE:
+    claude-profile <command> [arguments]
+
+COMMANDS:
+    switch <profile>     Switch to specified profile
+    show                 Display current profile information
+    list                 List all available profiles
+    backup               Create manual backup of current configuration
+    restore [backup]     Restore from backup (lists backups if none specified)
+    help                 Show this help message
+
+PROFILES:
+    minimal     Essential MCPs only (serena, sequential-thinking)
+    backend     Development MCPs (serena, sequential-thinking, context7)  
+    full        All MCPs enabled
+
+EXAMPLES:
+    claude-profile list                    # List available profiles
+    claude-profile switch minimal          # Switch to minimal profile
+    claude-profile show                    # Show current profile
+    claude-profile backup                  # Create backup
+    claude-profile restore 20240911_143022 # Restore specific backup
+
+SAFETY:
+    • Automatic backups before every switch
+    • JSON validation before applying changes  
+    • Rollback on errors
+    • Manual backup/restore commands
+
+EOF
+}
+
+# Main function
+main() {
+    check_dependencies
+    init_backup_dir
+    
+    case "${1:-help}" in
+        "switch")
+            if [[ -z "$2" ]]; then
+                log "ERROR" "Profile name required"
+                echo "Usage: claude-profile switch <profile>"
+                list_profiles
+                exit 1
+            fi
+            switch_profile "$2"
+            ;;
+        "show"|"current")
+            show_current_profile
+            ;;
+        "list"|"ls")
+            list_profiles
+            ;;
+        "backup")
+            manual_backup
+            ;;
+        "restore")
+            restore_backup "$2"
+            ;;
+        "help"|"-h"|"--help")
+            usage
+            ;;
+        *)
+            log "ERROR" "Unknown command: $1"
+            usage
+            exit 1
+            ;;
+    esac
+}
+
+# Run main function with all arguments
+main "$@"
