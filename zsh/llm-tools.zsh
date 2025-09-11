@@ -7,7 +7,7 @@
 
 
 # Remove any old aliases that might interfere and set correct ones
-unalias kimi glm deep claude kimic glmc deepc claudec 2>/dev/null || true
+unalias kimi glm deep claude 2>/dev/null || true
 
 # Set up direct aliases to the LLM tools
 alias kimi='~/dotfiles/bin/kimi'
@@ -25,6 +25,12 @@ alias glmd="~/dotfiles/bin/glm --dangerously-skip-permissions"
 alias glmr="~/dotfiles/bin/glm --dangerously-skip-permissions --resume"
 alias deepd="~/dotfiles/bin/deep --dangerously-skip-permissions"
 alias deepr="~/dotfiles/bin/deep --dangerously-skip-permissions --resume"
+
+# LLM tools with --dangerously-skip-permissions --continue
+alias kimic="~/dotfiles/bin/kimi --dangerously-skip-permissions --continue"
+alias glmc="~/dotfiles/bin/glm --dangerously-skip-permissions --continue"
+alias deepc="~/dotfiles/bin/deep --dangerously-skip-permissions --continue"
+alias claudec="claude --dangerously-skip-permissions --continue"
 
 
 
