@@ -37,4 +37,12 @@ if [[ "$DEBUG_MODE" == "true" ]]; then
 fi
 
 # Launch opencode with environment variables available
-exec /opt/homebrew/bin/opencode "$@"
+# Try to find opencode in PATH first, fallback to known locations
+if command -v opencode >/dev/null 2>&1; then
+    exec "$(command -v opencode)" "$@"
+elif [[ -x "/Users/smian/.npm-global/bin/opencode" ]]; then
+    exec /Users/smian/.npm-global/bin/opencode "$@"
+else
+    echo "Error: opencode not found in PATH or expected locations" >&2
+    exit 1
+fi
