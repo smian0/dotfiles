@@ -48,9 +48,9 @@ jobs:
           COMMAND=$(echo "$COMMENT_BODY" | grep -oE '(/oc |/opencode ).*' | sed 's/^\/[^ ]* //')
           echo "Command: $COMMAND"
           
-          # Get response from OpenCode
+          # Get response from OpenCode and clean ANSI codes
           echo "Getting AI response..."
-          RESPONSE=$(opencode run "$COMMAND" --model "$MODEL" 2>&1 || echo "Error: Could not get response")
+          RESPONSE=$(opencode run "$COMMAND" --model "$MODEL" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' || echo "Error: Could not get response")
           
           echo "Response: $RESPONSE"
           
