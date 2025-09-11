@@ -1,0 +1,38 @@
+[
+  // Zed Keymap Configuration
+  // Custom keybindings - uncomment and modify as needed
+  
+  // File operations
+  // {
+  //   "context": "Editor",
+  //   "bindings": {
+  //     "cmd-s": "workspace::Save",
+  //     "cmd-shift-s": "workspace::SaveAs"
+  //   }
+  // },
+  
+  // Navigation
+  // {
+  //   "context": "Editor",
+  //   "bindings": {
+  //     "cmd-p": "file_finder::Toggle",
+  //     "cmd-shift-p": "command_palette::Toggle"
+  //   }
+  // },
+  
+  // Terminal
+  // {
+  //   "context": "Workspace",
+  //   "bindings": {
+  //     "cmd-`": "terminal_panel::ToggleFocus"
+  //   }
+  // },
+  
+  // Git
+  // {
+  //   "context": "Editor",
+  //   "bindings": {
+  //     "cmd-shift-g": "project_panel::ToggleFocus"
+  //   }
+  // }
+]

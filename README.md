@@ -66,17 +66,29 @@ make test             # Run test suite
 | **[🔐 Security Guide](docs/SECURITY.md)** | Security best practices | Security-conscious users |
 | **[🆘 Troubleshooting](docs/TROUBLESHOOTING.md)** | Problem resolution | Support |
 
-### 📂 Specialized Guides
+### 🔧 Specialized Guides
 
-- **[MCP + Pass Integration](scripts/mcp-env/README.md)** - Secure MCP credentials setup
-- **[GPG Setup](docs/GPG-SETUP.md)** - GPG key management
-- **[Profile System](PROFILES.md)** - Installation profile details
-- **[CI/CD Guide](docs/CI.md)** - Continuous integration setup
+| Guide | Description | Use Case |
+|-------|-------------|----------|
+| **[🔐 MCP + Pass Integration](scripts/mcp-env/README.md)** | Secure credential management for MCP services | AI developers working with multiple services |
+| **[🔑 GPG Setup](docs/GPG-SETUP.md)** | Complete GPG key management and configuration | Security-focused development |
+| **[⚙️ Profile System](PROFILES.md)** | Flexible installation profiles and customization | Tailored environment setup |
+| **[🔄 CI/CD Guide](docs/CI.md)** | Automated testing and deployment workflows | DevOps and automation |
+
+### 🎯 Quick Access
+
+**First time here?** Start with [🚀 Setup Guide](docs/SETUP.md)  
+**Need help?** Check [🆘 Troubleshooting](docs/TROUBLESHOOTING.md)  
+**Want to contribute?** See [👨‍💻 Developer Workflow](docs/DEVELOPER-WORKFLOW.md)
 
 ## License
 
-MIT
+MIT License - see [LICENSE](LICENSE) file for details
 
-_Last updated: 2025-09-10_
+---
+
+> **✨ Pro Tip:** Use `make help` to discover all available commands and shortcuts
+
+_Last updated: 2025-01-27_
 
 

@@ -1,0 +1,63 @@
+{
+  // Zed Code Snippets
+  // Add custom snippets for different languages
+  
+  "javascript": {
+    "console.log": {
+      "prefix": "cl",
+      "body": "console.log($0);"
+    },
+    "function": {
+      "prefix": "fn",
+      "body": "function ${1:name}($2) {\n  $0\n}"
+    },
+    "arrow function": {
+      "prefix": "af",
+      "body": "const ${1:name} = ($2) => {\n  $0\n};"
+    }
+  },
+  
+  "typescript": {
+    "interface": {
+      "prefix": "int",
+      "body": "interface ${1:Name} {\n  $0\n}"
+    },
+    "type": {
+      "prefix": "type",
+      "body": "type ${1:Name} = $0;"
+    }
+  },
+  
+  "python": {
+    "def": {
+      "prefix": "def",
+      "body": "def ${1:function_name}($2):\n    \"\"\"$3\"\"\"\n    $0"
+    },
+    "class": {
+      "prefix": "class",
+      "body": "class ${1:ClassName}:\n    \"\"\"$2\"\"\"\n    \n    def __init__(self$3):\n        $0"
+    }
+  },
+  
+  "rust": {
+    "function": {
+      "prefix": "fn",
+      "body": "fn ${1:name}($2) -> ${3:ReturnType} {\n    $0\n}"
+    },
+    "struct": {
+      "prefix": "struct",
+      "body": "struct ${1:Name} {\n    $0\n}"
+    }
+  },
+  
+  "markdown": {
+    "code block": {
+      "prefix": "code",
+      "body": "```${1:language}\n$0\n```"
+    },
+    "link": {
+      "prefix": "link",
+      "body": "[${1:text}](${2:url})"
+    }
+  }
+}

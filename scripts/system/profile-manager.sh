@@ -19,10 +19,10 @@ declare -A PROFILES=(
 # Package mappings for each profile
 declare -A PROFILE_PACKAGES=(
     ["minimal"]="git zsh claude-default"
-    ["development"]="git zsh claude-default claude-experimental npm-configs config bin"
-    ["full"]="git zsh vim claude-default claude-experimental npm-configs config bin pass"
-    ["work"]="git zsh claude-default npm-configs"
-    ["personal"]="git zsh vim claude-default claude-experimental npm-configs config bin pass"
+    ["development"]="git zsh zed claude-default claude-experimental npm-configs config bin"
+    ["full"]="git zsh vim zed claude-default claude-experimental npm-configs config bin pass"
+    ["work"]="git zsh zed claude-default npm-configs"
+    ["personal"]="git zsh vim zed claude-default claude-experimental npm-configs config bin pass"
 )
 
 # Logging functions
@@ -149,6 +149,48 @@ show_status() {
     done
 }
 
+# Show detailed symlink status for each package
+show_detailed_status() {
+    echo "Detailed Stow Package Status:"
+    echo "============================="
+    echo ""
+    
+    for package in $(ls -d "$DOTFILES_ROOT"/*/ 2>/dev/null | grep -v -E '(tests|docs|scripts|\..*|claudedocs)/' | xargs -n 1 basename); do
+        echo "Package: $package"
+        
+        # Find symlinks for this package
+        local symlinks=$(find "$HOME" -maxdepth 3 -type l 2>/dev/null | grep "$DOTFILES_ROOT/$package" | head -10)
+        
+        if [[ -n "$symlinks" ]]; then
+            echo "  Status: ✅ Stowed"
+            echo "  Symlinks:"
+            while IFS= read -r link; do
+                if [[ -n "$link" ]]; then
+                    local target=$(readlink "$link" 2>/dev/null || echo "unknown")
+                    local rel_source=${link#$HOME/}
+                    local rel_target=${target#$DOTFILES_ROOT/}
+                    echo "    ~/$rel_source -> $rel_target"
+                fi
+            done <<< "$symlinks"
+            
+            # Check for broken links
+            local broken_links=$(find "$HOME" -maxdepth 3 -type l ! -exec test -e {} \; -print 2>/dev/null | grep "$DOTFILES_ROOT/$package" || true)
+            if [[ -n "$broken_links" ]]; then
+                echo "  ⚠️  Broken symlinks:"
+                while IFS= read -r link; do
+                    if [[ -n "$link" ]]; then
+                        local rel_link=${link#$HOME/}
+                        echo "    ~/$rel_link (broken)"
+                    fi
+                done <<< "$broken_links"
+            fi
+        else
+            echo "  Status: ❌ Not stowed"
+        fi
+        echo ""
+    done
+}
+
 # Interactive profile selection
 interactive_install() {
     echo "Profile Manager - Interactive Installation"
@@ -188,6 +230,7 @@ COMMANDS:
     install <profile>   Install specific profile
     uninstall <profile> Uninstall specific profile
     status              Show current installation status
+    status-detailed     Show detailed symlink status for each package
     interactive         Interactive profile selection
     help                Show this help
 
@@ -198,6 +241,7 @@ EXAMPLES:
     $0 list                    # List all profiles
     $0 install development     # Install development profile
     $0 status                  # Check what's installed
+    $0 status-detailed         # Show detailed symlink status
     $0 interactive             # Interactive selection
 EOF
 }
@@ -222,6 +266,9 @@ main() {
             ;;
         status)
             show_status
+            ;;
+        status-detailed|detailed)
+            show_detailed_status
             ;;
         interactive)
             interactive_install

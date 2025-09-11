@@ -1,7 +1,7 @@
 # Dotfiles Management Makefile
 # Provides convenient commands for managing dotfiles installation and maintenance
 
-.PHONY: help install install-all install-minimal backup restore clean test lint format update status docs docs-check test-quick test-unit test-integration test-e2e test-stress test-all-docker
+.PHONY: help install install-all install-minimal backup restore clean test lint format update status stow-audit stow-status stow-conflicts stow-dry-run stow-debug docs docs-check test-quick test-unit test-integration test-e2e test-stress test-all-docker
 
 # Default target
 .DEFAULT_GOAL := help
@@ -36,7 +36,7 @@ help: ## Show this help message
 	@echo -e "$(BOLD)⚙️  Configuration Commands$(NC)"
 	@echo "Profile and package management:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-	grep -E "(profile|api|install-|check-secrets|doctor|audit|backup-|restore-from|clean-|info):" | \
+	grep -E "(profile|api|install-|check-secrets|doctor|audit|backup-|restore-from|clean-|info|stow-):" | \
 	awk 'BEGIN {FS = ":.*?## "}; {printf "  $(BLUE)%-20s$(NC) %s\n", $$1, $$2}' | \
 	sort
 	@echo
@@ -217,6 +217,101 @@ status: ## Show installation status and system info
 	@echo
 	@./scripts/profile-manager.sh status
 
+# Stow audit and debugging
+stow-audit: ## Comprehensive stow state audit
+	@echo -e "$(BOLD)Stow State Audit$(NC)"
+	@echo "================"
+	@echo
+	@echo -e "$(BLUE)Active Stow Symlinks:$(NC)"
+	@find "$(HOME)" -maxdepth 3 -type l -ls 2>/dev/null | grep "$(PROJECT_ROOT)" | awk '{print "  " $$11 " -> " $$13}' || echo "  No symlinks found"
+	@echo
+	@echo -e "$(BLUE)Broken Symlinks:$(NC)"
+	@broken_links=$$(find "$(HOME)" -maxdepth 3 -type l ! -exec test -e {} \; -print 2>/dev/null | grep "$(PROJECT_ROOT)" || true); \
+	if [ -n "$$broken_links" ]; then \
+		echo "$$broken_links" | sed 's/^/  /'; \
+	else \
+		echo "  ✓ No broken symlinks found"; \
+	fi
+	@echo
+	@echo -e "$(BLUE)Stow Package Status:$(NC)"
+	@for pkg in $$(ls -d */ 2>/dev/null | grep -v -E '^(tests|docs|scripts|\..*|claudedocs)/' | tr -d '/'); do \
+		if find "$(HOME)" -maxdepth 3 -type l 2>/dev/null | grep -q "$(PROJECT_ROOT)/$$pkg" 2>/dev/null; then \
+			echo "  ✓ $$pkg: stowed"; \
+		else \
+			echo "  ✗ $$pkg: not stowed"; \
+		fi; \
+	done
+
+stow-status: ## Show current stow symlink status by package
+	@echo -e "$(BOLD)Stow Symlink Status$(NC)"
+	@echo "==================="
+	@echo
+	@for pkg in $$(ls -d */ 2>/dev/null | grep -v -E '^(tests|docs|scripts|\..*|claudedocs)/' | tr -d '/'); do \
+		echo -e "$(BLUE)Package: $$pkg$(NC)"; \
+		links=$$(find "$(HOME)" -maxdepth 3 -type l 2>/dev/null | grep "$(PROJECT_ROOT)/$$pkg" | head -10 || true); \
+		if [ -n "$$links" ]; then \
+			echo "$$links" | while read link; do \
+				target=$$(readlink "$$link" 2>/dev/null || echo "unknown"); \
+				echo "  $$link -> $$target"; \
+			done; \
+		else \
+			echo "  No symlinks found"; \
+		fi; \
+		echo; \
+	done
+
+stow-conflicts: ## Check for stow conflicts and issues
+	@echo -e "$(BOLD)Stow Conflict Analysis$(NC)"
+	@echo "======================"
+	@echo
+	@echo -e "$(BLUE)Checking for conflicts...$(NC)"
+	@conflict_found=false; \
+	for pkg in $$(ls -d */ 2>/dev/null | grep -v -E '^(tests|docs|scripts|\..*|claudedocs)/' | tr -d '/'); do \
+		if [ -d "$$pkg" ]; then \
+			echo "Checking package: $$pkg"; \
+			if ! stow -n -t "$(HOME)" "$$pkg" 2>&1 | grep -q "CONFLICT\|ERROR"; then \
+				echo "  ✓ No conflicts"; \
+			else \
+				echo "  ⚠️  Conflicts detected:"; \
+				stow -n -t "$(HOME)" "$$pkg" 2>&1 | grep -A 2 "CONFLICT\|ERROR" | sed 's/^/    /'; \
+				conflict_found=true; \
+			fi; \
+		fi; \
+	done; \
+	if [ "$$conflict_found" = "false" ]; then \
+		echo -e "$(GREEN)✓ No stow conflicts detected$(NC)"; \
+	fi
+
+stow-dry-run: ## Preview what stow operations would do (dry run)
+	@echo -e "$(BOLD)Stow Dry Run Preview$(NC)"
+	@echo "===================="
+	@echo
+	@echo -e "$(BLUE)What would happen if we stowed all packages:$(NC)"
+	@for pkg in $$(ls -d */ 2>/dev/null | grep -v -E '^(tests|docs|scripts|\..*|claudedocs)/' | tr -d '/'); do \
+		if [ -d "$$pkg" ]; then \
+			echo -e "$(BLUE)Package: $$pkg$(NC)"; \
+			stow -n -v -t "$(HOME)" "$$pkg" 2>&1 | grep -E "LINK|MKDIR|UNLINK" | sed 's/^/  /' || echo "  No changes needed"; \
+			echo; \
+		fi; \
+	done
+
+stow-debug: ## Verbose stow operations for debugging
+	@echo -e "$(BOLD)Stow Debug Mode$(NC)"
+	@echo "==============="
+	@echo
+	@echo -e "$(BLUE)Stow version and configuration:$(NC)"
+	@stow --version | head -1
+	@echo "Target directory: $(HOME)"
+	@echo "Stow directory: $(PROJECT_ROOT)"
+	@echo "Ignore file: $(PROJECT_ROOT)/.stow-global-ignore"
+	@echo
+	@echo -e "$(BLUE)Global ignore patterns:$(NC)"
+	@if [ -f ".stow-global-ignore" ]; then \
+		cat .stow-global-ignore | grep -v '^#' | grep -v '^$$' | sed 's/^/  /'; \
+	else \
+		echo "  No .stow-global-ignore file found"; \
+	fi
+
 info: ## Show detailed system and dotfiles information
 	@echo -e "$(BOLD)Detailed System Information$(NC)"
 	@echo "=============================="
@@ -356,7 +451,7 @@ docs: ## Update README with Makefile commands
 	@echo "Profile and package management:" >> /tmp/makefile_commands.md
 	@echo "" >> /tmp/makefile_commands.md
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-	grep -E "(profile|api|install-|check-secrets|doctor|audit|backup-|restore-from|clean-|info):" | \
+	grep -E "(profile|api|install-|check-secrets|doctor|audit|backup-|restore-from|clean-|info|stow-):" | \
 	awk 'BEGIN {FS = ":.*?## "}; {printf "- **`make %s`** - %s\n", $$1, $$2}' | \
 	sort >> /tmp/makefile_commands.md
 	@echo "" >> /tmp/makefile_commands.md
