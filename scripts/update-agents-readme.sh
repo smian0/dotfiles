@@ -10,8 +10,21 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Paths
-DOTFILES_DIR="${HOME}/dotfiles"
+# Paths - detect if we're in CI or local environment
+if [ -n "${GITHUB_WORKSPACE}" ]; then
+    # GitHub Actions environment
+    DOTFILES_DIR="${GITHUB_WORKSPACE}"
+elif [ -d "${HOME}/dotfiles" ]; then
+    # Local environment with dotfiles in home
+    DOTFILES_DIR="${HOME}/dotfiles"
+elif [ -d "$(pwd)/opencode" ]; then
+    # We're already in the dotfiles directory
+    DOTFILES_DIR="$(pwd)"
+else
+    # Fallback to current directory
+    DOTFILES_DIR="$(pwd)"
+fi
+
 OPENCODE_CONFIG="${DOTFILES_DIR}/opencode/.config/opencode/opencode.json"
 AGENT_DIR="${DOTFILES_DIR}/opencode/.config/opencode/agent"
 README="${DOTFILES_DIR}/README.md"

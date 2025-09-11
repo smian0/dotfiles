@@ -32,8 +32,8 @@ jobs:
           
           # Run the update script if it exists
           if [ -f scripts/update-agents-readme.sh ]; then
-            cd /home/runner/work/dotfiles/dotfiles
-            HOME=/home/runner/work/dotfiles/dotfiles bash scripts/update-agents-readme.sh
+            export GITHUB_WORKSPACE="${{ github.workspace }}"
+            bash scripts/update-agents-readme.sh
           else
             echo "Update script not found, using inline version"
             
@@ -109,7 +109,8 @@ jobs:
           
           # Generate agents.json
           if [ -f scripts/generate-agents-json.sh ]; then
-            HOME=/home/runner/work/dotfiles/dotfiles bash scripts/generate-agents-json.sh
+            export GITHUB_WORKSPACE="${{ github.workspace }}"
+            bash scripts/generate-agents-json.sh
           fi
       
       - name: Check for changes
