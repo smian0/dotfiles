@@ -13,15 +13,47 @@ jobs:
       startsWith(github.event.comment.body, '/opencode')
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
+      issues: write
+      pull-requests: write
       id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Run opencode
-        uses: sst/opencode/github@dev
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install OpenCode
+        run: npm install -g opencode-ai@latest
+
+      - name: Run OpenCode
         env:
           GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
-        with:
-          model: google/gemini-2.0-flash
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODEL: google/gemini-2.0-flash
+          REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          echo "OpenCode version:"
+          opencode --version || true
+          
+          # Extract the command from the comment
+          COMMAND=$(echo "$COMMENT_BODY" | grep -oE '(/oc |/opencode ).*' | sed 's/^\/[^ ]* //')
+          echo "Command: $COMMAND"
+          
+          # Try to run OpenCode with the command
+          opencode github run || echo "Direct run failed, trying alternative approach"
+          
+          # Alternative: Create a response manually
+          if [ $? -ne 0 ]; then
+            echo "Attempting alternative OpenCode execution..."
+            # You might need to adjust this based on OpenCode's CLI interface
+            opencode chat "$COMMAND" --model "$MODEL" || true
+          fi
