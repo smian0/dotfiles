@@ -31,11 +31,45 @@ jobs:
       - name: Install OpenCode
         run: npm install -g opencode-ai@latest
 
+      - name: Configure OpenCode for Ollama
+        run: |
+          mkdir -p ~/.config/opencode
+          cat > ~/.config/opencode/opencode.json << 'EOF'
+          {
+            "$schema": "https://opencode.ai/config.json",
+            "model": "ollamat/gpt-oss:120b",
+            "provider": {
+              "ollamat": {
+                "npm": "ollama-ai-provider-v2",
+                "name": "Ollama (turbo)",
+                "options": {
+                  "baseURL": "https://ollama.com/api",
+                  "headers": {
+                    "Authorization": "Bearer {env:OLLAMA_API_KEY}"
+                  }
+                },
+                "models": {
+                  "gpt-oss:20b": {
+                    "name": "GPT-OSS 20B (Turbo)"
+                  },
+                  "gpt-oss:120b": {
+                    "name": "GPT-OSS 120B (Turbo)"
+                  },
+                  "deepseek-v3.1:671b": {
+                    "name": "DeepSeek V3.1 671B (Turbo)"
+                  }
+                }
+              }
+            }
+          }
+          EOF
+          echo "OpenCode configured for Ollama Turbo"
+
       - name: Run OpenCode
         env:
-          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MODEL: google/gemini-2.0-flash
+          MODEL: ollamat/gpt-oss:120b
           REPO: ${{ github.repository }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           COMMENT_ID: ${{ github.event.comment.id }}
@@ -85,7 +119,7 @@ jobs:
           
           <div align="center">
           
-          ✨ **Powered by [OpenCode](https://opencode.ai) with Google Gemini** ✨
+          ✨ **Powered by [OpenCode](https://opencode.ai) with Ollama Turbo (GPT-OSS 120B)** ✨
           
           </div>
           EOF
