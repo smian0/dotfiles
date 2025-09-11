@@ -1,0 +1,72 @@
+#!/bin/bash
+# claude-toggle - Smart toggle for Claude/GLM redirect
+
+WRAPPER="$HOME/.bun/bin/claude"
+DISABLED="$HOME/.bun/bin/claude.disabled"
+ORIGINAL="/Users/smian/.npm-global/bin/claude"
+
+# Function to check current status
+check_status() {
+    if [ -f "$WRAPPER" ]; then
+        echo "active"
+    elif [ -f "$DISABLED" ]; then
+        echo "disabled"
+    else
+        echo "not_installed"
+    fi
+}
+
+# Show current status if requested
+if [ "$1" = "status" ] || [ "$1" = "-s" ]; then
+    case $(check_status) in
+        active)
+            echo "🟢 GLM redirect is ACTIVE"
+            echo "   Using: GLM API (z.ai)"
+            ;;
+        disabled)
+            echo "🔴 GLM redirect is DISABLED"
+            echo "   Using: Original Claude API"
+            ;;
+        not_installed)
+            echo "❌ GLM redirect not installed"
+            ;;
+    esac
+    echo -n "   Current path: "
+    which claude
+    exit 0
+fi
+
+# Toggle logic
+case $(check_status) in
+    active)
+        mv "$WRAPPER" "$DISABLED"
+        echo "🔄 Switched to: Original Claude API"
+        NEW_STATE="🔴 OFF"
+        ;;
+    disabled)
+        mv "$DISABLED" "$WRAPPER"
+        echo "🔄 Switched to: GLM API (z.ai)"
+        NEW_STATE="🟢 ON"
+        ;;
+    not_installed)
+        echo "❌ Error: Claude wrapper not found"
+        echo ""
+        echo "To install:"
+        echo "  1. Create wrapper at $WRAPPER"
+        echo "  2. Then use this script to toggle"
+        exit 1
+        ;;
+esac
+
+# Clear cache and verify
+hash -r 2>/dev/null || true
+echo "   Status: $NEW_STATE"
+echo -n "   Active: "
+which claude
+
+# Optional: Test the switch worked
+if [ "$2" = "--test" ]; then
+    echo ""
+    echo "Testing claude version..."
+    claude --version 2>&1 | head -1
+fi
