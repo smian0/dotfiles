@@ -19,9 +19,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run opencode
-        uses: sst/opencode/github@latest
+      - name: Run opencode  
+        uses: sst/opencode/github@v0.7.2
         env:
-          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         with:
-          model: ollamat/gpt-oss:120b
+          model: deepseek/deepseek-reasoner
