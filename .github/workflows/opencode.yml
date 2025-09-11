@@ -50,7 +50,8 @@ jobs:
           
           # Get response from OpenCode and clean ANSI codes
           echo "Getting AI response..."
-          RESPONSE=$(opencode run "$COMMAND" --model "$MODEL" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' || echo "Error: Could not get response")
+          # Capture only stdout, remove ANSI codes, and deduplicate consecutive identical lines
+          RESPONSE=$(opencode run "$COMMAND" --model "$MODEL" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | uniq || echo "Error: Could not get response")
           
           echo "Response: $RESPONSE"
           
