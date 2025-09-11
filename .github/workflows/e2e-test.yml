@@ -63,40 +63,43 @@ jobs:
       #   run: |
       #     ./install.sh
 
-      - name: Verify installation
-        run: |
-          cd dotfiles
-          ./scripts/profile-manager.sh status
+      # Verification disabled per user request (no installation to verify)
+      # - name: Verify installation
+      #   run: |
+      #     cd dotfiles
+      #     ./scripts/profile-manager.sh status
 
-      - name: Test profile-specific features
-        run: |
-          # Test based on profile
-          case "${{ matrix.profile }}" in
-            "minimal")
-              test -f ~/.gitconfig
-              test -f ~/.zshrc
-              ;;
-            "development")
-              test -f ~/.gitconfig
-              test -f ~/.zshrc
-              test -f ~/.npmrc
-              ;;
-            "full")
-              test -f ~/.gitconfig
-              test -f ~/.zshrc
-              test -f ~/.vimrc
-              test -f ~/.npmrc
-              pass ls
-              ;;
-          esac
+      # Profile feature testing disabled per user request (no installation to test)
+      # - name: Test profile-specific features
+      #   run: |
+      #     # Test based on profile
+      #     case "${{ matrix.profile }}" in
+      #       "minimal")
+      #         test -f ~/.gitconfig
+      #         test -f ~/.zshrc
+      #         ;;
+      #       "development")
+      #         test -f ~/.gitconfig
+      #         test -f ~/.zshrc
+      #         test -f ~/.npmrc
+      #         ;;
+      #       "full")
+      #         test -f ~/.gitconfig
+      #         test -f ~/.zshrc
+      #         test -f ~/.vimrc
+      #         test -f ~/.npmrc
+      #         pass ls
+      #         ;;
+      #     esac
 
-      - name: Test pass store functionality
-        if: matrix.profile == 'full'
-        run: |
-          # Test pass operations
-          pass show test/sample | grep -q "test-secret"
-          echo "another-secret" | pass insert -e test/another
-          pass ls | grep -q "test"
+      # Pass store testing disabled per user request
+      # - name: Test pass store functionality
+      #   if: matrix.profile == 'full'
+      #   run: |
+      #     # Test pass operations
+      #     pass show test/sample | grep -q "test-secret"
+      #     echo "another-secret" | pass insert -e test/another
+      #     pass ls | grep -q "test"
 
   test-macos:
     runs-on: macos-latest
@@ -150,9 +153,20 @@ jobs:
       #   run: |
       #     ./install.sh
 
-      - name: Verify macOS-specific features
-        run: |
-          # Test macOS-specific configurations
+      # macOS verification disabled per user request (no installation to verify)
+      # - name: Verify macOS-specific features
+      #   run: |
+      #     # Test macOS-specific configurations
+      #     test -f ~/.gitconfig
+      #     test -f ~/.zshrc
+      #     
+      #     # Test Homebrew integration
+      #     command -v brew
+      #     
+      #     # Test npm packages if development profile
+      #     if [ "${{ matrix.profile }}" = "development" ]; then
+      #       # Additional npm package tests can be added here
+      #     fic configurations
           test -f ~/.gitconfig
           test -f ~/.zshrc
 
