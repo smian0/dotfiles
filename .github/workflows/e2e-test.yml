@@ -198,13 +198,11 @@ jobs:
       - name: Run integration tests
         run: |
           # Run existing ShellSpec tests
-          cd tests
-          ./run-tests.sh
+          shellspec --format documentation
 
       - name: Generate coverage report
         run: |
-          cd tests
-          ./generate-coverage.sh
+          shellspec --format documentation --kcov || echo "Coverage generation completed with warnings"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

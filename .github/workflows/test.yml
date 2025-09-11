@@ -42,8 +42,8 @@ jobs:
         run: |
           chmod +x install.sh
           chmod +x scripts/*.sh
-          chmod +x tests/run-tests.sh
-          chmod +x tests/generate-coverage.sh
+          chmod +x tests/docker/*.sh
+          chmod +x tests/docker/test-cases/*.sh
 
       - name: Run ShellSpec tests
         run: |
@@ -122,8 +122,7 @@ jobs:
 
       - name: Generate coverage report
         run: |
-          cd tests
-          ./generate-coverage.sh || echo "Coverage generation completed with warnings"
+          shellspec --format documentation --kcov || echo "Coverage generation completed with warnings"
         continue-on-error: true
 
       - name: Upload coverage report
