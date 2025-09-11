@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run opencode  
-        uses: sst/opencode/github@v0.7.2
+        uses: sst/opencode/github@main
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         with:
