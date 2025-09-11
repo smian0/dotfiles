@@ -66,17 +66,17 @@ The profile system allows efficient context management by loading only the MCP s
 
 ### Available Profiles
 
-| Profile | MCP Servers | Project MCPs | Context Savings | Use Case |
-|---------|-------------|--------------|-----------------|----------|
-| **minimal** | serena, sequential-thinking | disabled | ~38k tokens (19%) | Essential development tools only |
-| **backend** | serena, sequential-thinking, context7 | disabled | ~30k tokens (15%) | Backend development with documentation |
-| **full** | All 5 MCP servers | enabled | baseline | Complete functionality |
+| Profile | MCP Servers | Context Savings | Use Case |
+|---------|-------------|-----------------|----------|
+| **minimal** | serena, sequential-thinking, context7 | ~30k tokens (15%) | Essential development tools with documentation |
+| **backend** | serena, sequential-thinking, context7 | ~30k tokens (15%) | Backend development (same as minimal) |
+| **full** | All 5 MCP servers | baseline | Complete functionality |
 
 ### Profile Management Commands
 
 ```bash
 # Switch between profiles
-claude-profile switch minimal    # Essential tools only (saves ~38k tokens)
+claude-profile switch minimal    # Essential tools with documentation (saves ~30k tokens)
 claude-profile switch backend    # Backend development (saves ~30k tokens)
 claude-profile switch full       # All functionality enabled
 
@@ -94,7 +94,6 @@ claude-profile restore [backup]  # Restore from backup
 Each profile consists of:
 ```
 profiles/minimal/
-├── settings.json    # Claude Code settings (enableAllProjectMcpServers: false)
 └── .mcp.json        # MCP server definitions for this profile
 ```
 
@@ -172,13 +171,13 @@ This configuration setup enables enhanced AI-assisted development through:
 ### Typical Workflow
 
 ```bash
-# Start with minimal profile for basic development
+# Start with minimal profile for development with documentation
 claude-profile switch minimal
-claude  # Start Claude session with ~38k fewer context tokens
+claude  # Start Claude session with ~30k fewer context tokens
 
-# Switch to backend profile when you need library documentation
+# Backend profile is equivalent to minimal (both include context7)
 claude-profile switch backend  
-# Restart Claude to load additional context7 MCP server
+# Same MCP servers as minimal
 
 # Use full profile for complex tasks requiring all tools
 claude-profile switch full

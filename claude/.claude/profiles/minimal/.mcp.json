@@ -1,0 +1,42 @@
+{
+  "serena": {
+    "args": [
+      "--from",
+      "git+https://github.com/oraios/serena",
+      "serena",
+      "start-mcp-server",
+      "--enable-web-dashboard",
+      "false",
+      "--enable-gui-log-window",
+      "false"
+    ],
+    "command": "uvx",
+    "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence",
+    "purpose": "code-analysis",
+    "scope": "project"
+  },
+  "sequential-thinking": {
+    "args": [
+      "-y",
+      "@modelcontextprotocol/server-sequential-thinking"
+    ],
+    "command": "npx",
+    "description": "Multi-step reasoning engine - complex analysis, systematic problem solving",
+    "env": {},
+    "purpose": "analysis",
+    "scope": "reasoning",
+    "type": "stdio"
+  },
+  "context7": {
+    "args": [
+      "-y",
+      "@upstash/context7-mcp"
+    ],
+    "command": "npx",
+    "description": "Official library documentation lookup - curated docs, framework patterns",
+    "env": {},
+    "purpose": "documentation",
+    "scope": "library",
+    "type": "stdio"
+  }
+}

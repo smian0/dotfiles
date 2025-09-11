@@ -15,7 +15,6 @@ set -e
 # Configuration
 PROFILES_DIR="$HOME/dotfiles/claude/.claude/profiles"
 CLAUDE_CONFIG="$HOME/.claude.json"
-SETTINGS_FILE="$HOME/dotfiles/claude/.claude/settings.json"
 CURRENT_PROFILE_FILE="$HOME/.claude/.current-profile"
 BACKUP_DIR="$HOME/.claude/backups"
 
@@ -83,9 +82,8 @@ list_profiles() {
         if [[ -d "$profile_dir" ]]; then
             local profile_name=$(basename "$profile_dir")
             local mcp_count=$(jq 'keys | length' "$profile_dir/.mcp.json" 2>/dev/null || echo "0")
-            local project_mcps=$(jq -r '.enableAllProjectMcpServers' "$profile_dir/settings.json" 2>/dev/null || echo "unknown")
             
-            echo "  • $profile_name ($mcp_count MCPs, project MCPs: $project_mcps)"
+            echo "  • $profile_name ($mcp_count MCP servers)"
         fi
     done
 }
@@ -98,10 +96,8 @@ show_current_profile() {
         
         # Show active MCPs
         local active_mcps=$(jq -r '.mcpServers | keys[]' "$CLAUDE_CONFIG" 2>/dev/null | wc -l | tr -d ' ')
-        local project_mcps=$(jq -r '.enableAllProjectMcpServers' "$SETTINGS_FILE" 2>/dev/null)
         
-        echo "  Active MCPs: $active_mcps"
-        echo "  Project MCPs enabled: $project_mcps"
+        echo "  Active MCP servers: $active_mcps"
         
         # Show MCP list
         echo "  MCP servers:"
@@ -125,13 +121,12 @@ switch_profile() {
     fi
     
     # Validate profile files
-    if [[ ! -f "$profile_dir/settings.json" ]] || [[ ! -f "$profile_dir/.mcp.json" ]]; then
-        log "ERROR" "Profile '$profile' is incomplete. Missing settings.json or .mcp.json"
+    if [[ ! -f "$profile_dir/.mcp.json" ]]; then
+        log "ERROR" "Profile '$profile' is incomplete. Missing .mcp.json"
         exit 1
     fi
     
     # Validate JSON files
-    validate_json "$profile_dir/settings.json" || exit 1
     validate_json "$profile_dir/.mcp.json" || exit 1
     
     log "INFO" "Switching to profile: $profile"
@@ -155,11 +150,6 @@ switch_profile() {
         exit 1
     fi
     
-    # Update settings.json symlink
-    log "INFO" "Updating settings.json"
-    rm -f "$SETTINGS_FILE"
-    ln -sf "profiles/$profile/settings.json" "$SETTINGS_FILE"
-    
     # Record current profile
     echo "$profile" > "$CURRENT_PROFILE_FILE"
     
@@ -167,9 +157,7 @@ switch_profile() {
     
     # Show what changed
     local mcp_count=$(jq 'keys | length' "$profile_dir/.mcp.json")
-    local project_mcps=$(jq -r '.enableAllProjectMcpServers' "$profile_dir/settings.json")
     echo "  • $mcp_count MCP servers loaded"
-    echo "  • Project MCPs: $project_mcps"
     
     log "INFO" "Restart any running Claude Code sessions to apply changes"
 }
@@ -229,11 +217,6 @@ restore_backup() {
         local restored_profile=$(cat "$CURRENT_PROFILE_FILE")
         log "INFO" "Restored profile: $restored_profile"
         
-        # Update settings.json symlink if profile exists
-        if [[ -d "$PROFILES_DIR/$restored_profile" ]]; then
-            rm -f "$SETTINGS_FILE"
-            ln -sf "profiles/$restored_profile/settings.json" "$SETTINGS_FILE"
-        fi
     else
         rm -f "$CURRENT_PROFILE_FILE"
         log "WARN" "No profile information in backup"
@@ -266,7 +249,7 @@ COMMANDS:
     help                 Show this help message
 
 PROFILES:
-    minimal     Essential MCPs only (serena, sequential-thinking)
+    minimal     Essential MCPs with documentation (serena, sequential-thinking, context7)
     backend     Development MCPs (serena, sequential-thinking, context7)  
     full        All MCPs enabled
 

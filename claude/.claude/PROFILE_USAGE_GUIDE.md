@@ -22,7 +22,7 @@ claude
 |---------|--------------|--------------|-------------------|
 | **full** | 80k/200k (40%) | baseline | context7, markdown, playwright, sequential-thinking, serena |
 | **backend** | 50k/200k (25%) | 30k tokens | context7, sequential-thinking, serena |
-| **minimal** | 42k/200k (21%) | 38k tokens | sequential-thinking, serena |
+| **minimal** | 50k/200k (25%) | 30k tokens | context7, sequential-thinking, serena |
 
 ## Development Scenarios
 
@@ -37,7 +37,7 @@ claude
 # Available tools:
 # ✅ serena - code analysis, symbol operations, project memory
 # ✅ sequential-thinking - complex reasoning and analysis
-# ❌ context7 - library documentation (not needed for basic coding)
+# ✅ context7 - library documentation lookup
 # ❌ playwright - browser testing (not needed)
 # ❌ markdown - document processing (not needed)
 ```
