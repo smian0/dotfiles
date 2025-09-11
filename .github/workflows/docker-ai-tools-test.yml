@@ -10,55 +10,23 @@ on:
     - cron: '0 2 * * *'
 
 jobs:
-  docker-ai-tools-test:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-        
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      
-    - name: Build test container
-      run: |
-        cd tests/docker
-        docker build -f Dockerfile.simple -t dotfiles-test ../../
-        
-    - name: Start test container
-      run: |
-        docker run -d --name test-container -v ${{ github.workspace }}:/home/testuser/dotfiles-source:ro dotfiles-test
-        sleep 5
-        
-    - name: Set up test environment
-      run: |
-        docker exec test-container bash -c "gpg --batch --passphrase '' --quick-generate-key 'CI Test <ci@example.com>' rsa4096"
-        docker exec test-container bash -c "sudo apk add --no-cache pass"
-        docker exec test-container bash -c "KEY_ID=\$(gpg --list-secret-keys --keyid-format LONG | grep sec | cut -d'/' -f2 | cut -d' ' -f1) && pass init \$KEY_ID"
-    - name: Set up mock environment
-      run: |
-        docker exec test-container bash -c "mkdir -p ~/.local/bin"
-        docker exec test-container bash -c "echo '#!/bin/bash' > ~/.local/bin/claude && echo 'echo \"[MOCK CLAUDE] Called with: \$*\"' >> ~/.local/bin/claude && chmod +x ~/.local/bin/claude"
-        docker exec test-container bash -c "echo '#!/bin/bash' > ~/.local/bin/pass && echo 'if [ \"\$2\" = \"llm/kimi_api_key\" ]; then echo \"ci-test-kimi-key\"; elif [ \"\$2\" = \"llm/glm_api_key\" ]; then echo \"ci-test-glm-key\"; fi' >> ~/.local/bin/pass && chmod +x ~/.local/bin/pass"
-    - name: Test AI tools
-      run: |
-        docker exec test-container bash -c "export PATH=~/.local/bin:\$PATH && mkdir -p ~/bin"
-        docker exec test-container bash -c "cp dotfiles-source/tests/fixtures/bin/kimi ~/bin/ && cp dotfiles-source/tests/fixtures/bin/glm ~/bin/"
-        docker exec test-container bash -c "sed -i 's|/Users/smian/.claude/local/claude|claude|g' ~/bin/kimi ~/bin/glm && chmod +x ~/bin/kimi ~/bin/glm"
-        docker exec test-container bash -c "export PATH=~/.local/bin:\$PATH && ~/bin/kimi 'CI test for Kimi' && echo 'Kimi test passed'"
-        docker exec test-container bash -c "export PATH=~/.local/bin:\$PATH && ~/bin/glm 'CI test for GLM' && echo 'GLM test passed'"
-    - name: Verify AI tools integration
-      run: |
-        echo "=== Debugging AI tools output ==="
-        docker exec test-container bash -c "export PATH=~/.local/bin:\$PATH && ~/bin/kimi 'test'"
-        echo "=== Kimi output complete ==="
-        docker exec test-container bash -c "export PATH=~/.local/bin:\$PATH && ~/bin/glm 'test'"
-        echo "=== GLM output complete ==="
-        echo "=== Testing API key integration ==="
-        docker exec test-container bash -c "export PATH=~/.local/bin:\$PATH && ~/bin/kimi 'test' | grep 'ci-test-kimi-key' && echo 'Kimi API key integration working' || echo 'Kimi API key test failed'"
-        docker exec test-container bash -c "export PATH=~/.local/bin:\$PATH && ~/bin/glm 'test' | grep 'ci-test-glm-key' && echo 'GLM API key integration working' || echo 'GLM API key test failed'"
-        echo "All AI tools integration tests completed!"
-        
-    - name: Clean up
-      if: always()
-      run: docker rm -f test-container || true
+  # All Docker AI Tools testing disabled per user request
+  # docker-ai-tools-test:
+  #   runs-on: ubuntu-latest
+  #   
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@v4
+  #       
+  #   - name: Set up Docker Buildx
+  #     uses: docker/setup-buildx-action@v3
+  #     
+  #   - name: Build test container
+  #     run: |
+  #       cd tests/docker
+  #       docker build -f Dockerfile.simple -t dotfiles-test ../../
+  #       
+  #   - name: Start test container
+  #     run: |
+  #       docker run -d --name test-container -v ${{ github.workspace }}:/home/testuser/dotfiles-source:ro dotfiles-test
+  #       sleep 5
