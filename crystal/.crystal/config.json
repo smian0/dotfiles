@@ -2,7 +2,7 @@
   "gitRepoPath": "/Users/smian",
   "verbose": true,
   "anthropicApiKey": "",
-  "systemPromptAppend": "Always think hard before you act.",
+  "systemPromptAppend": "",
   "defaultPermissionMode": "ignore",
   "defaultModel": "sonnet",
   "stravuServerUrl": "https://api.stravu.com",
