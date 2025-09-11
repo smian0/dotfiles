@@ -97,3 +97,4 @@ scripts/mcp-env/.env
 cursor/.cursor/mcp.json
 cursor/.cursor/mcp.json.backup*
 **/mcp.json
+zed/.config/zed/prompts/prompts-library-db.0.mdb
