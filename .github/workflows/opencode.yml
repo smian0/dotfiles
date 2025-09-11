@@ -33,8 +33,23 @@ jobs:
 
       - name: Configure OpenCode for Ollama
         run: |
-          mkdir -p ~/.config/opencode
-          cat > ~/.config/opencode/opencode.json << 'EOF'
+          # Copy the entire opencode configuration from the repository
+          if [ -d "opencode/.config/opencode" ]; then
+            echo "Setting up OpenCode configuration from repository..."
+            mkdir -p ~/.config
+            cp -r opencode/.config/opencode ~/.config/
+            echo "OpenCode configuration copied to ~/.config/opencode"
+            
+            # List available agents
+            if [ -d ~/.config/opencode/agent ]; then
+              echo "Available agents:"
+              ls -1 ~/.config/opencode/agent/*.md | xargs -n1 basename | sed 's/\.md$//' | sed 's/^/  - /'
+            fi
+          else
+            echo "Warning: opencode/.config/opencode not found in repository"
+            echo "Creating minimal configuration..."
+            mkdir -p ~/.config/opencode
+            cat > ~/.config/opencode/opencode.json << 'EOF'
           {
             "$schema": "https://opencode.ai/config.json",
             "model": "ollamat/gpt-oss:120b",
@@ -63,6 +78,7 @@ jobs:
             }
           }
           EOF
+          fi
           echo "OpenCode configured for Ollama Turbo"
 
       - name: Run OpenCode
@@ -79,13 +95,48 @@ jobs:
           opencode --version
           
           # Extract the command from the comment
-          COMMAND=$(echo "$COMMENT_BODY" | grep -oE '(/oc |/opencode ).*' | sed 's/^\/[^ ]* //')
+          FULL_COMMAND=$(echo "$COMMENT_BODY" | grep -oE '(/oc |/opencode ).*' | sed 's/^\/[^ ]* //')
+          echo "Full command: $FULL_COMMAND"
+          
+          # Parse for agent specification (supports @agent or agent: prefix)
+          AGENT_NAME=""
+          COMMAND="$FULL_COMMAND"
+          
+          # Check for @agent format
+          if echo "$FULL_COMMAND" | grep -qE '^@[a-zA-Z0-9_-]+\s'; then
+            AGENT_NAME=$(echo "$FULL_COMMAND" | grep -oE '^@[a-zA-Z0-9_-]+' | sed 's/@//')
+            COMMAND=$(echo "$FULL_COMMAND" | sed 's/^@[a-zA-Z0-9_-]*\s*//')
+            echo "Agent detected (@format): $AGENT_NAME"
+          # Check for agent: format
+          elif echo "$FULL_COMMAND" | grep -qE '^agent:[a-zA-Z0-9_-]+\s'; then
+            AGENT_NAME=$(echo "$FULL_COMMAND" | grep -oE '^agent:[a-zA-Z0-9_-]+' | sed 's/agent://')
+            COMMAND=$(echo "$FULL_COMMAND" | sed 's/^agent:[a-zA-Z0-9_-]*\s*//')
+            echo "Agent detected (agent: format): $AGENT_NAME"
+          fi
+          
+          echo "Agent: ${AGENT_NAME:-none}"
           echo "Command: $COMMAND"
           
           # Get response from OpenCode and clean ANSI codes
           echo "Getting AI response..."
-          # Capture only stdout, remove ANSI codes, and deduplicate consecutive identical lines
-          RESPONSE=$(opencode run "$COMMAND" --model "$MODEL" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | uniq || echo "Error: Could not get response")
+          
+          # Run with or without agent flag
+          if [ -n "$AGENT_NAME" ]; then
+            echo "Running with agent: $AGENT_NAME"
+            RESPONSE=$(opencode run "$COMMAND" --agent "$AGENT_NAME" --model "$MODEL" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | uniq || echo "Error: Could not get response")
+            
+            # Check for file outputs (especially for news agent)
+            if [ "$AGENT_NAME" = "news" ]; then
+              NEWS_FILE=$(ls -1t news-*.md 2>/dev/null | head -1)
+              if [ -n "$NEWS_FILE" ]; then
+                echo "News file generated: $NEWS_FILE"
+                NEWS_CONTENT=$(cat "$NEWS_FILE")
+              fi
+            fi
+          else
+            # Capture only stdout, remove ANSI codes, and deduplicate consecutive identical lines
+            RESPONSE=$(opencode run "$COMMAND" --model "$MODEL" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | uniq || echo "Error: Could not get response")
+          fi
           
           echo "Response: $RESPONSE"
           
@@ -94,24 +145,81 @@ jobs:
             # Get current timestamp
             TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
             
+            # Determine agent emoji and label
+            AGENT_EMOJI="🤖"
+            AGENT_LABEL=""
+            if [ -n "$AGENT_NAME" ]; then
+              case "$AGENT_NAME" in
+                news) AGENT_EMOJI="📰"; AGENT_LABEL=" (News Agent)" ;;
+                reasoning) AGENT_EMOJI="🧠"; AGENT_LABEL=" (Reasoning Agent)" ;;
+                websearch) AGENT_EMOJI="🔍"; AGENT_LABEL=" (WebSearch Agent)" ;;
+                markdown-pro) AGENT_EMOJI="📝"; AGENT_LABEL=" (Markdown Agent)" ;;
+                helper) AGENT_EMOJI="🛠️"; AGENT_LABEL=" (Helper Agent)" ;;
+                review) AGENT_EMOJI="👁️"; AGENT_LABEL=" (Review Agent)" ;;
+                *) AGENT_EMOJI="🎯"; AGENT_LABEL=" ($AGENT_NAME Agent)" ;;
+              esac
+            fi
+            
             cat > comment.md << EOF
-          ## 🤖 OpenCode Response
+          ## $AGENT_EMOJI OpenCode Response$AGENT_LABEL
           
           > **Query**: $COMMAND
+          EOF
+            
+            # Add agent indicator if used
+            if [ -n "$AGENT_NAME" ]; then
+              echo "> **Agent**: \`$AGENT_NAME\`" >> comment.md
+            fi
+            
+            cat >> comment.md << EOF
           
           ### 💬 Answer
           
           $RESPONSE
+          EOF
+            
+            # Add file content if news agent generated a file
+            if [ -n "$NEWS_CONTENT" ]; then
+              cat >> comment.md << EOF
+          
+          ---
+          
+          ### 📄 Generated News Report
+          
+          <details>
+          <summary>Click to view full news report</summary>
+          
+          $NEWS_CONTENT
+          
+          </details>
+          EOF
+            fi
+            
+            cat >> comment.md << EOF
           
           ---
           
           <details>
           <summary>📊 Response Details</summary>
           
-          - **Model**: \`$MODEL\` 
+          - **Model**: \`$MODEL\`
+          EOF
+            
+            if [ -n "$AGENT_NAME" ]; then
+              echo "- **Agent Used**: \`$AGENT_NAME\`" >> comment.md
+            fi
+            
+            cat >> comment.md << EOF
           - **Timestamp**: $TIMESTAMP
           - **Workflow Run**: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           - **Triggered by**: @${{ github.actor }}
+          EOF
+            
+            if [ -n "$NEWS_FILE" ]; then
+              echo "- **File Generated**: \`$NEWS_FILE\`" >> comment.md
+            fi
+            
+            cat >> comment.md << EOF
           
           </details>
           
