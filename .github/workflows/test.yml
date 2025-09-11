@@ -23,7 +23,9 @@ jobs:
       - name: Install dependencies
         run: |
           # Install test dependencies  
-          brew install shellspec bash stow gnupg pass
+          brew install shellspec bash stow pass
+          # Install gnupg only if not already present
+          brew list gnupg &>/dev/null || brew install gnupg
 
           # Install Ruby for coverage (optional)
           # brew install ruby
