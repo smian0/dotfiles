@@ -69,6 +69,49 @@ __pycache__/
 .Python
 venv/
 ENV/
+env/
+.venv/
+.pyenv/
+.env.venv/
+
+# Python package artifacts
+build/
+dist/
+*.egg-info/
+eggs/
+*.egg
+
+# Python testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+
+# DeepEval specific
+.deepeval/
+results/
+evaluation_results/
+test_results.json
+*.deepeval
+
+# Jupyter/IPython
+.ipynb_checkpoints
+.ipython/
+
+# OpenCode agent outputs
+news-*.md
+*.news
+agent-output/
+oc-output/
+
+# Temporary test data
+test_*.tmp
+test_*.temp
+sample_*.json
 
 # Claude IDE lock files
 claude-user/.claude/ide/*.lock
