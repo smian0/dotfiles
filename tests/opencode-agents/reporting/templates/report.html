@@ -1,0 +1,693 @@
+{% extends "base.html" %}
+
+{% block title %}DeepEval Report - {{ report_title }}{% endblock %}
+
+{% block header_title %}{{ report_title }}{% endblock %}
+{% block header_subtitle %}Generated on {{ generation_time }} | {{ overview.total_tests }} tests analyzed{% endblock %}
+
+{% block content %}
+
+<!-- Overview Section -->
+<div id="overview" class="section">
+    <div class="grid grid-4 mb-3">
+        <div class="card metric-card">
+            <div class="metric-value status-{{ 'passed' if overview.pass_rate >= 80 else 'failed' }}">{{ overview.total_tests }}</div>
+            <div class="metric-label">Total Tests</div>
+        </div>
+        
+        <div class="card metric-card">
+            <div class="metric-value status-{{ 'passed' if overview.pass_rate >= 80 else 'failed' }}">{{ overview.pass_rate }}%</div>
+            <div class="metric-label">Pass Rate</div>
+            <div class="progress progress-{{ 'success' if overview.pass_rate >= 80 else 'error' }}">
+                <div class="progress-bar" style="width: {{ overview.pass_rate }}%"></div>
+            </div>
+        </div>
+        
+        <div class="card metric-card">
+            <div class="metric-value">{{ overview.avg_duration }}s</div>
+            <div class="metric-label">Avg Duration</div>
+        </div>
+        
+        <div class="card metric-card">
+            <div class="metric-value">{{ overview.agents_tested }}</div>
+            <div class="metric-label">Agents Tested</div>
+        </div>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">📊 Test Results Distribution</div>
+            </div>
+            <div class="chart-container">
+                <canvas id="resultsChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">⏱️ Duration Analysis</div>
+            </div>
+            <div class="chart-container">
+                <canvas id="durationChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Metrics Section -->
+<div id="metrics" class="section" style="display: none;">
+    <div class="grid grid-1">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">📈 Metric Performance Overview</div>
+                <div class="card-subtitle">{{ metrics|length }} metrics analyzed</div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Tests</th>
+                            <th>Pass Rate</th>
+                            <th>Avg Score</th>
+                            <th>Min/Max</th>
+                            <th>Threshold</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for metric_name, metric in metrics.items() %}
+                        <tr>
+                            <td><strong>{{ metric.name }}</strong></td>
+                            <td>{{ metric.total_tests }}</td>
+                            <td>
+                                <span class="status-{{ 'passed' if metric.pass_rate >= 70 else 'failed' }}">
+                                    {{ metric.pass_rate }}%
+                                </span>
+                                <div class="progress progress-{{ 'success' if metric.pass_rate >= 70 else 'error' }} mb-0">
+                                    <div class="progress-bar" style="width: {{ metric.pass_rate }}%"></div>
+                                </div>
+                            </td>
+                            <td>{{ metric.avg_score }}</td>
+                            <td>{{ metric.min_score }} / {{ metric.max_score }}</td>
+                            <td>{{ metric.threshold if metric.threshold else 'N/A' }}</td>
+                            <td>
+                                {% if metric.pass_rate >= 80 %}
+                                    <span class="badge badge-success">Excellent</span>
+                                {% elif metric.pass_rate >= 70 %}
+                                    <span class="badge badge-warning">Good</span>
+                                {% else %}
+                                    <span class="badge badge-error">Needs Attention</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-2 mt-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">📊 Metric Performance Comparison</div>
+            </div>
+            <div class="chart-container">
+                <canvas id="metricsComparisonChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">🎯 Score Distribution</div>
+            </div>
+            <div class="chart-container">
+                <canvas id="scoresDistributionChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Agents Section -->
+<div id="agents" class="section" style="display: none;">
+    <div class="grid grid-3 mb-3">
+        {% for agent_name, agent in agents.items() %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">🤖 {{ agent.agent_name|title }}</div>
+                <span class="badge badge-{{ 'success' if agent.pass_rate >= 80 else 'warning' if agent.pass_rate >= 60 else 'error' }}">
+                    {{ agent.pass_rate }}%
+                </span>
+            </div>
+            <div class="grid grid-2 mb-2">
+                <div class="text-center">
+                    <div class="metric-value small">{{ agent.total_tests }}</div>
+                    <div class="metric-label">Tests</div>
+                </div>
+                <div class="text-center">
+                    <div class="metric-value small">{{ agent.avg_duration }}s</div>
+                    <div class="metric-label">Avg Duration</div>
+                </div>
+            </div>
+            
+            <div class="progress progress-{{ 'success' if agent.pass_rate >= 80 else 'warning' if agent.pass_rate >= 60 else 'error' }}">
+                <div class="progress-bar" style="width: {{ agent.pass_rate }}%"></div>
+            </div>
+            
+            {% if agent.metric_scores %}
+            <div class="mt-2">
+                <strong>Top Metrics:</strong>
+                <ul style="margin: 0.5rem 0; padding-left: 1rem;">
+                    {% for metric, score in agent.metric_scores.items() %}
+                    {% if loop.index <= 3 %}
+                    <li>{{ metric }}: {{ score }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if agent.common_failures %}
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <strong>Common Issues ({{ agent.common_failures|length }})</strong>
+                    <span class="collapsible-toggle">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <ul>
+                        {% for failure, count in agent.common_failures %}
+                        <li><strong>{{ count }}x:</strong> {{ failure }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">🏆 Agent Performance Comparison</div>
+            </div>
+            <div class="chart-container">
+                <canvas id="agentPerformanceChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">⚡ Duration vs Performance</div>
+            </div>
+            <div class="chart-container">
+                <canvas id="durationVsPerformanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Categories Section -->
+<div id="categories" class="section" style="display: none;">
+    <div class="grid grid-1">
+        {% for category, analysis in categories.items() %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">📂 {{ category|title }} Tests</div>
+                <div class="card-subtitle">{{ analysis.total_tests }} tests</div>
+            </div>
+            
+            <div class="grid grid-3 mb-2">
+                <div class="text-center">
+                    <div class="metric-value small status-{{ 'passed' if analysis.performance_metrics.pass_rate >= 80 else 'failed' }}">
+                        {{ analysis.performance_metrics.pass_rate }}%
+                    </div>
+                    <div class="metric-label">Pass Rate</div>
+                </div>
+                <div class="text-center">
+                    <div class="metric-value small">{{ analysis.performance_metrics.avg_duration }}s</div>
+                    <div class="metric-label">Avg Duration</div>
+                </div>
+                <div class="text-center">
+                    <div class="metric-value small status-{{ 'error' if analysis.performance_metrics.error_rate > 10 else 'passed' }}">
+                        {{ analysis.performance_metrics.error_rate }}%
+                    </div>
+                    <div class="metric-label">Error Rate</div>
+                </div>
+            </div>
+
+            {% if analysis.failure_patterns %}
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <strong>Failure Patterns</strong>
+                    <span class="collapsible-toggle">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <ul>
+                        {% for pattern in analysis.failure_patterns %}
+                        <li>{{ pattern }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if analysis.recommendations %}
+            <div class="mt-2">
+                <strong>Recommendations:</strong>
+                <ul style="margin: 0.5rem 0; padding-left: 1rem;">
+                    {% for rec in analysis.recommendations %}
+                    <li>{{ rec }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Failures Section -->
+<div id="failures" class="section" style="display: none;">
+    {% if failure_analysis.message %}
+    <div class="card text-center">
+        <div class="card-title">✅ {{ failure_analysis.message }}</div>
+    </div>
+    {% else %}
+    <div class="grid grid-1 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">🚨 Failure Analysis Summary</div>
+                <span class="badge badge-error">{{ failure_analysis.total_failures }} failures</span>
+            </div>
+            
+            <div class="grid grid-2">
+                {% for failure_type, analysis in failure_analysis.failure_types.items() %}
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        <strong>{{ failure_type|title }} Failures ({{ analysis.count }})</strong>
+                        <span class="badge badge-{{ 'error' if analysis.severity == 'high' else 'warning' if analysis.severity == 'medium' else 'success' }}">
+                            {{ analysis.severity|title }}
+                        </span>
+                    </div>
+                    <div class="collapsible-content">
+                        <p><strong>Affected Agents:</strong> {{ analysis.affected_agents|join(', ') }}</p>
+                        {% if analysis.common_patterns %}
+                        <p><strong>Common Patterns:</strong></p>
+                        <ul>
+                            {% for pattern in analysis.common_patterns %}
+                            <li>{{ pattern }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if failure_analysis.most_problematic_agent %}
+            <div class="mt-2">
+                <strong>Most Problematic Agent:</strong> 
+                <span class="badge badge-error">{{ failure_analysis.most_problematic_agent }}</span>
+            </div>
+            {% endif %}
+            
+            {% if failure_analysis.recommendations %}
+            <div class="mt-2">
+                <strong>Action Items:</strong>
+                <ul style="margin: 0.5rem 0; padding-left: 1rem;">
+                    {% for rec in failure_analysis.recommendations %}
+                    <li>{{ rec }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Test Details Section -->
+<div id="test-details" class="section" style="display: none;">
+    <div class="grid grid-1">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">🔍 Detailed Test Results & Debugging</div>
+                <div class="card-subtitle">Input/Output comparisons for all tests</div>
+            </div>
+            
+            {% for test in test_results %}
+            <div class="card mb-2" style="border-left: 4px solid {{ 'var(--success-color)' if test.success else 'var(--error-color)' }};">
+                <div class="card-header">
+                    <div class="card-title">
+                        {{ '✅' if test.success else '❌' }} {{ test.test_case_name }}
+                        <span class="badge badge-{{ 'success' if test.success else 'error' }}">
+                            {{ 'PASSED' if test.success else 'FAILED' }}
+                        </span>
+                    </div>
+                    <div class="card-subtitle">
+                        Duration: {{ "%.2f"|format(test.run_duration) }}s | Agent: {{ test.agent if test.agent else 'Unknown' }}
+                    </div>
+                </div>
+                
+                <!-- Input Section -->
+                <div class="mb-2">
+                    <strong>🎯 Input Query:</strong>
+                    <div class="card p-0" style="background: #f8f9fa; border: 1px solid #dee2e6; margin: 0.5rem 0;">
+                        <pre style="margin: 0; padding: 1rem; white-space: pre-wrap; font-family: monospace;">{{ test.input }}</pre>
+                    </div>
+                </div>
+                
+                <!-- Output Section -->
+                <div class="mb-2">
+                    <strong>📤 Actual Output:</strong>
+                    {% if test.actual_output %}
+                    <div class="card p-0" style="background: {{ '#fff5f5' if not test.success else '#f0fdf4' }}; border: 1px solid {{ '#fecaca' if not test.success else '#bbf7d0' }}; margin: 0.5rem 0;">
+                        <pre style="margin: 0; padding: 1rem; white-space: pre-wrap; font-family: monospace; max-height: 300px; overflow-y: auto;">{{ test.actual_output }}</pre>
+                    </div>
+                    {% else %}
+                    <div class="card p-0" style="background: #fef2f2; border: 1px solid #fecaca; margin: 0.5rem 0;">
+                        <div style="padding: 1rem; color: #dc2626; font-weight: bold;">
+                            ⚠️ EMPTY RESPONSE - Agent returned no content!
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Expected Output Section -->
+                {% if test.expected_output %}
+                <div class="mb-2">
+                    <strong>📋 Expected Output:</strong>
+                    <div class="card p-0" style="background: #f0f9ff; border: 1px solid #bae6fd; margin: 0.5rem 0;">
+                        <pre style="margin: 0; padding: 1rem; white-space: pre-wrap; font-family: monospace;">{{ test.expected_output }}</pre>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Metrics Analysis -->
+                {% if test.metrics %}
+                <div class="mb-2">
+                    <strong>📊 Metric Results:</strong>
+                    <div class="table-container" style="margin: 0.5rem 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Score</th>
+                                    <th>Threshold</th>
+                                    <th>Result</th>
+                                    <th>Detailed Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for metric_name, metric_data in test.metrics.items() %}
+                                <tr>
+                                    <td><strong>{{ metric_name }}</strong></td>
+                                    <td>
+                                        {% if metric_data.score is defined %}
+                                        <span style="color: {{ 'var(--success-color)' if metric_data.success else 'var(--error-color)' }}">
+                                            {{ "%.3f"|format(metric_data.score) }}
+                                        </span>
+                                        {% else %}
+                                        <span>N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if metric_data.threshold is defined %}
+                                        {{ "%.2f"|format(metric_data.threshold) }}
+                                        {% else %}
+                                        N/A
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if metric_data.success is defined %}
+                                        <span class="badge badge-{{ 'success' if metric_data.success else 'error' }}">
+                                            {{ 'PASS' if metric_data.success else 'FAIL' }}
+                                        </span>
+                                        {% else %}
+                                        <span class="badge badge-warning">UNKNOWN</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="max-width: 300px;">
+                                        {% if metric_data.reason is defined %}
+                                        {{ metric_data.reason }}
+                                        {% else %}
+                                        No reason provided
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Issues and Debugging Info -->
+                {% if test.issues %}
+                <div class="mb-2">
+                    <strong>🚨 Identified Issues:</strong>
+                    <ul style="margin: 0.5rem 0; padding-left: 1rem;">
+                        {% for issue in test.issues %}
+                        <li style="color: var(--error-color); margin: 0.25rem 0;">{{ issue }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if test.error_details %}
+                <div class="mb-2">
+                    <strong>🔧 Technical Details:</strong>
+                    <div class="card p-0" style="background: #fef2f2; border: 1px solid #fecaca; margin: 0.5rem 0;">
+                        <div style="padding: 1rem;">
+                            <p><strong>Error Type:</strong> {{ test.error_details.error_type }}</p>
+                            <p><strong>Description:</strong> {{ test.error_details.description }}</p>
+                            <p><strong>Impact:</strong> {{ test.error_details.impact }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Recommendations Section -->
+<div id="recommendations" class="section" style="display: none;">
+    <div class="grid grid-1">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">💡 Actionable Recommendations</div>
+                <div class="card-subtitle">{{ recommendations|length }} recommendations</div>
+            </div>
+            
+            {% if recommendations %}
+            <div class="grid grid-1">
+                {% for rec in recommendations %}
+                <div class="card" style="border-left: 4px solid var(--primary-color);">
+                    {{ rec }}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center">
+                <div class="metric-value">🎉</div>
+                <div class="metric-label">No specific recommendations - system performing well!</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Chart data from template variables
+    const chartData = {
+        overview: {{ overview|tojson }},
+        metrics: {{ metrics|tojson }},
+        agents: {{ agents|tojson }}
+    };
+
+    // Initialize charts when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeCharts();
+    });
+
+    function initializeCharts() {
+        // Results Distribution Chart
+        createChart('resultsChart', {
+            type: 'doughnut',
+            data: {
+                labels: ['Passed', 'Failed', 'Errors'],
+                datasets: [{
+                    data: [
+                        chartData.overview.passed,
+                        chartData.overview.failed,
+                        chartData.overview.errors
+                    ],
+                    backgroundColor: [
+                        'var(--success-color)',
+                        'var(--error-color)',
+                        'var(--warning-color)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Duration Analysis Chart
+        const agentNames = Object.keys(chartData.agents);
+        const durations = agentNames.map(name => chartData.agents[name].avg_duration);
+        
+        createChart('durationChart', {
+            type: 'bar',
+            data: {
+                labels: agentNames,
+                datasets: [{
+                    label: 'Average Duration (s)',
+                    data: durations,
+                    backgroundColor: 'var(--primary-color)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Metrics Comparison Chart
+        const metricNames = Object.keys(chartData.metrics);
+        const passRates = metricNames.map(name => chartData.metrics[name].pass_rate);
+        
+        createChart('metricsComparisonChart', {
+            type: 'radar',
+            data: {
+                labels: metricNames,
+                datasets: [{
+                    label: 'Pass Rate (%)',
+                    data: passRates,
+                    borderColor: 'var(--primary-color)',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Scores Distribution Chart
+        const avgScores = metricNames.map(name => chartData.metrics[name].avg_score);
+        
+        createChart('scoresDistributionChart', {
+            type: 'bar',
+            data: {
+                labels: metricNames,
+                datasets: [{
+                    label: 'Average Score',
+                    data: avgScores,
+                    backgroundColor: 'var(--secondary-color)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 1
+                    }
+                }
+            }
+        });
+
+        // Agent Performance Chart
+        const passRatesByAgent = agentNames.map(name => chartData.agents[name].pass_rate);
+        
+        createChart('agentPerformanceChart', {
+            type: 'bar',
+            data: {
+                labels: agentNames,
+                datasets: [{
+                    label: 'Pass Rate (%)',
+                    data: passRatesByAgent,
+                    backgroundColor: passRatesByAgent.map(rate => 
+                        rate >= 80 ? 'var(--success-color)' : 
+                        rate >= 60 ? 'var(--warning-color)' : 'var(--error-color)'
+                    )
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Duration vs Performance Scatter Plot
+        createChart('durationVsPerformanceChart', {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Agents',
+                    data: agentNames.map(name => ({
+                        x: chartData.agents[name].avg_duration,
+                        y: chartData.agents[name].pass_rate
+                    })),
+                    backgroundColor: 'var(--primary-color)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Average Duration (s)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Pass Rate (%)'
+                        },
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+# OpenCode Agent Evaluation Metrics Configuration
+# SOURCE-BASED EVALUATION SYSTEM - No fake fact-checking!
+
+news:
+  - type: "source_attribution"
+    threshold: 0.7
+    timeout: 15
+    description: "Verifies source attribution quality - checks real URLs and credible outlets"
+    
+  - type: "content_structure"  
+    threshold: 0.7
+    description: "Evaluates professional news structure and formatting"
+    
+  - type: "news_completeness"
+    threshold: 0.6
+    description: "Checks 5W1H completeness (Who, What, When, Where, Why, How)"
+    
+  - type: "answer_relevancy"
+    threshold: 0.75
+    model: "ollama/llama3.1:8b"
+    description: "Evaluates if response directly addresses the news query"
+
+websearch:
+  - type: "custom"
+    name: "AnswerRelevancy"
+    criteria: >
+      Evaluate whether the search results and summary directly answer the user's 
+      query. Check for relevance, accuracy, and completeness of the information 
+      provided in relation to what was asked.
+    threshold: 0.7
+    model: "ollama"
+    
+  - type: "faithfulness"
+    threshold: 0.8
+    model: "ollama"
+    description: "Ensures search summaries are faithful to retrieved sources"
+
+reasoning:
+  - type: "custom"
+    name: "LogicCoherence"
+    criteria: >
+      Evaluate whether the reasoning process is logical, coherent, and follows 
+      sound principles. Check for logical fallacies, inconsistencies, and 
+      whether conclusions follow from premises.
+    threshold: 0.8
+    model: "ollama"
+    
+  - type: "custom"
+    name: "StepByStepClarity"
+    criteria: >
+      Assess whether the reasoning is presented in clear, step-by-step manner 
+      that is easy to follow. Look for structured thinking, clear transitions 
+      between ideas, and comprehensive explanations.
+    threshold: 0.7
+    model: "ollama"

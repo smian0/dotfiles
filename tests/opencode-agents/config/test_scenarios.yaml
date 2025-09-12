@@ -1,0 +1,59 @@
+# Test scenarios for OpenCode agents
+# Each agent has specific test cases designed to evaluate its core functionality
+
+news:
+  quick_tests:
+    - name: "breaking_news"
+      input: "Get latest breaking news"
+      category: "breaking"
+      expected_keywords: ["news", "latest", "breaking", "today"]
+      
+    - name: "tech_news"
+      input: "Latest technology news"
+      category: "technology"
+      expected_keywords: ["technology", "tech", "innovation", "digital"]
+      
+    - name: "general_news"
+      input: "What's happening in the world today?"
+      category: "general"
+      expected_keywords: ["world", "today", "happening", "current"]
+
+  comprehensive_tests:
+    - name: "specific_topic"
+      input: "News about artificial intelligence developments"
+      category: "ai_tech"
+      expected_keywords: ["artificial intelligence", "AI", "machine learning", "development"]
+      
+    - name: "financial_news"
+      input: "Latest financial and economic news"
+      category: "finance"
+      expected_keywords: ["financial", "economic", "market", "economy"]
+      
+    - name: "international_news"
+      input: "International news and world events"
+      category: "international"
+      expected_keywords: ["international", "world", "global", "countries"]
+
+websearch:
+  quick_tests:
+    - name: "factual_query"
+      input: "What is the capital of Japan?"
+      category: "factual"
+      expected_keywords: ["Tokyo", "capital", "Japan"]
+      
+    - name: "current_events"
+      input: "Latest developments in space exploration"
+      category: "current"
+      expected_keywords: ["space", "exploration", "NASA", "mission"]
+
+reasoning:
+  quick_tests:
+    - name: "logical_problem"
+      input: "Explain the steps to solve: If all roses are flowers, and some flowers are red, can we conclude that some roses are red?"
+      category: "logic"
+      expected_keywords: ["logical", "steps", "conclusion", "premise"]
+      
+    - name: "mathematical_reasoning"
+      input: "Walk me through solving this step by step: What's 15% of 240?"
+      category: "math"
+      expected_keywords: ["step", "percentage", "calculate", "240"]

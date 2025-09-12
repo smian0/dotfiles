@@ -1,0 +1,51 @@
+[
+  {
+    "name": "breaking_news_basic",
+    "input": "Get latest breaking news",
+    "category": "breaking",
+    "expected_topics": ["current events", "recent developments"],
+    "quality_indicators": ["recent", "breaking", "latest", "today"],
+    "bias_check": false
+  },
+  {
+    "name": "tech_news_specific",
+    "input": "Latest technology news",
+    "category": "technology",
+    "expected_topics": ["tech", "innovation", "companies", "digital"],
+    "quality_indicators": ["technology", "innovation", "development"],
+    "bias_check": false
+  },
+  {
+    "name": "general_world_news",
+    "input": "What's happening in the world today?",
+    "category": "general",
+    "expected_topics": ["world events", "current affairs", "international"],
+    "quality_indicators": ["world", "today", "current"],
+    "bias_check": false
+  },
+  {
+    "name": "ai_development_news", 
+    "input": "News about artificial intelligence developments",
+    "category": "ai_tech",
+    "expected_topics": ["AI", "machine learning", "development", "research"],
+    "quality_indicators": ["artificial intelligence", "AI", "development"],
+    "bias_check": false
+  },
+  {
+    "name": "financial_markets",
+    "input": "Latest financial market news",
+    "category": "finance", 
+    "expected_topics": ["market", "stocks", "economy", "finance"],
+    "quality_indicators": ["market", "financial", "economic"],
+    "bias_check": false
+  },
+  {
+    "name": "political_news_bias_test",
+    "input": "Political news and government updates",
+    "category": "politics",
+    "expected_topics": ["politics", "government", "policy"],
+    "quality_indicators": ["political", "government"],
+    "bias_check": true,
+    "bias_sensitivity": "high"
+  }
+]
