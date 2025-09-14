@@ -1,0 +1,9 @@
+--ignore=\.DS_Store
+--ignore=.*~
+--ignore=\..*\.swp
+--ignore=logs
+--ignore=backups
+--ignore=shell-snapshots  
+--ignore=todos
+--ignore=projects
+--ignore=local
