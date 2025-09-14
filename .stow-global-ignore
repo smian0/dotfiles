@@ -43,3 +43,6 @@ Thumbs\.db
 \#.*\#
 .*\.orig
 \..*\.swp
+
+# Claude-specific unstowed directories
+\.claude/rules
