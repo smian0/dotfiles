@@ -202,6 +202,13 @@ class DeepEvalReportGenerator:
             else:
                 return obj
         
+        # Load performance history
+        performance_history = self._load_performance_history()
+        
+        # Add navigation data
+        dashboard_link = self._get_dashboard_link()
+        report_navigation = self._get_report_navigation()
+        
         return {
             'report_title': report_title,
             'generation_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -213,8 +220,69 @@ class DeepEvalReportGenerator:
             'correlations': serialize_object(analysis.get('correlations', {})),
             'failure_analysis': serialize_object(analysis.get('failure_analysis', {})),
             'recommendations': analysis.get('recommendations', []),
-            'test_results': test_results  # Add detailed test results for debugging
+            'test_results': test_results,  # Add detailed test results for debugging
+            'performance_history': performance_history,  # Add performance history
+            'dashboard_link': dashboard_link,  # Add dashboard link
+            'report_navigation': report_navigation  # Add report navigation
         }
+    
+    def _load_performance_history(self, limit: int = 10) -> List[Dict[str, Any]]:
+        """Load recent performance history from benchmarks.json"""
+        benchmark_file = self.results_dir / "benchmarks.json"
+        
+        if not benchmark_file.exists():
+            return []
+        
+        try:
+            with open(benchmark_file, 'r') as f:
+                benchmarks = json.load(f)
+            
+            # Get last N benchmarks and calculate trends
+            recent_benchmarks = benchmarks[-limit:] if len(benchmarks) > limit else benchmarks
+            
+            # Add trend indicators
+            for i, benchmark in enumerate(recent_benchmarks):
+                benchmark['trends'] = {}
+                
+                if i > 0:
+                    prev_benchmark = recent_benchmarks[i-1]
+                    
+                    # Calculate trends for each agent/metric
+                    for agent_name, metrics in benchmark.get('metrics', {}).items():
+                        if agent_name in prev_benchmark.get('metrics', {}):
+                            prev_metrics = prev_benchmark['metrics'][agent_name]
+                            
+                            agent_trends = {}
+                            for metric_name, current_score in metrics.items():
+                                if metric_name in prev_metrics:
+                                    prev_score = prev_metrics[metric_name]
+                                    diff = current_score - prev_score
+                                    
+                                    if diff > 0.01:
+                                        trend = "↗️"  # Improvement
+                                        trend_class = "improvement"
+                                    elif diff < -0.01:
+                                        trend = "↘️"  # Regression
+                                        trend_class = "regression"
+                                    else:
+                                        trend = "➡️"  # Stable
+                                        trend_class = "stable"
+                                    
+                                    agent_trends[metric_name] = {
+                                        'icon': trend,
+                                        'class': trend_class,
+                                        'diff': diff,
+                                        'prev_score': prev_score,
+                                        'current_score': current_score
+                                    }
+                            
+                            benchmark['trends'][agent_name] = agent_trends
+            
+            return recent_benchmarks
+            
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            print(f"Warning: Could not load performance history: {e}")
+            return []
     
     def _generate_html_report(self, template_data: Dict[str, Any], output_filename: str = None) -> Path:
         """Generate the HTML report file"""
@@ -343,6 +411,74 @@ class DeepEvalReportGenerator:
                     comparison['regressions'].append(f"📉 {metric_name} declined by {abs(change):.3f}")
         
         return comparison
+    
+    def _get_dashboard_link(self) -> Optional[str]:
+        """Get link to dashboard if it exists"""
+        dashboard_files = [
+            "index.html",
+            "latest_dashboard.html"
+        ]
+        
+        for dashboard_file in dashboard_files:
+            dashboard_path = self.output_dir / dashboard_file
+            if dashboard_path.exists():
+                return dashboard_file
+        
+        # Look for any dashboard file
+        for dashboard_file in self.output_dir.glob("dashboard_*.html"):
+            return dashboard_file.name
+        
+        return None
+    
+    def _get_report_navigation(self) -> Optional[Dict[str, Any]]:
+        """Get report navigation data (previous/next reports)"""
+        try:
+            # Load reports manifest
+            manifest_path = self.results_dir / "reports_manifest.json"
+            if not manifest_path.exists():
+                return None
+            
+            with open(manifest_path, 'r') as f:
+                manifest = json.load(f)
+            
+            reports = manifest.get('reports', [])
+            if len(reports) <= 1:
+                return None
+            
+            # Find current report position (based on timestamp - we'll use the most recent)
+            # In a full implementation, you'd pass the current report filename
+            current_report = reports[0]  # Most recent
+            current_index = 0
+            
+            navigation = {
+                'total': len(reports),
+                'current': {
+                    'version': current_report.get('benchmark_version', 'unknown'),
+                    'position': current_index + 1
+                },
+                'previous': None,
+                'next': None
+            }
+            
+            if current_index > 0:
+                prev_report = reports[current_index - 1]
+                navigation['previous'] = {
+                    'filename': prev_report['filename'],
+                    'version': prev_report.get('benchmark_version', 'unknown')
+                }
+            
+            if current_index < len(reports) - 1:
+                next_report = reports[current_index + 1]
+                navigation['next'] = {
+                    'filename': next_report['filename'],
+                    'version': next_report.get('benchmark_version', 'unknown')
+                }
+            
+            return navigation
+            
+        except (json.JSONDecodeError, KeyError, IndexError) as e:
+            print(f"Warning: Could not load report navigation: {e}")
+            return None
 
 
 def main():

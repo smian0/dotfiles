@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 class OllamaModel(DeepEvalBaseLLM):
     """Custom DeepEval model using local Ollama - Fixed for reliability"""
     
-    def __init__(self, model_id: str = "llama3.1:8b", model_url: str = "http://localhost:11434", timeout: int = 120):
+    def __init__(self, model_id: str = "gemma3:latest", model_url: str = "http://localhost:11434", timeout: int = 60):
         self.model_id = model_id
         self.model_url = model_url.rstrip('/')
         self.timeout = timeout
@@ -80,9 +80,9 @@ class OllamaModel(DeepEvalBaseLLM):
 def get_ollama_model() -> OllamaModel:
     """Get configured Ollama model for DeepEval - Fixed for reliability"""
     return OllamaModel(
-        model_id="llama3.1:8b",  # More reliable than gemma3:latest  
+        model_id="gemma3:latest",  # Use the available model
         model_url="http://localhost:11434",
-        timeout=120  # Increased timeout for stability
+        timeout=60  # Reasonable timeout to prevent hanging
     )
 
 def load_agent_metrics(agent_name: str) -> List:

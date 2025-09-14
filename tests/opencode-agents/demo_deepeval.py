@@ -58,16 +58,43 @@ def main():
             retrieval_context=response.sources or []
         )
         
-        # Run evaluation
+        # Run evaluation with timeout protection
         print("⚙️  Running NewsRelevancy evaluation...")
-        relevancy_metric.measure(test_case)
+        import signal
+        import time
         
-        # Display results
-        print(f"\n📊 Evaluation Results:")
-        print(f"   Score: {relevancy_metric.score:.2f}/1.0")
-        print(f"   Threshold: {relevancy_metric.threshold}")
-        print(f"   Passed: {'✅ Yes' if relevancy_metric.score >= relevancy_metric.threshold else '❌ No'}")
-        print(f"   Reason: {relevancy_metric.reason}")
+        def timeout_handler(signum, frame):
+            raise TimeoutError("Evaluation timed out")
+        
+        # Set timeout of 90 seconds for evaluation
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(90)
+        
+        try:
+            start_time = time.time()
+            relevancy_metric.measure(test_case)
+            end_time = time.time()
+            
+            # Cancel timeout
+            signal.alarm(0)
+            
+            # Display results
+            print(f"\n📊 Evaluation Results:")
+            print(f"   Score: {relevancy_metric.score:.2f}/1.0")
+            print(f"   Threshold: {relevancy_metric.threshold}")
+            print(f"   Passed: {'✅ Yes' if relevancy_metric.score >= relevancy_metric.threshold else '❌ No'}")
+            print(f"   Reason: {relevancy_metric.reason}")
+            print(f"   Duration: {end_time - start_time:.1f} seconds")
+            
+        except TimeoutError:
+            signal.alarm(0)
+            print(f"⏰ Evaluation timed out after 90 seconds")
+            print(f"   This may indicate an issue with the Ollama connection or model")
+            return 1
+        except Exception as eval_error:
+            signal.alarm(0)
+            print(f"❌ Evaluation failed: {eval_error}")
+            return 1
         
         print(f"\n🎉 Demo completed successfully!")
         

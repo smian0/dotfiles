@@ -55,6 +55,95 @@
     </div>
 </div>
 
+<!-- Performance History Section -->
+{% if performance_history %}
+<div id="performance-history" class="section">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">📈 Performance History</div>
+            <div class="card-subtitle">Recent {{ performance_history|length }} benchmark results</div>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Version</th>
+                        <th>Date</th>
+                        <th>Agent</th>
+                        <th>Metric</th>
+                        <th>Score</th>
+                        <th>Trend</th>
+                        <th>Issues</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for benchmark in performance_history %}
+                        {% for agent_name, metrics in benchmark.metrics.items() %}
+                            {% for metric_name, score in metrics.items() %}
+                            <tr>
+                                <td><strong>{{ benchmark.version }}</strong></td>
+                                <td>{{ benchmark.timestamp[:10] }}</td>
+                                <td><span class="badge badge-info">{{ agent_name }}</span></td>
+                                <td>{{ metric_name }}</td>
+                                <td>
+                                    <span class="metric-score">{{ "%.3f"|format(score) }}</span>
+                                </td>
+                                <td>
+                                    {% if benchmark.trends.get(agent_name, {}).get(metric_name) %}
+                                        {% set trend = benchmark.trends[agent_name][metric_name] %}
+                                        <span class="trend trend-{{ trend.class }}" title="Change: {{ '+%.3f'|format(trend.diff) if trend.diff > 0 else '%.3f'|format(trend.diff) }}">
+                                            {{ trend.icon }}
+                                            {% if trend.diff > 0.01 %}
+                                                <small>+{{ "%.3f"|format(trend.diff) }}</small>
+                                            {% elif trend.diff < -0.01 %}
+                                                <small>{{ "%.3f"|format(trend.diff) }}</small>
+                                            {% endif %}
+                                        </span>
+                                    {% else %}
+                                        <span class="trend trend-baseline">📍</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge {% if benchmark.issues_count <= 1 %}badge-success{% elif benchmark.issues_count <= 3 %}badge-warning{% else %}badge-error{% endif %}">
+                                        {{ benchmark.issues_count }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if performance_history|length > 1 %}
+        <div class="card-footer">
+            <div class="performance-summary">
+                {% set latest = performance_history[-1] %}
+                {% set baseline = performance_history[0] %}
+                <div class="summary-item">
+                    <strong>Latest:</strong> {{ latest.version }} ({{ latest.timestamp[:10] }})
+                </div>
+                <div class="summary-item">
+                    <strong>Baseline:</strong> {{ baseline.version }} ({{ baseline.timestamp[:10] }})
+                </div>
+                <div class="summary-item">
+                    <strong>Issues Trend:</strong> 
+                    {% if latest.issues_count < baseline.issues_count %}
+                        <span class="trend-improvement">↓ {{ baseline.issues_count - latest.issues_count }} fewer issues</span>
+                    {% elif latest.issues_count > baseline.issues_count %}
+                        <span class="trend-regression">↑ {{ latest.issues_count - baseline.issues_count }} more issues</span>
+                    {% else %}
+                        <span class="trend-stable">→ Same issue count</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
 <!-- Metrics Section -->
 <div id="metrics" class="section" style="display: none;">
     <div class="grid grid-1">
@@ -422,9 +511,9 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                        {% if metric_data.success is defined %}
-                                        <span class="badge badge-{{ 'success' if metric_data.success else 'error' }}">
-                                            {{ 'PASS' if metric_data.success else 'FAIL' }}
+                                        {% if metric_data.passed is defined %}
+                                        <span class="badge badge-{{ 'success' if metric_data.passed else 'error' }}">
+                                            {{ 'PASS' if metric_data.passed else 'FAIL' }}
                                         </span>
                                         {% else %}
                                         <span class="badge badge-warning">UNKNOWN</span>
@@ -470,11 +559,88 @@
                 </div>
                 {% endif %}
                 
+                <!-- Recommendations for Improvement -->
+                {% if test.recommendations %}
+                <div class="mb-2">
+                    <strong>💡 Recommendations for Improvement:</strong>
+                    <ul style="margin: 0.5rem 0; padding-left: 1rem;">
+                        {% for recommendation in test.recommendations %}
+                        <li style="color: var(--success-color); margin: 0.25rem 0;">{{ recommendation }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
             </div>
             {% endfor %}
         </div>
     </div>
 </div>
+
+<!-- Agent Improvement Insights Section -->
+{% if improvement_insights %}
+<div id="improvement-insights" class="section">
+    <div class="grid grid-1">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">🚀 Actionable Improvement Insights</div>
+                <div class="card-subtitle">Data-driven recommendations for enhancing agent performance</div>
+            </div>
+            
+            <!-- Performance Analysis -->
+            <div class="grid grid-2 mb-3">
+                <div class="card" style="background: #f0f9ff; border: 1px solid #0ea5e9;">
+                    <div class="card-header">
+                        <div class="card-title" style="color: #0ea5e9;">✅ Strengths</div>
+                    </div>
+                    <ul style="margin: 0; padding-left: 1rem;">
+                        {% for strength in improvement_insights.performance_analysis.strengths %}
+                        <li style="margin: 0.25rem 0;">{{ strength }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="card" style="background: #fef2f2; border: 1px solid #ef4444;">
+                    <div class="card-header">
+                        <div class="card-title" style="color: #ef4444;">⚠️ Weaknesses</div>
+                    </div>
+                    <ul style="margin: 0; padding-left: 1rem;">
+                        {% for weakness in improvement_insights.performance_analysis.weaknesses %}
+                        <li style="margin: 0.25rem 0;">{{ weakness }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Actionable Improvements -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🎯 Priority Improvements</div>
+                </div>
+                
+                {% for improvement in improvement_insights.actionable_improvements %}
+                <div class="card mb-2" style="border-left: 4px solid {% if improvement.priority == 'HIGH' %}var(--error-color){% elif improvement.priority == 'MEDIUM' %}var(--warning-color){% else %}var(--success-color){% endif %};">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span class="badge badge-{% if improvement.priority == 'HIGH' %}error{% elif improvement.priority == 'MEDIUM' %}warning{% else %}success{% endif %}">
+                                {{ improvement.priority }}
+                            </span>
+                            {{ improvement.area }}
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 0 1rem 1rem 1rem;">
+                        <p><strong>🔍 Issue:</strong> {{ improvement.issue }}</p>
+                        <p><strong>💡 Solution:</strong> {{ improvement.solution }}</p>
+                        <p><strong>🛠️ Implementation:</strong> {{ improvement.implementation }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <!-- Recommendations Section -->
 <div id="recommendations" class="section" style="display: none;">
