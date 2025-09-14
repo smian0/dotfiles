@@ -33,6 +33,9 @@ text=$(jq -r '.message.content[0].text' <<< "$item")
 done <<< "$items"
 [[ "$needs_reminder" == "true" ]] || exit 0
 
+# Log when hook triggers (minimal logging approach)
+echo "{\"timestamp\": \"$(date -Iseconds)\", \"triggered\": true, \"session_id\": \"$(basename "$transcript_path" .jsonl)\"}" >> "$(dirname "$0")/../logs/you_are_not_right.jsonl"
+
 # upon exit code 0, Claude Code will append stdout to the context
 # and proceed.
 cat <<'EOF'
