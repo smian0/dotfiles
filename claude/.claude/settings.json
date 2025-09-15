@@ -6,6 +6,8 @@
   },
   "permissions": {
     "allow": [
+      "Read(//Users/smian/github-ck/**)",
+      "Read(//Users/smian/github-smian0/**)",
       "Bash(npm run lint)",
       "Bash(npm run test:*)",
       "Read(~/.zshrc)",

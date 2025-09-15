@@ -74,11 +74,8 @@ if [ -f "/tmp/claude-${project_id}-last-summary.txt" ]; then
         age=$((current_time - summary_timestamp))
         
         if [ "$age" -le 300 ] && [ -n "$summary_text" ]; then
-            # Truncate summary to 120 characters max (since it's on its own line)
-            if [ ${#summary_text} -gt 120 ]; then
-                summary_text=$(echo "$summary_text" | cut -c1-117)...
-            fi
-            summary_part="\n${BLUE}[📝 ${summary_text}]${RESET}"
+            # No truncation - let LLM generate properly sized summaries
+            summary_part="\n${BLUE}📝 ${summary_text}${RESET}"
         fi
     fi
 fi

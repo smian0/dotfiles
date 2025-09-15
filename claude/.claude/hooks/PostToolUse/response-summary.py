@@ -2,20 +2,14 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#     "openai",
+#     "ollama",
 #     "python-dotenv",
 # ]
 # ///
 """
-Claude Response Summarizer with Log Rotation
+Claude Response Summarizer - Ultra Minimal
 
-Provides concise summaries of Claude's responses without polluting Claude's context.
-Uses efficient log rotation to prevent unbounded log growth.
-
-Environment Variables:
-    OLLAMA_MODEL: Model to use for summaries (default: gpt-oss:20b)
-    SUMMARY_MODE: Output mode - minimal/inline/panel (default: minimal)
-    DEBUG_HOOK: Enable debug output (set to 1)
+Generates concise summaries optimized for gpt-oss models.
 """
 
 import json
@@ -24,286 +18,113 @@ import os
 from pathlib import Path
 from typing import Optional
 
-# Import LogRotator from log-rotator.py using importlib
 try:
-    import importlib.util
-    spec = importlib.util.spec_from_file_location('log_rotator', str(Path.home() / '.claude' / 'scripts' / 'log-rotator.py'))
-    log_rotator_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(log_rotator_module)
-    LogRotator = log_rotator_module.LogRotator
-except Exception:
-    # Fallback if log rotator not available
-    LogRotator = None
+    import ollama
+except ImportError:
+    ollama = None
 
+from dotenv import load_dotenv
+env_file = Path(__file__).parent / ".env"
+if env_file.exists():
+    load_dotenv(env_file)
 
-def extract_last_response(transcript_path: str) -> Optional[str]:
-    """Extract Claude's latest response from transcript"""
-    if not Path(transcript_path).exists():
-        return None
-    
-    import time
-    # Try multiple times with small delays (transcript may still be writing)
-    for attempt in range(3):
-        messages = []
-        try:
-            with open(transcript_path, 'r') as f:
-                for line in f:
-                    if line.strip():
-                        try:
-                            messages.append(json.loads(line))
-                        except json.JSONDecodeError:
-                            continue
-        except Exception:
-            if attempt < 2:  # Don't sleep on last attempt
-                time.sleep(0.1)
-            continue
+def extract_response(transcript_path: str) -> Optional[str]:
+    """Extract last assistant response"""
+    try:
+        with open(transcript_path, 'r') as f:
+            messages = [json.loads(line) for line in f if line.strip()]
         
-        # If we found messages, break out of retry loop
-        if messages:
-            break
-        
-        if attempt < 2:  # Don't sleep on last attempt
-            time.sleep(0.1)
-    
-    # Find last assistant message
-    for msg in reversed(messages):
-        if msg.get('role') == 'assistant':
-            content = msg.get('message', {}).get('content', '')
-            if isinstance(content, list):
-                text_parts = [
-                    item.get('text', '') 
-                    for item in content 
-                    if item.get('type') == 'text'
-                ]
-                response = ' '.join(text_parts)
-            else:
-                response = content
-            
-            # Clean up response - remove tool calls and system reminders
-            if response:
-                lines = response.split('\n')
-                cleaned_lines = []
-                skip_until_end = False
-                
-                for line in lines:
-                    if '<system-reminder>' in line:
-                        skip_until_end = True
-                        continue
-                    elif '</system-reminder>' in line:
-                        skip_until_end = False
-                        continue
-                    elif skip_until_end:
-                        continue
-                    elif line.strip().startswith('<function_calls>'):
-                        skip_until_end = True
-                        continue
-                    elif line.strip().startswith('</function_results>'):
-                        skip_until_end = False
-                        continue
-                    elif not skip_until_end and line.strip():
-                        cleaned_lines.append(line)
-                
-                return '\n'.join(cleaned_lines).strip()
+        for msg in reversed(messages):
+            if msg.get('type') == 'assistant':
+                content = msg.get('message', {}).get('content', '')
+                if isinstance(content, list):
+                    return ' '.join(item.get('text', '') for item in content if item.get('type') == 'text')
+                return content
+    except:
+        pass
     return None
 
-
-def should_summarize(response: str) -> bool:
-    """Determine if response warrants summarization"""
-    if not response:
-        return False
+def summarize(response: str) -> str:
+    """Generate summary"""
+    if not ollama:
+        return f"Response ({len(response.split())} words)"
     
-    # Only summarize substantial responses
-    word_count = len(response.split())
-    return word_count > 100  # Skip short responses
-
-
-def generate_ollama_summary(response: str) -> Optional[str]:
-    """Try to generate summary using Ollama"""
     try:
-        from openai import OpenAI
+        model = os.getenv("OLLAMA_MODEL", "gpt-oss:20b")
+        base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:3305")
         
-        client = OpenAI(
-            base_url='http://localhost:11434/v1',
-            api_key='ollama',
-        )
-        model = os.getenv("OLLAMA_MODEL", "gemma3:latest")
+        # Generic single-line prompt for any content
+        prompt = f"Summarize this in one concise sentence:\n\n{response}"
         
-        # Truncate very long responses
-        if len(response) > 3000:
-            response = response[:3000] + "..."
+        # 20b needs more tokens than 120b
+        tokens = 300 if "20b" in model else 150 if "gpt-oss" in model else 50
         
-        prompt = f"""Summarize this AI assistant response in ONE concise sentence (max 15 words).
-Focus on the main action or key information provided.
-Do not include meta-commentary or formatting.
-
-Response to summarize:
-{response}
-
-Summary:"""
-        
-        completion = client.chat.completions.create(
+        result = ollama.Client(host=base_url).chat(
             model=model,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=50,
-            temperature=0.3,
-            timeout=5
+            options={"num_predict": tokens, "temperature": 0.3}
         )
         
-        summary = completion.choices[0].message.content.strip()
-        # Clean up common prefixes
-        for prefix in ["Summary:", "In summary:", "The response"]:
-            if summary.startswith(prefix):
-                summary = summary[len(prefix):].strip()
-        
-        return summary
-        
-    except Exception:
-        return None  # Fall back on any error
-
-
-def generate_fallback_summary(response: str) -> str:
-    """Generate rule-based summary when Ollama is unavailable"""
+        if result and result.message:
+            content = result.message.content or ''
+            thinking = getattr(result.message, 'thinking', '') or ''
+            
+            # Handle gpt-oss thinking field - use content first, then thinking
+            if content.strip():
+                summary = content.strip()
+            elif "gpt-oss" in model and thinking:
+                lines = [line.strip() for line in thinking.split('\n') if line.strip()]
+                summary = lines[-1] if lines else ""
+            else:
+                summary = ""
+            
+            # Clean up common prefixes and ensure single line
+            for prefix in ["Summary:", "SUMMARY:", "Answer:", "ANSWER:"]:
+                if summary.startswith(prefix):
+                    summary = summary[len(prefix):].strip(' ":')
+            
+            # Ensure single line and reasonable length
+            summary = summary.replace('\n', ' ').replace('\r', ' ')
+            summary = ' '.join(summary.split())  # Remove extra whitespace
+            if len(summary) > 120:
+                summary = summary[:117] + "..."
+            
+            if len(summary) > 5:
+                return summary
+    except:
+        pass
+    
+    # Generic fallback
     words = response.split()
-    
-    # Look for action words
-    action_words = ['implement', 'create', 'build', 'explain', 'analyze', 'design', 
-                   'develop', 'configure', 'install', 'setup', 'fix', 'update',
-                   'add', 'remove', 'modify', 'test', 'deploy', 'run', 'write']
-    
-    found_action = None
-    action_context = ""
-    
-    for i, word in enumerate(words[:50]):
-        clean_word = word.lower().rstrip('.,!?:;')
-        if clean_word in action_words:
-            found_action = clean_word
-            # Get some context after the action
-            if i + 1 < len(words):
-                next_words = words[i+1:i+6]  # Get next 5 words
-                action_context = ' '.join(next_words)
-            break
-    
-    if found_action:
-        if action_context:
-            # Clean up context
-            action_context = action_context.strip('.,!?:;')[:50]
-            if action_context:
-                return f"Helped {found_action} {action_context}"
-        return f"Provided guidance on {found_action}ing"
-    
-    # Look for question words that might indicate explanation
-    if any(word in response.lower()[:200] for word in ['how to', 'what is', 'why', 'explain']):
-        return f"Explained concepts ({len(words)} words)"
-    
-    # Fallback to word count and type
-    word_count = len(words)
-    if word_count > 300:
-        return f"Comprehensive response ({word_count} words)"
-    elif word_count > 150:
-        return f"Detailed response ({word_count} words)"
-    else:
-        return f"Response provided ({word_count} words)"
-
-
-def format_output(summary: str, mode: str = "minimal") -> None:
-    """Output summary in simple format"""
-    print(f"Short Summary: {summary}", file=sys.stdout)
-
+    return f"Response provided ({len(words)} words)"
 
 def main():
-    stdin_data = None
     try:
-        # Read hook data from stdin
-        stdin_data = json.load(sys.stdin)
-        transcript_path = stdin_data.get('transcript_path')
+        data = json.load(sys.stdin)
+        transcript_path = data.get('transcript_path')
         
         if not transcript_path:
             return
-        
-        # Initialize log rotator
-        if LogRotator:
-            hooks_log_dir = Path.home() / ".claude" / "hooks" / "PostToolUse" / "logs"
-            hooks_log_dir.mkdir(exist_ok=True)
-            log_rotator = LogRotator(
-                log_path=str(hooks_log_dir / "response-summary.jsonl"),
-                format="jsonl",
-                max_size_mb=5.0,
-                max_entries=1000,
-                max_archives=3,
-                compress=True
-            )
-            # Log hook invocation
-            log_rotator.append({
-                "status": "started",
-                "transcript_path": transcript_path,
-                "session_id": stdin_data.get('session_id'),
-                "tool_name": stdin_data.get('tool_name'),
-                "cwd": os.getcwd()
-            })
-        
-        # Extract response
-        response = extract_last_response(transcript_path)
-        
-        if not response:
-            if LogRotator:
-                log_rotator.append({"status": "no_response_found"})
+            
+        response = extract_response(transcript_path)
+        if not response or len(response.split()) < int(os.getenv("MIN_RESPONSE_WORDS", "3")):
             return
+            
+        summary = summarize(response)
+        print(summary)
         
-        if not should_summarize(response):
-            if LogRotator:
-                log_rotator.append({
-                    "status": "response_too_short", 
-                    "word_count": len(response.split())
-                })
-            return
-        
-        # Generate summary
-        summary = generate_ollama_summary(response)
-        summary_method = "ollama" if summary else "fallback"
-        
-        if not summary:
-            summary = generate_fallback_summary(response)
-        
-        # Log successful summary
-        if LogRotator:
-            log_rotator.append({
-                "status": "summary_generated",
-                "summary": summary,
-                "summary_method": summary_method,
-                "response_length": len(response),
-                "word_count": len(response.split())
-            })
-        
-        # Output to stderr (user sees, Claude doesn't)
-        output_mode = os.getenv("SUMMARY_MODE", "minimal")
-        format_output(summary, output_mode)
-        
-        # Write summary to project-specific temp file for statusline integration
+        # Write to statusline temp file
         try:
             import time
             project_id = os.path.basename(os.getcwd()).replace('/', '-').replace(' ', '_')
             summary_file = Path(f"/tmp/claude-{project_id}-last-summary.txt")
             timestamp = int(time.time())
-            with summary_file.open("w") as f:
-                f.write(f"{timestamp}:{summary}")
-        except Exception:
-            pass  # Don't fail if we can't write summary file
+            summary_file.write_text(f"{timestamp}:{summary}")
+        except:
+            pass
         
-    except Exception as e:
-        # Log any errors
-        if LogRotator and stdin_data:
-            try:
-                log_rotator.append({
-                    "status": "error", 
-                    "error": str(e)
-                })
-            except:
-                pass
-        
-        if os.getenv("DEBUG_HOOK"):
-            print(f"DEBUG: Hook error: {e}", file=sys.stderr)
+    except:
         pass  # Never disrupt Claude
-
 
 if __name__ == "__main__":
     main()
