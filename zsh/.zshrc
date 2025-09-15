@@ -909,3 +909,6 @@ gh() {
     command gh "$@"
   fi
 }
+
+# Auto-added by MCP Environment Setup
+source "/Users/smian/.config/mcp-env/shell-env.sh"
