@@ -852,3 +852,35 @@ export PATH="$PATH:/Users/smian/.cache/lm-studio/bin"
 
 # # Claude Code Router configuration
 # export ANTHROPIC_BASE_URL="http://127.0.0.1:8080"
+
+# =============================================================================
+# GitHub Safety Function
+# =============================================================================
+
+# GitHub CLI wrapper to prevent accidental operations on non-owned repos
+gh() {
+  if [[ "$1" == "issue" && "$2" == "create" ]]; then
+    current_repo=$(command gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "unknown")
+    
+    # Extract owner from repo (e.g., "Cloud-Kinetix/bmad-enhanced" → "Cloud-Kinetix")
+    repo_owner=$(echo "$current_repo" | cut -d'/' -f1)
+    
+    # Define allowed organizations/users
+    allowed_owners=("Cloud-Kinetix" "smian0")
+    
+    if [[ ! " ${allowed_owners[@]} " =~ " ${repo_owner} " ]]; then
+      echo "❌ BLOCKED: Cannot create issues in third-party repository!"
+      echo "Current repo: $current_repo"
+      echo "Owner: $repo_owner"
+      echo "Allowed owners: ${allowed_owners[*]}"
+      echo ""
+      echo "If this is intentional, use: command gh issue create ..."
+      return 1
+    fi
+    
+    echo "✅ Safe repository: $current_repo"
+    command gh "$@"
+  else
+    command gh "$@"
+  fi
+}
