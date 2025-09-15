@@ -60,25 +60,6 @@ else
     url_part=""
 fi
 
-# Summary from PostToolUse hook (if available and recent)
-summary_part=""
-if [ -f "/tmp/claude-${project_id}-last-summary.txt" ]; then
-    # Read timestamp and summary
-    summary_content=$(cat "/tmp/claude-${project_id}-last-summary.txt" 2>/dev/null)
-    if [ -n "$summary_content" ]; then
-        summary_timestamp=$(echo "$summary_content" | cut -d: -f1)
-        summary_text=$(echo "$summary_content" | cut -d: -f2-)
-        
-        # Check if summary is recent (within 5 minutes = 300 seconds)
-        current_time=$(date +%s)
-        age=$((current_time - summary_timestamp))
-        
-        if [ "$age" -le 300 ] && [ -n "$summary_text" ]; then
-            # No truncation - let LLM generate properly sized summaries
-            summary_part="\n${BLUE}📝 ${summary_text}${RESET}"
-        fi
-    fi
-fi
 
 # Current prompt from UserPromptSubmit hook (real-time capture)
 prompt_part=""
@@ -121,5 +102,5 @@ if [ -n "$current_prompt" ] && [ "$current_prompt" != "null" ] && [ "$current_pr
     prompt_part="\n${LIGHT_GREEN}${icon} ${clean_prompt}${RESET}"
 fi
 
-# Output complete status line (prompt on line 2, summary on line 3)
-printf "${user_host}${dir_part}${git_part}${model_part}${claude_part}${style_part}${url_part}${prompt_part}${summary_part}"
+# Output complete status line (prompt on line 2)
+printf "${user_host}${dir_part}${git_part}${model_part}${claude_part}${style_part}${url_part}${prompt_part}"
