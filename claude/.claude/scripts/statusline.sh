@@ -26,6 +26,8 @@ YELLOW='\033[1;33m'
 CYAN='\033[1;36m'
 DARK_GRAY='\033[90m'
 DARK_CYAN='\033[36m'
+GRAY='\033[90m'
+LIGHT_GREEN='\033[92m'
 RESET='\033[0m'
 
 # Build status components
@@ -76,7 +78,7 @@ if [ -f "/tmp/claude-${project_id}-last-summary.txt" ]; then
             if [ ${#summary_text} -gt 120 ]; then
                 summary_text=$(echo "$summary_text" | cut -c1-117)...
             fi
-            summary_part="\n${DARK_CYAN}[📝 ${summary_text}]${RESET}"
+            summary_part="\n${BLUE}[📝 ${summary_text}]${RESET}"
         fi
     fi
 fi
@@ -119,7 +121,7 @@ if [ -n "$current_prompt" ] && [ "$current_prompt" != "null" ] && [ "$current_pr
         icon="♻️"
     fi
     
-    prompt_part="\n${DARK_GRAY}${icon} ${clean_prompt}${RESET}"
+    prompt_part="\n${LIGHT_GREEN}${icon} ${clean_prompt}${RESET}"
 fi
 
 # Output complete status line (prompt on line 2, summary on line 3)
