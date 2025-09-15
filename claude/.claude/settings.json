@@ -86,7 +86,8 @@
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
-      "Read(./secrets/**)"
+      "Read(./secrets/**)",
+      "Read(./pass/**)"
     ]
   },
   "model": "opusplan",
