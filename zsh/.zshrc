@@ -860,25 +860,50 @@ export PATH="$PATH:/Users/smian/.cache/lm-studio/bin"
 # GitHub CLI wrapper to prevent accidental operations on non-owned repos
 gh() {
   if [[ "$1" == "issue" && "$2" == "create" ]]; then
-    current_repo=$(command gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "unknown")
+    # Parse --repo flag to get target repository
+    local target_repo=""
+    local args=("$@")
+    
+    # Look for --repo flag
+    for ((i=3; i<=${#args[@]}; i++)); do
+      if [[ "${args[i]}" == "--repo" && $((i+1)) -le ${#args[@]} ]]; then
+        target_repo="${args[$((i+1))]}"
+        break
+      elif [[ "${args[i]}" == --repo=* ]]; then
+        target_repo="${args[i]#--repo=}"
+        break
+      fi
+    done
+    
+    # If no --repo flag, use current repository context
+    if [[ -z "$target_repo" ]]; then
+      target_repo=$(command gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "unknown")
+    fi
     
     # Extract owner from repo (e.g., "Cloud-Kinetix/bmad-enhanced" → "Cloud-Kinetix")
-    repo_owner=$(echo "$current_repo" | cut -d'/' -f1)
+    local repo_owner=$(echo "$target_repo" | cut -d'/' -f1)
     
     # Define allowed organizations/users
-    allowed_owners=("Cloud-Kinetix" "smian0")
+    local allowed_owners=("Cloud-Kinetix" "smian0")
+    
+    if [[ "$target_repo" == "unknown" ]]; then
+      echo "❌ BLOCKED: Cannot determine target repository!"
+      echo "Please run from within a git repository or use --repo flag"
+      echo "If this is intentional, use: command gh issue create ..."
+      return 1
+    fi
     
     if [[ ! " ${allowed_owners[@]} " =~ " ${repo_owner} " ]]; then
       echo "❌ BLOCKED: Cannot create issues in third-party repository!"
-      echo "Current repo: $current_repo"
-      echo "Owner: $repo_owner"
+      echo "Target repo: $target_repo"
+      echo "Owner: $repo_owner"  
       echo "Allowed owners: ${allowed_owners[*]}"
       echo ""
       echo "If this is intentional, use: command gh issue create ..."
       return 1
     fi
     
-    echo "✅ Safe repository: $current_repo"
+    echo "✅ Safe repository: $target_repo"
     command gh "$@"
   else
     command gh "$@"

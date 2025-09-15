@@ -1,0 +1,5 @@
+# Exclude installation scripts
+install.sh
+
+# Exclude hooks directory (using git templates instead)
+hooks/

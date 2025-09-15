@@ -51,6 +51,7 @@
 	
 	# Clean merged branches
 	cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master' | xargs -n 1 git branch -d"
+	safe-issue = "!bash -c \"\n  if [[ \\\"\\$PWD\\\" == *microsoft* || \\\"\\$PWD\\\" == *third-party* ]]; then\n    echo \\\"❌ BLOCKED: In third-party repository directory\\\"\n    exit 1\n  fi\n  gh issue create \\\"\\$@\\\"\n\" --"
 
 [color]
 	ui = auto
