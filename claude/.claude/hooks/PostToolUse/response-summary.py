@@ -222,8 +222,10 @@ def main():
         
         # Initialize log rotator
         if LogRotator:
+            hooks_log_dir = Path.home() / ".claude" / "hooks" / "PostToolUse" / "logs"
+            hooks_log_dir.mkdir(exist_ok=True)
             log_rotator = LogRotator(
-                log_path="logs/response-summary.jsonl",
+                log_path=str(hooks_log_dir / "response-summary.jsonl"),
                 format="jsonl",
                 max_size_mb=5.0,
                 max_entries=1000,

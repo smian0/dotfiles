@@ -143,3 +143,4 @@ cursor/.cursor/mcp.json.backup*
 **/mcp.json
 zed/.config/zed/prompts/prompts-library-db.0.mdb
 claude/.claude/hooks/logs
+claude/.claude/hooks/PostToolUse/logs
