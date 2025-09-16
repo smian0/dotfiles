@@ -42,6 +42,9 @@
           "name": "DeepSeek V3.1 671B (Turbo)"
         }
       }
+    },
+    "zhipuai": {
+      "api": "https://api.z.ai/api/coding/paas/v4"
     }
   },
   "mcp": {
