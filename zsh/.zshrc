@@ -87,7 +87,7 @@ fi
 
 # Node.js tools
 if [[ -d "$HOME/.npm-global/bin" ]]; then
-    path=("$HOME/.npm-global/bin" $path)
+    path=($path "$HOME/.npm-global/bin")
 fi
 
 # Bun
@@ -856,11 +856,9 @@ export PATH="$PATH:/Users/smian/.cache/lm-studio/bin"
 # =============================================================================
 # OpenCode Agent Transformation Support
 # =============================================================================
-# Shell function to wrap opencode with agent transformation
-opencode() {
-    # Run our wrapper which handles transformation and calls real opencode
-    "$HOME/.local/bin/opencode" "$@"
-}
+# Direct binary replacement handles opencode interception
+# No shell function needed - wrapper installed at ~/.npm-global/bin/opencode
+# Use ~/dotfiles/scripts/opencode-wrapper-manager.sh to manage the wrapper
 
 # =============================================================================
 # GitHub Safety Function

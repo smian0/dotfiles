@@ -62,6 +62,37 @@ if [[ "$DEBUG_MODE" == "true" ]]; then
     env | grep -E "(OLLAMA|OPENAI|ANTHROPIC|GITHUB|DEEPSEEK)" | sed 's/=.*/=***/'
 fi
 
+# Check if opencode wrapper is properly installed, auto-fix if not
+check_and_fix_opencode_wrapper() {
+    local opencode_bin="/Users/smian/.npm-global/bin/opencode"
+    local wrapper_manager="$HOME/dotfiles/scripts/opencode-wrapper-manager.sh"
+    
+    # Check if opencode exists and is our wrapper
+    if [[ -f "$opencode_bin" ]] && grep -q "OpenCode Direct Binary Replacement Wrapper" "$opencode_bin" 2>/dev/null; then
+        return 0  # Wrapper is properly installed
+    fi
+    
+    # Wrapper is missing or overwritten, try to reinstall
+    if [[ -x "$wrapper_manager" ]]; then
+        echo "🔧 OpenCode wrapper missing/overwritten, auto-reinstalling..." >&2
+        if "$wrapper_manager" install >/dev/null 2>&1; then
+            echo "✅ OpenCode wrapper reinstalled successfully" >&2
+            return 0
+        else
+            echo "⚠️  Failed to reinstall OpenCode wrapper automatically" >&2
+            echo "   Run: $wrapper_manager install" >&2
+        fi
+    else
+        echo "⚠️  OpenCode wrapper missing and manager script not found" >&2
+        echo "   Expected: $wrapper_manager" >&2
+    fi
+    
+    return 1  # Could not fix wrapper
+}
+
+# Auto-fix wrapper if needed
+check_and_fix_opencode_wrapper
+
 # Run pre-launch agent transformation
 run_pre_launch_transform "$@"
 
