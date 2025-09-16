@@ -74,3 +74,22 @@ services:
         ./tests/docker/e2e-test.sh switch &&
         echo '✅ Profile switching works!'
       "
+
+  # Pre-launch functionality - test agent transformation
+  dotfiles-pre-launch:
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test
+    container_name: dotfiles-pre-launch
+    volumes:
+      - ../../:/home/testuser/dotfiles-source:ro
+      - ./exports:/exports
+    environment:
+      - TEST_SCENARIO=pre-launch
+    command: >
+      bash -c "
+        cd dotfiles-source &&
+        echo '🚀 Testing pre-launch functionality...' &&
+        ./tests/docker/test-cases/pre-launch-test.sh &&
+        echo '✅ Pre-launch functionality works!'
+      "

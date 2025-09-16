@@ -1,6 +1,17 @@
 # OpenCode Integration with CCPM
 
-This directory contains opencode configuration that extends Claude Code Project Management (CCPM) with local model support. The system integrates opencode as an interface layer for AI-powered development workflows using local models like gpt-oss:120b.
+This directory contains opencode configuration that extends Claude Code Project Management (CCPM) with local model support and **automatic agent transformation**. The system integrates opencode as an interface layer for AI-powered development workflows using local models like gpt-oss:120b.
+
+## Agent & Command Transformation System
+
+This configuration includes automatic transformation of Claude Code agents and commands to OpenCode format:
+
+- **Agent Transformation**: Claude agents from `~/dotfiles/claude/.claude/agents/` automatically work in OpenCode
+- **Command Transformation**: Claude commands automatically converted to OpenCode format
+- **Universal Command Support**: Both `oc` and `opencode` commands supported
+- **Triple-Mechanism System**: Pre-launch + runtime + shell function for maximum reliability
+
+For complete details see: **[AGENT-TRANSFORMATION-ARCHITECTURE.md](AGENT-TRANSFORMATION-ARCHITECTURE.md)**
 
 ## Directory Structure
 
@@ -67,11 +78,18 @@ A typical OpenCode project structure:
 ### Key Components
 
 - **opencode.json** - Main configuration with models, providers, and global settings
-- **agents/** - Optional specialized agents for task automation
-- **command/** - Command implementations as markdown files  
+- **agents/** - Optional specialized agents for task automation (auto-transformed from Claude)
+- **command/** - Command implementations as markdown files (auto-transformed from Claude)
 - **modes/** - Optional mode definitions for different workflows
 - **rules/** - Optional behavioral guidelines and patterns
 - **README.md** - Project documentation
+
+### Transformation Components
+
+- **scripts/pre-launch-transform.js** - Pre-launch agent transformation
+- **plugin/agent-transformer.js** - Runtime agent transformation plugin
+- **plugin/command-transformer.js** - Runtime command transformation plugin
+- **~/.local/bin/opencode** - Universal binary wrapper for shell function support
 
 ### OpenCode Flexibility
 
@@ -92,39 +110,51 @@ A typical OpenCode project structure:
 
 ## Model Configuration
 
-### Primary Models
-- **gpt-oss:120b** - Primary model for all agents and commands
-- **gpt-oss:20b** - Alternative lighter model
-- **deepseek-v3.1:671b** - Advanced reasoning model
+### Available Models (Confirmed on Ollama.com)
+- **gpt-oss:120b** - Primary model for all agents and commands (High Quality)
+- **gpt-oss:20b** - Alternative lighter model (Fast)
+- **deepseek-v3.1:671b** - Advanced reasoning model (Very Large)
+
+### Additional Models (Configuration Ready)
+- **qwen3-coder:480b** - Qwen3 Coder 480B (Coding Focus)*
+
+*Check `oc models` or `opencode models` for current availability.
 
 ### Model Providers
 - **Local (ollama)**: `http://localhost:3304/v1` - For local inference
 - **Remote (ollamat)**: `https://ollama.com/api` - For cloud inference (requires OLLAMA_API_KEY)
+- **ZhipuAI**: Default model `zhipuai/glm-4.5` for transformed agents
 
 ## Command Usage
 
-### Basic Commands
+### Basic Commands (Universal Support)
 ```bash
-# Start opencode TUI in this directory
+# Start opencode TUI in this directory (either command works)
 oc
+opencode
 
 # Run with direct message
 oc run "message"
+opencode run "message"
 
-# Use specific agent
-oc --agent code-analyzer "analyze this file"
+# Use specific agent (automatic transformation)
+oc --agent claude-test-agent "analyze this file"
+opencode --agent claude-test-agent "analyze this file"
 
 # Continue previous session
 oc --continue
+opencode --continue
 ```
 
 ### Model Selection
 ```bash
-# Use specific model
+# Use specific model (both commands work identically)
 oc -m ollamat/gpt-oss:120b "message"
+opencode -m ollamat/gpt-oss:120b "message"
 
 # Use local model
 oc -m ollama/gpt-oss:120b "message"
+opencode -m ollama/gpt-oss:120b "message"
 ```
 
 ## Documentation Reference
@@ -153,7 +183,7 @@ When encountering discrepancies with opencode behavior or when unable to determi
 
 ### Agent Frontmatter Schema
 
-When creating or modifying agent files in `.opencode/agents/`, use this frontmatter schema:
+**Note**: If using automatic transformation, Claude agents are automatically converted to OpenCode format. For manual agent creation in `.opencode/agents/`, use this frontmatter schema:
 
 ```yaml
 ---
@@ -202,7 +232,7 @@ permission:
 
 ### Command Frontmatter Schema
 
-When creating or modifying command files in `.opencode/commands/`, use this frontmatter schema:
+**Note**: If using automatic transformation, Claude commands are automatically converted to OpenCode format. For manual command creation in `.opencode/command/`, use this frontmatter schema:
 
 ```yaml
 ---

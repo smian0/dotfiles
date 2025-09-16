@@ -1,7 +1,7 @@
 # Dotfiles Management Makefile
 # Provides convenient commands for managing dotfiles installation and maintenance
 
-.PHONY: help install install-all install-minimal backup restore clean test lint format update status stow-audit stow-status stow-conflicts stow-dry-run stow-debug docs docs-check test-quick test-unit test-integration test-e2e test-stress test-all-docker
+.PHONY: help install install-all install-minimal backup restore clean test lint format update status stow-audit stow-status stow-conflicts stow-dry-run stow-debug docs docs-check test-quick test-unit test-integration test-e2e test-stress test-all-docker test-pre-launch
 
 # Default target
 .DEFAULT_GOAL := help
@@ -149,6 +149,14 @@ test-e2e-shellspec: ## Run ShellSpec E2E tests
 test-coverage: ## Generate test coverage report
 	@echo -e "$(GREEN)[INFO]$(NC) Generating coverage report..."
 	./tests/generate-coverage.sh
+
+test-pre-launch: ## Test pre-launch agent transformation functionality
+	@echo -e "$(GREEN)[INFO]$(NC) Testing pre-launch functionality..."
+	./tests/docker/test-cases/pre-launch-test.sh
+
+validate-pre-launch: ## Quick validation of pre-launch functionality
+	@echo -e "$(GREEN)[INFO]$(NC) Validating pre-launch functionality..."
+	./scripts/validate-pre-launch.sh
 
 # Maintenance
 clean: ## Clean temporary files and caches

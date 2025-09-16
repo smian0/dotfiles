@@ -90,3 +90,85 @@ Converted agents are saved with `-converted.md` suffix:
 
 This script uses the exact same transformation logic as the live plugin at:
 `/Users/smian/dotfiles/opencode/.config/opencode/plugin/agent-transformer.js`
+
+## Command Transformer Testing
+
+### Runtime Plugin Testing
+
+The command transformer operates as a runtime plugin, transforming Claude commands on-the-fly during OpenCode operation. Unlike the agent transformer, it does not create files on disk but transforms content in memory.
+
+### Manual Testing Commands
+
+**Test Command Transformation:**
+```bash
+# Test if Claude commands work in OpenCode
+oc run "/existing-claude-command"
+opencode run "/existing-claude-command"
+
+# Test with debug mode to see transformation logs
+DEBUG_MODE=true oc run "/command" 2>&1 | grep -i "transform"
+
+# List available commands (should include transformed Claude commands)
+oc commands
+opencode commands
+```
+
+### Testing Command Discovery
+
+**Verify Command Loading:**
+```bash
+# Check if Claude commands are discoverable
+oc help | grep "/command-name"
+
+# Test command help shows OpenCode format
+oc help "/command-name"
+
+# Verify command execution without errors
+oc run "/command-name" --dry-run
+```
+
+### Integration Testing
+
+**Test Both Systems Together:**
+```bash
+# Test agent + command transformation together
+oc run --agent claude-test-agent "/claude-command"
+opencode run --agent claude-test-agent "/claude-command"
+
+# Verify universal command coverage
+./bin/oc run "/command"     # Original wrapper
+opencode run "/command"     # Shell function wrapper
+```
+
+### Command Transformer File Location
+
+The command transformer plugin is located at:
+`/Users/smian/dotfiles/opencode/.config/opencode/plugin/command-transformer.js`
+
+### Troubleshooting Command Tests
+
+If command transformation fails:
+1. **Check Source**: Verify Claude command exists in `.claude/commands/`
+2. **Check Frontmatter**: Ensure command has `allowed-tools` field
+3. **Check Plugin**: Verify command-transformer.js is loading
+4. **Check Logs**: Use debug mode to see transformation attempts
+
+### Expected Behavior
+
+**Successful Command Transformation:**
+- Claude commands appear in OpenCode command list
+- Commands execute without "Invalid Tool" errors
+- Frontmatter shows OpenCode format in help
+- Tool names are mapped correctly
+
+**Command vs Agent Testing:**
+- **Agents**: Create files on disk via pre-launch transformation
+- **Commands**: Transform in memory via runtime plugin
+- **Both**: Work with universal command coverage (`oc` and `opencode`)
+
+## Related Documentation
+
+For comprehensive testing procedures see:
+- **[TESTING-PROCEDURES.md](../TESTING-PROCEDURES.md)** - Complete testing framework
+- **[COMMAND-TRANSFORMATION.md](../COMMAND-TRANSFORMATION.md)** - Command transformation system details
+- **[AGENT-TRANSFORMATION-ARCHITECTURE.md](../AGENT-TRANSFORMATION-ARCHITECTURE.md)** - Agent transformation system details

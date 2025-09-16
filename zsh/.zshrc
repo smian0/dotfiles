@@ -854,6 +854,15 @@ export PATH="$PATH:/Users/smian/.cache/lm-studio/bin"
 # export ANTHROPIC_BASE_URL="http://127.0.0.1:8080"
 
 # =============================================================================
+# OpenCode Agent Transformation Support
+# =============================================================================
+# Shell function to wrap opencode with agent transformation
+opencode() {
+    # Run our wrapper which handles transformation and calls real opencode
+    "$HOME/.local/bin/opencode" "$@"
+}
+
+# =============================================================================
 # GitHub Safety Function
 # =============================================================================
 

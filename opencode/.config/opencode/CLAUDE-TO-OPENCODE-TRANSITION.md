@@ -2,6 +2,36 @@
 
 Quick migration guide for existing Claude Code users transitioning to OpenCode.
 
+## ⚡ Automatic Transformation Available
+
+**NEW**: If you're using the OpenCode configuration in this directory, Claude agents and commands are **automatically transformed** to OpenCode format. You may not need manual migration!
+
+### Automatic Agent Transformation
+- **Claude agents** in `~/dotfiles/claude/.claude/agents/` work automatically in OpenCode
+- **No manual conversion required** for agents
+- Uses triple-mechanism transformation system (pre-launch + runtime + shell function)
+- Both `oc` and `opencode` commands supported
+
+### Quick Test
+```bash
+# Test if automatic transformation works
+oc run --agent claude-test-agent "test message"
+opencode run --agent claude-test-agent "test message"
+
+# If this works, you're already set up! No manual migration needed.
+```
+
+### Automatic Command Transformation
+- **Claude commands** are also automatically transformed
+- Command-transformer plugin handles `.claude/commands/` → `.opencode/command/` conversion
+- Frontmatter automatically updated from Claude format to OpenCode format
+
+For complete details see: **[AGENT-TRANSFORMATION-ARCHITECTURE.md](AGENT-TRANSFORMATION-ARCHITECTURE.md)**
+
+## Manual Migration (If Needed)
+
+If automatic transformation is not available or you prefer manual control:
+
 ## Installation
 
 ```bash
@@ -136,7 +166,31 @@ sed -i '' 's/fetch/webfetch/g' *.md
 sed -i '' 's/ls/glob/g' *.md
 ```
 
-### 6. Create Framework Documentation
+### 6. Set Up Universal Command Coverage (Optional)
+```bash
+# Add shell function for direct opencode command support
+cat >> ~/.zshrc << 'EOF'
+
+# OpenCode Agent Transformation Support
+opencode() {
+    "$HOME/.local/bin/opencode" "$@"
+}
+EOF
+
+# Copy universal binary wrapper
+mkdir -p ~/.local/bin
+cp /path/to/dotfiles/bin/oc ~/.local/bin/opencode
+chmod +x ~/.local/bin/opencode
+
+# Reload shell
+exec zsh
+
+# Test both commands work identically
+oc --version
+opencode --version
+```
+
+### 7. Create Framework Documentation
 ```bash
 # Copy project-specific docs
 cp ../.claude/CLAUDE.md ./
@@ -173,14 +227,21 @@ EOF
 
 ### Test Your Commands
 ```bash
-# Test a basic command (replace with your actual commands)
+# Test a basic command with both wrappers
+oc run "/help"
 opencode run "/help"
 
 # Test with arguments (example)
+oc run "/build --target production"
 opencode run "/build --target production"
 
 # Test interactive command
+oc run "/setup"
 opencode run "/setup"
+
+# Test agent functionality (if using transformation)
+oc run --agent build "test agent"
+opencode run --agent build "test agent"
 ```
 
 ### Verify No Warnings
@@ -193,30 +254,34 @@ Commands should execute without "Invalid Tool" warnings. If you see warnings:
 
 ### Daily Workflow
 ```bash
-# Start OpenCode TUI
+# Start OpenCode TUI (either command works)
+oc
 opencode
 
 # Run specific command
+oc run "/your-command"
 opencode run "/your-command"
 
 # Continue previous session
+oc --continue
 opencode --continue
 
 # Use specific model/agent
+oc --model "provider/model" run "/command"
 opencode --model "provider/model" run "/command"
 ```
 
 ### Examples (adapt to your project)
 ```bash
-# Development commands
-opencode run "/dev:start"
-opencode run "/test:run"
-opencode run "/build:prod"
+# Development commands (both work identically)
+oc run "/dev:start" | opencode run "/dev:start"
+oc run "/test:run" | opencode run "/test:run"
+oc run "/build:prod" | opencode run "/build:prod"
 
 # Project management  
-opencode run "/status"
-opencode run "/deploy"
-opencode run "/docs:generate"
+oc run "/status" | opencode run "/status"
+oc run "/deploy" | opencode run "/deploy"
+oc run "/docs:generate" | opencode run "/docs:generate"
 ```
 
 ## Troubleshooting
@@ -241,8 +306,30 @@ opencode run "/docs:generate"
 - **Fix**: Update paths to `.opencode/scripts/` in command files
 - **Check**: Ensure scripts exist in new location
 
+### Automatic Transformation Issues
+- **Cause**: Agents not transforming automatically
+- **Fix**: Check transformation logs with debug mode
+- **Check**: Verify Claude agents exist in source directory
+
+### `opencode` Command Not Found
+- **Cause**: Shell function not defined or binary wrapper missing
+- **Fix**: Run setup script again or reload shell with `exec zsh`
+- **Check**: `type opencode` should show shell function
+
+### Both Commands Don't Work Identically
+- **Cause**: Different environment variables or transformation issues
+- **Fix**: Check both wrappers load environment correctly
+- **Check**: Compare output with `DEBUG_MODE=true`
+
 ## Migration Checklist
 
+### Automatic Transformation Setup
+- [ ] Test automatic transformation: `oc run --agent claude-test-agent "test"`
+- [ ] Verify shell function works: `type opencode` shows shell function
+- [ ] Test universal coverage: `opencode run --agent claude-test-agent "test"`
+- [ ] If automatic works, **skip manual migration below** ✅
+
+### Manual Migration (if needed)
 - [ ] Install OpenCode CLI
 - [ ] Create `.opencode/` directory structure  
 - [ ] Copy commands to `command/` (singular)
@@ -250,13 +337,20 @@ opencode run "/docs:generate"
 - [ ] Update all command frontmatter
 - [ ] Fix agent tool names
 - [ ] Update script paths in commands
+- [ ] Set up shell function for universal `opencode` command
 - [ ] Test key commands work without warnings
-- [ ] Verify both CLIs produce same results
+- [ ] Verify both `oc` and `opencode` commands produce same results
 
 ## Migration Complete
 
-Your project now supports both systems:
-- **Claude Code**: `claude /command` 
-- **OpenCode**: `opencode run "/command"`
+Your project now supports multiple command patterns:
+- **Claude Code**: `claude /command` (existing)
+- **OpenCode (oc wrapper)**: `oc run "/command"` (secure wrapper)
+- **OpenCode (direct)**: `opencode run "/command"` (shell function)
 
-Both CLIs will execute identically with full backward compatibility.
+All patterns execute identically with automatic agent transformation and full backward compatibility.
+
+### Related Documentation
+- **[AGENT-TRANSFORMATION-ARCHITECTURE.md](AGENT-TRANSFORMATION-ARCHITECTURE.md)** - Complete transformation system
+- **[SHELL-FUNCTION-MAINTENANCE.md](SHELL-FUNCTION-MAINTENANCE.md)** - Shell function maintenance
+- **[TESTING-PROCEDURES.md](TESTING-PROCEDURES.md)** - Testing all command patterns

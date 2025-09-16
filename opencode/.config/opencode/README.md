@@ -6,7 +6,9 @@ This directory contains OpenCode configuration with advanced Ollama integration 
 
 - **OpenCode Version**: 0.6.8
 - **Provider**: ollama-ai-provider-v2@1.3.1 (latest)
-- **Secure Wrapper**: `oc` command loads environment variables from system launchctl
+- **Command Coverage**: Universal support for both `oc` and `opencode` commands
+- **Agent Transformation**: Automatic Claude agent → OpenCode format conversion
+- **Secure Wrapper**: Commands load environment variables from system launchctl
 - **Environment**: System-wide API key management via LaunchAgent
 - **Direct Testing**: `test-ollama-turbo/` directory for provider experimentation
 
@@ -34,6 +36,54 @@ This directory contains OpenCode configuration with advanced Ollama integration 
   }
 }
 ```
+
+## Agent Transformation System
+
+This configuration includes automatic transformation of Claude Code agents to OpenCode format using a **triple-mechanism hybrid approach** for maximum reliability:
+
+### Triple Mechanism Architecture
+1. **Pre-Launch Transformation** - Transforms agents to disk before OpenCode starts
+2. **Runtime Plugin** - Intercepts file reads for in-memory transformation
+3. **Shell Function Wrapper** - Ensures transformation for direct `opencode` commands
+
+### Universal Command Support
+Both commands work seamlessly with automatic agent transformation:
+```bash
+# Using oc wrapper (original)
+oc run --agent claude-test-agent "message"
+
+# Using opencode directly (shell function)  
+opencode run --agent claude-test-agent "message"
+```
+
+### How It Works
+- **Source**: Claude agents in `~/dotfiles/claude/.claude/agents/`
+- **Target**: OpenCode format in `~/.config/opencode/agent/`
+- **Smart Caching**: Only transforms when source files are newer
+- **Automatic**: No manual conversion required
+
+### Transformation Process
+Claude format agents are automatically converted:
+```yaml
+# Before (Claude format)
+---
+name: my-agent
+description: "Description..."
+tools: Read,Write,Bash
+---
+
+# After (OpenCode format)  
+---
+description: "Description..."
+mode: all
+model: zhipuai/glm-4.5
+---
+```
+
+For detailed information see:
+- **[AGENT-TRANSFORMATION-ARCHITECTURE.md](AGENT-TRANSFORMATION-ARCHITECTURE.md)** - Complete system architecture
+- **[SHELL-FUNCTION-MAINTENANCE.md](SHELL-FUNCTION-MAINTENANCE.md)** - Shell function maintenance guide
+- **[TESTING-PROCEDURES.md](TESTING-PROCEDURES.md)** - Testing framework
 
 ## Complete Provider Options Reference
 
@@ -142,30 +192,45 @@ This directory contains OpenCode configuration with advanced Ollama integration 
 ```
 
 ### Available Models
+**Confirmed Available on Ollama.com (as of Sept 10, 2025):**
 - **gpt-oss:20b** - GPT-OSS 20B (Fast)
 - **gpt-oss:120b** - GPT-OSS 120B (High Quality)
 - **deepseek-v3.1:671b** - DeepSeek V3.1 671B (Very Large)
-- **deepseek-r1:7b** - DeepSeek R1 7B (Reasoning)*
-- **deepseek-r1:1.5b** - DeepSeek R1 1.5B (Reasoning)*
-- **deepseek-r1:8b** - DeepSeek R1 8B (Reasoning)*
 
-*Reasoning models may not be available on hosted ollama.com service yet.
+**Additional Models (Configuration Ready):**
+- **qwen3-coder:480b** - Qwen3 Coder 480B (Coding Focus)*
+
+*Additional models may be available depending on provider and local/hosted configuration. Check with `oc models` for current availability.
 
 ## Usage Examples
 
 ### Basic Usage
 ```bash
+# Using oc wrapper
 oc run 'Hello, world!' --model ollamat/gpt-oss:120b
+
+# Using opencode directly (equivalent)
+opencode run 'Hello, world!' --model ollamat/gpt-oss:120b
 ```
 
 ### With Reasoning Mode
 ```bash
+# Both commands support reasoning mode
 oc run 'Solve step by step: 2x + 5 = 17' --model ollamat/gpt-oss:120b
+opencode run 'Solve step by step: 2x + 5 = 17' --model ollamat/gpt-oss:120b
 ```
 
 ### Interactive Mode
 ```bash
-oc  # Start interactive session
+oc       # Start interactive session with oc
+opencode # Start interactive session with opencode
+```
+
+### Agent Usage (Automatic Transformation)
+```bash
+# Claude agents work automatically in OpenCode
+oc run --agent claude-test-agent "test message"
+opencode run --agent claude-test-agent "test message"
 ```
 
 ## Direct Provider Testing
@@ -213,8 +278,12 @@ Managed via LaunchAgent (`/Users/smian/dotfiles/mcp-launcher/Library/LaunchAgent
 - `KIMI_API_KEY` - Kimi API key
 - `BRAVE_API_KEY` - Brave Search API key
 
-### Secure Wrapper Script
-The `oc` command (`/Users/smian/dotfiles/bin/oc`) automatically loads environment variables from system launchctl before launching OpenCode.
+### Secure Wrapper Scripts
+Both command patterns automatically load environment variables from system launchctl:
+- **`oc` command** (`/Users/smian/dotfiles/bin/oc`) - Original binary wrapper
+- **`opencode` command** (shell function → `~/.local/bin/opencode`) - Universal wrapper
+
+Both provide identical functionality with automatic agent transformation.
 
 ## Customization Tips
 
@@ -255,10 +324,18 @@ The `oc` command (`/Users/smian/dotfiles/bin/oc`) automatically loads environmen
    - Solution: Run MCP environment setup script
 
 2. **"Not Found" Model Error**
-   - Check: `oc models | grep model-name`
+   - Check: `oc models | grep model-name` or `opencode models | grep model-name`
    - Solution: Use available models or switch to local Ollama
 
-3. **Slow Responses**
+3. **Agent Not Found Error**
+   - Check: Claude agent exists in `~/dotfiles/claude/.claude/agents/`
+   - Solution: Verify transformation ran with debug mode or check logs
+
+4. **`opencode` Command Not Found**
+   - Check: `type opencode` should show shell function
+   - Solution: Reload shell with `exec zsh` or `source ~/.zshrc`
+
+5. **Slow Responses**
    - Reduce `num_ctx` for faster responses
    - Use smaller models (gpt-oss:20b vs 120b)
 
@@ -278,6 +355,7 @@ DEBUG_MODE=true
 
 ---
 
-**Last Updated**: September 10, 2025  
+**Last Updated**: September 16, 2025  
 **Configuration Path**: `/Users/smian/dotfiles/opencode/.config/opencode/opencode.json`  
-**Environment Script**: `/Users/smian/dotfiles/scripts/mcp-env/mcp-env/set-mcp-env-system.sh`
+**Environment Script**: `/Users/smian/dotfiles/scripts/mcp-env/mcp-env/set-mcp-env-system.sh`  
+**Agent Transformation**: See [AGENT-TRANSFORMATION-ARCHITECTURE.md](AGENT-TRANSFORMATION-ARCHITECTURE.md) for complete system details

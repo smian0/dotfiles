@@ -28,6 +28,32 @@ load_env_var "GLM_API_KEY"
 load_env_var "KIMI_API_KEY"
 load_env_var "BRAVE_API_KEY"
 
+# Pre-launch agent transformation
+run_pre_launch_transform() {
+    local pre_launch_script="$HOME/dotfiles/opencode/.config/opencode/scripts/pre-launch-transform.js"
+    
+    # Only run transformation for commands that might load agents
+    case "${1:-}" in
+        "" | "-h" | "--help" | "help" | "version" | "--version")
+            # These commands don't load agents, skip transformation
+            return 0
+            ;;
+        *)
+            # All other commands might load agents, run transformation
+            if [[ -f "$pre_launch_script" ]]; then
+                [[ "$DEBUG_MODE" == "true" ]] && echo "Running pre-launch agent transformation..."
+                if node "$pre_launch_script" 2>/dev/null; then
+                    [[ "$DEBUG_MODE" == "true" ]] && echo "✅ Pre-launch transformation completed"
+                else
+                    [[ "$DEBUG_MODE" == "true" ]] && echo "⚠️  Pre-launch transformation had issues, proceeding anyway..."
+                fi
+            else
+                [[ "$DEBUG_MODE" == "true" ]] && echo "⚠️  Pre-launch transform script not found, proceeding..."
+            fi
+            ;;
+    esac
+}
+
 # Debug: Show final environment before launching
 if [[ "$DEBUG_MODE" == "true" ]]; then
     echo "Final environment check:"
@@ -35,6 +61,9 @@ if [[ "$DEBUG_MODE" == "true" ]]; then
     echo "Environment passed to opencode:"
     env | grep -E "(OLLAMA|OPENAI|ANTHROPIC|GITHUB|DEEPSEEK)" | sed 's/=.*/=***/'
 fi
+
+# Run pre-launch agent transformation
+run_pre_launch_transform "$@"
 
 # Launch opencode with environment variables available
 # Try to find opencode in PATH first, fallback to known locations
