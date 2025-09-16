@@ -217,6 +217,9 @@ export const AgentTransformer = async ({ project, client, $, directory, worktree
      */
     "tool.execute.before": async (input, output) => {
       try {
+        // Debug: Log all tool calls to see what OpenCode is using
+        console.log(`[Agent Transformer] Tool call: ${input.tool} with args:`, JSON.stringify(output.args, null, 2));
+        
         // Intercept view/read tool calls for agent files
         if (input.tool === 'view' && output.args?.filePath && isOpenCodeAgentPath(output.args.filePath)) {
           const opencodePath = output.args.filePath;
