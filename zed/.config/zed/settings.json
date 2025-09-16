@@ -7,6 +7,13 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "agent_servers": {
+    "your_agent": {
+      "command": "path_to_executable",
+      "args": [],
+      "env": {}
+    }
+  },
   "features": {
     "edit_prediction_provider": "copilot"
   },
@@ -27,6 +34,17 @@
               "parallel_tool_calls": false,
               "prompt_cache_key": false
             }
+          },
+          {
+            "name": "qwen3-coder:480b",
+            "display_name": "Qwen3 Coder Turbo",
+            "max_tokens": 128000,
+            "capabilities": {
+              "tools": true,
+              "images": false,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": true
+            }
           }
         ]
       }
@@ -40,7 +58,13 @@
           "max_tokens": 128000,
           "keep_alive": "120s",
           "supports_tools": true,
-          "supports_thinking": true
+          "supports_thinking": false,
+          "capabilities": {
+            "tools": true,
+            "images": false,
+            "parallel_tool_calls": false,
+            "prompt_cache_key": false
+          }
         },
         {
           "name": "gpt-oss:120b",
@@ -49,6 +73,19 @@
           "keep_alive": "120s",
           "supports_tools": true,
           "supports_thinking": true
+        },
+        {
+          "name": "qwen3-coder:480b",
+          "display_name": "Qwen3 Coder Turbo",
+          "max_tokens": 128000,
+          "supports_tools": true,
+          "supports_thinking": false,
+          "capabilities": {
+            "tools": true,
+            "images": false,
+            "parallel_tool_calls": false,
+            "prompt_cache_key": false
+          }
         }
       ]
     }
@@ -61,8 +98,8 @@
     "single_file_review": true,
     "always_allow_tool_actions": true,
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "claude-sonnet-4"
+      "provider": "ollama",
+      "model": "gpt-oss:120b"
     }
   },
   "minimap": {
