@@ -92,13 +92,26 @@ This repository includes an AI-powered GitHub bot that responds to commands in i
 |-------|---------|-------------|
 | 🏗️ **Build** | `/oc @build` | Build automation and deployment assistance |
 | 🎯 **General** | `/oc @general` | General-purpose AI assistance |
-| 📝 **Markdown Pro** | `/oc @markdown-pro` | Specialized markdown formatting and documentation |
-| 📰 **News** | `/oc @news` | Aggregates and summarizes latest news from multiple sources |
 | 📋 **Plan** | `/oc @plan` | Strategic planning and project organization |
 | 🧠 **Reasoning** | `/oc @reasoning` | Provides step-by-step reasoning for complex problems |
 | 🔍 **Websearch** | `/oc @websearch` | Searches the web and provides concise summaries |
-| 🛠️ **Helper** | `/oc @helper` | General assistance and utility functions |
-| 👁️ **Review** | `/oc @review` | Code review and analysis capabilities |
+| 🤖 **Backend Architect** | `/oc @backend-architect` | Custom agent for specialized tasks |
+| 🤖 **Claude Test Agent** | `/oc @claude-test-agent` | Custom agent for specialized tasks |
+| 🤖 **Devops Architect** | `/oc @devops-architect` | Custom agent for specialized tasks |
+| 🤖 **Frontend Architect** | `/oc @frontend-architect` | Custom agent for specialized tasks |
+| 🤖 **Learning Guide** | `/oc @learning-guide` | Custom agent for specialized tasks |
+| 📝 **Markdown Pro** | `/oc @markdown-pro` | Specialized markdown formatting and documentation |
+| 📰 **News** | `/oc @news` | Aggregates and summarizes latest news from multiple sources |
+| 🤖 **Performance Engineer** | `/oc @performance-engineer` | Custom agent for specialized tasks |
+| 🤖 **Python Expert** | `/oc @python-expert` | Custom agent for specialized tasks |
+| 🤖 **Quality Engineer** | `/oc @quality-engineer` | Custom agent for specialized tasks |
+| 🤖 **Refactoring Expert** | `/oc @refactoring-expert` | Custom agent for specialized tasks |
+| 🤖 **Requirements Analyst** | `/oc @requirements-analyst` | Custom agent for specialized tasks |
+| 🤖 **Root Cause Analyst** | `/oc @root-cause-analyst` | Custom agent for specialized tasks |
+| 🤖 **Security Engineer** | `/oc @security-engineer` | Custom agent for specialized tasks |
+| 🤖 **Socratic Mentor** | `/oc @socratic-mentor` | Custom agent for specialized tasks |
+| 🤖 **System Architect** | `/oc @system-architect` | Custom agent for specialized tasks |
+| 🤖 **Technical Writer** | `/oc @technical-writer` | Custom agent for specialized tasks |
 
 ### Usage Examples
 

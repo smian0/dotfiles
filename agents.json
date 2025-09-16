@@ -1,5 +1,5 @@
 {
-  "updated": "2025-09-11T20:58:15Z",
+  "updated": "2025-09-16T22:42:04Z",
   "agents": [
     {
       "name": "build",
@@ -13,20 +13,6 @@
       "emoji": "🎯",
       "trigger": "/oc @general",
       "description": "General-purpose AI assistance"
-    }
-,
-    {
-      "name": "markdown-pro",
-      "emoji": "📝",
-      "trigger": "/oc @markdown-pro",
-      "description": "Specialized markdown formatting and documentation"
-    }
-,
-    {
-      "name": "news",
-      "emoji": "📰",
-      "trigger": "/oc @news",
-      "description": "Aggregates and summarizes latest news from multiple sources"
     }
 ,
     {
