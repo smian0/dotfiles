@@ -48,15 +48,33 @@ fi
 # SSH Agent Configuration
 # =============================================================================
 
-# Start SSH agent if not running
-if [[ -z "$SSH_AUTH_SOCK" ]]; then
-    eval "$(ssh-agent -s)" > /dev/null 2>&1
-fi
+# SSH Agent Management - Robust version
+start_ssh_agent() {
+    local ssh_agent_file="$HOME/.ssh/ssh-agent-env"
+    
+    # Kill any existing dead agents
+    if [[ -f "$ssh_agent_file" ]]; then
+        source "$ssh_agent_file" > /dev/null 2>&1
+        if ! kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
+            rm -f "$ssh_agent_file"
+            unset SSH_AUTH_SOCK SSH_AGENT_PID
+        fi
+    fi
+    
+    # Start new agent if needed
+    if [[ -z "$SSH_AUTH_SOCK" ]] || ! ssh-add -l >/dev/null 2>&1; then
+        ssh-agent > "$ssh_agent_file"
+        source "$ssh_agent_file" > /dev/null 2>&1
+    fi
+    
+    # Add GitHub SSH key automatically
+    if [[ -f "$HOME/.ssh/id_ed25519_github_smian0" ]]; then
+        ssh-add -l 2>/dev/null | grep -q "id_ed25519_github_smian0" || \
+            ssh-add "$HOME/.ssh/id_ed25519_github_smian0" >/dev/null 2>&1
+    fi
+}
 
-# Add GitHub SSH key automatically
-if [[ -f "$HOME/.ssh/id_ed25519_github_smian0" ]]; then
-    ssh-add -l | grep -q "id_ed25519_github_smian0" || ssh-add "$HOME/.ssh/id_ed25519_github_smian0" > /dev/null 2>&1
-fi
+start_ssh_agent
 
 
 
@@ -756,16 +774,7 @@ fi
 # GPG configuration
 export GPG_TTY=$(tty)
 
-# SSH configuration
-if [[ -d "$HOME/.ssh" ]]; then
-    # Start ssh-agent if not running
-    if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-        ssh-agent > "$HOME/.ssh/ssh-agent-thing"
-    fi
-    if [[ "$SSH_AGENT_PID" == "" ]] && [[ -f "$HOME/.ssh/ssh-agent-thing" ]]; then
-        eval "$(<$HOME/.ssh/ssh-agent-thing)" > /dev/null
-    fi
-fi
+# SSH configuration handled by start_ssh_agent function above
 
 # =============================================================================
 # Load Local Configuration
