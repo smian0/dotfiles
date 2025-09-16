@@ -7,6 +7,12 @@ import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { basename, join, dirname } from 'path';
 import { homedir } from 'os';
+import { transformAgent } from '../plugin-util/agent-transformer-core.js';
+
+// CRITICAL: Patch filesystem immediately when module loads
+// This must happen before OpenCode tries to read agent files
+console.log('[Agent Transformer] Patching filesystem at module load time');
+patchFileSystemGlobally();
 
 // Tool name mapping from Claude to OpenCode format
 const TOOL_MAPPING = {
@@ -26,114 +32,7 @@ const TOOL_MAPPING = {
   'Search': 'search'
 };
 
-/**
- * Parse YAML frontmatter (simple implementation)
- */
-function parseYAML(yamlStr) {
-  const result = {};
-  const lines = yamlStr.trim().split('\n');
-  
-  for (const line of lines) {
-    if (line.includes(':')) {
-      const [key, ...valueParts] = line.split(':');
-      const value = valueParts.join(':').trim();
-      
-      if (key.trim() === 'tools') {
-        result[key.trim()] = value.split(',').map(t => t.trim());
-      } else {
-        result[key.trim()] = value;
-      }
-    }
-  }
-  
-  return result;
-}
-
-/**
- * Transform Claude frontmatter to OpenCode format
- */
-function transformFrontmatter(claudeFM) {
-  // Extract clean description from first sentence, removing examples and markup
-  let cleanDescription = 'Transformed agent';
-  if (claudeFM.description) {
-    cleanDescription = claudeFM.description
-      .split('\n')[0]                           // Take first line
-      .split('.')[0] + '.'                     // Take first sentence
-      .replace(/<[^>]*>/g, '')                 // Remove HTML/XML tags
-      .replace(/\s+/g, ' ')                    // Normalize whitespace
-      .trim();
-    
-    // Fallback if description becomes too short
-    if (cleanDescription.length < 20) {
-      cleanDescription = claudeFM.name ? `${claudeFM.name} agent for specialized tasks` : 'Transformed agent';
-    }
-  }
-  
-  return {
-    description: cleanDescription,
-    mode: claudeFM.mode || 'all',
-    model: claudeFM.model || 'inherit'  // Add default model if missing
-  };
-}
-
-/**
- * Serialize object to YAML format
- */
-function stringifyYAML(obj) {
-  let result = '';
-  
-  for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === 'object' && !Array.isArray(value)) {
-      result += `${key}:\n`;
-      for (const [subKey, subValue] of Object.entries(value)) {
-        result += `  ${subKey}: ${subValue}\n`;
-      }
-    } else if (Array.isArray(value)) {
-      result += `${key}: [${value.join(', ')}]\n`;
-    } else {
-      result += `${key}: ${value}\n`;
-    }
-  }
-  
-  return result;
-}
-
-/**
- * Transform agent content from Claude to OpenCode format
- */
-function transformAgent(content) {
-  try {
-    // Split frontmatter and body
-    const parts = content.split('---');
-    if (parts.length < 3) {
-      console.warn('[Agent Transformer] Invalid agent file format, missing frontmatter');
-      return content;
-    }
-    
-    const frontmatterStr = parts[1];
-    const body = parts.slice(2).join('---');
-    
-    // Parse and transform frontmatter
-    const claudeFM = parseYAML(frontmatterStr);
-    const opencodeFM = transformFrontmatter(claudeFM);
-    
-    // Transform body content
-    const transformedBody = body
-      .replace(/\.claude\//g, '.opencode/')
-      .replace(/Task tool/g, 'agent tool')
-      .replace(/Claude Code/g, 'OpenCode');
-    
-    // Reconstruct file
-    const result = `---\n${stringifyYAML(opencodeFM)}---${transformedBody}`;
-    
-    console.log(`[Agent Transformer] Transformed ${claudeFM.name || 'unknown'} agent`);
-    return result;
-    
-  } catch (error) {
-    console.error('[Agent Transformer] Transform error:', error);
-    return content; // Return original on error
-  }
-}
+// Transformation functions imported from shared module
 
 /**
  * Check if path is requesting an OpenCode agent
@@ -171,11 +70,105 @@ function getClaudeAgentPath(opencodePath, directory) {
 }
 
 /**
+ * Override Node.js fs functions globally to intercept agent file reads
+ * This MUST happen at module load time, before OpenCode reads agent files
+ */
+function patchFileSystemGlobally() {
+  const fs = require('fs');
+  const fsPromises = require('fs/promises');
+  
+  // Store original functions
+  if (!global._originalReadFileSync) {
+    global._originalReadFileSync = fs.readFileSync;
+    global._originalReadFile = fsPromises.readFile;
+    
+    // Patch synchronous readFileSync
+    fs.readFileSync = function(path, options) {
+      // Debug: Log ALL file reads to see what OpenCode is accessing
+      if (typeof path === 'string' && path.endsWith('.md')) {
+        console.log(`[Agent Transformer] DEBUG readFileSync: ${path}`);
+      }
+      
+      // Check if this is an agent file read (both opencode/agent/ and claude/agents/ paths)
+      if (typeof path === 'string' && 
+          (path.includes('/agent/') || path.includes('/.claude/agents/')) && 
+          path.endsWith('.md')) {
+        console.log(`[Agent Transformer] Intercepting readFileSync: ${path}`);
+        
+        try {
+          // Read the original file
+          const content = global._originalReadFileSync.call(this, path, options);
+          const contentStr = content.toString();
+          
+          // Check if it's a Claude agent (missing model field)
+          if (contentStr.includes('---') && !contentStr.includes('model:')) {
+            console.log(`[Agent Transformer] Transforming Claude agent: ${path}`);
+            const transformed = transformAgent(contentStr, { 
+              returnOriginalOnError: true, 
+              enableLogging: true, 
+              logPrefix: '[Agent Transformer]' 
+            });
+            return options && options.encoding ? transformed : Buffer.from(transformed);
+          }
+          
+          return content;
+        } catch (error) {
+          console.error(`[Agent Transformer] Error transforming ${path}:`, error);
+          return global._originalReadFileSync.call(this, path, options);
+        }
+      }
+      
+      return global._originalReadFileSync.call(this, path, options);
+    };
+    
+    // Patch asynchronous readFile
+    fsPromises.readFile = async function(path, options) {
+      // Check if this is an agent file read (both opencode/agent/ and claude/agents/ paths)
+      if (typeof path === 'string' && 
+          (path.includes('/agent/') || path.includes('/.claude/agents/')) && 
+          path.endsWith('.md')) {
+        console.log(`[Agent Transformer] Intercepting readFile: ${path}`);
+        
+        try {
+          // Read the original file
+          const content = await global._originalReadFile.call(this, path, options);
+          const contentStr = content.toString();
+          
+          // Check if it's a Claude agent (missing model field)
+          if (contentStr.includes('---') && !contentStr.includes('model:')) {
+            console.log(`[Agent Transformer] Transforming Claude agent: ${path}`);
+            const transformed = transformAgent(contentStr, { 
+              returnOriginalOnError: true, 
+              enableLogging: true, 
+              logPrefix: '[Agent Transformer]' 
+            });
+            return options && options.encoding ? transformed : Buffer.from(transformed);
+          }
+          
+          return content;
+        } catch (error) {
+          console.error(`[Agent Transformer] Error transforming ${path}:`, error);
+          return global._originalReadFile.call(this, path, options);
+        }
+      }
+      
+      return global._originalReadFile.call(this, path, options);
+    };
+    
+    console.log('[Agent Transformer] File system patched globally (sync + async)');
+  } else {
+    console.log('[Agent Transformer] File system already patched');
+  }
+}
+
+/**
  * Plugin export - Handles agent transformation
  */
-export const AgentTransformer = async ({ project, client, $, directory, worktree }) => {
+export const AgentTransformer = async ({ directory }) => {
   console.log('[Agent Transformer] Plugin initializing');
   console.log(`[Agent Transformer] Working directory: ${directory}`);
+  
+  // Filesystem is already patched at module load time
   
   // Detect and log agents from both global and project .claude directories
   const { readdirSync } = await import('fs');
@@ -230,7 +223,11 @@ export const AgentTransformer = async ({ project, client, $, directory, worktree
           
           try {
             const claudeContent = await readFile(claudePath, 'utf8');
-            const transformedContent = transformAgent(claudeContent);
+            const transformedContent = transformAgent(claudeContent, { 
+              returnOriginalOnError: true, 
+              enableLogging: true, 
+              logPrefix: '[Agent Transformer]' 
+            });
             
             // Modify args to return transformed content
             output.args = {
