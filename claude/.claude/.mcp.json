@@ -60,6 +60,20 @@
       "purpose": "document-quality",
       "scope": "documentation",
       "type": "stdio"
+    },
+    "zen": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/Users/smian/github-ck/zen-mcp-server-private",
+        "python",
+        "server.py"
+      ],
+      "description": "AI-powered workflow tools - comprehensive analysis, stock analysis, code review, debugging, consensus building",
+      "purpose": "workflow-analysis",
+      "scope": "comprehensive",
+      "type": "stdio"
     }
   }
 }
