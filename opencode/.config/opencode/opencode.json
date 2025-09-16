@@ -104,11 +104,6 @@
       "model": "ollamat/gpt-oss:120b",
       "system": "You are a concise web-search assistant. Retrieve the most relevant information for the given query and return a short factual summary (max 3 sentences). Cite the source URL at the end.",
       "reasoningEffort": "medium"
-    },
-
-    "news": {
-      "model": "ollamat/gpt-oss:120b",
-      "system": "{file:./agent/news.md}"
     }
   }
 }
