@@ -1,46 +1,53 @@
 {
-  "updated": "2025-09-17T16:41:36Z",
+  "updated": "2025-09-17T18:07:25Z",
   "agents": [
     {
-      "name": "build",
-      "emoji": "🏗️",
-      "trigger": "/oc @build",
-      "description": "Build automation and deployment assistance"
-    }
-,
-    {
-      "name": "fast",
+      "name": "claude-copilot",
       "emoji": "🤖",
-      "trigger": "/oc @fast",
+      "trigger": "/oc @claude-copilot",
       "description": "Custom agent for specialized tasks"
     }
 ,
     {
-      "name": "general",
-      "emoji": "🎯",
-      "trigger": "/oc @general",
-      "description": "General-purpose AI assistance"
+      "name": "claude-fallback",
+      "emoji": "🤖",
+      "trigger": "/oc @claude-fallback",
+      "description": "Custom agent for specialized tasks"
     }
 ,
     {
-      "name": "plan",
-      "emoji": "📋",
-      "trigger": "/oc @plan",
-      "description": "Strategic planning and project organization"
+      "name": "claude-primary",
+      "emoji": "🤖",
+      "trigger": "/oc @claude-primary",
+      "description": "Custom agent for specialized tasks"
     }
 ,
     {
-      "name": "reasoning",
-      "emoji": "🧠",
-      "trigger": "/oc @reasoning",
-      "description": "Provides step-by-step reasoning for complex problems"
+      "name": "glm",
+      "emoji": "🤖",
+      "trigger": "/oc @glm",
+      "description": "Custom agent for specialized tasks"
     }
 ,
     {
-      "name": "websearch",
-      "emoji": "🔍",
-      "trigger": "/oc @websearch",
-      "description": "Searches the web and provides concise summaries"
+      "name": "gpt-oss-120",
+      "emoji": "🤖",
+      "trigger": "/oc @gpt-oss-120",
+      "description": "Custom agent for specialized tasks"
+    }
+,
+    {
+      "name": "qwen3-coder:480b",
+      "emoji": "🤖",
+      "trigger": "/oc @qwen3-coder:480b",
+      "description": "Custom agent for specialized tasks"
+    }
+,
+    {
+      "name": "small-direct",
+      "emoji": "🤖",
+      "trigger": "/oc @small-direct",
+      "description": "Custom agent for specialized tasks"
     }
 
   ]
