@@ -18,6 +18,7 @@ import { existsSync, readdirSync } from 'fs';
 import { homedir } from 'os';
 import { transformAgent } from '../plugin-util/agent-transformer-core.js';
 import { transformCommand } from '../plugin-util/command-transformer-core.js';
+import { transformAllMcpConfigs } from './pre-launch-mcp.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -289,6 +290,17 @@ async function transformAll() {
       if (transformed) totalTransformed++;
       totalChecked++;
     }
+  }
+  
+  // === MCP CONFIGURATION ===
+  console.log(`${LOG_PREFIX} === TRANSFORMING MCP CONFIGURATION ===`);
+  
+  try {
+    const mcpTransformed = await transformAllMcpConfigs();
+    totalTransformed += mcpTransformed;
+  } catch (error) {
+    console.error(`${LOG_PREFIX} ❌ MCP transformation failed: ${error.message}`);
+    // Continue with other transformations even if MCP fails
   }
   
   // Summary

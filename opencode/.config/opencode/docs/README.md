@@ -23,6 +23,7 @@ For maintaining and extending the OpenCode system:
 ### Architecture
 - **[Agent Transformation](dev/architecture/agent-transformation.md)** - How Claude agents are converted
 - **[Command Transformation](dev/architecture/command-transformation.md)** - Command processing system
+- **[MCP Transformation](dev/architecture/mcp-transformation.md)** - Model Context Protocol server integration system
 
 ### Maintenance  
 - **[Shell Functions](dev/maintenance/shell-functions.md)** - Shell function management

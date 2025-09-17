@@ -8,6 +8,7 @@ Deep technical details about how the system works:
 
 - **[Agent Transformation](architecture/agent-transformation.md)** - How Claude agents are converted to OpenCode format
 - **[Command Transformation](architecture/command-transformation.md)** - Command processing and conversion system
+- **[MCP Transformation](architecture/mcp-transformation.md)** - Model Context Protocol server integration and live synchronization
 
 ## Maintenance Documentation  
 
