@@ -144,3 +144,7 @@ cursor/.cursor/mcp.json.backup*
 zed/.config/zed/prompts/prompts-library-db.0.mdb
 claude/.claude/hooks/logs
 claude/.claude/hooks/PostToolUse/logs
+
+# OpenCode transformation test artifacts
+.claude/.opencode/
+.opencode/command/
