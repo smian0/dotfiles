@@ -69,14 +69,20 @@ fi
 run_pre_launch_transform "$@"
 
 # Launch opencode with environment variables available
-# Use the backup binary to avoid wrapper recursion issues
-OPENCODE_BINARY="/Users/smian/.npm-global/bin/opencode.original"
+# Use the current binary to ensure upgrades work properly
+OPENCODE_BINARY="/Users/smian/.npm-global/bin/opencode"
+OPENCODE_BACKUP="/Users/smian/.npm-global/bin/opencode.original"
 
+# Try current binary first (this gets updated by npm)
 if [[ -x "$OPENCODE_BINARY" ]]; then
-    [[ "$DEBUG_MODE" == "true" ]] && echo "Using opencode binary: $OPENCODE_BINARY"
+    [[ "$DEBUG_MODE" == "true" ]] && echo "Using current opencode binary: $OPENCODE_BINARY"
     exec "$OPENCODE_BINARY" "$@"
+# Fallback to backup binary if current one doesn't exist
+elif [[ -x "$OPENCODE_BACKUP" ]]; then
+    [[ "$DEBUG_MODE" == "true" ]] && echo "Using backup opencode binary: $OPENCODE_BACKUP"
+    exec "$OPENCODE_BACKUP" "$@"
 else
-    echo "Error: opencode binary not found at $OPENCODE_BINARY" >&2
+    echo "Error: opencode binary not found at $OPENCODE_BINARY or $OPENCODE_BACKUP" >&2
     echo "Try running: npm install -g opencode-ai" >&2
     exit 1
 fi
