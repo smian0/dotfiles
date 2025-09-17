@@ -51,7 +51,7 @@ function isOpenCodeAgentPath(filePath) {
  */
 function getClaudeAgentPath(opencodePath, directory) {
   const filename = basename(opencodePath);
-  const projectRoot = dirname(directory); // Go up one level from .opencode to project root
+  const projectRoot = directory; // The directory parameter IS the project root
   
   // First try project-local (takes precedence)
   const projectPath = join(projectRoot, '.claude/agents', filename);
@@ -172,7 +172,7 @@ export const AgentTransformer = async ({ directory }) => {
   
   // Detect and log agents from both global and project .claude directories
   const { readdirSync } = await import('fs');
-  const projectRoot = dirname(directory); // Go up one level from .opencode to project root
+  const projectRoot = directory; // The directory parameter IS the project root
   const agents = new Map(); // Use Map to handle duplicates with precedence
   
   // Check global ~/.claude/agents first

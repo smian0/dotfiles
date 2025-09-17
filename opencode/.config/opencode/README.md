@@ -8,6 +8,7 @@ This directory contains OpenCode configuration with advanced Ollama integration 
 - **Provider**: ollama-ai-provider-v2@1.3.1 (latest)
 - **Command Coverage**: Universal support for both `oc` and `opencode` commands
 - **Agent Transformation**: Automatic Claude agent → OpenCode format conversion
+- **Command Transformation**: Automatic Claude command → OpenCode format conversion
 - **Secure Wrapper**: Commands load environment variables from system launchctl
 - **Environment**: System-wide API key management via LaunchAgent
 - **Direct Testing**: `test-ollama-turbo/` directory for provider experimentation
@@ -37,33 +38,46 @@ This directory contains OpenCode configuration with advanced Ollama integration 
 }
 ```
 
-## Agent Transformation System
+## Agent & Command Transformation System
 
-This configuration includes automatic transformation of Claude Code agents to OpenCode format using a **triple-mechanism hybrid approach** for maximum reliability:
+This configuration includes automatic transformation of Claude Code **agents and commands** to OpenCode format using a **triple-mechanism hybrid approach** for maximum reliability:
 
 ### Triple Mechanism Architecture
-1. **Pre-Launch Transformation** - Transforms agents to disk before OpenCode starts
-2. **Runtime Plugin** - Intercepts file reads for in-memory transformation
+1. **Pre-Launch Transformation** - Transforms agents and commands to disk before OpenCode starts
+2. **Runtime Plugin** - Intercepts file reads for in-memory transformation (separate plugins for agents and commands)
 3. **Shell Function Wrapper** - Ensures transformation for direct `opencode` commands
 
 ### Universal Command Support
-Both commands work seamlessly with automatic agent transformation:
+Both commands work seamlessly with automatic agent and command transformation:
 ```bash
-# Using oc wrapper (original)
+# Using oc wrapper with agents
 oc run --agent claude-test-agent "message"
 
-# Using opencode directly (shell function)  
+# Using opencode directly with agents  
 opencode run --agent claude-test-agent "message"
+
+# Using commands (transformed automatically)
+oc run "/claude-command"
+opencode run "/claude-command"
 ```
 
 ### How It Works
+**Agents**:
 - **Source**: Claude agents in `~/dotfiles/claude/.claude/agents/`
 - **Target**: OpenCode format in `~/.config/opencode/agent/`
+
+**Commands**:
+- **Source**: Claude commands in `~/dotfiles/claude/.claude/commands/` and `.claude/commands/`
+- **Target**: OpenCode format in `~/.config/opencode/command/` and `.opencode/command/`
+
+**Features**:
 - **Smart Caching**: Only transforms when source files are newer
 - **Automatic**: No manual conversion required
+- **Precedence**: Project commands override global commands
 
 ### Transformation Process
-Claude format agents are automatically converted:
+
+**Agent Transformation**:
 ```yaml
 # Before (Claude format)
 ---
@@ -80,8 +94,26 @@ model: zhipuai/glm-4.5
 ---
 ```
 
+**Command Transformation**:
+```yaml
+# Before (Claude format)
+---
+title: "Build Project"
+allowed-tools: Bash,Read,Write
+category: build
+---
+
+# After (OpenCode format)  
+---
+description: "Build Project"
+agent: build
+category: build
+---
+```
+
 For detailed information see:
-- **[AGENT-TRANSFORMATION-ARCHITECTURE.md](AGENT-TRANSFORMATION-ARCHITECTURE.md)** - Complete system architecture
+- **[AGENT-TRANSFORMATION-ARCHITECTURE.md](AGENT-TRANSFORMATION-ARCHITECTURE.md)** - Complete system architecture  
+- **[COMMAND-TRANSFORMATION.md](COMMAND-TRANSFORMATION.md)** - Command transformation details
 - **[SHELL-FUNCTION-MAINTENANCE.md](SHELL-FUNCTION-MAINTENANCE.md)** - Shell function maintenance guide
 - **[TESTING-PROCEDURES.md](TESTING-PROCEDURES.md)** - Testing framework
 

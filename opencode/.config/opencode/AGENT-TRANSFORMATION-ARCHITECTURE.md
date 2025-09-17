@@ -1,15 +1,19 @@
-# Agent Transformation Architecture
+# Agent & Command Transformation Architecture
 
 ## Overview
 
-This document describes the on-the-fly transformation system that converts Claude Code agent files to OpenCode format. The system uses a **triple-mechanism hybrid approach** with universal command coverage for maximum reliability and user convenience.
+This document describes the on-the-fly transformation system that converts Claude Code **agent and command files** to OpenCode format. The system uses a **triple-mechanism hybrid approach** with universal command coverage for maximum reliability and user convenience.
+
+**Supported Transformations**:
+- ✅ **Agents**: `~/dotfiles/claude/.claude/agents/` → `~/.config/opencode/agent/`
+- ✅ **Commands**: `~/dotfiles/claude/.claude/commands/` → `~/.config/opencode/command/`
 
 ## Architecture Components
 
 ### 1. Pre-Launch Transformation (Primary)
 **Location**: `/Users/smian/dotfiles/opencode/.config/opencode/scripts/pre-launch-transform.js`
 **Triggered by**: `bin/oc` launcher script before OpenCode starts
-**Purpose**: Transforms Claude agents to OpenCode format and writes files to disk
+**Purpose**: Transforms Claude agents **and commands** to OpenCode format and writes files to disk
 
 ```bash
 # Triggered automatically by:
@@ -17,20 +21,25 @@ This document describes the on-the-fly transformation system that converts Claud
 ```
 
 **Process**:
-1. Scans for Claude agents in `~/dotfiles/claude/.claude/agents/`
-2. Checks modification times (only transforms if source is newer)
-3. Transforms and writes to `~/.config/opencode/agent/`
-4. OpenCode reads the pre-transformed files
+1. **Agent transformation**: Scans `~/dotfiles/claude/.claude/agents/` → `~/.config/opencode/agent/`
+2. **Command transformation**: Scans `~/dotfiles/claude/.claude/commands/` and `.claude/commands/` → corresponding `.opencode/command/` locations
+3. Checks modification times (only transforms if source is newer)
+4. Uses shared core logic for consistent transformation
+5. OpenCode reads the pre-transformed files
 
 ### 2. Runtime Plugin (Backup)
-**Location**: `/Users/smian/dotfiles/opencode/.config/opencode/plugin/agent-transformer.js`
+**Locations**: 
+- **Agents**: `/Users/smian/dotfiles/opencode/.config/opencode/plugin/agent-transformer.js`
+- **Commands**: `/Users/smian/dotfiles/opencode/.config/opencode/plugin/command-transformer.js`
+
 **Triggered by**: OpenCode plugin system during startup
 **Purpose**: Patches Node.js filesystem functions to transform files in-memory
 
 **Process**:
 1. Patches `fs.readFileSync` and `fs.readFile` globally
-2. Intercepts agent file reads and transforms content on-the-fly
-3. Returns transformed content without writing to disk
+2. **Agent plugin**: Intercepts agent file reads and transforms content on-the-fly
+3. **Command plugin**: Intercepts command file reads and transforms content using shared core logic
+4. Returns transformed content without writing to disk
 
 ### 3. Shell Function Wrapper (Universal Coverage)
 **Location**: `~/.zshrc` shell configuration
@@ -125,24 +134,37 @@ This allows pre-launch script to write transformed files without overwriting ori
 ## File Locations
 
 ### Source (Claude Format)
+**Agents**:
 - Global: `~/dotfiles/claude/.claude/agents/*.md`
 - Project: `<project>/.claude/agents/*.md`
 
+**Commands**:
+- Global: `~/dotfiles/claude/.claude/commands/*.md`  
+- Project: `<project>/.claude/commands/*.md`
+
 ### Target (OpenCode Format)  
+**Agents**:
 - Global: `~/.config/opencode/agent/*.md`
 - Project: `<project>/.opencode/agent/*.md`
+
+**Commands**:
+- Global: `~/.config/opencode/command/*.md`
+- Project: `<project>/.opencode/command/*.md`
 
 ### Core Files
 ```
 opencode/.config/opencode/
 ├── scripts/
-│   └── pre-launch-transform.js         # Pre-launch transformation
+│   └── pre-launch-transform.js         # Pre-launch transformation (agents & commands)
 ├── plugin/
-│   └── agent-transformer.js            # Runtime plugin
+│   ├── agent-transformer.js            # Agent runtime plugin
+│   └── command-transformer.js          # Command runtime plugin
 ├── plugin-util/
-│   └── agent-transformer-core.js       # Shared transformation logic
+│   ├── agent-transformer-core.js       # Shared agent transformation logic
+│   └── command-transformer-core.js     # Shared command transformation logic
 └── tests/
-    └── test-agent-transformer.js       # Comprehensive tests
+    ├── test-agent-transformer.js       # Agent tests
+    └── test-command-transformer.js     # Command tests
 
 Shell Configuration:
 ~/.zshrc                                 # opencode() shell function

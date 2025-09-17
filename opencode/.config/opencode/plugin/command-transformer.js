@@ -1,104 +1,14 @@
 /**
  * OpenCode Plugin: Command Transformer  
  * Dynamically transforms Claude command files to OpenCode format on-the-fly
+ * Uses shared transformation logic for consistency with pre-launch script
  */
 
 import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { basename, join, dirname } from 'path';
 import { homedir } from 'os';
-
-// Tool name mapping from Claude to OpenCode format
-const TOOL_MAPPING = {
-  'Task': 'agent',
-  'Read': 'view', 
-  'Edit': 'edit',
-  'MultiEdit': 'edit',
-  'Write': 'write',
-  'LS': 'ls',
-  'Grep': 'grep',
-  'Glob': 'glob',
-  'Bash': 'bash',
-  'WebFetch': 'fetch',
-  'TodoWrite': 'todo',
-  'WebSearch': 'websearch',
-  'Search': 'search',
-  'Agent': 'agent'
-};
-
-/**
- * Parse YAML frontmatter for commands
- */
-function parseCommandYAML(yamlStr) {
-  const result = {};
-  const lines = yamlStr.trim().split('\n');
-  
-  for (const line of lines) {
-    const colonIndex = line.indexOf(':');
-    if (colonIndex > 0) {
-      const key = line.substring(0, colonIndex).trim();
-      const value = line.substring(colonIndex + 1).trim();
-      
-      if (key === 'allowed-tools') {
-        // Parse comma-separated tools
-        result[key] = value.split(',').map(t => t.trim());
-      } else {
-        result[key] = value;
-      }
-    }
-  }
-  return result;
-}
-
-/**
- * Transform Claude command to OpenCode format
- */
-function transformCommand(content) {
-  try {
-    const parts = content.split('---');
-    if (parts.length < 3) {
-      console.warn('[Command Transformer] Invalid command file format, missing frontmatter');
-      return content;
-    }
-    
-    const frontmatterStr = parts[1];
-    const body = parts.slice(2).join('---');
-    
-    const claudeFM = parseCommandYAML(frontmatterStr);
-    
-    // Transform allowed-tools
-    if (claudeFM['allowed-tools']) {
-      claudeFM['allowed-tools'] = claudeFM['allowed-tools'].map(tool => 
-        TOOL_MAPPING[tool] || tool.toLowerCase()
-      );
-    }
-    
-    // Transform body content
-    const transformedBody = body
-      .replace(/\.claude\//g, '.opencode/')
-      .replace(/Task tool/g, 'agent tool')
-      .replace(/Claude Code/g, 'OpenCode');
-    
-    // Build YAML frontmatter
-    let yaml = '';
-    for (const [key, value] of Object.entries(claudeFM)) {
-      if (Array.isArray(value)) {
-        yaml += `${key}: ${value.join(', ')}\n`;
-      } else {
-        yaml += `${key}: ${value}\n`;
-      }
-    }
-    
-    const result = `---\n${yaml}---${transformedBody}`;
-    
-    console.log(`[Command Transformer] Transformed command`);
-    return result;
-    
-  } catch (error) {
-    console.error('[Command Transformer] Transform error:', error);
-    return content; // Return original on error
-  }
-}
+import { transformCommand } from '../plugin-util/command-transformer-core.js';
 
 /**
  * Check if path is requesting an OpenCode command
@@ -127,7 +37,7 @@ function getClaudeCommandPath(opencodePath, directory) {
   }
   
   // Fall back to global ~/.claude
-  const globalPath = join(homedir(), '.claude/commands', relativePath);
+  const globalPath = join(homedir(), 'dotfiles/claude/.claude/commands', relativePath);
   if (existsSync(globalPath)) {
     return globalPath;
   }
@@ -137,20 +47,20 @@ function getClaudeCommandPath(opencodePath, directory) {
 }
 
 /**
- * Plugin export - Handles command transformation
+ * Plugin export - Handles command transformation using shared core logic
  */
 export const CommandTransformer = async ({ project, client, $, directory, worktree }) => {
-  console.log('[Command Transformer] Plugin initializing');
+  console.log('[Command Transformer] Plugin initializing with shared core logic');
   console.log(`[Command Transformer] Working directory: ${directory}`);
   
   // Detect and log commands from both global and project .claude directories
   const { readdirSync } = await import('fs');
-  const projectRoot = dirname(directory); // Go up one level from .opencode to project root
+  const projectRoot = directory; // The directory parameter IS the project root
   const commands = new Map(); // Use Map to handle duplicates with precedence
   
-  // Check global ~/.claude/commands first
+  // Check global commands first
   try {
-    const globalCommandsPath = join(homedir(), '.claude/commands');
+    const globalCommandsPath = join(homedir(), 'dotfiles/claude/.claude/commands');
     const globalCommands = readdirSync(globalCommandsPath, { recursive: true }).filter(file => file.endsWith('.md'));
     globalCommands.forEach(cmd => commands.set(cmd, 'global'));
     console.log(`[Command Transformer] Global commands detected: ${globalCommands.join(', ')}`);
@@ -158,7 +68,7 @@ export const CommandTransformer = async ({ project, client, $, directory, worktr
     console.log(`[Command Transformer] No global commands found: ${error.message}`);
   }
   
-  // Check project-local .claude/commands (these override global)
+  // Check project-local commands (these override global)
   try {
     const projectCommandsPath = join(projectRoot, '.claude/commands');
     const projectCommands = readdirSync(projectCommandsPath, { recursive: true }).filter(file => file.endsWith('.md'));
@@ -193,7 +103,12 @@ export const CommandTransformer = async ({ project, client, $, directory, worktr
           
           try {
             const claudeContent = await readFile(claudePath, 'utf8');
-            const transformedContent = transformCommand(claudeContent);
+            
+            // Use shared transformation logic
+            const transformedContent = transformCommand(claudeContent, {
+              returnOriginalOnError: true,
+              enableLogging: true
+            });
             
             // Modify args to return transformed content
             output.args = {
@@ -202,7 +117,7 @@ export const CommandTransformer = async ({ project, client, $, directory, worktr
               _transformedContent: transformedContent
             };
             
-            console.log(`[Command Transformer] Successfully intercepted and transformed`);
+            console.log(`[Command Transformer] Successfully intercepted and transformed using shared core`);
             
           } catch (readError) {
             console.error(`[Command Transformer] Could not read Claude command: ${claudePath}`, readError);

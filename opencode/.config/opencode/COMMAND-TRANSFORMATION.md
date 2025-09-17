@@ -2,40 +2,110 @@
 
 ## Overview
 
-The OpenCode configuration includes automatic transformation of Claude Code commands to OpenCode format using runtime plugin interception. This allows existing Claude commands to work seamlessly in OpenCode without manual conversion.
+The OpenCode configuration includes automatic transformation of Claude Code commands to OpenCode format using the same **triple-mechanism hybrid approach** as agents. This provides maximum reliability and user convenience through pre-launch transformation, runtime plugin backup, and universal command coverage.
 
-## Architecture
+## Architecture Components
 
-### Runtime Plugin System
-**Location**: `/Users/smian/dotfiles/opencode/.config/opencode/plugin/command-transformer.js`
+### 1. Pre-Launch Transformation (Primary)
+**Location**: `/Users/smian/dotfiles/opencode/.config/opencode/scripts/pre-launch-transform.js`
+**Triggered by**: `bin/oc` launcher script before OpenCode starts
+**Purpose**: Transforms Claude commands to OpenCode format and writes files to disk
 
-The command transformer uses Node.js filesystem interception to transform Claude commands on-the-fly:
-
-1. **Filesystem Patching** - Intercepts `fs.readFileSync` and `fs.readFile` calls
-2. **Path Detection** - Identifies Claude command file requests
-3. **Format Conversion** - Transforms frontmatter from Claude to OpenCode format
-4. **Tool Mapping** - Updates tool names for OpenCode compatibility
-
-### Transformation Process
-
-Claude commands are automatically converted when OpenCode reads them:
-
-```yaml
-# Before (Claude format)
----
-allowed-tools: Read, Write, Bash, Grep
----
-
-# After (OpenCode format)
----
-description: "Auto-converted command"
-agent: build
----
+```bash
+# Triggered automatically by:
+./bin/oc [any-command]
 ```
 
-### Tool Name Mapping
+**Process**:
+1. Scans for Claude commands in `~/dotfiles/claude/.claude/commands/` and `.claude/commands/`
+2. Checks modification times (only transforms if source is newer)
+3. Transforms and writes to `~/.config/opencode/command/` and `.opencode/command/`
+4. OpenCode reads the pre-transformed files
 
-The transformer maps Claude tools to OpenCode equivalents:
+### 2. Runtime Plugin (Backup)
+**Location**: `/Users/smian/dotfiles/opencode/.config/opencode/plugin/command-transformer.js`
+**Triggered by**: OpenCode plugin system during startup  
+**Purpose**: Provides fallback transformation using shared core logic
+
+**Status**: ✅ **Implemented and configured** - Plugin code uses shared core logic and path calculation has been fixed
+
+**Process**:
+1. Detects command file reads during runtime
+2. Intercepts requests for `.opencode/command/` files  
+3. Redirects to source Claude command files
+4. Returns transformed content using shared transformation logic
+
+**Note**: Direct binary calls may have extended execution times; normal shell wrapper usage is recommended
+
+### 3. Shell Function Wrapper (Universal Coverage)
+**Location**: `~/.zshrc` shell configuration
+**Triggered by**: Direct `opencode` command usage
+**Purpose**: Ensures transformation happens regardless of how user invokes OpenCode
+
+```bash
+# Shell function in ~/.zshrc
+opencode() {
+    # Run our wrapper which handles transformation and calls real opencode
+    "$HOME/.local/bin/opencode" "$@"
+}
+```
+
+### 4. Core Transformation Logic
+**Location**: `/Users/smian/dotfiles/opencode/.config/opencode/plugin-util/command-transformer-core.js`
+**Used by**: All transformation mechanisms (pre-launch, runtime plugin, and shell wrapper)
+
+**Transformations**:
+```yaml
+# Claude Format → OpenCode Format
+---                              ---
+title: "Build Command"      →    description: "Build Command"
+allowed-tools: Read,Bash    →    agent: build
+category: deployment        →    category: deployment
+---                              ---
+```
+
+## Why Triple Mechanisms?
+
+### Reliability Comparison
+
+**Pre-Launch transformation advantages**: ✅ **Verified working** - Files are in correct format when OpenCode starts, providing excellent reliability.
+
+**Runtime Plugin status**: ✅ **Implemented with fixes** - Path calculation corrected, uses shared core logic. Works as backup for edge cases.
+
+**Shell wrapper advantages**: ✅ **Verified working** - Provides universal coverage by ensuring pre-launch transformation runs.
+
+### Architecture Decision Matrix
+
+| Aspect | Runtime Only | Pre-launch Only | Shell Function Only | Triple Hybrid (Current) |
+|--------|--------------|-----------------|---------------------|-------------------------|
+| **Reliability** | ❌ Timing failures | ✅ High | ✅ High | ✅ Maximum defense in depth |
+| **Performance** | ❌ Transform on every read | ✅ No runtime overhead | ✅ No runtime overhead | ✅ Best of all approaches |
+| **Debugging** | ❌ Memory-only | ✅ Files visible on disk | ✅ Files visible on disk | ✅ Visible artifacts + logs |
+| **User Experience** | ❌ Unreliable | ⚠️ Requires `oc` usage | ✅ Works with `opencode` | ✅ Universal compatibility |
+| **Fail-safe** | ❌ Single point of failure | ⚠️ Single point of failure | ⚠️ Single point of failure | ✅ Triple redundancy |
+
+## Implementation Details
+
+### Transformation Logic
+
+The shared core (`command-transformer-core.js`) handles:
+
+**Frontmatter Conversion**:
+```yaml
+# Claude Format → OpenCode Format
+title: "Command Name"        →    description: "Command Name"
+allowed-tools: Read,Write    →    agent: build  
+category: deployment         →    category: deployment
+author: developer           →    author: developer
+```
+
+**Content Transformation**:
+- `.claude/` → `.opencode/` (directory references)
+- `Task tool` → `agent tool` (tool references)
+- `Claude Code` → `OpenCode` (product names)
+- `claude run` → `opencode run` (command references)
+
+**Tool Name Mapping**:
 
 | Claude Tool | OpenCode Tool |
 |-------------|---------------|
@@ -53,52 +123,120 @@ The transformer maps Claude tools to OpenCode equivalents:
 | WebSearch   | websearch     |
 | Search      | search        |
 | Agent       | agent         |
+| Notebook    | notebook      |
+| Jupyter     | jupyter       |
+
+## File Locations
+
+### Source (Claude Format)
+- Global: `~/dotfiles/claude/.claude/commands/*.md`
+- Project: `<project>/.claude/commands/*.md`
+
+### Target (OpenCode Format)  
+- Global: `~/.config/opencode/command/*.md`
+- Project: `<project>/.opencode/command/*.md`
+
+### Core Files
+```
+opencode/.config/opencode/
+├── scripts/
+│   └── pre-launch-transform.js         # Enhanced for both agents AND commands
+├── plugin/
+│   ├── agent-transformer.js            # Agent runtime plugin
+│   └── command-transformer.js          # Command runtime plugin (uses shared core)
+├── plugin-util/
+│   ├── agent-transformer-core.js       # Shared agent logic
+│   └── command-transformer-core.js     # NEW: Shared command logic
+└── tests/
+    ├── test-agent-transformer.js       # Existing agent tests
+    ├── test-command-transformer.js     # NEW: Command transformation tests
+    └── fixtures/
+        ├── claude-test-command.md       # Test command input
+        └── claude-test-command-converted-expected.md  # Expected output
+
+Shell Configuration:
+~/.zshrc                                 # opencode() shell function
+
+Binary Wrappers:
+bin/oc                                   # Original binary wrapper  
+~/.local/bin/opencode                    # Universal binary wrapper
+```
+
+## Universal Command Coverage
+
+The system now supports **both calling patterns** seamlessly:
+
+### Command Flow Architecture
+```
+User Command Patterns:
+├── oc [args]           → bin/oc wrapper → transformation → real opencode
+└── opencode [args]     → shell function → ~/.local/bin/opencode → transformation → real opencode
+```
+
+**Key Benefits**:
+- ✅ Users can use either `oc` or `opencode` interchangeably
+- ✅ Commands transformed before OpenCode starts (no timing issues)
+- ✅ Same transformation pipeline for both approaches
+- ✅ Visible transformed files for debugging
 
 ## How It Works
 
-### Source Locations
-The transformer looks for Claude commands in:
-- **Global**: `~/.claude/commands/`
-- **Project**: `.claude/commands/`
-
-### Target Format
-Commands are transformed to OpenCode format with:
-- **Description**: Generic description for auto-converted commands
-- **Agent**: Defaults to `"build"` agent
-- **Tools**: Mapped to OpenCode tool names
+### Smart Multi-Location Support
+The system checks for commands in priority order:
+1. **Project-local**: `.claude/commands/` (takes precedence)
+2. **Global**: `~/dotfiles/claude/.claude/commands/` (fallback)
 
 ### Automatic Detection
-The plugin automatically detects Claude command files by:
-1. **Path patterns**: Files matching Claude command directory structures
-2. **Frontmatter format**: Presence of `allowed-tools` field
-3. **File extension**: `.md` files with YAML frontmatter
+Commands are automatically detected by:
+1. **File extension**: `.md` files with YAML frontmatter
+2. **Frontmatter format**: Presence of `allowed-tools:` field
+3. **Directory structure**: Claude command directory patterns
+
+## Smart Caching System
+
+### Efficient Updates
+The pre-launch transformation includes smart caching:
+- **Timestamp comparison**: Only transforms when source is newer than target
+- **Selective processing**: Skips up-to-date commands automatically
+- **Performance optimization**: No unnecessary file operations
+
+### Cache Management
+```bash
+# Force re-transformation of all commands
+touch ~/dotfiles/claude/.claude/commands/*.md
+
+# Force re-transformation of specific command
+touch ~/dotfiles/claude/.claude/commands/my-command.md
+```
 
 ## Configuration
 
-### Plugin Loading
-The command transformer is automatically loaded as an OpenCode plugin:
+### Shared Core Logic
+All transformation mechanisms use `command-transformer-core.js`:
 
 ```javascript
-// In plugin/command-transformer.js
-export default function plugin(opencode) {
-  // Filesystem interception logic
-  patchReadFile();
-  patchReadFileSync();
-}
+// Shared transformation logic
+import { transformCommand } from '../plugin-util/command-transformer-core.js';
+
+// Used by both pre-launch script and runtime plugin
+const result = transformCommand(claudeContent, {
+  returnOriginalOnError: true,
+  enableLogging: false  // Quiet for startup
+});
 ```
 
 ### Transformation Rules
 
-#### Frontmatter Conversion
-- **allowed-tools** → Removed (tools mapped to agent capabilities)
-- **title** → **description** (if present)
-- **description** → Preserved or generated
-- **agent** → Added with default "build"
+#### Frontmatter Conversion Rules
+1. **title** → **description** (priority over description field)
+2. **allowed-tools** → **agent: build** (tools mapped to agent capabilities)
+3. **Other fields** → Preserved (category, author, version, etc.)
 
 #### Content Preservation
-- Command body content is preserved unchanged
+- Command body content preserved with transformations
 - Markdown formatting maintained
 - Dynamic placeholders (like `$ARGUMENTS`) preserved
+- References updated for OpenCode compatibility
 
 ## Usage Examples
 
@@ -108,9 +246,13 @@ export default function plugin(opencode) {
 oc run "/my-claude-command"
 opencode run "/my-claude-command"
 
-# No manual conversion needed
-oc run "/build" --agent build
-opencode run "/deploy" --agent build
+# Commands from both global and project locations
+oc run "/global-command"           # From ~/dotfiles/claude/.claude/commands/
+opencode run "/project-command"    # From .claude/commands/ (project-local)
+
+# No manual conversion needed - fully automatic
+oc run "/build-and-deploy" --model gpt-oss:120b
+opencode run "/build-and-deploy" --model gpt-oss:120b
 ```
 
 ### Command Discovery
@@ -119,21 +261,51 @@ opencode run "/deploy" --agent build
 oc commands
 opencode commands
 
-# Commands from both .claude/commands/ and .opencode/command/ are available
+# Both command locations are searched automatically:
+# - ~/.config/opencode/command/ (transformed global)
+# - .opencode/command/ (transformed project-local)
+```
+
+### Development Workflow
+```bash
+# Create new Claude command
+echo '---
+title: "Deploy to Production"
+allowed-tools: Bash, Read, Write
+---
+Deploy the application to production.' > .claude/commands/deploy-prod.md
+
+# Automatic transformation on next OpenCode run
+oc run "/deploy-prod"  # Automatically transformed and available
 ```
 
 ## Testing
 
+### Comprehensive Test Suite
+```bash
+# Run complete command transformation tests
+node opencode/.config/opencode/tests/test-command-transformer.js
+
+# Test specific command file
+node opencode/.config/opencode/tests/test-command-transformer.js /path/to/command.md
+
+# Test pre-launch transformation directly
+node opencode/.config/opencode/scripts/pre-launch-transform.js
+```
+
 ### Manual Testing
 ```bash
-# Test command transformation
+# Test command transformation end-to-end
 oc run "/existing-claude-command"
-
-# Verify command works without errors
 opencode run "/existing-claude-command"
 
-# Check command help shows OpenCode format
-oc help "/command-name"
+# Test both global and project commands
+oc run "/global-command"     # From ~/dotfiles/claude/.claude/commands/
+oc run "/project-command"    # From .claude/commands/
+
+# Verify transformation artifacts
+ls ~/.config/opencode/command/          # Global transformed commands
+ls .opencode/command/                   # Project transformed commands
 ```
 
 ### Debug Mode
@@ -141,39 +313,97 @@ oc help "/command-name"
 # Enable debug logging to see transformation
 DEBUG_MODE=true oc run "/command"
 
-# Check for transformation messages
+# Check transformation logs
 DEBUG_MODE=true opencode run "/command" 2>&1 | grep -i "transform"
+
+# Force re-transformation for testing
+touch ~/dotfiles/claude/.claude/commands/command.md
+oc run "/command"  # Will re-transform due to newer timestamp
 ```
+
+### Automated Tests
+The test suite provides comprehensive coverage:
+
+**Unit Tests**: Core transformation functions
+- `parseCommandYAML()` - Frontmatter parsing
+- `transformCommand()` - Full transformation pipeline  
+- `validateTransformedCommand()` - Output validation
+
+**Integration Tests**: End-to-end transformation
+- File reading and writing
+- Smart caching behavior
+- Error handling and fallbacks
+
+**Fixtures**: Test data and expected results
+- `claude-test-command.md` - Sample Claude command
+- `claude-test-command-converted-expected.md` - Expected output
 
 ## Troubleshooting
 
 ### Command Not Found
 **Symptoms**: `Command "/name" not found`
 **Solutions**:
-1. Check Claude command exists in `.claude/commands/`
-2. Verify frontmatter has `allowed-tools` field
-3. Ensure OpenCode can read the source file
-
-### Invalid Tool Warnings
-**Symptoms**: `Invalid tool "Tool" specified`
-**Solutions**:
-1. Check tool mapping in transformer configuration
-2. Verify tool name exists in OpenCode
-3. Update transformer for new tool mappings
+1. Check Claude command exists in source location:
+   - Global: `~/dotfiles/claude/.claude/commands/`
+   - Project: `.claude/commands/`
+2. Verify frontmatter has `allowed-tools:` field
+3. Check pre-launch transformation logs:
+   ```bash
+   DEBUG_MODE=true oc run "/command" 2>&1 | grep "Pre-Launch"
+   ```
+4. Manually trigger transformation:
+   ```bash
+   touch ~/dotfiles/claude/.claude/commands/command.md
+   oc run "/command"
+   ```
 
 ### Transformation Not Working
-**Symptoms**: Commands load but don't transform
+**Symptoms**: Commands load but show Claude format
 **Solutions**:
-1. Check plugin loading logs
-2. Verify filesystem patching activated
-3. Test with simple command first
+1. Check transformation status:
+   ```bash
+   ls -la ~/.config/opencode/command/
+   ls -la .opencode/command/
+   ```
+2. Verify timestamps (source should be newer):
+   ```bash
+   stat ~/dotfiles/claude/.claude/commands/command.md
+   stat ~/.config/opencode/command/command.md
+   ```
+3. Test transformation manually:
+   ```bash
+   node opencode/.config/opencode/tests/test-command-transformer.js /path/to/command.md
+   ```
 
 ### Performance Issues
 **Symptoms**: Slow command loading
 **Solutions**:
-1. Check if multiple transformations occurring
-2. Verify caching is working correctly
-3. Consider pre-transformation approach
+1. Pre-launch transformation eliminates runtime overhead
+2. Smart caching prevents unnecessary re-transformation
+3. Check for transformation errors in logs
+
+### Tool Mapping Issues
+**Symptoms**: Commands reference unknown tools
+**Solutions**:
+1. Update tool mapping in `command-transformer-core.js`:
+   ```javascript
+   export const CLAUDE_TO_OPENCODE_TOOLS = {
+     'NewTool': 'mapped-tool',  // Add new mappings
+     // ...existing mappings
+   };
+   ```
+2. Test updated mapping:
+   ```bash
+   node opencode/.config/opencode/tests/test-command-transformer.js
+   ```
+
+### Shell Function Issues
+**Symptoms**: `opencode` command not using wrapper
+**Solutions**:
+1. Verify shell function exists: `type opencode`
+2. Reload shell configuration: `exec zsh`
+3. Check for conflicts: `which -a opencode`
+4. Use `oc` as fallback (always works)
 
 ## Integration with Agent Transformation
 
@@ -243,8 +473,24 @@ opencode/.config/opencode/
 - YAML parsing capabilities
 - OpenCode plugin system
 
+## Conclusion
+
+The **triple-mechanism hybrid approach** provides maximum reliability and user convenience for Claude→OpenCode command transformation. The combination of pre-launch transformation, runtime plugin, and shell function wrapper ensures:
+
+- ✅ **Universal compatibility**: Both `oc` and `opencode` commands work seamlessly
+- ✅ **Maximum reliability**: Triple redundancy prevents failures
+- ✅ **User convenience**: No need to learn special commands  
+- ✅ **Backward compatibility**: Existing `oc` usage continues to work
+- ✅ **Transparent operation**: Users can use OpenCode naturally
+- ✅ **Smart caching**: Efficient transformation with timestamp checking
+- ✅ **Visible artifacts**: Transformed files available for debugging
+
+This architecture ensures that users can seamlessly use their existing Claude Code commands in OpenCode without manual conversion or configuration changes, regardless of how they invoke the tool.
+
 ---
 
 **Last Updated**: September 16, 2025  
-**Status**: Runtime plugin system for automatic Claude command transformation  
-**Integration**: Works with agent transformation and shell function wrapper for complete Claude → OpenCode compatibility
+**Status**: ✅ **Triple-mechanism implementation complete** with verified pre-launch transformation and shell wrapper functionality  
+**Integration**: Command transformation now provides the same reliability approach as agent transformation  
+**Verified**: ✅ Pre-launch transformation, ✅ Shell wrapper coverage, ✅ Project precedence, ✅ Smart caching  
+**Runtime Plugin**: ✅ Implemented with shared core logic and fixed path calculation
