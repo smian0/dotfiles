@@ -1,5 +1,5 @@
 {
-  "updated": "2025-09-17T18:07:25Z",
+  "updated": "2025-09-17T18:45:55Z",
   "agents": [
     {
       "name": "claude-copilot",
@@ -33,6 +33,13 @@
       "name": "gpt-oss-120",
       "emoji": "🤖",
       "trigger": "/oc @gpt-oss-120",
+      "description": "Custom agent for specialized tasks"
+    }
+,
+    {
+      "name": "mcp-manager",
+      "emoji": "🤖",
+      "trigger": "/oc @mcp-manager",
       "description": "Custom agent for specialized tasks"
     }
 ,
