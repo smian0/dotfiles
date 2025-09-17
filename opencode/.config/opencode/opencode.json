@@ -1,7 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "theme": "opencode",
-  "model": "zhipuai/glm-4.5",
+  "model": "github-copilot/claude-sonnet-4",
+  "small_model": "ollamat/gpt-oss:120b",
   "autoupdate": true,
   "provider": {
     "ollama": {
@@ -146,34 +147,35 @@
     "mcp__serena__*": true
   },
   "agent": {
-    "fast": {
-      "model": "ollamat/gpt-oss:20b",
-      "system": "You are a fast assistant. Provide quick, direct answers.",
-      "reasoningEffort": "low"
+    "claude-primary": {
+      "model": "github-copilot/claude-sonnet-4",
+      "reasoningEffort": "medium",
+      "description": "Primary: Claude Sonnet 4"
     },
-    "plan": {
-      "model": "ollamat/gpt-oss:120b",
-      "system": "You are a strategic planning assistant. Provide thorough analysis with step-by-step reasoning.",
-      "reasoningEffort": "high"
-    },
-    "build": {
+    "claude-fallback": {
       "model": "zhipuai/glm-4.5",
-      "system": "You are a code generation assistant focused on building and implementation."
+      "reasoningEffort": "medium",
+      "description": "Fallback: GLM 4.5 when Claude rate limited"
     },
-    "general": {
-      "model": "ollamat/gpt-oss:20b",
-      "system": "You are a general-purpose assistant providing balanced responses.",
+    "claude-copilot": {
+      "model": "github-copilot/claude-sonnet-4",
       "reasoningEffort": "medium"
     },
-    "reasoning": {
+    "gpt-oss-120": {
       "model": "ollamat/gpt-oss:120b",
-      "system": "You are a high‑quality reasoning assistant. Always provide step-by-step mathematical reasoning with clear formatting.",
-      "reasoningEffort": "high"
-    },
-    "websearch": {
-      "model": "ollamat/gpt-oss:120b",
-      "system": "You are a concise web-search assistant. Retrieve the most relevant information for the given query and return a short factual summary (max 3 sentences). Cite the source URL at the end.",
       "reasoningEffort": "medium"
+    },
+    "qwen3-coder:480b": {
+      "model": "ollamat/qwen3-coder:480b",
+      "reasoningEffort": "medium"
+    },
+    "glm": {
+      "model": "zhipuai/glm-4.5",
+      "reasoningEffort": "medium"
+    },
+    "small-direct": {
+      "model": "ollamat/gpt-oss:120b",
+      "reasoningEffort": "low"
     }
   }
 }
