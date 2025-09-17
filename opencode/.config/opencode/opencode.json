@@ -113,16 +113,16 @@
   },
   "mcp": {
     "markdown": {
-      "type": "local",
       "command": [
         "uv",
         "run",
-        "/Users/smian/dotfiles/claude/.claude/mcp_servers/mcp_markdown/server.py"
+        "--script",
+        "/Users/smian/.claude/mcp_servers/mcp_markdown/server.py"
       ],
+      "type": "local",
       "enabled": true
     },
     "serena": {
-      "type": "local",
       "command": [
         "uvx",
         "--from",
@@ -134,17 +134,60 @@
         "--enable-gui-log-window",
         "false"
       ],
+      "type": "local",
       "enabled": true
     },
     "streamable-mcp-server": {
       "type": "remote",
       "url": "http://127.0.0.1:12306/mcp",
       "enabled": false
+    },
+    "context7": {
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "type": "local",
+      "enabled": true
+    },
+    "playwright": {
+      "command": [
+        "npx",
+        "@playwright/mcp@latest"
+      ],
+      "type": "local",
+      "enabled": true
+    },
+    "sequential-thinking": {
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "type": "local",
+      "enabled": true
+    },
+    "zen": {
+      "command": [
+        "uv",
+        "run",
+        "--directory",
+        "/Users/smian/github-ck/zen-mcp-server-private",
+        "python",
+        "server.py"
+      ],
+      "type": "local",
+      "enabled": true
     }
   },
   "tools": {
     "mcp__markdown__*": true,
-    "mcp__serena__*": true
+    "mcp__serena__*": true,
+    "mcp__context7__*": true,
+    "mcp__playwright__*": true,
+    "mcp__sequential_thinking__*": true,
+    "mcp__zen__*": true
   },
   "agent": {
     "claude-primary": {
@@ -176,6 +219,11 @@
     "small-direct": {
       "model": "ollamat/gpt-oss:120b",
       "reasoningEffort": "low"
+    },
+    "mcp-manager": {
+      "model": "ollamat/gpt-oss:120b",
+      "reasoningEffort": "low",
+      "description": "MCP Server Manager - List, analyze, and manage Model Context Protocol servers and tools"
     }
   }
 }
