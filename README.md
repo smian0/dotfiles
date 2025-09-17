@@ -95,6 +95,7 @@ This repository includes an AI-powered GitHub bot that responds to commands in i
 | 🤖 **Claude Primary** | `/oc @claude-primary` | Custom agent for specialized tasks |
 | 🤖 **Glm** | `/oc @glm` | Custom agent for specialized tasks |
 | 🤖 **Gpt Oss 120** | `/oc @gpt-oss-120` | Custom agent for specialized tasks |
+| 🤖 **Mcp Manager** | `/oc @mcp-manager` | Custom agent for specialized tasks |
 | 🤖 **Qwen3 Coder:480b** | `/oc @qwen3-coder:480b` | Custom agent for specialized tasks |
 | 🤖 **Small Direct** | `/oc @small-direct` | Custom agent for specialized tasks |
 | 🤖 **Backend Architect** | `/oc @backend-architect` | Custom agent for specialized tasks |
