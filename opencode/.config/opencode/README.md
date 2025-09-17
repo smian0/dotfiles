@@ -2,6 +2,19 @@
 
 This directory contains OpenCode configuration with advanced Ollama integration using `ollama-ai-provider-v2`.
 
+## Documentation
+
+All documentation is organized under the `docs/` directory:
+
+**📚 [Complete Documentation](docs/README.md)** - User guides, references, and developer docs
+
+### Quick Navigation
+
+**New Users**: Start with [Getting Started Guide](docs/user/guide/getting-started.md)  
+**Claude Users**: See [Transition Guide](docs/user/guide/transition-guide.md)  
+**Model Configuration**: Check [Reasoning Effort Guide](docs/user/reference/reasoning-effort.md)  
+**Developers**: Begin with [Architecture Overview](docs/dev/architecture/agent-transformation.md)
+
 ## Current Setup
 
 - **OpenCode Version**: 0.6.8

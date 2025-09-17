@@ -6,19 +6,19 @@
   "provider": {
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "Ollama (local)",
+      "name": "Ollama (OpenAI Compatible)",
       "options": {
         "baseURL": "http://localhost:3304/v1"
       },
       "models": {
         "gpt-oss:20b": {
-          "name": "GPT-OSS 20B (Local)"
+          "name": "GPT-OSS 20B (OpenAI Compatible)"
         },
         "gpt-oss:120b": {
-          "name": "GPT-OSS 120B (Local)"
+          "name": "GPT-OSS 120B (OpenAI Compatible)"
         },
         "deepseek-v3.1:671b": {
-          "name": "DeepSeek V3.1 671B (Local)"
+          "name": "DeepSeek V3.1 671B (OpenAI Compatible)"
         }
       }
     },
@@ -33,16 +33,76 @@
       },
       "models": {
         "gpt-oss:20b": {
-          "name": "GPT-OSS 20B (Turbo)"
+          "id": "gpt-oss:20b",
+          "name": "GPT-OSS 20B",
+          "options": {
+            "reasoningEffort": "high",
+            "think": "high",
+            "effort": "high",
+            "reasoning_effort": "high"
+          },
+          "limit": {
+            "context": 131072,
+            "output": 131072
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
         },
         "gpt-oss:120b": {
-          "name": "GPT-OSS 120B (Turbo)"
+          "id": "gpt-oss:120b",
+          "name": "GPT-OSS 120B",
+          "options": {
+            "reasoningEffort": "high",
+            "think": "high",
+            "effort": "high",
+            "reasoning_effort": "high"
+          },
+          "limit": {
+            "context": 131072,
+            "output": 131072
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
         },
         "qwen3-coder:480b": {
-          "name": "Qwen3 Coder 480b (Turbo)"
+          "id": "qwen3-coder:480b",
+          "name": "Qwen3 Coder 480B",
+          "options": {
+            "reasoningEffort": "medium",
+            "think": "medium",
+            "effort": "medium",
+            "reasoning_effort": "medium"
+          },
+          "limit": {
+            "context": 131072,
+            "output": 131072
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
         },
         "deepseek-v3.1:671b": {
-          "name": "DeepSeek V3.1 671B (Turbo)"
+          "id": "deepseek-v3.1:671b",
+          "name": "DeepSeek V3.1 671B",
+          "options": {
+            "reasoningEffort": "high",
+            "think": "high",
+            "effort": "high",
+            "reasoning_effort": "high"
+          },
+          "limit": {
+            "context": 131072,
+            "output": 131072
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
         }
       }
     },
@@ -86,19 +146,29 @@
     "mcp__serena__*": true
   },
   "agent": {
+    "fast": {
+      "model": "ollamat/gpt-oss:20b",
+      "system": "You are a fast assistant. Provide quick, direct answers.",
+      "reasoningEffort": "low"
+    },
     "plan": {
-      "model": "zhipuai/glm-4.5"
+      "model": "ollamat/gpt-oss:120b",
+      "system": "You are a strategic planning assistant. Provide thorough analysis with step-by-step reasoning.",
+      "reasoningEffort": "high"
     },
     "build": {
-      "model": "zhipuai/glm-4.5"
+      "model": "zhipuai/glm-4.5",
+      "system": "You are a code generation assistant focused on building and implementation."
     },
     "general": {
-      "model": "zhipuai/glm-4.5"
+      "model": "ollamat/gpt-oss:20b",
+      "system": "You are a general-purpose assistant providing balanced responses.",
+      "reasoningEffort": "medium"
     },
     "reasoning": {
-      "model": "zhipuai/glm-4.5",
-      "system": "You are a high‑quality reasoning assistant. Always provide step-by-step <reasoning></reasoning> tags before the final answer.",
-      "reasoningEffort": "medium"
+      "model": "ollamat/gpt-oss:120b",
+      "system": "You are a high‑quality reasoning assistant. Always provide step-by-step mathematical reasoning with clear formatting.",
+      "reasoningEffort": "high"
     },
     "websearch": {
       "model": "ollamat/gpt-oss:120b",
