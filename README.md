@@ -91,6 +91,7 @@ This repository includes an AI-powered GitHub bot that responds to commands in i
 | Agent | Trigger | Description |
 |-------|---------|-------------|
 | 🏗️ **Build** | `/oc @build` | Build automation and deployment assistance |
+| 🤖 **Fast** | `/oc @fast` | Custom agent for specialized tasks |
 | 🎯 **General** | `/oc @general` | General-purpose AI assistance |
 | 📋 **Plan** | `/oc @plan` | Strategic planning and project organization |
 | 🧠 **Reasoning** | `/oc @reasoning` | Provides step-by-step reasoning for complex problems |

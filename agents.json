@@ -1,11 +1,18 @@
 {
-  "updated": "2025-09-16T22:42:04Z",
+  "updated": "2025-09-17T16:41:36Z",
   "agents": [
     {
       "name": "build",
       "emoji": "🏗️",
       "trigger": "/oc @build",
       "description": "Build automation and deployment assistance"
+    }
+,
+    {
+      "name": "fast",
+      "emoji": "🤖",
+      "trigger": "/oc @fast",
+      "description": "Custom agent for specialized tasks"
     }
 ,
     {
