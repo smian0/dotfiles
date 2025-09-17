@@ -90,12 +90,13 @@ This repository includes an AI-powered GitHub bot that responds to commands in i
 
 | Agent | Trigger | Description |
 |-------|---------|-------------|
-| 🏗️ **Build** | `/oc @build` | Build automation and deployment assistance |
-| 🤖 **Fast** | `/oc @fast` | Custom agent for specialized tasks |
-| 🎯 **General** | `/oc @general` | General-purpose AI assistance |
-| 📋 **Plan** | `/oc @plan` | Strategic planning and project organization |
-| 🧠 **Reasoning** | `/oc @reasoning` | Provides step-by-step reasoning for complex problems |
-| 🔍 **Websearch** | `/oc @websearch` | Searches the web and provides concise summaries |
+| 🤖 **Claude Copilot** | `/oc @claude-copilot` | Custom agent for specialized tasks |
+| 🤖 **Claude Fallback** | `/oc @claude-fallback` | Custom agent for specialized tasks |
+| 🤖 **Claude Primary** | `/oc @claude-primary` | Custom agent for specialized tasks |
+| 🤖 **Glm** | `/oc @glm` | Custom agent for specialized tasks |
+| 🤖 **Gpt Oss 120** | `/oc @gpt-oss-120` | Custom agent for specialized tasks |
+| 🤖 **Qwen3 Coder:480b** | `/oc @qwen3-coder:480b` | Custom agent for specialized tasks |
+| 🤖 **Small Direct** | `/oc @small-direct` | Custom agent for specialized tasks |
 | 🤖 **Backend Architect** | `/oc @backend-architect` | Custom agent for specialized tasks |
 | 🤖 **Claude Test Agent** | `/oc @claude-test-agent` | Custom agent for specialized tasks |
 | 🤖 **Devops Architect** | `/oc @devops-architect` | Custom agent for specialized tasks |
