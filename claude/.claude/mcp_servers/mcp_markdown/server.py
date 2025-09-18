@@ -24,6 +24,7 @@ try:
     from .lint_engine import LintEngine
     from .mq_engine import MQEngine
     from .performance_engine import PerformanceEngine, Config, HAS_PSUTIL
+    from .spec_engine import SpecEngine
 except ImportError:
     # Add current directory to path for direct script execution
     sys.path.insert(0, str(Path(__file__).parent))
@@ -32,6 +33,7 @@ except ImportError:
     from lint_engine import LintEngine
     from mq_engine import MQEngine
     from performance_engine import PerformanceEngine, Config, HAS_PSUTIL
+    from spec_engine import SpecEngine
 
 # Initialize MCP server
 mcp = FastMCP()
@@ -41,6 +43,7 @@ obsidian = ObsidianEngine()
 linter = LintEngine()
 mq = MQEngine()
 performance = PerformanceEngine()
+spec = SpecEngine()
 
 # Standard markdown tools (using core utilities)
 @mcp.tool
@@ -384,6 +387,91 @@ def bulk_analyze(search_path: str, max_files: int = 100):
         files, analyze_single_file, "bulk_analyze", batch_size=Config.MAX_BATCH_SIZE
     )
 
+# Specification Intelligence Tools
+@mcp.tool
+def validate_spec_document(file_path: str):
+    """Comprehensive validation of a specification document."""
+    # Check cache first
+    cached_result = performance.get_cached_result(file_path, "spec_validation")
+    if cached_result is not None:
+        return cached_result
+    
+    result = spec.validate_spec_document(file_path)
+    
+    # Cache result
+    performance.cache_result(file_path, "spec_validation", result)
+    return result
+
+@mcp.tool
+def analyze_spec_semantics(file_path: str):
+    """Analyze semantic patterns in specification documents."""
+    # Check cache first
+    cached_result = performance.get_cached_result(file_path, "spec_semantics")
+    if cached_result is not None:
+        return cached_result
+    
+    result = spec.analyze_spec_semantics(file_path)
+    
+    # Cache result
+    performance.cache_result(file_path, "spec_semantics", result)
+    return result
+
+@mcp.tool
+def extract_spec_requirements(file_path: str):
+    """Extract structured requirements from specification documents."""
+    # Check cache first
+    cached_result = performance.get_cached_result(file_path, "spec_requirements")
+    if cached_result is not None:
+        return cached_result
+    
+    result = spec.extract_spec_requirements(file_path)
+    
+    # Cache result
+    performance.cache_result(file_path, "spec_requirements", result)
+    return result
+
+@mcp.tool
+def extract_spec_constraints(file_path: str):
+    """Extract constraints and limitations from specification documents."""
+    # Check cache first
+    cached_result = performance.get_cached_result(file_path, "spec_constraints")
+    if cached_result is not None:
+        return cached_result
+    
+    result = spec.extract_spec_constraints(file_path)
+    
+    # Cache result
+    performance.cache_result(file_path, "spec_constraints", result)
+    return result
+
+@mcp.tool
+def extract_spec_dependencies(file_path: str):
+    """Extract dependencies and cross-references from specification documents."""
+    # Check cache first
+    cached_result = performance.get_cached_result(file_path, "spec_dependencies")
+    if cached_result is not None:
+        return cached_result
+    
+    result = spec.extract_spec_dependencies(file_path)
+    
+    # Cache result
+    performance.cache_result(file_path, "spec_dependencies", result)
+    return result
+
+@mcp.tool
+def validate_spec_completeness(file_path: str):
+    """Validate completeness of specification documents against templates."""
+    # Check cache first
+    cached_result = performance.get_cached_result(file_path, "spec_completeness")
+    if cached_result is not None:
+        return cached_result
+    
+    result = spec.validate_spec_completeness(file_path)
+    
+    # Cache result
+    performance.cache_result(file_path, "spec_completeness", result)
+    return result
+
 @mcp.tool
 def health_check():
     """Check server health and capabilities with FunctionTool corruption detection."""
@@ -464,11 +552,20 @@ def health_check():
             # Linting capabilities
             "document_linting", "auto_fix_document",
             # MQ-compatible selectors
-            "mq_selectors", "bulk_queries", "performance_optimization"
+            "mq_selectors", "bulk_queries", "performance_optimization",
+            # Specification Intelligence
+            "spec_validation", "spec_semantics", "spec_requirements_extraction",
+            "spec_constraints_extraction", "spec_dependencies_extraction", "spec_completeness_validation"
         ],
         "obsidian_features": [
             "transclusion", "block_links", "aliases", "callouts", 
             "dataview", "vault_graph", "nested_tags", "header_links"
+        ],
+        "spec_features": [
+            "rfc2119_compliance", "requirement_language_analysis", "ambiguity_detection",
+            "implementation_gap_detection", "cross_reference_validation", "completeness_checking",
+            "structured_requirements_extraction", "constraints_analysis", "dependencies_mapping",
+            "spec_type_detection", "acceptance_criteria_parsing", "clarity_scoring"
         ],
         "mq_selectors": [
             ".h1", ".h2", ".h3", ".h4", ".h5", ".h6",
@@ -494,7 +591,8 @@ def health_check():
             "obsidian": "1.0.0", 
             "lint": "1.0.0",
             "mq": "1.0.0",
-            "performance": "1.0.0"
+            "performance": "1.0.0",
+            "spec": "1.0.0"
         }
     }
     
