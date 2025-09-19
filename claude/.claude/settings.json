@@ -90,7 +90,7 @@
       "Read(./pass/**)"
     ]
   },
-  "model": "sonnet",
+  "model": "opusplan",
   "enableAllProjectMcpServers": true,
   "hooks": {
     "SessionStart": [
