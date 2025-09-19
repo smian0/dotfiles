@@ -20,6 +20,11 @@ web_dashboard: false
 # shows Serena's current session logs - as an alternative to the GUI log window which
 # is supported on all platforms.
 
+default_context: codex
+# Default context for MCP server instances when not specified via command line
+# Available contexts: ide-assistant, desktop-app, codex, agent
+# NOTE: This may be overridden by command-line arguments in .mcp.json
+
 web_dashboard_open_on_launch: false
 # whether to open a browser window with the web dashboard when Serena starts (provided that web_dashboard
 # is enabled). If set to False, you can still open the dashboard manually by navigating to
@@ -70,7 +75,8 @@ token_count_estimator: TIKTOKEN_GPT4O
 # instruct Serena to activate the project by its path for first-time activation.
 # NOTE: Make sure there are no name collisions in the names of registered projects.
 projects:
-- "/Users/smian/Library/Mobile Documents/iCloud~md~obsidian/Documents/shoaib-life-hub"
+- /Users/smian/Library/Mobile 
+  Documents/iCloud~md~obsidian/Documents/shoaib-life-hub
 - /Users/smian/Services/ccflare
 - /Users/smian/dotfiles
 - /Users/smian/github
@@ -78,6 +84,7 @@ projects:
 - /Users/smian/github-ck/zen-mcp-server-private
 - /Users/smian/github-smian0/SuperClaude-CK
 - /Users/smian/github-smian0/agno-ck
+- /Users/smian/github-smian0/apex-workspace
 - /Users/smian/github-smian0/ccpm
 - /Users/smian/github-smian0/mcp-langextract
 - /Users/smian/github-smian0/sc-ccpm

@@ -16,8 +16,9 @@ stow serena
 - **Target:** `~/.serena/serena_config.yml` (symlink)
 
 ## Current Settings
-- Web dashboard: Enabled
-- Auto-open dashboard: Enabled
+- **Default context:** codex (for code analysis)
+- Web dashboard: Disabled
+- Auto-open dashboard: Disabled  
 - Log level: INFO (20)
 - Tool timeout: 240 seconds
 
