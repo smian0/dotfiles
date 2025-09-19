@@ -63,6 +63,32 @@ excluded_tools: []
 
 # initial prompt for the project. It will always be given to the LLM upon activating the project
 # (contrary to the memories, which are loaded on demand).
-initial_prompt: ""
+initial_prompt: |
+  This is a dotfiles repository for macOS/Linux environment configuration.
+  
+  IMPORTANT: When working with third-party libraries, frameworks, or tools:
+  
+  1. **ALWAYS use context7 first** for official documentation:
+     - For package.json dependencies: Use context7 to lookup library docs
+     - For Python requirements: Use context7 for framework documentation  
+     - For any popular library/framework: Query context7 before analyzing code
+  
+  2. **Example workflow:**
+     - If you see React usage → Query context7 with "React hooks best practices"
+     - If you see Express.js → Query context7 with "Express middleware patterns"
+     - If you see TypeScript → Query context7 with "TypeScript configuration"
+  
+  3. **Then combine with Serena analysis:**
+     - Use context7 for "what the library should do"
+     - Use Serena tools for "how this project uses it"
+  
+  This ensures you have both authoritative documentation AND project-specific implementation details.
+  
+  Key areas in this repo where this applies:
+  - Node.js/npm configurations
+  - Python/pip setups  
+  - Zsh/shell tool configurations
+  - Git hooks and automation
+  - Claude MCP server configurations
 
 project_name: "dotfiles"
