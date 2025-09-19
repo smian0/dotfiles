@@ -30,25 +30,25 @@ load_env_var "BRAVE_API_KEY"
 
 # Pre-launch agent transformation
 run_pre_launch_transform() {
-    local pre_launch_script="$HOME/dotfiles/opencode/.config/opencode/scripts/pre-launch-transform.js"
+    local sync_script="$HOME/.config/opencode/scripts/sync-claude.sh"
     
     # Only run transformation for commands that might load agents
     case "${1:-}" in
-        "" | "-h" | "--help" | "help" | "version" | "--version")
+        "-h" | "--help" | "help" | "version" | "--version")
             # These commands don't load agents, skip transformation
             return 0
             ;;
         *)
             # All other commands might load agents, run transformation
-            if [[ -f "$pre_launch_script" ]]; then
-                [[ "$DEBUG_MODE" == "true" ]] && echo "Running pre-launch agent transformation..."
-                if node "$pre_launch_script" 2>/dev/null; then
-                    [[ "$DEBUG_MODE" == "true" ]] && echo "✅ Pre-launch transformation completed"
+            if [[ -f "$sync_script" ]]; then
+                [[ "$DEBUG_MODE" == "true" ]] && echo "Running Claude to OpenCode sync..."
+                if "$sync_script" 2>/dev/null; then
+                    [[ "$DEBUG_MODE" == "true" ]] && echo "✅ Sync completed"
                 else
-                    [[ "$DEBUG_MODE" == "true" ]] && echo "⚠️  Pre-launch transformation had issues, proceeding anyway..."
+                    [[ "$DEBUG_MODE" == "true" ]] && echo "⚠️  Sync had issues, proceeding anyway..."
                 fi
             else
-                [[ "$DEBUG_MODE" == "true" ]] && echo "⚠️  Pre-launch transform script not found, proceeding..."
+                [[ "$DEBUG_MODE" == "true" ]] && echo "⚠️  Sync script not found, proceeding..."
             fi
             ;;
     esac
