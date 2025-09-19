@@ -5,13 +5,15 @@
       "git+https://github.com/oraios/serena",
       "serena",
       "start-mcp-server",
+      "--context",
+      "codex",
       "--enable-web-dashboard",
       "false",
       "--enable-gui-log-window",
       "false"
     ],
     "command": "uvx",
-    "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence",
+    "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence (codex context)",
     "purpose": "code-analysis",
     "scope": "project"
   },
