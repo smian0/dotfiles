@@ -147,4 +147,4 @@ claude/.claude/hooks/PostToolUse/logs
 
 # OpenCode transformation test artifacts
 .claude/.opencode/
-.opencode/command/
+

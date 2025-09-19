@@ -112,36 +112,6 @@
     }
   },
   "mcp": {
-    "markdown": {
-      "command": [
-        "uv",
-        "run",
-        "--script",
-        "/Users/smian/.claude/mcp_servers/mcp_markdown/server.py"
-      ],
-      "type": "local",
-      "enabled": true
-    },
-    "serena": {
-      "command": [
-        "uvx",
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena",
-        "start-mcp-server",
-        "--enable-web-dashboard",
-        "false",
-        "--enable-gui-log-window",
-        "false"
-      ],
-      "type": "local",
-      "enabled": true
-    },
-    "streamable-mcp-server": {
-      "type": "remote",
-      "url": "http://127.0.0.1:12306/mcp",
-      "enabled": false
-    },
     "context7": {
       "command": [
         "npx",
@@ -168,6 +138,29 @@
       "type": "local",
       "enabled": true
     },
+    "serena": {
+      "command": [
+        "uvx",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--enable-web-dashboard",
+        "false",
+        "--enable-gui-log-window",
+        "false"
+      ],
+      "type": "local",
+      "enabled": true
+    },
+    "markdown": {
+      "command": [
+        "/Users/smian/.pyenv/versions/3.12.1/bin/python",
+        "/Users/smian/.claude/mcp_servers/mcp_markdown/server.py"
+      ],
+      "type": "local",
+      "enabled": true
+    },
     "zen": {
       "command": [
         "uv",
@@ -179,6 +172,11 @@
       ],
       "type": "local",
       "enabled": true
+    },
+    "streamable-mcp-server": {
+      "type": "remote",
+      "url": "http://127.0.0.1:12306/mcp",
+      "enabled": false
     }
   },
   "tools": {
@@ -187,7 +185,8 @@
     "mcp__context7__*": true,
     "mcp__playwright__*": true,
     "mcp__sequential_thinking__*": true,
-    "mcp__zen__*": true
+    "mcp__zen__*": true,
+    "mcp__streamable_mcp_server__*": true
   },
   "agent": {
     "claude-primary": {
@@ -210,7 +209,7 @@
     },
     "qwen3-coder:480b": {
       "model": "ollamat/qwen3-coder:480b",
-      "reasoningEffort": "medium"
+      "reasoningEffort": "high"
     },
     "glm": {
       "model": "zhipuai/glm-4.5",
@@ -224,6 +223,41 @@
       "model": "ollamat/gpt-oss:120b",
       "reasoningEffort": "low",
       "description": "MCP Server Manager - List, analyze, and manage Model Context Protocol servers and tools"
+    },
+    "build": {
+      "model": "ollamat/gpt-oss:120b",
+      "system": "You are a helpful AI assistant.",
+      "temperature": 0.2
+    },
+    "researcher": {
+      "model": "ollamat/gpt-oss:120b",
+      "mode": "subagent",
+      "system": "You are a research assistant specializing in gathering and analyzing information.",
+      "temperature": 0.3,
+      "description": "Research subagent for information gathering"
+    },
+    "coder": {
+      "model": "ollamat/gpt-oss:120b",
+      "mode": "subagent",
+      "system": "You are a coding assistant specializing in writing clean, efficient code.",
+      "temperature": 0.2,
+      "description": "Coding subagent for implementation tasks"
+    },
+    "mcp-checker": {
+      "model": "github-copilot/claude-sonnet-4",
+      "temperature": 0.1,
+      "description": "MCP Server availability checker - Verify configured MCP servers and tools"
+    },
+    "mcp-simple": {
+      "model": "github-copilot/claude-sonnet-4",
+      "temperature": 0.1,
+      "description": "Simple MCP status check"
+    },
+    "news-fetcher": {
+      "model": "github-copilot/claude-sonnet-4",
+      "temperature": 0.3,
+      "system": "You are a news fetcher agent specialized in retrieving top headlines from Google News. When asked for news, use the webfetch tool to access https://news.google.com, extract the top 10-15 headlines, and format them as a numbered list with brief descriptions and source publications. Focus only on Google News as your source. Be direct and efficient - users want quick access to current news.",
+      "description": "Fetches and displays top news headlines from Google News only"
     }
   }
 }

@@ -39,7 +39,7 @@
       "serena",
       "start-mcp-server",
       "--context",
-      "codex",
+      "codex-enhanced",
       "--enable-web-dashboard",
       "false",
       "--enable-gui-log-window",

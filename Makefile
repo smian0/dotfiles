@@ -155,6 +155,11 @@ test-pre-launch: ## Test pre-launch agent transformation functionality
 	./tests/docker/test-cases/pre-launch-test.sh
 
 validate-pre-launch: ## Quick validation of pre-launch functionality
+
+# New validation script for CI pipelines
+validate-dotfiles: ## Run comprehensive dotfiles validation (CI friendly)
+	@echo -e "$(GREEN)[INFO]$(NC) Running validate-dotfiles.sh..."
+	./scripts/validate-dotfiles.sh
 	@echo -e "$(GREEN)[INFO]$(NC) Validating pre-launch functionality..."
 	./scripts/validate-pre-launch.sh
 

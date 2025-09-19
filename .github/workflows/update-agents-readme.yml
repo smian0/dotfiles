@@ -108,9 +108,9 @@ jobs:
           fi
           
           # Generate agents.json
-          if [ -f scripts/generate-agents-json.sh ]; then
+          if [ -f .github/scripts/generate-agents-json.sh ]; then
             export GITHUB_WORKSPACE="${{ github.workspace }}"
-            bash scripts/generate-agents-json.sh
+            bash .github/scripts/generate-agents-json.sh
           fi
       
       - name: Check for changes

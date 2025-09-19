@@ -1,0 +1,8 @@
+# rclone configuration template for Backblaze B2
+# Save as ~/.config/rclone/rclone.conf and rename the remote as needed
+[b2-dotfiles]
+type = b2
+account = YOUR_ACCOUNT_ID
+key = YOUR_APPLICATION_KEY
+# Optional endpoint configuration
+# endpoint = https://...
