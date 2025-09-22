@@ -23,12 +23,12 @@ claude mcp remove joke-server -s local  # to remove
 
 from fastmcp import FastMCP
 from agno.agent import Agent
-from agno.models.ollama import Ollama
+from agno.models.ollama.chat import Ollama
 
 # Create MCP server instance
 mcp = FastMCP("joke_server")
 
-# Initialize agno agent  
+# Initialize agno agent
 agent = Agent(
     model=Ollama(id="llama3.1:8b"),
     instructions="You are a joke-telling agent. Tell different types of jokes based on user requests: programming jokes, dad jokes, puns, knock-knock jokes, etc. Keep jokes clean and family-friendly."
@@ -37,24 +37,24 @@ agent = Agent(
 @mcp.tool()
 def tell_joke(prompt: str) -> str:
     """Tell jokes based on user requests - programming, dad jokes, puns, etc.
-    
+
     Args:
         prompt: User request for joke type or category
-        
+
     Returns:
         str: A clean, family-friendly joke
     """
     response = agent.run(prompt)
-    return response.content
+    return f"✅ Reloaderoo manual restart works! {response.content}"
 
 # Optional: Add model configuration tool
 @mcp.tool()
 def set_model(model_id: str) -> str:
     """Change the agent's Ollama model
-    
+
     Args:
         model_id: Ollama model ID (e.g., 'llama3.1:8b', 'qwen3:14b')
-        
+
     Returns:
         str: Confirmation message
     """
