@@ -1,0 +1,250 @@
+#!/bin/bash
+# mcp-hotreload - Add hot-reload capability to MCP servers
+#
+# Automatically wraps MCP servers with reloaderoo for development workflow
+# Usage: mcp-hotreload [OPTIONS] <mcp-config-file>
+# Example: mcp-hotreload ~/.claude/.mcp.json
+
+set -euo pipefail
+
+# Default values
+DRY_RUN=false
+MCP_FILE=""
+
+# Show help
+show_help() {
+    cat << EOF
+mcp-hotreload - Add hot-reload capability to MCP servers
+
+USAGE:
+    mcp-hotreload [OPTIONS] <mcp-config-file>
+
+OPTIONS:
+    -d, --dry-run        Preview changes without modifying file
+    -h, --help           Show this help message
+
+EXAMPLES:
+    # Wrap all servers in config
+    mcp-hotreload ~/.claude/.mcp.json
+
+    # Preview changes without modifying
+    mcp-hotreload --dry-run .mcp.json
+
+WHAT IT DOES:
+    Transforms MCP servers from:
+      "command": "python3", "args": ["server.py"]
+    To:
+      "command": "npx", "args": ["reloaderoo", "proxy", "--", "python3", "server.py"]
+
+    Enables hot-reload via 'restart_server' tool - no Claude Code restart needed!
+
+DEPENDENCIES:
+    - jq (for JSON processing)
+    - Node.js/npx (for reloaderoo)
+    - reloaderoo (will prompt to install if missing)
+EOF
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -d|--dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        -*)
+            echo "Error: Unknown option: $1"
+            show_help
+            exit 1
+            ;;
+        *)
+            if [[ -z "$MCP_FILE" ]]; then
+                MCP_FILE="$1"
+            else
+                echo "Error: Multiple files specified. Only one .mcp.json file allowed."
+                exit 1
+            fi
+            shift
+            ;;
+    esac
+done
+
+if [[ -z "$MCP_FILE" ]]; then
+    echo "Error: No MCP configuration file specified."
+    show_help
+    exit 1
+fi
+
+# Validate file
+if [[ ! -f "$MCP_FILE" ]]; then
+    echo "Error: File not found: $MCP_FILE"
+    exit 1
+fi
+
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is required but not installed. Install with: brew install jq"
+    exit 1
+fi
+
+if ! jq empty "$MCP_FILE" 2>/dev/null; then
+    echo "Error: Invalid JSON in file: $MCP_FILE"
+    exit 1
+fi
+
+if ! jq -e '.mcpServers' "$MCP_FILE" >/dev/null 2>&1; then
+    echo "Error: File does not contain 'mcpServers' object: $MCP_FILE"
+    exit 1
+fi
+
+# Check if reloaderoo is installed
+if ! command -v npx &> /dev/null; then
+    echo "Error: npx is required but not installed. Please install Node.js first."
+    exit 1
+fi
+
+if ! npm list -g reloaderoo &> /dev/null && ! npx --package=reloaderoo --yes reloaderoo --version &> /dev/null; then
+    echo "⚠️  reloaderoo is not installed globally."
+    echo ""
+    if [[ "$DRY_RUN" == "true" ]]; then
+        echo "🔍 DRY RUN: Would need to install reloaderoo to proceed."
+        echo "Run without --dry-run to install reloaderoo when prompted."
+        exit 0
+    fi
+
+    echo "reloaderoo is required for MCP hot-reload functionality."
+    echo "Would you like to install it globally? (y/N)"
+    read -r response
+
+    case "$response" in
+        [yY][eE][sS]|[yY])
+            echo "📦 Installing reloaderoo globally..."
+            if npm install -g reloaderoo; then
+                echo "✅ reloaderoo installed successfully!"
+                echo ""
+            else
+                echo "❌ Failed to install reloaderoo. Please install manually:"
+                echo "   npm install -g reloaderoo"
+                exit 1
+            fi
+            ;;
+        *)
+            echo "Installation cancelled. reloaderoo is required for hot-reload functionality."
+            echo "To install manually: npm install -g reloaderoo"
+            exit 1
+            ;;
+    esac
+fi
+
+if [[ "$DRY_RUN" == "true" ]]; then
+    echo "🔍 DRY RUN - Preview changes for: $MCP_FILE"
+else
+    echo "🔧 Processing MCP servers in: $MCP_FILE"
+
+    # Create backup
+    backup_file="${MCP_FILE}.backup.$(date +%Y%m%d-%H%M%S)"
+    cp "$MCP_FILE" "$backup_file"
+    echo "📦 Created backup: $backup_file"
+fi
+
+# Get all server names and process
+servers=$(jq -r '.mcpServers | keys[]' "$MCP_FILE")
+config=$(cat "$MCP_FILE")
+wrapped_count=0
+skipped_count=0
+
+for server_name in $servers; do
+    # Check server type - only wrap stdio servers
+    server_type=$(echo "$config" | jq -r ".mcpServers[\"$server_name\"].type // \"stdio\"")
+    if [[ "$server_type" != "stdio" ]]; then
+        echo "⚠️  Skipping '$server_name' (type: $server_type, only stdio servers supported)"
+        ((skipped_count++))
+        continue
+    fi
+
+    # Check if already wrapped
+    command=$(echo "$config" | jq -r ".mcpServers[\"$server_name\"].command")
+
+    if [[ "$command" == "npx" ]]; then
+        if echo "$config" | jq -e ".mcpServers[\"$server_name\"].args | contains([\"reloaderoo\"])" >/dev/null 2>&1; then
+            echo "⚠️  Skipping '$server_name' (already wrapped)"
+            ((skipped_count++))
+            continue
+        fi
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        echo "🔍 Would wrap server '$server_name' with reloaderoo..."
+    else
+        echo "🚀 Wrapping server '$server_name' with reloaderoo..."
+    fi
+
+    # Extract current command and args
+    current_command=$(echo "$config" | jq -r ".mcpServers[\"$server_name\"].command")
+    current_args=$(echo "$config" | jq -c ".mcpServers[\"$server_name\"].args // []")
+
+    # Build new args array
+    if [[ "$current_args" == "[]" ]]; then
+        new_args='["reloaderoo", "proxy", "--", "'$current_command'"]'
+    else
+        # Extract individual args and build new array
+        args_list=$(echo "$current_args" | jq -r '.[]')
+        new_args='["reloaderoo", "proxy", "--", "'$current_command'"'
+        while IFS= read -r arg; do
+            new_args+=', "'$arg'"'
+        done <<< "$args_list"
+        new_args+=']'
+    fi
+
+    # Update configuration while preserving existing environment variables
+    config=$(echo "$config" | jq ".mcpServers[\"$server_name\"].command = \"npx\"")
+    config=$(echo "$config" | jq ".mcpServers[\"$server_name\"].args = $new_args")
+
+    # Preserve existing env variables and add reloaderoo-specific one
+    config=$(echo "$config" | jq ".mcpServers[\"$server_name\"].env = (.mcpServers[\"$server_name\"].env // {}) + {\"MCPDEV_PROXY_AUTO_RESTART\": \"true\"}")
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        echo "✅ Would wrap server '$server_name'"
+    else
+        echo "✅ Wrapped server '$server_name'"
+    fi
+    ((wrapped_count++))
+done
+
+# Handle output based on mode
+echo ""
+if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ $wrapped_count -eq 0 ]]; then
+        echo "🔍 DRY RUN - No changes needed (all servers already wrapped)"
+    else
+        echo "🔍 DRY RUN - Preview of changes:"
+        echo "$config" | jq .
+        echo ""
+        echo "📊 Summary: Would wrap $wrapped_count server(s), skip $skipped_count server(s)"
+        echo "📄 File: $MCP_FILE (unchanged in dry-run)"
+    fi
+else
+    # Write updated configuration
+    echo "$config" | jq . > "$MCP_FILE"
+
+    echo "🎉 Complete! Wrapped $wrapped_count server(s), skipped $skipped_count server(s)"
+    echo "📄 Updated: $MCP_FILE"
+fi
+
+echo ""
+echo "🔄 Next steps:"
+if [[ "$DRY_RUN" == "true" && $wrapped_count -gt 0 ]]; then
+    echo "  1. Run without --dry-run to apply changes"
+    echo "  2. Restart Claude Code to load new configuration"
+    echo "  3. Use 'restart_server' tool for instant hot-reload"
+elif [[ "$DRY_RUN" == "false" && $wrapped_count -gt 0 ]]; then
+    echo "  1. Restart Claude Code to load new configuration"
+    echo "  2. Make code changes to your MCP servers"
+    echo "  3. Use 'restart_server' tool for instant hot-reload"
+    echo "  4. No more Claude Code restarts needed! 🚀"
+else
+    echo "  All servers already have hot-reload enabled! 🎉"
+fi
