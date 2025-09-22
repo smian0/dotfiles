@@ -4,6 +4,24 @@
       "type": "http",
       "url": "http://127.0.0.1:12306/mcp",
       "description": "Chrome browser automation for dotfiles project - HTTP interface to chrome-automation service"
+    },
+    "joke-dev": {
+      "command": "npx",
+      "args": [
+        "reloaderoo",
+        "proxy",
+        "--log-level",
+        "debug",
+        "--",
+        "python3",
+        "/Users/smian/dotfiles/claude/.claude/mcp_servers/simple_joke_server.py"
+      ],
+      "type": "stdio",
+      "description": "Joke MCP server with reloaderoo proxy and manual restart capability",
+      "env": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true",
+        "MCPDEV_PROXY_LOG_LEVEL": "debug"
+      }
     }
   }
 }
