@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# Universal MCP development wrapper using Reloaderoo
+# Usage: ./mcp-dev.sh [command] [options] <server-path>
+#
+# Commands:
+#   test     - Test server tools via CLI
+#   proxy    - Start development proxy with hot-reload
+#   call     - Call specific tool
+#   inspect  - Get server info
+#   help     - Show help
+
+set -e
+
+usage() {
+    echo "Universal MCP Development Tool with Reloaderoo"
+    echo ""
+    echo "Usage: $0 [command] [options] <server-path>"
+    echo ""
+    echo "Commands:"
+    echo "  test <server>              List tools and test basic functionality"
+    echo "  proxy <server>             Start development proxy with hot-reload"
+    echo "  call <tool> <params> <srv> Call specific tool with parameters"
+    echo "  inspect <server>           Get server information"
+    echo "  help                       Show this help"
+    echo ""
+    echo "Examples:"
+    echo "  $0 test /path/to/server.py"
+    echo "  $0 proxy /path/to/server.js"
+    echo "  $0 call tell_joke '{\"prompt\":\"dad joke\"}' /path/to/joke_server.py"
+    echo "  $0 inspect /path/to/server.py"
+    echo ""
+    echo "Environment Variables:"
+    echo "  MCPDEV_LOG_LEVEL           Set log level (debug, info, warn, error)"
+    echo "  MCPDEV_AUTO_RESTART        Enable auto-restart (true/false)"
+    exit 1
+}
+
+log() {
+    echo "$(date '+%H:%M:%S') [mcp-dev] $*"
+}
+
+case "${1:-help}" in
+    test)
+        shift
+        SERVER="$1"
+        [[ -z "$SERVER" ]] && { echo "Error: Server path required"; usage; }
+
+        log "Testing MCP server: $SERVER"
+        echo ""
+
+        log "📋 Listing available tools..."
+        npx reloaderoo inspect list-tools -- "$SERVER"
+        echo ""
+
+        log "ℹ️  Server information..."
+        npx reloaderoo inspect server-info -- "$SERVER" || true
+        echo ""
+
+        log "✅ Test completed"
+        ;;
+
+    proxy)
+        shift
+        SERVER="$1"
+        [[ -z "$SERVER" ]] && { echo "Error: Server path required"; usage; }
+
+        LOG_LEVEL="${MCPDEV_LOG_LEVEL:-debug}"
+        AUTO_RESTART="${MCPDEV_AUTO_RESTART:-true}"
+
+        log "🚀 Starting development proxy for: $SERVER"
+        log "🔄 Hot-reload: enabled"
+        log "📊 Log level: $LOG_LEVEL"
+        log "🔁 Auto-restart: $AUTO_RESTART"
+        echo ""
+
+        ARGS=(proxy --log-level "$LOG_LEVEL")
+        [[ "$AUTO_RESTART" == "true" ]] && ARGS+=(--auto-restart)
+        ARGS+=(-- "$SERVER")
+
+        npx reloaderoo "${ARGS[@]}"
+        ;;
+
+    call)
+        shift
+        TOOL="$1"
+        PARAMS="$2"
+        SERVER="$3"
+
+        [[ -z "$TOOL" || -z "$PARAMS" || -z "$SERVER" ]] && {
+            echo "Error: Tool name, parameters, and server path required"
+            echo "Usage: $0 call <tool> <params> <server>"
+            exit 1
+        }
+
+        log "🔧 Calling tool '$TOOL' on server: $SERVER"
+        log "📦 Parameters: $PARAMS"
+        echo ""
+
+        npx reloaderoo inspect call-tool "$TOOL" --params "$PARAMS" -- "$SERVER"
+        ;;
+
+    inspect)
+        shift
+        SERVER="$1"
+        [[ -z "$SERVER" ]] && { echo "Error: Server path required"; usage; }
+
+        log "🔍 Inspecting MCP server: $SERVER"
+        echo ""
+
+        npx reloaderoo inspect server-info -- "$SERVER"
+        ;;
+
+    help|--help|-h)
+        usage
+        ;;
+
+    *)
+        echo "Error: Unknown command '$1'"
+        echo ""
+        usage
+        ;;
+esac
