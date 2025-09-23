@@ -32,6 +32,19 @@ alias glmc="~/dotfiles/bin/glm --dangerously-skip-permissions --continue"
 alias deepc="~/dotfiles/bin/deep --dangerously-skip-permissions --continue"
 alias claudec="claude --dangerously-skip-permissions --continue"
 
+# Claude wrapper function - automatically adds current date as system prompt
+claude() {
+    local current_date=$(date '+%A, %B %d, %Y')
+    local timezone=$(date '+%Z (%z)')
+    local date_prompt="Today is $current_date, timezone $timezone."
+
+    # Call original claude with date prompt appended
+    /Users/smian/.npm-global/bin/claude --append-system-prompt "$date_prompt" "$@"
+}
+
+# Claude bypass alias - access original claude without automatic date injection
+alias claude-original='/Users/smian/.npm-global/bin/claude'
+
 
 
 

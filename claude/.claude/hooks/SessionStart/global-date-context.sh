@@ -11,5 +11,6 @@ CURRENT_TIME=$(date +'%H:%M:%S %Z')
 CURRENT_YEAR=$(date +%Y)
 ISO_TIMESTAMP=$(date -Iseconds)
 
-# Inject context that Claude will always see (session start only) - redirect to /dev/null to hide from console
-printf "[TEMPORAL CONTEXT] Current Date: %s | Current Time: %s | Current Year: %s | ISO Timestamp: %s | Timezone: %s\n\n[INSTRUCTION] Always use %s as the current year or full date+time(if applicable) for searches, recommendations, and time-sensitive operations.\n\n" "$CURRENT_DATE" "$CURRENT_TIME" "$CURRENT_YEAR" "$ISO_TIMESTAMP" "$TZ" "$CURRENT_YEAR" >/dev/null
+# Inject context that Claude will always see (session start only)
+# Temporarily disabled - to re-enable, uncomment the line below
+# printf "[TEMPORAL CONTEXT] Current Date: %s | Current Time: %s | Current Year: %s | ISO Timestamp: %s | Timezone: %s\n\n[INSTRUCTION] Always use %s as the current year or full date+time(if applicable) for searches, recommendations, and time-sensitive operations.\n\n" "$CURRENT_DATE" "$CURRENT_TIME" "$CURRENT_YEAR" "$ISO_TIMESTAMP" "$TZ" "$CURRENT_YEAR"
