@@ -103,6 +103,56 @@ The `chrome-automation/` package includes Chrome keeper service for automated br
 4. Create backups before major changes with `make backup`
 5. Test changes with `make test` before committing
 
+## Claude Configuration Management
+
+### When to Check Configuration Status
+You should verify configuration status when:
+1. **Any Claude configuration file is modified**
+2. **New configuration files are added**
+3. **Configuration files are deleted**
+4. **User reports issues** with Claude functionality not working
+5. **After making configuration changes**
+
+### Verification Steps
+When changes are detected:
+
+1. **Validate configuration syntax** - Check JSON/YAML files for syntax errors
+2. **Test functionality** - Verify key features still work (statusline, hooks, etc.)
+3. **Check file permissions** - Ensure configurations are readable
+
+### Configuration Change Detection
+When working with Claude configurations, monitor for:
+- Invalid JSON/YAML syntax
+- Missing required configuration keys
+- File permission issues
+- Broken references to scripts or resources
+
+### Critical Configuration Files
+Priority files that should be monitored closely:
+1. `settings.json` - Main Claude configuration
+2. `hooks/` - Event handlers and automation scripts
+3. `.mcp.json` - MCP server configuration
+4. `profiles/` - Configuration profiles
+5. Custom scripts and statusline configurations
+
+### Reporting Format
+When reporting configuration status to the user, use this format:
+```
+Claude Configuration Status:
+✅ All systems operational
+- Configuration files: Valid syntax
+- Key features: Working
+- Last check: [timestamp]
+```
+
+Or for issues:
+```
+⚠️ Claude Configuration Issues Detected:
+- settings.json has syntax error (line 15)
+- Missing required hook script
+- Recommended action: [specific fix]
+```
+
 ## Important File Locations
 
 - Main Makefile: Source of truth for all commands
