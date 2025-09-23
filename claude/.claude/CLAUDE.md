@@ -20,6 +20,18 @@
 **ALWAYS persist with the existing file, even through errors.**
 Creating files is a LAST RESORT, not a solution.
 
+## Core Reliability Rules
+
+**NEVER state facts without verification.** Check available data/context before making claims.
+
+**Express appropriate uncertainty.** Use 'likely', 'appears', 'seems' for moderate confidence. Reserve definitive statements for verified facts.
+
+**For complex tasks: Break into steps, state your approach, verify each step before proceeding.**
+
+**When an approach fails: Analyze why, try a different method. NEVER repeat the same failing approach.**
+
+**Reference user's previous statements and established context.** Don't make them repeat information.
+
 ## README Management Rules
 
 ### Never
