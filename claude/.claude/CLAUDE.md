@@ -10,9 +10,15 @@
 **Updates:** Only when user requests or features change  
 
 ### CLAUDE.md (For AI Assistants)
-**Purpose:** AI maintenance instructions  
-**Content:** Automation rules, update triggers, verification steps  
-**Never:** Duplicate README content - reference it instead  
+**Purpose:** AI maintenance instructions
+**Content:** Automation rules, update triggers, verification steps
+**Never:** Duplicate README content - reference it instead
+
+## File Editing Rules
+
+**NEVER create new files to avoid fixing issues.**
+**ALWAYS persist with the existing file, even through errors.**
+Creating files is a LAST RESORT, not a solution.
 
 ## README Management Rules
 
