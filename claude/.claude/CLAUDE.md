@@ -109,11 +109,25 @@ Only suggest Claude Code restart when:
 
 ## Quick Decision Tree
 
-**User asks about feature?** → Point to README  
-**User asks about maintenance?** → Point to CLAUDE.md  
-**Need to document for users?** → Update README  
-**Need to add automation?** → Update CLAUDE.md  
-**Content could go either place?** → README for what, CLAUDE for how  
+**User asks about feature?** → Point to README
+**User asks about maintenance?** → Point to CLAUDE.md
+**Need to document for users?** → Update README
+**Need to add automation?** → Update CLAUDE.md
+**Content could go either place?** → README for what, CLAUDE for how
+
+## Development Principles
+
+### DRY (Don't Repeat Yourself) & YAGNI (You Aren't Gonna Need It)
+- **DRY**: Avoid duplicating code patterns - use functions, templates, or shared utilities instead
+- **YAGNI**: Only add features/complexity when actually needed, not "just in case"
+- Examples: Reuse existing scripts, reference shared configs, add features only when there's an immediate use case
+
+### Real-World Testing Over Mocking
+Prioritize understanding root causes and real end-user scenarios:
+- **Avoid mock objects/data** - Use real configurations, real files, real environment conditions
+- **Test actual user workflows** - Simulate complete operations from start to finish
+- **Debug root causes** - Investigate why something fails instead of mocking around problems
+- **End-to-end validation** - Test entire workflows, not just isolated components
 
 ## README Quality Standards
 
