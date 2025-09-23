@@ -124,6 +124,17 @@ If verification fails:
 2. If conflicts exist: Backup conflicts, remove, restow
 3. If still failing: Alert user with specific conflict details
 
+## Code and Configuration Principles
+
+### DRY (Don't Repeat Yourself) & YAGNI (You Aren't Gonna Need It)
+When maintaining configurations and scripts:
+- **DRY**: Avoid duplicating configuration patterns - use references, templates, or shared configs instead
+- **YAGNI**: Only add features/configurations when actually needed, not "just in case"
+- Examples:
+  - Use symlinks rather than copying identical configs
+  - Reference existing scripts instead of reimplementing functionality
+  - Add new hooks/profiles only when there's an immediate use case
+
 ## Documentation Standards
 
 When updating documentation:
