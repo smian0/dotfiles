@@ -1,602 +1,220 @@
 #!/usr/bin/env -S uv run --script
 # /// script
-# dependencies = [
-#     "fastmcp",
-# ]
+# dependencies = ["fastmcp"]
 # ///
-"""
-Unified Markdown MCP Server
-
-Combines MQ-style selectors with advanced Obsidian features and document linting
-in a high-performance, cached architecture. Maintains full backward compatibility
-with existing MCP clients while providing enhanced functionality.
-"""
-
-import subprocess
-import sys
+"""MD"""
+import subprocess,sys
 from pathlib import Path
 from fastmcp import FastMCP
-
-# Handle both package and script execution
 try:
-    from .core import PATTERNS, MarkdownParser, safe_findall, safe_finditer, safe_search
+    from .core import PATTERNS,MarkdownParser,safe_findall,safe_finditer,safe_search
     from .obsidian_engine import ObsidianEngine
     from .lint_engine import LintEngine
     from .mq_engine import MQEngine
-    from .performance_engine import PerformanceEngine, Config, HAS_PSUTIL
+    from .performance_engine import PerformanceEngine,Config,HAS_PSUTIL
     from .spec_engine import SpecEngine
-except ImportError:
-    # Add current directory to path for direct script execution
-    sys.path.insert(0, str(Path(__file__).parent))
-    from core import PATTERNS, MarkdownParser, safe_findall, safe_finditer, safe_search
+except:
+    sys.path.insert(0,str(Path(__file__).parent))
+    from core import PATTERNS,MarkdownParser,safe_findall,safe_finditer,safe_search
     from obsidian_engine import ObsidianEngine
     from lint_engine import LintEngine
     from mq_engine import MQEngine
-    from performance_engine import PerformanceEngine, Config, HAS_PSUTIL
+    from performance_engine import PerformanceEngine,Config,HAS_PSUTIL
     from spec_engine import SpecEngine
-
-# Initialize MCP server
-mcp = FastMCP()
-
-# Initialize engines
-obsidian = ObsidianEngine()
-linter = LintEngine()
-mq = MQEngine()
-performance = PerformanceEngine()
-spec = SpecEngine()
-
-# Standard markdown tools (using core utilities)
+mcp=FastMCP()
+o=ObsidianEngine()
+l=LintEngine()
+m=MQEngine()
+p=PerformanceEngine()
+s=SpecEngine()
 @mcp.tool
-def get_document_outline(file_path: str):
-    """Extract document outline with headers as navigable symbols."""
-    # Check cache first
-    cached_result = performance.get_cached_result(file_path, "document_outline")
-    if cached_result is not None:
-        return cached_result
-    
-    path = Path(file_path)
-    if not path.exists():
-        return {"error": f"File not found: {file_path}"}
-    
+def get_document_outline(x):
+    """h"""
+    c=p.get_cached_result(x,"document_outline")
+    if c:return c
+    a=Path(x)
+    if not a.exists():return{"error":"!"}
     try:
-        content = MarkdownParser.read_file(file_path)
-        headers = [
-            {
-                "level": len(m.group(1)),
-                "title": m.group(2).strip(),
-                "line": MarkdownParser.get_line_number(content, m.start()),
-                "anchor": MarkdownParser.normalize_anchor(m.group(2).strip())
-            }
-            for m in safe_finditer(PATTERNS.HEADERS, content, Config.REGEX_TIMEOUT_SECONDS)
-        ]
-        
-        result = {
-            "file": file_path,
-            "outline": headers,
-            "count": len(headers)
-        }
-        
-        # Cache result
-        performance.cache_result(file_path, "document_outline", result)
-        return result
-        
-    except Exception as e:
-        return {"error": str(e)}
-
+        t=MarkdownParser.read_file(x)
+        h=[{"level":len(i.group(1)),"title":i.group(2).strip(),"line":MarkdownParser.get_line_number(t,i.start()),"anchor":MarkdownParser.normalize_anchor(i.group(2).strip())}for i in safe_finditer(PATTERNS.HEADERS,t,Config.REGEX_TIMEOUT_SECONDS)]
+        r={"file":x,"outline":h,"count":len(h)}
+        p.cache_result(x,"document_outline",r)
+        return r
+    except Exception as e:return{"error":str(e)}
 @mcp.tool
-def extract_frontmatter(file_path: str):
-    """Extract YAML frontmatter metadata."""
-    # Check cache first
-    cached_result = performance.get_cached_result(file_path, "frontmatter")
-    if cached_result is not None:
-        return cached_result
-    
-    path = Path(file_path)
-    if not path.exists():
-        return {"error": f"File not found: {file_path}"}
-    
+def extract_frontmatter(x):
+    """y"""
+    c=p.get_cached_result(x,"frontmatter")
+    if c:return c
+    a=Path(x)
+    if not a.exists():return{"error":"!"}
     try:
-        content = MarkdownParser.read_file(file_path)
-        match = safe_search(PATTERNS.FRONTMATTER, content, Config.REGEX_TIMEOUT_SECONDS)
-        
-        if not match:
-            result = {"file": file_path, "has_frontmatter": False, "frontmatter": {}}
+        t=MarkdownParser.read_file(x)
+        i=safe_search(PATTERNS.FRONTMATTER,t,Config.REGEX_TIMEOUT_SECONDS)
+        if not i:r={"file":x,"has_frontmatter":False,"frontmatter":{}}
         else:
-            # Simple key:value parsing
-            metadata = {}
-            for line in match.group(1).split('\n'):
-                if ':' in line and not line.strip().startswith('#'):
-                    key, value = line.split(':', 1)
-                    metadata[key.strip()] = value.strip().strip('"\'[]')
-            
-            result = {"file": file_path, "has_frontmatter": True, "frontmatter": metadata}
-        
-        # Cache result
-        performance.cache_result(file_path, "frontmatter", result)
-        return result
-        
-    except Exception as e:
-        return {"error": str(e)}
-
+            d={}
+            for n in i.group(1).split('\n'):
+                if':'in n and not n.strip().startswith('#'):k,v=n.split(':',1);d[k.strip()]=v.strip().strip('"\'[]')
+            r={"file":x,"has_frontmatter":True,"frontmatter":d}
+        p.cache_result(x,"frontmatter",r)
+        return r
+    except Exception as e:return{"error":str(e)}
 @mcp.tool
-def find_code_blocks(file_path: str, language: str = None):
-    """Find code blocks, optionally filtered by language."""
-    cache_params = {"language": language} if language else None
-    cached_result = performance.get_cached_result(file_path, "code_blocks", cache_params)
-    if cached_result is not None:
-        return cached_result
-    
-    path = Path(file_path)
-    if not path.exists():
-        return {"error": f"File not found: {file_path}"}
-    
+def find_code_blocks(x,g=None):
+    """c"""
+    w={"language":g}if g else None
+    c=p.get_cached_result(x,"code_blocks",w)
+    if c:return c
+    a=Path(x)
+    if not a.exists():return{"error":"!"}
     try:
-        content = MarkdownParser.read_file(file_path)
-        blocks = [
-            {
-                "language": m.group(1) or "text",
-                "code": m.group(2),
-                "line": MarkdownParser.get_line_number(content, m.start()),
-                "length": len(m.group(2).split('\n'))
-            }
-            for m in safe_finditer(PATTERNS.CODE_BLOCKS, content, Config.REGEX_TIMEOUT_SECONDS)
-            if not language or (m.group(1) or "").lower() == language.lower()
-        ]
-        
-        result = {
-            "file": file_path,
-            "code_blocks": blocks,
-            "count": len(blocks),
-            "languages": list(set(b["language"] for b in blocks))
-        }
-        
-        performance.cache_result(file_path, "code_blocks", result, cache_params)
-        return result
-        
-    except Exception as e:
-        return {"error": str(e)}
-
+        t=MarkdownParser.read_file(x)
+        b=[{"language":i.group(1)or"text","code":i.group(2),"line":MarkdownParser.get_line_number(t,i.start()),"length":len(i.group(2).split('\n'))}for i in safe_finditer(PATTERNS.CODE_BLOCKS,t,Config.REGEX_TIMEOUT_SECONDS)if not g or(i.group(1)or"").lower()==g.lower()]
+        r={"file":x,"code_blocks":b,"count":len(b),"languages":list(set(z["language"]for z in b))}
+        p.cache_result(x,"code_blocks",r,w)
+        return r
+    except Exception as e:return{"error":str(e)}
 @mcp.tool
-def find_task_lists(file_path: str, status: str = None):
-    """Find task lists with completion tracking."""
-    cache_params = {"status": status} if status else None
-    cached_result = performance.get_cached_result(file_path, "task_lists", cache_params)
-    if cached_result is not None:
-        return cached_result
-    
-    path = Path(file_path)
-    if not path.exists():
-        return {"error": f"File not found: {file_path}"}
-    
+def find_task_lists(x,z=None):
+    """t"""
+    w={"status":z}if z else None
+    c=p.get_cached_result(x,"task_lists",w)
+    if c:return c
+    a=Path(x)
+    if not a.exists():return{"error":"!"}
     try:
-        content = MarkdownParser.read_file(file_path)
-        tasks = []
-        
-        for m in safe_finditer(PATTERNS.TASKS, content, Config.REGEX_TIMEOUT_SECONDS):
-            completed = m.group(1) == 'x'
-            if not status or (status == 'completed' and completed) or (status == 'incomplete' and not completed):
-                tasks.append({
-                    "completed": completed,
-                    "text": m.group(2),
-                    "line": MarkdownParser.get_line_number(content, m.start())
-                })
-        
-        completed = sum(1 for t in tasks if t["completed"])
-        result = {
-            "file": file_path,
-            "tasks": tasks,
-            "summary": {
-                "total": len(tasks),
-                "completed": completed,
-                "incomplete": len(tasks) - completed,
-                "completion_rate": completed / len(tasks) if tasks else 0
-            }
-        }
-        
-        performance.cache_result(file_path, "task_lists", result, cache_params)
-        return result
-        
-    except Exception as e:
-        return {"error": str(e)}
-
-def _analyze_document_structure_internal(file_path: str):
-    """Internal implementation for document structure analysis."""
-    cached_result = performance.get_cached_result(file_path, "document_structure")
-    if cached_result is not None:
-        return cached_result
-    
-    path = Path(file_path)
-    if not path.exists():
-        return {"error": f"File not found: {file_path}"}
-    
+        t=MarkdownParser.read_file(x)
+        k=[]
+        for i in safe_finditer(PATTERNS.TASKS,t,Config.REGEX_TIMEOUT_SECONDS):
+            d=i.group(1)=='x'
+            if not z or(z=='completed'and d)or(z=='incomplete'and not d):k.append({"completed":d,"text":i.group(2),"line":MarkdownParser.get_line_number(t,i.start())})
+        n=sum(1 for j in k if j["completed"])
+        r={"file":x,"tasks":k,"summary":{"total":len(k),"completed":n,"incomplete":len(k)-n,"completion_rate":n/len(k)if k else 0}}
+        p.cache_result(x,"task_lists",r,w)
+        return r
+    except Exception as e:return{"error":str(e)}
+def _a(x):
+    c=p.get_cached_result(x,"document_structure")
+    if c:return c
+    a=Path(x)
+    if not a.exists():return{"error":"!"}
     try:
-        content = MarkdownParser.read_file(file_path)
-        
-        # Count all elements (standard + Obsidian) with timeout protection
-        timeout = Config.REGEX_TIMEOUT_SECONDS
-        structure = {
-            "headers": len(safe_findall(PATTERNS.HEADERS, content, timeout)),
-            "wiki_links": len(safe_findall(PATTERNS.WIKI_LINKS, content, timeout)),
-            "external_links": len(safe_findall(PATTERNS.EXTERNAL_LINKS, content, timeout)),
-            "code_blocks": len(safe_findall(PATTERNS.CODE_BLOCKS, content, timeout)),
-            "tasks": len(safe_findall(PATTERNS.TASKS, content, timeout)),
-            "completed_tasks": len([m for m in safe_finditer(PATTERNS.TASKS, content, timeout) if m and m.group(1) == 'x']),
-            "tables": len(safe_findall(PATTERNS.TABLES, content, timeout)),
-            "tags": len(set(safe_findall(PATTERNS.TAGS, content, timeout))),
-            
-            # Obsidian-specific elements
-            "embedded_content": len(safe_findall(PATTERNS.EMBEDDED, content, timeout)),
-            "block_references": len(safe_findall(PATTERNS.BLOCK_REF, content, timeout)),
-            "block_links": len(safe_findall(PATTERNS.BLOCK_LINK, content, timeout)),
-            "header_links": len([m for m in safe_finditer(PATTERNS.HEADER_LINK, content, timeout) if m and '#^' not in m.group(0)]),
-            "callouts": len(safe_findall(PATTERNS.CALLOUTS, content, timeout)),
-            "dataview_fields": len(safe_findall(PATTERNS.DATAVIEW_FIELDS, content, timeout)),
-            "wiki_aliases": len([m for m in safe_finditer(PATTERNS.WIKI_LINKS, content, timeout) if m and m.group(2)])
-        }
-        
-        # Calculate enhanced complexity score
-        obsidian_elements = structure["embedded_content"] + structure["block_references"] + structure["callouts"] + structure["dataview_fields"]
-        standard_elements = structure["headers"] + structure["wiki_links"] + structure["code_blocks"] + structure["tasks"] + structure["tables"]
-        
-        result = {
-            "file": file_path,
-            "structure": structure,
-            "content": {
-                "lines": content.count('\n') + 1,
-                "words": len(content.split()),
-                "characters": len(content)
-            },
-            "complexity_score": standard_elements + obsidian_elements,
-            "obsidian_features": {
-                "has_embedded": structure["embedded_content"] > 0,
-                "has_block_refs": structure["block_references"] > 0,
-                "has_callouts": structure["callouts"] > 0,
-                "has_dataview": structure["dataview_fields"] > 0,
-                "obsidian_score": obsidian_elements
-            }
-        }
-        
-        performance.cache_result(file_path, "document_structure", result)
-        return result
-        
-    except Exception as e:
-        return {"error": str(e)}
-
+        t=MarkdownParser.read_file(x)
+        u=Config.REGEX_TIMEOUT_SECONDS
+        d={"headers":len(safe_findall(PATTERNS.HEADERS,t,u)),"wiki_links":len(safe_findall(PATTERNS.WIKI_LINKS,t,u)),"external_links":len(safe_findall(PATTERNS.EXTERNAL_LINKS,t,u)),"code_blocks":len(safe_findall(PATTERNS.CODE_BLOCKS,t,u)),"tasks":len(safe_findall(PATTERNS.TASKS,t,u)),"completed_tasks":len([i for i in safe_finditer(PATTERNS.TASKS,t,u)if i and i.group(1)=='x']),"tables":len(safe_findall(PATTERNS.TABLES,t,u)),"tags":len(set(safe_findall(PATTERNS.TAGS,t,u))),"embedded_content":len(safe_findall(PATTERNS.EMBEDDED,t,u)),"block_references":len(safe_findall(PATTERNS.BLOCK_REF,t,u)),"block_links":len(safe_findall(PATTERNS.BLOCK_LINK,t,u)),"header_links":len([i for i in safe_finditer(PATTERNS.HEADER_LINK,t,u)if i and'#^'not in i.group(0)]),"callouts":len(safe_findall(PATTERNS.CALLOUTS,t,u)),"dataview_fields":len(safe_findall(PATTERNS.DATAVIEW_FIELDS,t,u)),"wiki_aliases":len([i for i in safe_finditer(PATTERNS.WIKI_LINKS,t,u)if i and i.group(2)])}
+        e=d["embedded_content"]+d["block_references"]+d["callouts"]+d["dataview_fields"]
+        f=d["headers"]+d["wiki_links"]+d["code_blocks"]+d["tasks"]+d["tables"]
+        r={"file":x,"structure":d,"content":{"lines":t.count('\n')+1,"words":len(t.split()),"characters":len(t)},"complexity_score":f+e,"obsidian_features":{"has_embedded":d["embedded_content"]>0,"has_block_refs":d["block_references"]>0,"has_callouts":d["callouts"]>0,"has_dataview":d["dataview_fields"]>0,"obsidian_score":e}}
+        p.cache_result(x,"document_structure",r)
+        return r
+    except Exception as e:return{"error":str(e)}
 @mcp.tool
-def analyze_document_structure(file_path: str):
-    """Comprehensive markdown document analysis with Obsidian features."""
-    return _analyze_document_structure_internal(file_path)
-
-# Obsidian-specific tools (delegate to obsidian engine)
+def analyze_document_structure(x):
+    """a"""
+    return _a(x)
 @mcp.tool
-def find_wiki_links(file_path: str, target_link: str = None):
-    """Find wiki-style [[internal links]] with Obsidian alias support."""
-    return obsidian.find_wiki_links(file_path, target_link)
-
+def find_obsidian_elements(x,y,f=None):
+    """o"""
+    if y=="wiki_links":return o.find_wiki_links(x,f)
+    elif y=="embedded":return o.find_embedded_content(x,f)
+    elif y=="blocks":return o.find_block_references(x)
+    elif y=="callouts":return o.find_callouts(x,f)
+    elif y=="dataview":return o.extract_dataview_fields(x,f)
+    return{"error":"?"}
 @mcp.tool
-def find_embedded_content(file_path: str, content_type: str = None):
-    """Find embedded content using ![[]] syntax (Obsidian transclusion)."""
-    return obsidian.find_embedded_content(file_path, content_type)
-
+def parse_obsidian_links(x):
+    """l"""
+    return o.parse_obsidian_links(x)
 @mcp.tool
-def find_block_references(file_path: str):
-    """Find block IDs (^block-id) and block links ([[note#^block]])."""
-    return obsidian.find_block_references(file_path)
-
+def build_vault_graph(x):
+    """v"""
+    return o.build_vault_graph(x)
 @mcp.tool
-def find_callouts(file_path: str, callout_type: str = None):
-    """Find callout/admonition blocks using > [!type] syntax."""
-    return obsidian.find_callouts(file_path, callout_type)
-
+def find_cross_references(x,y):
+    """x"""
+    return o.find_cross_references(x,y)
 @mcp.tool
-def parse_obsidian_links(file_path: str):
-    """Comprehensive Obsidian link parser for all link types."""
-    return obsidian.parse_obsidian_links(file_path)
-
+def lint_document(x,f=False,y=None):
+    """L"""
+    return l.auto_fix_document(x,y)if f else l.lint_document(x)
 @mcp.tool
-def extract_dataview_fields(file_path: str, field_name: str = None):
-    """Extract Dataview inline fields (field:: value)."""
-    return obsidian.extract_dataview_fields(file_path, field_name)
-
+def mq_query(x,q,f='json'):
+    """q"""
+    return m.query(x,q,f)
 @mcp.tool
-def build_vault_graph(search_path: str):
-    """Build a graph structure of vault connections."""
-    return obsidian.build_vault_graph(search_path)
-
+def mq_bulk_query(x,q):
+    """b"""
+    return p.bulk_operation_optimized(x,lambda z:m.query(z,q,'json'),f"mq_{q}",batch_size=Config.MAX_BATCH_SIZE)
 @mcp.tool
-def find_cross_references(search_path: str, term: str):
-    """Find cross-references to a term across markdown files."""
-    return obsidian.find_cross_references(search_path, term)
-
-# Linting tools (delegate to lint engine)
+def analyze_docs(x):
+    """d"""
+    return m.analyze_docs(x)
 @mcp.tool
-def lint_document(file_path: str):
-    """Analyze document for common markdown issues and categorize by fixability."""
-    return linter.lint_document(file_path)
-
+def generate_toc(x,d=3):
+    """T"""
+    return m.generate_toc(x,d)
 @mcp.tool
-def auto_fix_document(file_path: str, fix_types: list = None):
-    """Apply deterministic fixes to markdown document."""
-    return linter.auto_fix_document(file_path, fix_types)
-
-# MQ-style selector tools (delegate to MQ engine)
+def task_stats(x):
+    """s"""
+    return m.task_stats(x)
 @mcp.tool
-def mq_query(file_path: str, selector: str, output_format: str = 'json'):
-    """Execute MQ-style query on markdown file (e.g., '.h1', '.code', '.list')."""
-    return mq.query(file_path, selector, output_format)
-
-@mcp.tool
-def mq_bulk_query(file_paths: list, selector: str):
-    """Execute MQ-style query across multiple files with performance optimization."""
-    # Use performance engine for bulk operations
-    def single_query(file_path):
-        return mq.query(file_path, selector, 'json')
-    
-    return performance.bulk_operation_optimized(
-        file_paths, single_query, f"mq_query_{selector}", batch_size=Config.MAX_BATCH_SIZE
-    )
-
-@mcp.tool
-def analyze_docs(search_path: str):
-    """Analyze documentation structure across markdown files (MQ-compatible)."""
-    return mq.analyze_docs(search_path)
-
-@mcp.tool
-def generate_toc(file_path: str, max_depth: int = 3):
-    """Generate table of contents from headers (MQ-compatible)."""
-    return mq.generate_toc(file_path, max_depth)
-
-@mcp.tool
-def task_stats(search_path: str):
-    """Generate task completion statistics (MQ-compatible)."""
-    return mq.task_stats(search_path)
-
-@mcp.tool
-def validate_spec(file_path: str):
-    """Validate markdown specification completeness (MQ-compatible)."""
-    return mq.validate_spec(file_path)
-
-# Performance and utility tools
+def validate_spec(x,y="comprehensive"):
+    """S"""
+    k=f"spec_{y}"
+    c=p.get_cached_result(x,k)
+    if c:return c
+    if y=="semantics":r=s.analyze_spec_semantics(x)
+    elif y=="requirements":r=s.extract_spec_requirements(x)
+    elif y=="constraints":r=s.extract_spec_constraints(x)
+    elif y=="dependencies":r=s.extract_spec_dependencies(x)
+    elif y=="completeness":r=s.validate_spec_completeness(x)
+    else:r=s.validate_spec_document(x)
+    p.cache_result(x,k,r)
+    return r
 @mcp.tool
 def get_performance_stats():
-    """Get comprehensive performance statistics for the server."""
-    return performance.get_performance_stats()
-
+    """p"""
+    return p.get_performance_stats()
 @mcp.tool
-def clear_cache(cache_type: str = "all"):
-    """Clear server caches (all, content, results, bulk)."""
-    performance.clear_cache(cache_type)
-    return {"status": "success", "message": f"Cleared {cache_type} cache"}
-
+def clear_cache(y="all"):
+    """C"""
+    p.clear_cache(y)
+    return{"status":"ok","message":f"cleared {y}"}
 @mcp.tool
-def bulk_analyze(search_path: str, max_files: int = 100):
-    """Perform bulk analysis of markdown files with performance optimization."""
-    # Discover files intelligently
-    files = performance.intelligent_file_discovery(search_path, "*.md", max_size_mb=50)
-    if len(files) > max_files:
-        files = files[:max_files]
-    
-    # Optimize performance for dataset
-    avg_file_size = 10  # Assume 10KB average
-    performance.optimize_for_dataset(len(files), avg_file_size)
-    
-    def analyze_single_file(file_path):
-        return _analyze_document_structure_internal(file_path)
-    
-    return performance.bulk_operation_optimized(
-        files, analyze_single_file, "bulk_analyze", batch_size=Config.MAX_BATCH_SIZE
-    )
-
-# Specification Intelligence Tools
-@mcp.tool
-def validate_spec_document(file_path: str):
-    """Comprehensive validation of a specification document."""
-    # Check cache first
-    cached_result = performance.get_cached_result(file_path, "spec_validation")
-    if cached_result is not None:
-        return cached_result
-    
-    result = spec.validate_spec_document(file_path)
-    
-    # Cache result
-    performance.cache_result(file_path, "spec_validation", result)
-    return result
-
-@mcp.tool
-def analyze_spec_semantics(file_path: str):
-    """Analyze semantic patterns in specification documents."""
-    # Check cache first
-    cached_result = performance.get_cached_result(file_path, "spec_semantics")
-    if cached_result is not None:
-        return cached_result
-    
-    result = spec.analyze_spec_semantics(file_path)
-    
-    # Cache result
-    performance.cache_result(file_path, "spec_semantics", result)
-    return result
-
-@mcp.tool
-def extract_spec_requirements(file_path: str):
-    """Extract structured requirements from specification documents."""
-    # Check cache first
-    cached_result = performance.get_cached_result(file_path, "spec_requirements")
-    if cached_result is not None:
-        return cached_result
-    
-    result = spec.extract_spec_requirements(file_path)
-    
-    # Cache result
-    performance.cache_result(file_path, "spec_requirements", result)
-    return result
-
-@mcp.tool
-def extract_spec_constraints(file_path: str):
-    """Extract constraints and limitations from specification documents."""
-    # Check cache first
-    cached_result = performance.get_cached_result(file_path, "spec_constraints")
-    if cached_result is not None:
-        return cached_result
-    
-    result = spec.extract_spec_constraints(file_path)
-    
-    # Cache result
-    performance.cache_result(file_path, "spec_constraints", result)
-    return result
-
-@mcp.tool
-def extract_spec_dependencies(file_path: str):
-    """Extract dependencies and cross-references from specification documents."""
-    # Check cache first
-    cached_result = performance.get_cached_result(file_path, "spec_dependencies")
-    if cached_result is not None:
-        return cached_result
-    
-    result = spec.extract_spec_dependencies(file_path)
-    
-    # Cache result
-    performance.cache_result(file_path, "spec_dependencies", result)
-    return result
-
-@mcp.tool
-def validate_spec_completeness(file_path: str):
-    """Validate completeness of specification documents against templates."""
-    # Check cache first
-    cached_result = performance.get_cached_result(file_path, "spec_completeness")
-    if cached_result is not None:
-        return cached_result
-    
-    result = spec.validate_spec_completeness(file_path)
-    
-    # Cache result
-    performance.cache_result(file_path, "spec_completeness", result)
-    return result
-
+def bulk_analyze(x,n=100):
+    """B"""
+    f=p.intelligent_file_discovery(x,"*.md",max_size_mb=50)
+    if len(f)>n:f=f[:n]
+    p.optimize_for_dataset(len(f),10)
+    return p.bulk_operation_optimized(f,_a,"bulk_analyze",batch_size=Config.MAX_BATCH_SIZE)
 @mcp.tool
 def health_check():
-    """Check server health and capabilities with FunctionTool corruption detection."""
-    health_status = "healthy"
-    warnings = []
-    errors = []
-    memory_mb = "unavailable"
-    
+    """H"""
+    h="healthy"
+    w=[]
+    e=[]
+    v="n/a"
     try:
-        # Memory health check with graceful psutil handling
         if HAS_PSUTIL:
             try:
                 import psutil
-                process = psutil.Process()
-                memory_mb = process.memory_info().rss / (1024 * 1024)
-                memory_limit_mb = Config.MAX_MEMORY_MB
-                
-                if memory_mb > memory_limit_mb * 0.9:  # 90% threshold
-                    health_status = "warning"
-                    warnings.append(f"Memory usage high: {memory_mb:.1f}MB / {memory_limit_mb}MB")
-                elif memory_mb > memory_limit_mb:
-                    health_status = "critical"
-                    errors.append(f"Memory limit exceeded: {memory_mb:.1f}MB > {memory_limit_mb}MB")
-            except ImportError:
-                warnings.append("Memory monitoring disabled - psutil import failed. Timeout and batch protection active.")
-        else:
-            warnings.append("Memory monitoring disabled - psutil not available. Timeout and batch protection active.")
-        
-        # FunctionTool integrity check
+                r=psutil.Process()
+                v=r.memory_info().rss/(1024*1024)
+                u=Config.MAX_MEMORY_MB
+                if v>u*0.9:h="warning";w.append(f"mem:{v:.1f}/{u}")
+                elif v>u:h="critical";e.append(f"mem>{u}")
+            except:w.append("mem off")
+        else:w.append("mem off")
         try:
-            # Test basic functionality by attempting to create a simple test result
-            test_result = {"test": "passed"}
-            if not isinstance(test_result, dict):
-                raise Exception("Basic dictionary creation failed")
-        except Exception as e:
-            health_status = "critical"
-            errors.append(f"FunctionTool corruption detected: {str(e)}")
-        
-        # Performance engine health check
+            if not isinstance({"test":"ok"},dict):raise Exception("!")
+        except Exception as x:h="critical";e.append(f"corrupt:{x}")
         try:
-            perf_stats = performance.get_performance_stats()
-            if not isinstance(perf_stats, dict):
-                raise Exception("Performance engine returned invalid response")
-        except Exception as e:
-            health_status = "warning"
-            warnings.append(f"Performance engine issue: {str(e)}")
-        
-        # External dependency check
-        try:
-            marksman_available = subprocess.run(["marksman", "--version"], 
-                                              capture_output=True, timeout=3).returncode == 0
-        except:
-            marksman_available = False
-            
-    except Exception as e:
-        health_status = "critical"
-        errors.append(f"Health check failed: {str(e)}")
-        marksman_available = False
-        
-    result = {
-        "status": health_status,
-        "marksman_available": marksman_available,
-        "memory_info": {
-            "current_mb": memory_mb if isinstance(memory_mb, (int, float)) else "unavailable",
-            "limit_mb": Config.MAX_MEMORY_MB,
-            "usage_percent": (memory_mb / Config.MAX_MEMORY_MB * 100) if isinstance(memory_mb, (int, float)) else "unavailable",
-            "monitoring": "active" if isinstance(memory_mb, (int, float)) else "disabled"
-        },
-        "warnings": warnings,
-        "errors": errors,
-        "capabilities": [
-            # Standard markdown
-            "document_outline", "wiki_links", "cross_references", 
-            "frontmatter_extraction", "code_blocks", "task_lists", "document_analysis",
-            # Obsidian-specific
-            "embedded_content", "block_references", "callouts", "obsidian_links",
-            "dataview_fields", "vault_graph", "nested_tags",
-            # Linting capabilities
-            "document_linting", "auto_fix_document",
-            # MQ-compatible selectors
-            "mq_selectors", "bulk_queries", "performance_optimization",
-            # Specification Intelligence
-            "spec_validation", "spec_semantics", "spec_requirements_extraction",
-            "spec_constraints_extraction", "spec_dependencies_extraction", "spec_completeness_validation"
-        ],
-        "obsidian_features": [
-            "transclusion", "block_links", "aliases", "callouts", 
-            "dataview", "vault_graph", "nested_tags", "header_links"
-        ],
-        "spec_features": [
-            "rfc2119_compliance", "requirement_language_analysis", "ambiguity_detection",
-            "implementation_gap_detection", "cross_reference_validation", "completeness_checking",
-            "structured_requirements_extraction", "constraints_analysis", "dependencies_mapping",
-            "spec_type_detection", "acceptance_criteria_parsing", "clarity_scoring"
-        ],
-        "mq_selectors": [
-            ".h1", ".h2", ".h3", ".h4", ".h5", ".h6",
-            ".code", ".list", ".link", ".link.url", ".link.text",
-            ".table", ".task", ".tag", ".frontmatter"
-        ],
-        "performance_features": [
-            "intelligent_caching", "bulk_operations", "memory_optimization",
-            "file_discovery", "dataset_optimization", "timeout_protection", "streaming_mode"
-        ],
-        "configuration": {
-            "max_memory_mb": Config.MAX_MEMORY_MB,
-            "max_batch_size": Config.MAX_BATCH_SIZE,
-            "streaming_enabled": Config.ENABLE_STREAMING,
-            "memory_monitoring": Config.ENABLE_MEMORY_MONITOR,
-            "regex_timeout_seconds": Config.REGEX_TIMEOUT_SECONDS,
-            "streaming_chunk_size": Config.STREAMING_CHUNK_SIZE,
-            "cache_ttl": Config.CACHE_TTL
-        },
-        "version": "1.0.0-unified-protected",
-        "engines": {
-            "core": "1.0.0",
-            "obsidian": "1.0.0", 
-            "lint": "1.0.0",
-            "mq": "1.0.0",
-            "performance": "1.0.0",
-            "spec": "1.0.0"
-        }
-    }
-    
-    return result
-
-if __name__ == "__main__":
-    mcp.run(show_banner=False)
+            z=p.get_performance_stats()
+            if not isinstance(z,dict):raise Exception("!")
+        except Exception as x:h="warning";w.append(f"perf:{x}")
+        try:k=subprocess.run(["marksman","--version"],capture_output=True,timeout=3).returncode==0
+        except:k=False
+    except Exception as x:h="critical";e.append(f"fail:{x}");k=False
+    return{"status":h,"marksman_available":k,"memory_info":{"current_mb":v if isinstance(v,(int,float))else"n/a","limit_mb":Config.MAX_MEMORY_MB,"usage_percent":(v/Config.MAX_MEMORY_MB*100)if isinstance(v,(int,float))else"n/a","monitoring":"on"if isinstance(v,(int,float))else"off"},"warnings":w,"errors":e,"capabilities":["h","y","c","t","a","o","l","v","x","L","q","b","d","T","s","S","p","C","B","H"],"version":"3.0-x"}
+if __name__=="__main__":mcp.run(show_banner=False)
