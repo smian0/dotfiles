@@ -135,6 +135,7 @@ tests/test-runs
 # MCP API Keys and configurations
 scripts/mcp-env/.env
 .mcp.json
+/.mcp.json
 !claude/.claude/profiles/**/.mcp.json
 
 # Cursor MCP configuration (contains API keys)
@@ -148,3 +149,6 @@ claude/.claude/hooks/PostToolUse/logs
 # OpenCode transformation test artifacts
 .claude/.opencode/
 
+
+# Trading analysis outputs
+.claude/analysis/
