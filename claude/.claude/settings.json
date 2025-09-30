@@ -14,7 +14,7 @@
       "Bash(npm run lint)",
       "Bash(npm run test:*)",
       "Read(~/.zshrc)",
-      "Read(./.env.example)",
+      "Read(.env.example)",
       "mcp__serena__read_memory",
       "mcp__serena__write_memory",
       "mcp__serena__list_memories",
@@ -81,16 +81,18 @@
       "mcp__marksman__analyze_document_structure",
       "mcp__marksman__lint_document",
       "mcp__marksman__auto_fix_document",
-      "mcp__marksman__health_check"
+      "mcp__marksman__health_check",
+      "mcp__web-search-prime__webSearchPrime",
+      "mcp__zen__retrieve_tools",
+      "mcp__zen__call_tool",
+      "mcp__zen__restart_server"
     ],
     "deny": [
       "Read(./.env)",
-      "Read(./.env.*)",
       "Read(./secrets/**)",
       "Read(./pass/**)"
     ]
   },
-  "model": "opusplan",
   "enableAllProjectMcpServers": true,
   "hooks": {
     "SessionStart": [
@@ -139,5 +141,6 @@
   "statusLine": {
     "type": "command",
     "command": "$HOME/.claude/scripts/statusline.sh"
-  }
+  },
+  "alwaysThinkingEnabled": true
 }
