@@ -1,49 +1,48 @@
 {
-  "serena": {
-    "args": [
-      "--from",
-      "git+https://github.com/oraios/serena",
-      "serena",
-      "start-mcp-server",
-      "--context",
-      "codex-enhanced",
-      "--enable-web-dashboard",
-      "false",
-      "--enable-gui-log-window",
-      "false"
-    ],
-    "command": "uvx",
-    "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence (codex context)",
-    "purpose": "code-analysis",
-    "scope": "project"
-  },
-  "zen": {
-    "command": "npx",
-    "args": [
-      "reloaderoo",
-      "proxy",
-      "--",
-      "/Users/smian/github/zen-mcp-server/.zen_venv/bin/python",
-      "/Users/smian/github/zen-mcp-server/server.py"
-    ],
-    "description": "AI orchestration with Universal Intelligence - multi-model workflows, cross-domain expertise, hot-reload enabled",
-    "env": {
-      "MCPDEV_PROXY_AUTO_RESTART": "true"
+  "mcpServers": {
+    "context7": {
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "command": "npx",
+      "description": "Official library documentation lookup - curated docs, framework patterns",
+      "env": {},
+      "purpose": "documentation",
+      "scope": "library",
+      "type": "stdio"
     },
-    "purpose": "ai-orchestration",
-    "scope": "universal",
-    "type": "stdio"
-  },
-  "context7": {
-    "args": [
-      "-y",
-      "@upstash/context7-mcp"
-    ],
-    "command": "npx",
-    "description": "Official library documentation lookup - curated docs, framework patterns",
-    "env": {},
-    "purpose": "documentation",
-    "scope": "library",
-    "type": "stdio"
+    "serena": {
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide-assistant",
+        "--enable-web-dashboard",
+        "false",
+        "--enable-gui-log-window",
+        "false"
+      ],
+      "command": "uvx",
+      "description": "Semantic code analysis & project memory - IDE-optimized, excludes redundant tools, symbol operations",
+      "purpose": "code-analysis",
+      "scope": "project"
+    },
+    "zen": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "reloaderoo",
+        "proxy",
+        "--",
+        "/Users/smian/github/zen-mcp-server/.zen_venv/bin/python",
+        "/Users/smian/github/zen-mcp-server/server_proxy.py"
+      ],
+      "env": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      }
+    }
   }
 }
