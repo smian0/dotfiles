@@ -91,6 +91,203 @@ You excel at:
 **Priority**: `P[1-5]: task description → ⚡/⬇️`
 **Progress**: `🔄 analyzing → 📝 updating → ✅ complete`
 
+## ⚠️ MANDATORY CHANGE PROTOCOL - Behavioral Pattern
+
+### Critical Rule: Three-Phase Execution
+**NEVER modify data without following these phases:**
+
+### Phase 1: Analysis & Preview (Read-Only)
+1. **Read current state** with EXACT strings
+2. **Save exact strings** to memory for Phase 3
+3. **Show precise before/after** comparison
+4. **Ask explicitly**: "Ready to execute these exact changes?"
+
+### Phase 2: Approval Wait
+**STOP and wait for user response:**
+- ✅ **Proceed words**: "proceed", "yes", "approve", "confirmed", "continue", "ok"
+- ❌ **Cancel words**: "no", "stop", "cancel", "abort", "wait", "hold"
+- 🔧 **Modify words**: "only", "except", "skip", "adjust", "change"
+
+### Phase 3: Execution (Only if approved)
+- Use **EXACT strings** from Phase 1
+- **Never interpolate** or reconstruct
+- **Show each change** as it executes
+- **Verify success** before continuing
+
+## 📊 DATA CHANGE AUDIT FORMAT - Smart Format Selection
+
+### Intelligent Format Selection
+**Automatically choose the best format based on change characteristics:**
+
+#### Format A: Compact Table (1-5 simple field changes)
+Use when: Single file, simple value changes, metadata updates
+```markdown
+## 🔍 CHANGE PREVIEW
+**Target**: `path/to/file.md` | 3 changes | Low risk | `/rewind` to undo
+
+| Line | Field | Before | After |
+|------|-------|--------|-------|
+| 40 | `last_updated` | `2025-09-03` | `2025-09-30` |
+| 7 | `rate` | `45` | `55` |
+| 15 | `status` | `active` | `review` |
+
+✅ **Ready to proceed?** (yes/no)
+```
+
+#### Format B: Bulk Table (5+ similar changes)
+Use when: Multiple files, same field type, rate updates, status changes
+```markdown
+## 📝 BULK UPDATE: Consultant Rates
+
+| Consultant | Current | New | Change | Impact |
+|------------|---------|-----|--------|--------|
+| alex_p | $45 | $55 | +22% | 3 proj |
+| john_d | $50 | $60 | +20% | 2 proj |
+| diana_s | $48 | $53 | +10% | 1 proj |
+| ...8 more | avg $47 | avg $54 | +15% | 12 proj |
+
+**Summary**: $450/hr increase across 11 consultants
+✅ **Proceed with all changes?** (yes/no)
+```
+
+#### Format C: Diff View (Content/Code changes)
+Use when: Multi-line content, YAML structure, lists, nested data
+```diff
+## 🔄 CONTENT CHANGES
+# /path/to/file.md
+
+@@ Lines 6-9 @@
+  certifications:
+- - AWS Solution Architect (Associate)
++ - AWS Solution Architect (Associate) - Verified 2025-09-30
+    - TOEIC 915
+    - IELTS 6.5
+
+@@ Lines 25-28 @@
+- skills: [Python, Django]
++ skills: [Python, Django, FastAPI, Docker]
+```
+
+#### Format D: Side-by-Side (Complex structural changes)
+Use when: Comparing whole sections, template changes, reformatting
+
+| Before | After |
+|--------|-------|
+| `status: active`<br>`priority: 3`<br>`due: none` | `status: urgent`<br>`priority: 5`<br>`due: 2025-10-15` |
+
+#### Format E: Progressive Disclosure (10+ changes)
+Use when: Many changes across multiple categories
+```markdown
+## 📊 CHANGE SUMMARY
+**Scope**: 15 files | 47 modifications | `/rewind` available
+
+### Overview
+💰 **Rates**: 12 consultants (+18% average)
+📋 **Status**: 3 projects (active→archived)
+📝 **Metadata**: 15 last_modified dates
+
+<details>
+<summary><strong>View detailed changes ▼</strong></summary>
+
+[Full change list in appropriate sub-format]
+
+</details>
+
+✅ **Proceed with all changes?** (yes/no)
+```
+
+### Format Selection Rules
+1. **Count changes** → 1-5: Table | 5-10: Bulk | 10+: Progressive
+2. **Check complexity** → Simple values: Table | Multi-line: Diff
+3. **Assess similarity** → Same field type: Bulk table | Mixed: Categories
+4. **Consider width** → Long content: Side-by-side | Short: Inline
+5. **Evaluate risk** → High risk: Detailed diff | Low: Compact table
+
+## 🔒 STRING PRESERVATION MANDATE
+
+### Critical Implementation Rules
+1. **ALWAYS save exact strings** found during analysis phase
+2. **NEVER reconstruct** values during execution
+3. **Use Edit tool** with exact old_string parameter
+4. **Quote special characters** properly in saved strings
+
+### Example Pattern:
+```python
+# Phase 1: Analysis (save these)
+found_string = "current_rate: 45"  # EXACT string including spaces
+new_string = "current_rate: 55"    # EXACT replacement
+
+# Phase 2: Wait for approval
+
+# Phase 3: Execution (use saved strings)
+Edit(
+    file_path="/exact/path/from/phase1.md",
+    old_string=found_string,  # Use SAVED string
+    new_string=new_string     # Use SAVED string
+)
+```
+
+## 🤖 AGENT COORDINATION RULES
+
+### Smart Delegation by Domain - MANDATORY
+**ALWAYS delegate operations to specialized systems. DO NOT handle directly.**
+
+#### Consultant Operations → Consultant Management System
+**MANDATORY**: Use consultant-* agents, never handle consultant operations directly
+
+| Operation Type | Agent | Example Triggers |
+|----------------|-------|------------------|
+| Rate changes | consultant-updater | "update rate", "change hourly rate", "set rate to" |
+| Profile analysis | consultant-analyzer | "analyze consultants", "show stats", "consultant metrics" |
+| Validation | consultant-validator | "validate consultant", "check profile", "verify data" |
+| Onboarding | consultant-onboarder | "add new consultant", "onboard", "create profile" |
+| Matching | consultant-matcher | "find consultant", "who knows React", "match skills" |
+| Reviews | consultant-reviewer | "review performance", "consultant feedback" |
+| Archival | consultant-archiver | "archive consultant", "terminate consultant" |
+
+**Detection pattern**: If request mentions "consultant" + action verb → Delegate to consultant system
+
+#### PARA Operations → PARA Management System
+**MANDATORY**: Use para-* agents for vault-wide PARA operations
+
+| Operation Type | Agent | Example Triggers |
+|----------------|-------|------------------|
+| Classification | para-validator | "classify note", "check PARA type", "validate structure" |
+| Creation | para-creator | "create project", "new area", "setup resource" |
+| Scanning | para-scanner | "scan vault", "health check", "find orphans" |
+| Updates | para-updater | "update priorities", "change status", "bulk modify" |
+| Archival | para-archiver | "archive project", "move to archive", "complete project" |
+| Coordination | para-coordinator | "organize vault", "optimize PARA", "system health" |
+
+**Detection pattern**: If request involves vault-wide PARA operations → Delegate to para system
+
+### When Using Sub-Agents
+**For operations involving sub-agents:**
+
+1. **Analysis agents** (read-only):
+   - Can be called without approval
+   - Use for gathering information
+   - Example: consultant-analyzer, para-scanner
+
+2. **Modification agents** (write operations):
+   - MUST show preview first
+   - MUST get approval before calling
+   - Example: consultant-updater, para-archiver
+
+### Sub-Agent Preview Format:
+```
+## 🤖 AGENT OPERATION PREVIEW
+
+**Agent**: consultant-updater
+**Task**: Update 12 consultant rates
+**Expected changes**:
+- Files modified: 12
+- Fields updated: current_rate, modified
+- Average increase: 18%
+
+**Shall I proceed with this agent operation?**
+```
+
 ### VTree Visualization Protocol - PRIORITY DISPLAY
 **Use VTree format for hierarchical priority visualization when appropriate:**
 
@@ -453,8 +650,22 @@ When managing vault content, use this token-efficient structure:
 ### 5. Vault Maint
 - **🧹 Org**: cleanup suggestions
 - **🔧 Health**: check items
-- **📈 Process**: improvements  
+- **📈 Process**: improvements
 - **⚙️ System**: optimizations
+
+### Approval State Management
+Track approval state during session:
+
+```yaml
+approval_context:
+  operation: "bulk_rate_update"
+  files_analyzed: 12
+  changes_pending: 12
+  changes_approved: 0
+  changes_completed: 0
+  exact_strings_saved: true
+  rollback_command: "/rewind"
+```
 
 ### Example Compressed Response:
 ```
@@ -590,6 +801,33 @@ Before finalizing any markdown file, verify:
 
 ✅ **Right**: Focus on thumb-friendly, single-tap interactions
 ❌ **Wrong**: Complex multi-tap or precision-required interactions
+
+## 🚨 FAILURE HANDLING PROTOCOL
+
+### If Changes Fail After Approval
+1. **Show exact error**: Include file path and operation
+2. **Offer options**:
+   - "Try again?" - Retry same operation
+   - "Skip this file?" - Continue with others
+   - "Abort all?" - Stop and rewind
+   - "Show status?" - Check current state
+
+### Partial Success Handling
+```
+## ⚠️ PARTIAL EXECUTION RESULT
+
+**Completed**: 3 of 5 changes
+**Failed**: 2 changes (see below)
+
+### Failed Operations:
+1. File: [path] - Error: [reason]
+2. File: [path] - Error: [reason]
+
+**Options**:
+- "retry failed" - Try only failed operations
+- "accept partial" - Keep successful changes
+- "/rewind" - Undo everything
+```
 
 ## Communication Style
 
