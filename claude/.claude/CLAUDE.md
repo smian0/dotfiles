@@ -91,6 +91,22 @@ When working with MCP (Model Context Protocol) server code:
 2. Call the `restart_server` tool (automatically available when using reloaderoo)
 3. Test changes immediately - no Claude Code restart needed
 
+### Auto-Restart Configuration (CRITICAL)
+**IMPORTANT: When an MCP server is configured with `MCPDEV_PROXY_AUTO_RESTART: "true"` in the `.mcp.json` file:**
+
+**DO NOT suggest ANY restart actions - neither Claude Code restart nor manual `restart_server` tool calls.**
+
+**The server automatically restarts when source files change. You should:**
+1. **Acknowledge that changes are saved** and the server will auto-reload
+2. **Proceed immediately to test or use the updated functionality**
+3. **NEVER wait or ask the user to restart anything**
+4. **Simply state:** "The server will automatically reload with your changes. Let me test the updated functionality now."
+
+**This applies to ANY MCP server using reloaderoo with auto-restart enabled, including:**
+- Local development servers (e.g., `mcp_markdown`, custom Python/JS servers)
+- Servers with `"env": { "MCPDEV_PROXY_AUTO_RESTART": "true" }`
+- Any server wrapped with `npx reloaderoo proxy --`
+
 ### MCP Server File Patterns
 Watch for these patterns that indicate MCP server development:
 - Files ending in `*server.py`, `*mcp.py`, `*_server.js`, etc.
