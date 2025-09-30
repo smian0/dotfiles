@@ -4,5 +4,9 @@
 export ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic
 export ANTHROPIC_AUTH_TOKEN=$(pass show llm/glm_api_key 2>/dev/null | head -1)
 
+# Add MCP servers for Z.AI web search capabilities
+claude mcp add -s project zai-mcp-server --env Z_AI_API_KEY=${ANTHROPIC_AUTH_TOKEN} Z_AI_MODE=ZAI -- npx -y @z_ai/mcp-server 2>/dev/null || true
+claude mcp add -s project -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header "Authorization: Bearer $ANTHROPIC_AUTH_TOKEN" 2>/dev/null || true
+
 # Use claude from PATH (dynamically found)
 exec claude "$@"
