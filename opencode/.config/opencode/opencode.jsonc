@@ -1,0 +1,303 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "opencode",
+  "model": "qwen3-coder:480b-cloud",
+  "small_model": "ollamat/gpt-oss:120b",
+  "autoupdate": true,
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (OpenAI Compatible)",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        "gpt-oss:20b": {
+          "name": "GPT-OSS 20B (OpenAI Compatible)",
+          "options": {
+            "temperature": 0.3
+          },
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          }
+        },
+        "gpt-oss:120b-cloud": {
+          "name": "GPT-OSS 120B (OpenAI Compatible)",
+          "options": {
+            "reasoningEffort": "high",
+            "think": "high",
+            "effort": "high",
+            "reasoning_effort": "high",
+            "temperature": 0.3
+          },
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
+        },
+        "deepseek-v3.1:671b-cloud": {
+          "name": "DeepSeek V3.1 671B (OpenAI Compatible)",
+          // "options": {
+          //   "reasoningEffort": "high",
+          //   "think": "high",
+          //   "effort": "high",
+          //   "reasoning_effort": "high",
+          //   "temperature": 0.2
+          // },
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          }
+          // "attachment": false,
+          // "reasoning": false
+          // "temperature": true,
+          // "tool_call": true
+        },
+        "qwen3-coder:480b-cloud": {
+          "name": "Qwen3 Coder 480B (OpenAI Compatible)",
+          "options": {
+            "think": "high",
+            "effort": "high",
+            "temperature": 0.6,
+            "top_p": 0.8,
+            "top_k": 20
+          },
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
+        }
+      }
+    },
+    "ollamat": {
+      "npm": "ollama-ai-provider-v2",
+      "name": "Ollama (turbo)",
+      "options": {
+        "baseURL": "https://ollama.com/api",
+        "headers": {
+          "Authorization": "Bearer {env:OLLAMA_API_KEY}"
+        }
+      },
+      "models": {
+        "gpt-oss:20b": {
+          "id": "gpt-oss:20b",
+          "name": "GPT-OSS 20B",
+          "options": {
+            "reasoningEffort": "high",
+            "think": "high",
+            "effort": "high",
+            "reasoning_effort": "high",
+            "temperature": 0.3
+          },
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
+        },
+        "gpt-oss:120b": {
+          "id": "gpt-oss:120b",
+          "name": "GPT-OSS 120B",
+          "options": {
+            "reasoningEffort": "high",
+            "think": "high",
+            "effort": "high",
+            "reasoning_effort": "high",
+            "temperature": 0.3
+          },
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
+        },
+        "qwen3-coder:480b": {
+          "id": "qwen3-coder:480b",
+          "name": "Qwen3 Coder 480B",
+          "options": {
+            "reasoningEffort": "medium",
+            "think": "medium",
+            "effort": "medium",
+            "reasoning_effort": "medium",
+            "temperature": 0.6,
+            "top_p": 0.8,
+            "top_k": 20
+          },
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
+        },
+        "deepseek-v3.1:671b": {
+          "id": "deepseek-v3.1:671b",
+          "name": "DeepSeek V3.1 671B",
+          "options": {
+            "reasoningEffort": "high",
+            "think": "high",
+            "effort": "high",
+            "reasoning_effort": "high",
+            "temperature": 0.2
+          },
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
+        }
+      }
+    },
+    "zhipuai": {
+      "api": "https://api.z.ai/api/coding/paas/v4"
+    }
+  },
+  "mcp": {
+    "serena": {
+      "command": [
+        "uvx",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--enable-web-dashboard",
+        "false",
+        "--enable-gui-log-window",
+        "false"
+      ],
+      "type": "local",
+      "enabled": true
+    },
+    "context7": {
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "type": "local",
+      "enabled": true,
+      "environment": {}
+    },
+    "zen": {
+      "command": [
+        "/Users/smian/github/zen-mcp-server/.zen_venv/bin/python",
+        "/Users/smian/github/zen-mcp-server/server.py"
+      ],
+      "type": "local",
+      "enabled": true,
+      "environment": {
+        "GEMINI_API_KEY": "AIzaSyBXHBaYdpC-wBo1spBxrLqMrmgEkbYHKqo",
+        "DEFAULT_MODEL": "auto",
+        "DEFAULT_THINKING_MODE_THINKDEEP": "high",
+        "GOOGLE_ALLOWED_MODELS": "pro",
+        "CONVERSATION_TIMEOUT_HOURS": "3",
+        "MAX_CONVERSATION_TURNS": "20",
+        "LOG_LEVEL": "DEBUG",
+        "DISABLED_TOOLS": "analyze,refactor,testgen,secaudit,docgen,tracer",
+        "COMPOSE_PROJECT_NAME": "zen-mcp",
+        "TZ": "UTC",
+        "LOG_MAX_SIZE": "10MB"
+      }
+    },
+    "chrome": {
+      "type": "remote",
+      "url": "http://127.0.0.1:12306/mcp"
+    }
+  },
+  "tools": {
+    "mcp__context7__*": true,
+    "mcp__serena__*": true,
+    "mcp__zen__*": true,
+    "mcp__chrome__*": true
+  },
+  "agent": {
+    "claude-primary": {
+      "model": "github-copilot/claude-sonnet-4",
+      "reasoningEffort": "medium",
+      "description": "Primary: Claude Sonnet 4"
+    },
+    "claude-fallback": {
+      "model": "zhipuai/glm-4.5",
+      "reasoningEffort": "medium",
+      "description": "Fallback: GLM 4.5 when Claude rate limited"
+    },
+    "claude-copilot": {
+      "model": "github-copilot/claude-sonnet-4",
+      "reasoningEffort": "medium"
+    },
+    "gpt-oss-120": {
+      "model": "ollamat/gpt-oss:120b",
+      "reasoningEffort": "medium"
+    },
+    "qwen3-coder:480b": {
+      "model": "ollamat/qwen3-coder:480b",
+      "reasoningEffort": "high"
+    },
+    "glm": {
+      "model": "zhipuai/glm-4.5",
+      "reasoningEffort": "medium"
+    },
+    "small-direct": {
+      "model": "ollamat/gpt-oss:120b",
+      "reasoningEffort": "low"
+    },
+    "mcp-manager": {
+      "model": "ollamat/gpt-oss:120b",
+      "reasoningEffort": "low",
+      "description": "MCP Server Manager - List, analyze, and manage Model Context Protocol servers and tools"
+    },
+    "build": {
+      "model": "qwen3-coder:480b-cloud"
+    },
+    "researcher": {
+      "model": "ollamat/gpt-oss:120b",
+      "mode": "subagent",
+      "system": "You are a research assistant specializing in gathering and analyzing information.",
+      "temperature": 0.3,
+      "description": "Research subagent for information gathering"
+    },
+    "coder": {
+      "model": "ollamat/gpt-oss:120b",
+      "mode": "subagent",
+      "system": "You are a coding assistant specializing in writing clean, efficient code.",
+      "temperature": 0.2,
+      "description": "Coding subagent for implementation tasks"
+    },
+    "mcp-checker": {
+      "model": "github-copilot/claude-sonnet-4",
+      "temperature": 0.1,
+      "description": "MCP Server availability checker - Verify configured MCP servers and tools"
+    },
+    "mcp-simple": {
+      "model": "github-copilot/claude-sonnet-4",
+      "temperature": 0.1,
+      "description": "Simple MCP status check"
+    },
+    "news-fetcher": {
+      "model": "github-copilot/claude-sonnet-4",
+      "temperature": 0.3,
+      "system": "You are a news fetcher agent specialized in retrieving top headlines from Google News. When asked for news, use the webfetch tool to access https://news.google.com, extract the top 10-15 headlines, and format them as a numbered list with brief descriptions and source publications. Focus only on Google News as your source. Be direct and efficient - users want quick access to current news.",
+      "description": "Fetches and displays top news headlines from Google News only"
+    }
+  }
+}
