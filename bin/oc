@@ -54,6 +54,51 @@ run_pre_launch_transform() {
     esac
 }
 
+# Detect if transform is needed due to unresolved templates in ~/.config/opencode
+needs_transform() {
+    local base_dir="$HOME/.config/opencode/agent"
+    # If agent directory doesn't exist, prefer running transform to set it up
+    if [[ ! -d "$base_dir" ]]; then
+        return 0
+    fi
+    # Detect unresolved handlebars-style placeholders like {{DOMAIN}} 
+    # but exclude files in /templates/ directories (those are meant to stay as templates)
+    if command -v grep >/dev/null 2>&1; then
+        if grep -R -I --exclude-dir=templates -E "\{\{[A-Z][A-Z0-9_]*\}\}" "$base_dir" >/dev/null 2>&1; then
+            return 0
+        fi
+    fi
+    return 1
+}
+
+# Parse arguments: support short switch -T (and --no-transform) to skip pre-launch transform
+SKIP_TRANSFORM=false
+FORWARD_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -T|--no-transform)
+            SKIP_TRANSFORM=true
+            ;;
+        --)
+            shift
+            while [[ $# -gt 0 ]]; do
+                FORWARD_ARGS+=("$1")
+                shift
+            done
+            break
+            ;;
+        *)
+            FORWARD_ARGS+=("$1")
+            ;;
+    esac
+    shift
+done
+
+# If -T/--no-transform was provided and no other args remain, default to 'help'
+if [[ "$SKIP_TRANSFORM" == "true" && ${#FORWARD_ARGS[@]} -eq 0 ]]; then
+    FORWARD_ARGS+=("help")
+fi
+
 # Debug: Show final environment before launching
 if [[ "$DEBUG_MODE" == "true" ]]; then
     echo "Final environment check:"
@@ -65,8 +110,17 @@ fi
 # Removed auto-wrapper logic to prevent corruption of npm packages
 # The oc script handles environment and transformations; npm handles binary management
 
-# Run pre-launch agent transformation
-run_pre_launch_transform "$@"
+# Run pre-launch agent transformation (unless skipped with -T/--no-transform)
+if [[ "$SKIP_TRANSFORM" != "true" ]]; then
+    run_pre_launch_transform "${FORWARD_ARGS[@]}"
+else
+    if needs_transform; then
+        echo "⚠️  Detected unresolved templates in ~/.config/opencode; running sync despite -T"
+        run_pre_launch_transform "${FORWARD_ARGS[@]}"
+    else
+        [[ "$DEBUG_MODE" == "true" ]] && echo "Skipping pre-launch transform due to -T/--no-transform"
+    fi
+fi
 
 # Launch opencode with environment variables available
 # Use the current binary to ensure upgrades work properly
@@ -76,11 +130,11 @@ OPENCODE_BACKUP="/Users/smian/.npm-global/bin/opencode.original"
 # Try current binary first (this gets updated by npm)
 if [[ -x "$OPENCODE_BINARY" ]]; then
     [[ "$DEBUG_MODE" == "true" ]] && echo "Using current opencode binary: $OPENCODE_BINARY"
-    exec "$OPENCODE_BINARY" "$@"
+    exec "$OPENCODE_BINARY" "${FORWARD_ARGS[@]}"
 # Fallback to backup binary if current one doesn't exist
 elif [[ -x "$OPENCODE_BACKUP" ]]; then
     [[ "$DEBUG_MODE" == "true" ]] && echo "Using backup opencode binary: $OPENCODE_BACKUP"
-    exec "$OPENCODE_BACKUP" "$@"
+    exec "$OPENCODE_BACKUP" "${FORWARD_ARGS[@]}"
 else
     echo "Error: opencode binary not found at $OPENCODE_BINARY or $OPENCODE_BACKUP" >&2
     echo "Try running: npm install -g opencode-ai" >&2
