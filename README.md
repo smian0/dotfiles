@@ -90,31 +90,22 @@ This repository includes an AI-powered GitHub bot that responds to commands in i
 
 | Agent | Trigger | Description |
 |-------|---------|-------------|
+| 🏗️ **Build** | `/oc @build` | Build automation and deployment assistance |
 | 🤖 **Claude Copilot** | `/oc @claude-copilot` | Custom agent for specialized tasks |
 | 🤖 **Claude Fallback** | `/oc @claude-fallback` | Custom agent for specialized tasks |
 | 🤖 **Claude Primary** | `/oc @claude-primary` | Custom agent for specialized tasks |
+| 🤖 **Coder** | `/oc @coder` | Custom agent for specialized tasks |
 | 🤖 **Glm** | `/oc @glm` | Custom agent for specialized tasks |
 | 🤖 **Gpt Oss 120** | `/oc @gpt-oss-120` | Custom agent for specialized tasks |
+| 🤖 **Mcp Checker** | `/oc @mcp-checker` | Custom agent for specialized tasks |
 | 🤖 **Mcp Manager** | `/oc @mcp-manager` | Custom agent for specialized tasks |
+| 🤖 **Mcp Simple** | `/oc @mcp-simple` | Custom agent for specialized tasks |
+| 🤖 **News Fetcher** | `/oc @news-fetcher` | Custom agent for specialized tasks |
 | 🤖 **Qwen3 Coder:480b** | `/oc @qwen3-coder:480b` | Custom agent for specialized tasks |
+| 🤖 **Researcher** | `/oc @researcher` | Custom agent for specialized tasks |
 | 🤖 **Small Direct** | `/oc @small-direct` | Custom agent for specialized tasks |
-| 🤖 **Backend Architect** | `/oc @backend-architect` | Custom agent for specialized tasks |
-| 🤖 **Claude Test Agent** | `/oc @claude-test-agent` | Custom agent for specialized tasks |
-| 🤖 **Devops Architect** | `/oc @devops-architect` | Custom agent for specialized tasks |
-| 🤖 **Frontend Architect** | `/oc @frontend-architect` | Custom agent for specialized tasks |
-| 🤖 **Learning Guide** | `/oc @learning-guide` | Custom agent for specialized tasks |
-| 📝 **Markdown Pro** | `/oc @markdown-pro` | Specialized markdown formatting and documentation |
-| 📰 **News** | `/oc @news` | Aggregates and summarizes latest news from multiple sources |
-| 🤖 **Performance Engineer** | `/oc @performance-engineer` | Custom agent for specialized tasks |
-| 🤖 **Python Expert** | `/oc @python-expert` | Custom agent for specialized tasks |
-| 🤖 **Quality Engineer** | `/oc @quality-engineer` | Custom agent for specialized tasks |
-| 🤖 **Refactoring Expert** | `/oc @refactoring-expert` | Custom agent for specialized tasks |
-| 🤖 **Requirements Analyst** | `/oc @requirements-analyst` | Custom agent for specialized tasks |
-| 🤖 **Root Cause Analyst** | `/oc @root-cause-analyst` | Custom agent for specialized tasks |
-| 🤖 **Security Engineer** | `/oc @security-engineer` | Custom agent for specialized tasks |
-| 🤖 **Socratic Mentor** | `/oc @socratic-mentor` | Custom agent for specialized tasks |
-| 🤖 **System Architect** | `/oc @system-architect` | Custom agent for specialized tasks |
-| 🤖 **Technical Writer** | `/oc @technical-writer` | Custom agent for specialized tasks |
+| 🤖 **Test Agent** | `/oc @test-agent` | Custom agent for specialized tasks |
+| 🤖 **Test Helper** | `/oc @test-helper` | Custom agent for specialized tasks |
 
 ### Usage Examples
 
