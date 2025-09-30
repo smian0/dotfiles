@@ -12,6 +12,20 @@
       "scope": "library",
       "type": "stdio"
     },
+    "mcp_markdown": {
+      "args": [
+        "reloaderoo",
+        "proxy",
+        "--",
+        "python3",
+        "/Users/smian/dotfiles/claude/.claude/mcp_servers/mcp_markdown/server.py"
+      ],
+      "command": "npx",
+      "env": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      },
+      "type": "stdio"
+    },
     "serena": {
       "args": [
         "--from",
@@ -31,8 +45,6 @@
       "scope": "project"
     },
     "zen": {
-      "type": "stdio",
-      "command": "npx",
       "args": [
         "reloaderoo",
         "proxy",
@@ -40,9 +52,11 @@
         "/Users/smian/github/zen-mcp-server/.zen_venv/bin/python",
         "/Users/smian/github/zen-mcp-server/server_proxy.py"
       ],
+      "command": "npx",
       "env": {
         "MCPDEV_PROXY_AUTO_RESTART": "true"
-      }
+      },
+      "type": "stdio"
     }
   }
 }

@@ -141,6 +141,10 @@ def lint_document(x,f=False,y=None):
 @mcp.tool
 def mq_query(x,q,f='json'):
     """q"""
+    from pathlib import Path
+    # Check if path is a directory and provide helpful error
+    if Path(x).is_dir():
+        return {"error": f"Path is a directory. Use 'mq_bulk_query' for querying multiple files in '{x}'"}
     return m.query(x,q,f)
 @mcp.tool
 def mq_bulk_query(x,q):
@@ -184,6 +188,9 @@ def clear_cache(y="all"):
 @mcp.tool
 def bulk_analyze(x,n=100):
     """B"""
+    # Convert n to int if it's a string (from MCP call)
+    if isinstance(n, str):
+        n = int(n)
     f=p.intelligent_file_discovery(x,"*.md",max_size_mb=50)
     if len(f)>n:f=f[:n]
     p.optimize_for_dataset(len(f),10)
