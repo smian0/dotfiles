@@ -149,7 +149,21 @@ def mq_query(x,q,f='json'):
 @mcp.tool
 def mq_bulk_query(x,q):
     """b"""
-    return p.bulk_operation_optimized(x,lambda z:m.query(z,q,'json'),f"mq_{q}",batch_size=Config.MAX_BATCH_SIZE)
+    from pathlib import Path
+    # Convert directory path to list of markdown files
+    path = Path(x)
+    if path.is_dir():
+        file_paths = [str(f) for f in path.rglob("*.md")]
+    elif path.is_file():
+        file_paths = [str(path)]
+    else:
+        return {"error": f"Path not found: {x}"}
+
+    if not file_paths:
+        return {"error": f"No markdown files found in: {x}"}
+
+    # Use MQEngine's bulk_query method which handles compact mode for field queries
+    return m.bulk_query(file_paths, q, compact=True)
 @mcp.tool
 def analyze_docs(x):
     """d"""

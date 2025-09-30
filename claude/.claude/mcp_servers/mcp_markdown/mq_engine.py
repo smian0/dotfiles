@@ -39,23 +39,69 @@ class MQEngine:
         }
     
     def query(self, file_path: str, selector: str, output_format: str = 'json') -> Union[str, Dict[str, Any]]:
-        """Execute MQ-style query on markdown file."""
+        """Execute MQ-style query on markdown file.
+
+        Supports field-specific queries like:
+        - frontmatter.status:active
+        - frontmatter.priority:5
+        - frontmatter.para-type:project
+        """
         try:
             content = MarkdownParser.read_file(file_path)
         except FileNotFoundError:
             return {"error": f"File not found: {file_path}"}
-        
+
         # Normalize selector
         selector = selector.strip()
-        
-        # Check if selector is supported
+
+        # Check for field-specific frontmatter queries
+        if selector.startswith('frontmatter.') and ':' in selector:
+            # Parse field query: frontmatter.FIELD:VALUE
+            field_query = selector[len('frontmatter.'):]
+            if ':' in field_query:
+                field_name, field_value = field_query.split(':', 1)
+                field_name = field_name.strip()
+                field_value = field_value.strip()
+
+                # Extract frontmatter
+                frontmatter = self._extract_frontmatter_data(content)
+
+                # Filter by field
+                if field_name in frontmatter:
+                    actual_value = str(frontmatter[field_name]).strip()
+                    matches = (actual_value.lower() == field_value.lower())
+
+                    if output_format.lower() == 'json':
+                        return {
+                            "file": file_path,
+                            "selector": selector,
+                            "matched": matches,
+                            "field": field_name,
+                            "value": frontmatter[field_name] if matches else None,
+                            "results": frontmatter if matches else {}
+                        }
+                    else:
+                        return str(frontmatter[field_name]) if matches else ""
+                else:
+                    if output_format.lower() == 'json':
+                        return {
+                            "file": file_path,
+                            "selector": selector,
+                            "matched": False,
+                            "field": field_name,
+                            "error": f"Field '{field_name}' not found in frontmatter"
+                        }
+                    else:
+                        return ""
+
+        # Check if selector is in standard map
         if selector not in self.selector_map:
             return {"error": f"Unsupported selector: {selector}"}
-        
+
         # Execute selector function
         try:
             results = self.selector_map[selector](content)
-            
+
             if output_format.lower() == 'json':
                 return {
                     "file": file_path,
@@ -69,29 +115,58 @@ class MQEngine:
                     return '\n'.join(str(item) for item in results)
                 else:
                     return str(results)
-                    
+
         except Exception as e:
             return {"error": f"Query execution failed: {str(e)}"}
     
-    def bulk_query(self, file_paths: List[str], selector: str) -> Dict[str, Any]:
-        """Execute MQ-style query across multiple files."""
+    def bulk_query(self, file_paths: List[str], selector: str, compact: bool = True) -> Dict[str, Any]:
+        """Execute MQ-style query across multiple files.
+
+        Args:
+            file_paths: List of file paths to query
+            selector: Query selector string
+            compact: If True, only return matched file paths for field queries (default: True)
+        """
         results = {}
         total_matches = 0
-        
+        matched_files = []
+        is_field_query = selector.startswith('frontmatter.') and ':' in selector
+
         for file_path in file_paths:
             file_result = self.query(file_path, selector, 'json')
             if 'error' not in file_result:
-                results[file_path] = file_result['results']
-                total_matches += file_result.get('count', 0)
+                # Handle field-specific queries differently
+                if 'matched' in file_result:
+                    if file_result['matched']:
+                        matched_files.append(file_path)
+                        total_matches += 1
+                        # Only store full results if not compact mode
+                        if not compact:
+                            results[file_path] = file_result['results']
+                else:
+                    # Standard query - always include results
+                    results[file_path] = file_result['results']
+                    total_matches += file_result.get('count', 0)
             else:
                 results[file_path] = {"error": file_result['error']}
-        
-        return {
+
+        response = {
             "selector": selector,
             "files_processed": len(file_paths),
             "total_matches": total_matches,
-            "results": results
         }
+
+        # For field queries in compact mode, only return matched file list
+        if is_field_query and compact:
+            response['matched_files'] = matched_files
+            response['note'] = 'Compact mode: only matched file paths returned. Use compact=False for full results.'
+        else:
+            # Include full results
+            response['results'] = results
+            if matched_files:
+                response['matched_files'] = matched_files
+
+        return response
     
     def analyze_docs(self, search_path: str) -> Dict[str, Any]:
         """Analyze documentation structure across markdown files (MQ-compatible)."""
