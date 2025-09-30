@@ -6,14 +6,14 @@
       "serena",
       "start-mcp-server",
       "--context",
-      "codex-enhanced",
+      "ide-assistant",
       "--enable-web-dashboard",
       "false",
       "--enable-gui-log-window",
       "false"
     ],
     "command": "uvx",
-    "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence (codex context)",
+    "description": "Semantic code analysis & project memory - IDE-optimized, excludes redundant tools, symbol operations",
     "purpose": "code-analysis",
     "scope": "project"
   },
