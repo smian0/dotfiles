@@ -216,11 +216,11 @@ Focus on: What it configures, prerequisites, effects
 
 ## Web Research Policy
 
-**IMPORTANT: Delegate web research to web-researcher subagent instead of using WebSearch/WebFetch directly**
+**IMPORTANT: Delegate web research to @web-researcher agent instead of using WebSearch/WebFetch directly**
 
-### When to Use web-researcher Subagent
+### When to Use @web-researcher Agent
 
-Use `Task(subagent_type="web-researcher", ...)` for:
+Use `@web-researcher` for:
 - ✅ Documentation lookup requiring multiple sources
 - ✅ Comprehensive research on any topic
 - ✅ Comparing tools, frameworks, or approaches
@@ -233,34 +233,16 @@ Use `Task(subagent_type="web-researcher", ...)` for:
 Use WebSearch/WebFetch directly ONLY for:
 - Single fact verification (e.g., "What's the current Fed Funds rate?")
 - Quick URL validation (checking if a link works)
-- Emergency fallback if Task tool unavailable
+- Immediate simple queries during active work
 
-### Standard Delegation Pattern
-
-```
-Task(subagent_type="web-researcher",
-     description="Research X topic",
-     prompt="Find authoritative sources on X. Focus on Y aspects.
-             Synthesize key findings with source attribution...")
-```
-
-### Benefits of Delegation
+### Benefits of Delegating to @web-researcher
 
 - **Research rigor**: Adversarial search, source diversity, primary source tracing
 - **Context preservation**: Returns concise summaries (2-5K tokens) instead of raw content
 - **Quality assessment**: Evaluates source credibility and recency
 - **Structured output**: Clear sections, bullet points, source URLs
 
-### Research Agents Available
-
-- `web-researcher`: Universal web research (use this for most cases)
-- `fact-checker`: Cross-reference and validate specific claims
-- `research-planner`: Break down complex research into structured plans
-- `research-planning-agent`: Create detailed research plans with parallel streams
-
-**For comprehensive research**: Use the `/research` slash command which orchestrates the full workflow automatically.
-
-**Rule of thumb**: If you find yourself writing multiple WebSearch queries, spawn web-researcher instead.
+**Rule of thumb**: Use `@web-researcher` for comprehensive research. Use direct tools for quick single-fact lookups.
 
 ## Emergency Recovery
 
