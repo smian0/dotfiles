@@ -928,3 +928,4 @@ gh() {
 
 # Auto-added by MCP Environment Setup
 source "/Users/smian/.config/mcp-env/shell-env.sh"
+export NODE_OPTIONS="--max-old-space-size=8192"
