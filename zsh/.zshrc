@@ -51,7 +51,7 @@ fi
 # SSH Agent Management - Robust version
 start_ssh_agent() {
     local ssh_agent_file="$HOME/.ssh/ssh-agent-env"
-    
+
     # Kill any existing dead agents
     if [[ -f "$ssh_agent_file" ]]; then
         source "$ssh_agent_file" > /dev/null 2>&1
@@ -60,13 +60,13 @@ start_ssh_agent() {
             unset SSH_AUTH_SOCK SSH_AGENT_PID
         fi
     fi
-    
+
     # Start new agent if needed
     if [[ -z "$SSH_AUTH_SOCK" ]] || ! ssh-add -l >/dev/null 2>&1; then
         ssh-agent > "$ssh_agent_file"
         source "$ssh_agent_file" > /dev/null 2>&1
     fi
-    
+
     # Add GitHub SSH key automatically
     if [[ -f "$HOME/.ssh/id_ed25519_github_smian0" ]]; then
         ssh-add -l 2>/dev/null | grep -q "id_ed25519_github_smian0" || \
@@ -242,25 +242,25 @@ HIST_STAMPS="yyyy-mm-dd"
 # Auto-install Oh My Zsh and dependencies if missing
 if [[ ! -f "$ZSH/oh-my-zsh.sh" ]]; then
     echo "🔧 Oh My Zsh not found. Auto-installing..."
-    
+
     # Install Oh My Zsh
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    
+
     # Install required plugins
     local custom_plugins_dir="$ZSH/custom/plugins"
-    
+
     # zsh-autosuggestions
     if [[ ! -d "$custom_plugins_dir/zsh-autosuggestions" ]]; then
         echo "📦 Installing zsh-autosuggestions..."
         git clone https://github.com/zsh-users/zsh-autosuggestions "$custom_plugins_dir/zsh-autosuggestions"
     fi
-    
+
     # zsh-syntax-highlighting
     if [[ ! -d "$custom_plugins_dir/zsh-syntax-highlighting" ]]; then
         echo "📦 Installing zsh-syntax-highlighting..."
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$custom_plugins_dir/zsh-syntax-highlighting"
     fi
-    
+
     echo "✅ Oh My Zsh and plugins installed successfully!"
     echo "💡 Restart your terminal for full functionality"
 fi
@@ -275,20 +275,20 @@ _run_setup_checks() {
     # Only run setup checks once per day to avoid spam
     local setup_check_file="$HOME/.cache/zsh-setup-check"
     local today=$(date +%Y-%m-%d)
-    
+
     if [[ -f "$setup_check_file" ]]; then
         local last_check=$(cat "$setup_check_file" 2>/dev/null)
         if [[ "$last_check" == "$today" ]]; then
             return 0
         fi
     fi
-    
+
     # Create cache directory if needed
     mkdir -p "$(dirname "$setup_check_file")"
-    
+
     # Run checks
     _check_theme_health
-    
+
     # Record that we ran checks today
     echo "$today" > "$setup_check_file"
 }
@@ -305,6 +305,9 @@ alias ls='ls -G'
 alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
+
+# Safe file deletion - use trash instead of rm
+alias rm='trash'
 
 # Standard grep with color support
 alias grep='grep --color=auto'
@@ -409,6 +412,10 @@ function pcp() {
 # AI Tools Integration
 # =============================================================================
 
+# Ollama Cloud API Key (for cloud models like deepseek-v3.1:671b-cloud)
+# Get your API key from: https://ollama.com/settings/keys
+# export OLLAMA_API_KEY="your-api-key-here"
+
 # Source LLM tools configuration
 if [[ -f "$HOME/dotfiles/zsh/llm-tools.zsh" ]]; then
     source "$HOME/dotfiles/zsh/llm-tools.zsh"
@@ -435,21 +442,21 @@ function env-debug() {
 function env-sync() {
     echo "🔄 Syncing shell environment with system (launchctl)..."
     local synced=0
-    
+
     # Key environment variables to sync
     local vars=("GITHUB_TOKEN" "OPENAI_API_KEY" "ANTHROPIC_API_KEY" "BRAVE_API_KEY" "OLLAMA_API_KEY" "DEEPSEEK_API_KEY" "GLM_API_KEY" "KIMI_API_KEY")
-    
+
     for var in "${vars[@]}"; do
         local system_val=$(launchctl getenv "$var" 2>/dev/null || echo "")
         local shell_val=$(printenv "$var" 2>/dev/null || echo "")
-        
+
         if [[ -n "$system_val" && "$system_val" != "$shell_val" ]]; then
             export "$var"="$system_val"
             echo "✓ Synced $var"
             ((synced++))
         fi
     done
-    
+
     if [[ $synced -eq 0 ]]; then
         echo "✅ No sync needed - all variables match"
     else
@@ -580,7 +587,7 @@ function dotstatus() {
     echo "Dotfiles Status:"
     echo "==============="
     cd ~/dotfiles
-    
+
     echo "Available packages:"
     ls -1 | grep -v README.md | while read -r package; do
         if [[ -d "$package" ]]; then
@@ -592,7 +599,7 @@ function dotstatus() {
                     break
                 fi
             done < <(find "$HOME" -maxdepth 2 -type l 2>/dev/null)
-            
+
             if [[ "$stowed" == "true" ]]; then
                 echo "  ✓ $package (stowed)"
             else
@@ -879,7 +886,7 @@ gh() {
     # Parse --repo flag to get target repository
     local target_repo=""
     local args=("$@")
-    
+
     # Look for --repo flag
     for ((i=3; i<=${#args[@]}; i++)); do
       if [[ "${args[i]}" == "--repo" && $((i+1)) -le ${#args[@]} ]]; then
@@ -890,35 +897,35 @@ gh() {
         break
       fi
     done
-    
+
     # If no --repo flag, use current repository context
     if [[ -z "$target_repo" ]]; then
       target_repo=$(command gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "unknown")
     fi
-    
+
     # Extract owner from repo (e.g., "Cloud-Kinetix/bmad-enhanced" → "Cloud-Kinetix")
     local repo_owner=$(echo "$target_repo" | cut -d'/' -f1)
-    
+
     # Define allowed organizations/users
     local allowed_owners=("Cloud-Kinetix" "smian0")
-    
+
     if [[ "$target_repo" == "unknown" ]]; then
       echo "❌ BLOCKED: Cannot determine target repository!"
       echo "Please run from within a git repository or use --repo flag"
       echo "If this is intentional, use: command gh issue create ..."
       return 1
     fi
-    
+
     if [[ ! " ${allowed_owners[@]} " =~ " ${repo_owner} " ]]; then
       echo "❌ BLOCKED: Cannot create issues in third-party repository!"
       echo "Target repo: $target_repo"
-      echo "Owner: $repo_owner"  
+      echo "Owner: $repo_owner"
       echo "Allowed owners: ${allowed_owners[*]}"
       echo ""
       echo "If this is intentional, use: command gh issue create ..."
       return 1
     fi
-    
+
     echo "✅ Safe repository: $target_repo"
     command gh "$@"
   else
