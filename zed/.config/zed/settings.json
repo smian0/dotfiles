@@ -8,9 +8,9 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
   "agent_servers": {
-    "your_agent": {
-      "command": "path_to_executable",
-      "args": [],
+    "Goose": {
+      "command": "goose",
+      "args": ["acp"],
       "env": {}
     }
   },
@@ -22,12 +22,23 @@
     "openai_compatible": {
       // Using Together AI as an example
       "Ollama Turbo": {
-        "api_url": "http://localhost:3304/v1",
+        "api_url": "http://localhost:11434/v1",
         "available_models": [
           {
-            "name": "deepseek-v3.1:671b",
-            "display_name": "Deepseek Ollama Turbo",
-            "max_tokens": 128000,
+            "name": "deepseek-v3.1:671b-cloud",
+            "display_name": "Deepseek Ollama Turbo (No Tools)",
+            "max_tokens": 256000,
+            "capabilities": {
+              "tools": false,
+              "images": false,
+              "parallel_tool_calls": false,
+              "prompt_cache_key": false
+            }
+          },
+          {
+            "name": "deepseek-v3.1-tools",
+            "display_name": "DeepSeek V3.1 Tools (Custom)",
+            "max_tokens": 256000,
             "capabilities": {
               "tools": true,
               "images": false,
@@ -36,7 +47,7 @@
             }
           },
           {
-            "name": "qwen3-coder:480b",
+            "name": "qwen3-coder:480b-cloud",
             "display_name": "Qwen3 Coder Turbo",
             "max_tokens": 128000,
             "capabilities": {
@@ -50,34 +61,58 @@
       }
     },
     "ollama": {
-      "api_url": "http://localhost:3305",
+      "api_url": "https://ollama.com",
       "available_models": [
         {
-          "name": "deepseek-v3.1:671b",
-          "display_name": "DeepSeek V3.1 671B (Turbo)",
+          "name": "deepseek-v3.1:671b-cloud",
+          "display_name": "deepseek-v3.1:671b-cloud (Turbo - No Tools)",
           "max_tokens": 128000,
+          "max_output_tokens": 8192,
           "keep_alive": "120s",
-          "supports_tools": true,
-          "supports_thinking": false,
+          "supports_tools": false,
+          "supports_thinking": true,
+          "supports_images": true,
           "capabilities": {
-            "tools": true,
-            "images": false,
+            "tools": false,
+            "images": true,
             "parallel_tool_calls": false,
             "prompt_cache_key": false
           }
         },
         {
-          "name": "gpt-oss:120b",
-          "display_name": "GPT OSS 120B (Turbo)",
+          "name": "deepseek-v3.1-tools",
+          "display_name": "DeepSeek V3.1 Tools (Custom)",
           "max_tokens": 128000,
+          "max_output_tokens": 8192,
           "keep_alive": "120s",
           "supports_tools": true,
-          "supports_thinking": true
+          "supports_thinking": false,
+          "supports_images": true,
+          "capabilities": {
+            "tools": true,
+            "images": true,
+            "parallel_tool_calls": false,
+            "prompt_cache_key": false
+          }
         },
         {
-          "name": "qwen3-coder:480b",
-          "display_name": "Qwen3 Coder Turbo",
-          "max_tokens": 128000,
+          "name": "kimi-k2:1t-cloud",
+          "display_name": "kimi-k2:1t-cloud (Turbo)",
+          "max_tokens": 256000,
+          "keep_alive": "120s",
+          "supports_tools": true,
+          "supports_thinking": false,
+          "capabilities": {
+            "tools": false,
+            "images": false,
+            "parallel_tool_calls": true,
+            "prompt_cache_key": false
+          }
+        },
+        {
+          "name": "qwen3-coder:480b-cloud",
+          "display_name": "qwen3-coder:480b-cloud (Turbo)",
+          "max_tokens": 256000,
           "supports_tools": true,
           "supports_thinking": false,
           "capabilities": {
@@ -98,8 +133,8 @@
     "single_file_review": true,
     "always_allow_tool_actions": true,
     "default_model": {
-      "provider": "ollama",
-      "model": "gpt-oss:120b"
+      "provider": "Ollama Turbo",
+      "model": "deepseek-v3.1:671b-cloud"
     }
   },
   "minimap": {
