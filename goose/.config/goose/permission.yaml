@@ -1,0 +1,23 @@
+user:
+  always_allow:
+  - fetch__fetch
+  - platform__manage_extensions
+  - memory__remember_memory
+  - memory__remove_memory_category
+  - memory__retrieve_memories
+  - developer__text_editor
+  - developer__shell
+  - computercontroller__automation_script
+  ask_before:
+  - memory__remove_specific_memory
+  never_allow: []
+smart_approve:
+  always_allow: []
+  ask_before:
+  - fetch__fetch
+  - platform__manage_extensions
+  - memory__remember_memory
+  - developer__text_editor
+  - developer__shell
+  - computercontroller__automation_script
+  never_allow: []

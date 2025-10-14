@@ -1,0 +1,6 @@
+README\.md
+^/\.config/goose/logs
+^/\.config/goose/memory
+^/\.config/goose/mcp-hermit
+^/\.config/goose/recipes
+^/\.config/goose/.*\.bak.*

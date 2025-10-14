@@ -1,0 +1,90 @@
+GOOSE_MODEL: kimi-k2:1t-cloud
+CUSTOM_PROVIDER_BASE_URL: junk:3305
+GOOSE_PROVIDER: ollama
+claude-code_configured: true
+GOOSE_MODE: auto
+OLLAMA_TIMEOUT: '600'
+OLLAMA_HOST: http://localhost:11434
+extensions:
+  memory:
+    enabled: true
+    type: builtin
+    name: memory
+    display_name: Memory
+    description: null
+    timeout: 300
+    bundled: true
+    available_tools: []
+  fetch:
+    enabled: true
+    type: stdio
+    name: Fetch
+    cmd: uvx
+    args:
+    - mcp-server-fetch
+    envs: {}
+    env_keys: []
+    timeout: null
+    description: Web content fetching and processing capabilities
+    bundled: null
+    available_tools: []
+  computercontroller:
+    enabled: true
+    type: builtin
+    name: computercontroller
+    display_name: Computer Controller
+    description: null
+    timeout: 300
+    bundled: true
+    available_tools: []
+  jetbrains:
+    enabled: false
+    type: builtin
+    name: jetbrains
+    display_name: Jetbrains
+    description: null
+    timeout: 300
+    bundled: true
+    available_tools: []
+  developer:
+    enabled: true
+    type: builtin
+    name: developer
+    display_name: Developer
+    description: null
+    timeout: 300
+    bundled: true
+    available_tools: []
+  autovisualiser:
+    enabled: true
+    type: builtin
+    name: autovisualiser
+    display_name: Auto Visualiser
+    description: null
+    timeout: 300
+    bundled: true
+    available_tools: []
+  tutorial:
+    enabled: false
+    type: builtin
+    name: tutorial
+    display_name: Tutorial
+    description: null
+    timeout: 300
+    bundled: true
+    available_tools: []
+  streamablemcpserver:
+    enabled: true
+    type: streamable_http
+    name: streamablemcpserver
+    uri: http://127.0.0.1:12306/mcp
+    envs: {}
+    env_keys: []
+    headers: {}
+    description: chrome mcp
+    timeout: 300
+    bundled: null
+    available_tools: []
+GOOSE_ENABLE_ROUTER: 'false'
+CLAUDE_CODE_COMMAND: claude
+OPENAI_BASE_PATH: v1/chat/completions
