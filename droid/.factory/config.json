@@ -1,0 +1,35 @@
+{
+  "custom_models": [
+    {
+      "model_display_name": "qwen3-coder [Online] - 262K Context",
+      "model": "qwen3-coder:480b-cloud",
+      "base_url": "http://localhost:11434/v1/",
+      "api_key": "not-needed",
+      "provider": "generic-chat-completion-api",
+      "max_tokens": 262144
+    },
+    {
+      "model_display_name": "Kimi K2 [Online] - 256K Context",
+      "model": "kimi-k2:1t-cloud",
+      "base_url": "http://localhost:11434/v1/",
+      "api_key": "not-needed",
+      "provider": "generic-chat-completion-api",
+      "max_tokens": 262144
+    },
+    {
+      "model_display_name": "DeepSeek v3.1 [Online] - 163K Context",
+      "model": "deepseek-v3.1:671b-cloud",
+      "base_url": "http://localhost:11434/v1/",
+      "api_key": "not-needed",
+      "provider": "generic-chat-completion-api",
+      "max_tokens": 163840
+    },
+    {
+      "model_display_name": "GLM 4.6 Coding Plan [Anthropic]",
+      "model": "glm-4.6",
+      "base_url": "https://api.z.ai/api/anthropic",
+      "api_key": "a24f09170ffc4a16958a9986c475561b.MWYL7fnGDHQesuuR",
+      "provider": "anthropic"
+    }
+  ]
+}
