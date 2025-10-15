@@ -129,6 +129,25 @@ Only suggest Claude Code restart when:
 - Adding/removing MCP servers (not modifying existing ones)
 - MCP server fails to start initially
 
+## Sub-Agent Development Workflow
+
+**When the user requests to create or edit a Claude Code sub-agent:**
+
+**ALWAYS consult `~/.claude/agents/meta/meta-sub-agent.md` for the authoritative guide on:**
+- Proper sub-agent frontmatter structure (name, description, tools, model, color)
+- Available tools and when to use them
+- Writing effective delegation descriptions
+- System prompt best practices
+- Advanced features (hooks, output styles, background tasks)
+
+**Quick Reference:**
+- Use `@meta-sub-agent` to delegate sub-agent creation
+- Follow the documented output format exactly
+- Select minimal required tools from available core tools
+- Write action-oriented descriptions for automatic delegation
+
+**Location:** `~/.claude/agents/meta/meta-sub-agent.md`
+
 ## Cross-References
 
 ### In README.md
@@ -270,3 +289,25 @@ If README deleted/corrupted:
 
 ---
 *Remember: README = What (users), CLAUDE = How (AI)*
+
+# ===================================================
+# SuperClaude Framework Components
+# ===================================================
+
+# Core Framework
+@PRINCIPLES.md
+@RESEARCH_CONFIG.md
+@RULES.md
+
+# Behavioral Modes
+@MODE_Brainstorming.md
+@MODE_Business_Panel.md
+@MODE_DeepResearch.md
+@MODE_Introspection.md
+@MODE_Orchestration.md
+@MODE_Task_Management.md
+@MODE_Token_Efficiency.md
+
+# MCP Documentation
+@MCP_Context7.md
+@MCP_Serena.md
