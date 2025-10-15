@@ -182,6 +182,154 @@ Prioritize understanding root causes and real end-user scenarios:
 - **Debug root causes** - Investigate why something fails instead of mocking around problems
 - **End-to-end validation** - Test entire workflows, not just isolated components
 
+### Clean Code & Self-Documentation
+
+**Core Principle: Code should explain itself through clarity, not comments.**
+
+#### Self-Documenting Code First
+- Use descriptive names: `calculate_monthly_payment(principal, rate, months)` not `calc(p, r, m)`
+- Structure reveals intent: Small, focused functions with clear purposes
+- Type hints over type documentation: Use language-native annotations
+- Named constants over magic numbers: `MAX_RETRIES = 3` not `3` with a comment
+
+#### Minimal, Purposeful Comments
+**Only comment when code cannot be made clearer.**
+
+Use comments ONLY for:
+- Non-obvious business logic or domain rules
+- Complex algorithms that need explanation
+- "Why" decisions were made (not "what" the code does)
+- Workarounds or edge cases that aren't apparent
+
+**Never comment:**
+- What the code obviously does
+- Type information (use type hints)
+- Function entry/exit
+- Variable assignments that are self-explanatory
+
+#### Lean Docstrings
+**Skip redundant descriptions. Document the non-obvious.**
+
+Good docstrings:
+- Brief purpose statement for public APIs
+- Unexpected behavior or side effects
+- Important constraints or requirements
+- When to use vs alternatives
+
+Skip:
+- Obvious parameter descriptions
+- Return types already in type hints
+- Restating the function name in prose
+- Generic filler text
+
+#### Strategic Logging
+**Log meaningful events, not execution traces.**
+
+Good logging:
+- State changes: "User authentication failed: invalid token"
+- Important decisions: "Falling back to cache, API unavailable"
+- Errors with context: "Failed to parse config: missing required field 'api_key'"
+
+Avoid:
+- Function entry/exit logs
+- Debug breadcrumbs in production code
+- Logging every variable value
+- Redundant success messages
+
+#### Code Structure Over Comments
+**If you need comments to explain code sections, refactor instead.**
+
+Bad:
+```python
+# Calculate the total with tax
+subtotal = sum(item.price for item in cart)
+tax_rate = 0.08
+tax = subtotal * tax_rate
+total = subtotal + tax
+```
+
+Good:
+```python
+def calculate_total_with_tax(cart, tax_rate=0.08):
+    subtotal = sum(item.price for item in cart)
+    return subtotal * (1 + tax_rate)
+```
+
+#### Examples
+
+**❌ Over-Commented Verbose Code:**
+```python
+def process_user(user_id):
+    """
+    Process a user by their ID.
+
+    Args:
+        user_id (int): The ID of the user to process
+
+    Returns:
+        dict: A dictionary containing the processed user data
+    """
+    # Log that we're starting to process the user
+    logger.debug(f"Starting to process user {user_id}")
+
+    # Get the user from the database
+    user = db.get_user(user_id)
+
+    # Check if user exists
+    if not user:
+        # Log error if user not found
+        logger.error(f"User {user_id} not found")
+        return None
+
+    # Process the user data
+    processed = {
+        'name': user.name,  # Get user name
+        'email': user.email,  # Get user email
+        'active': True  # Set active status
+    }
+
+    # Log success
+    logger.debug(f"Successfully processed user {user_id}")
+
+    # Return the processed data
+    return processed
+```
+
+**✅ Clean Self-Documenting Code:**
+```python
+def process_user(user_id: int) -> dict | None:
+    user = db.get_user(user_id)
+
+    if not user:
+        logger.warning(f"User {user_id} not found")
+        return None
+
+    return {
+        'name': user.name,
+        'email': user.email,
+        'active': True
+    }
+```
+
+**When Comments ARE Appropriate:**
+```python
+def calculate_compound_interest(principal: float, rate: float, years: int) -> float:
+    # Using continuous compounding formula: A = Pe^(rt)
+    # More accurate for high-frequency compounding than discrete formula
+    return principal * math.exp(rate * years)
+
+def retry_with_backoff(func, max_attempts: int = 3):
+    # Exponential backoff prevents thundering herd problem
+    # when multiple clients retry failed requests simultaneously
+    for attempt in range(max_attempts):
+        try:
+            return func()
+        except TransientError:
+            wait_time = 2 ** attempt
+            time.sleep(wait_time)
+    raise MaxRetriesExceeded()
+```
+
 ## README Quality Standards
 
 ### Universal Structure
