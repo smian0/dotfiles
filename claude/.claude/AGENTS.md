@@ -84,17 +84,17 @@ bash ~/dotfiles/scripts/verify-*-stow.sh
 ### Hot-Reload Instead of Restart
 When working with MCP (Model Context Protocol) server code:
 
-**NEVER suggest restarting Claude Code** for MCP server changes.
+**NEVER suggest restarting the IDE** for MCP server changes.
 
-**ALWAYS use the `restart_server` tool instead:**
+**ALWAYS use the `restart_server` tool instead (if available):**
 1. Make code changes to MCP server files
 2. Call the `restart_server` tool (automatically available when using reloaderoo)
-3. Test changes immediately - no Claude Code restart needed
+3. Test changes immediately - no IDE restart needed
 
 ### Auto-Restart Configuration (CRITICAL)
 **IMPORTANT: When an MCP server is configured with `MCPDEV_PROXY_AUTO_RESTART: "true"` in the `.mcp.json` file:**
 
-**DO NOT suggest ANY restart actions - neither Claude Code restart nor manual `restart_server` tool calls.**
+**DO NOT suggest ANY restart actions - neither IDE restart nor manual `restart_server` tool calls.**
 
 **The server automatically restarts when source files change. You should:**
 1. **Acknowledge that changes are saved** and the server will auto-reload
@@ -115,38 +115,56 @@ Watch for these patterns that indicate MCP server development:
 
 ### Development Commands
 ```bash
-# Instead of: "Restart Claude Code to pick up changes"
+# Instead of: "Restart IDE to pick up changes"
 # Use: "Call restart_server tool to reload MCP server"
 
-# Setup pattern in .mcp.json:
+# Setup pattern in .mcp.json (or IDE-specific config):
 "command": "npx",
 "args": ["reloaderoo", "proxy", "--", "python3", "server.py"]
 ```
 
 ### Exceptions
-Only suggest Claude Code restart when:
-- Changing `.mcp.json` configuration file itself
+Only suggest IDE restart when:
+- Changing MCP configuration file itself (e.g., `.mcp.json`, `mcp_settings.json`)
 - Adding/removing MCP servers (not modifying existing ones)
 - MCP server fails to start initially
 
-## Sub-Agent Development Workflow
+## AI Agent Development Workflow
 
-**When the user requests to create or edit a Claude Code sub-agent:**
+**When the user requests to create or edit AI assistant agents/personas:**
 
-**ALWAYS consult `~/.claude/agents/meta/meta-sub-agent.md` for the authoritative guide on:**
-- Proper sub-agent frontmatter structure (name, description, tools, model, color)
+**If using Claude Code:** Consult `~/.claude/agents/meta/meta-sub-agent.md` for the authoritative guide on:
+- Proper agent frontmatter structure (name, description, tools, model, color)
 - Available tools and when to use them
 - Writing effective delegation descriptions
 - System prompt best practices
 - Advanced features (hooks, output styles, background tasks)
 
-**Quick Reference:**
-- Use `@meta-sub-agent` to delegate sub-agent creation
-- Follow the documented output format exactly
-- Select minimal required tools from available core tools
-- Write action-oriented descriptions for automatic delegation
+**For other IDEs (Cursor, etc.):** Adapt the following principles:
+- Define clear agent purpose and capabilities
+- Specify available tools/functions for the agent
+- Write concise, action-oriented descriptions
+- Follow IDE-specific agent configuration formats
 
-**Location:** `~/.claude/agents/meta/meta-sub-agent.md`
+**IDE-Specific Configuration Locations:**
+- **Claude Code:** `~/.claude/agents/` or project `.claude/agents/`
+- **Cursor:** `.cursorrules` or `.cursor/agents/`
+- **Other IDEs:** Consult IDE-specific documentation for agent configuration
+
+### Available Cloud Models for Agents
+
+Ollama cloud models available at `http://localhost:11434` or `http://localhost:11434/v1`.
+
+| Model ID | Context | Tok/s | Best For | Tools | Notes |
+|----------|---------|-------|----------|-------|-------|
+| `gpt-oss:120b-cloud` | 128K | **174** | General purpose, research, high-throughput | ✅ | Fastest, most verbose |
+| `deepseek-v3.1:671b-cloud` | 160K | **56** | Reasoning, analysis, balanced tasks | ✅ | Hybrid thinking mode |
+| `qwen3-coder:480b-cloud` | 256K | **39** | Code generation, software engineering | ✅ | Best for coding |
+| `glm-4.6:cloud` | 198K | **25** | Autonomous agents, search, structured output | ✅ | Requires `ollama pull` first |
+| `kimi-k2:1t-cloud` | 256K | **15** | Frontend dev, UI tasks, concise responses | ❓ | Slowest, 1T MoE |
+| `qwen3-vl:235b-cloud` | 125K | N/A | Vision, OCR, GUI, multimodal | ✅ | Images/video, 32-lang OCR |
+
+**Usage:** Free under preview caps • Requires Ollama v0.12+ • Performance varies by system load
 
 ## Cross-References
 
@@ -399,11 +417,11 @@ Focus on: What it configures, prerequisites, effects
 
 ## Web Research Policy
 
-**IMPORTANT: Delegate web research to @web-researcher agent instead of using WebSearch/WebFetch directly**
+**IMPORTANT: Delegate complex web research to specialized research agents/tools instead of using basic web search directly**
 
-### When to Use @web-researcher Agent
+### When to Use Specialized Research Agents
 
-Use `@web-researcher` for:
+Use research agents/delegation (e.g., `@web-researcher` in Claude Code) for:
 - ✅ Documentation lookup requiring multiple sources
 - ✅ Comprehensive research on any topic
 - ✅ Comparing tools, frameworks, or approaches
@@ -411,21 +429,26 @@ Use `@web-researcher` for:
 - ✅ Investigating best practices or recent developments
 - ✅ Any research requiring 3+ sources or deep analysis
 
-### When Direct WebSearch/WebFetch Is OK
+### When Direct Web Search Is OK
 
-Use WebSearch/WebFetch directly ONLY for:
+Use basic web search tools directly ONLY for:
 - Single fact verification (e.g., "What's the current Fed Funds rate?")
 - Quick URL validation (checking if a link works)
 - Immediate simple queries during active work
 
-### Benefits of Delegating to @web-researcher
+### Benefits of Delegating Research
 
-- **Research rigor**: Adversarial search, source diversity, primary source tracing
-- **Context preservation**: Returns concise summaries (2-5K tokens) instead of raw content
+- **Research rigor**: Multiple sources, adversarial search, source diversity
+- **Context preservation**: Returns concise summaries instead of raw content
 - **Quality assessment**: Evaluates source credibility and recency
 - **Structured output**: Clear sections, bullet points, source URLs
 
-**Rule of thumb**: Use `@web-researcher` for comprehensive research. Use direct tools for quick single-fact lookups.
+**Rule of thumb**: Use specialized research agents for comprehensive research. Use direct web search tools for quick single-fact lookups.
+
+**IDE-Specific Research Capabilities:**
+- **Claude Code:** `@web-researcher` agent with WebSearch/WebFetch tools
+- **Cursor:** Web search via Composer or custom agents
+- **Other IDEs:** Consult documentation for research/web search capabilities
 
 ## Emergency Recovery
 
