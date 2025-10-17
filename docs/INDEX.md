@@ -82,13 +82,22 @@ This repository contains comprehensive documentation covering all aspects of set
 ### 🔷 Specialized Guides
 
 #### [🤖 Claude Configuration](CLAUDE.md)
-**Purpose**: AI integration setup and usage  
-**Audience**: AI developers, Claude Code users  
+**Purpose**: AI integration setup and usage
+**Audience**: AI developers, Claude Code users
 **Contents**:
 - Multi-level configuration system
 - Profile management
 - Project-specific settings
 - Command and agent creation
+
+#### [📊 MLflow Tracing](MLFLOW_TRACING.md)
+**Purpose**: Claude Code interaction tracing and analytics
+**Audience**: AI developers, data scientists
+**Contents**:
+- MLflow tracing setup for Claude Code
+- UI configuration and usage
+- Privacy considerations
+- Trace analysis and troubleshooting
 
 #### [🔐 Security Guide](SECURITY.md)
 **Purpose**: Security best practices and implementation  

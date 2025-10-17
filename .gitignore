@@ -152,3 +152,7 @@ claude/.claude/hooks/PostToolUse/logs
 
 # Trading analysis outputs
 .claude/analysis/
+
+# MLflow tracing
+mlflow.db
+mlruns/
