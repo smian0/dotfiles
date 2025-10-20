@@ -1,0 +1,510 @@
+---
+name: research
+description: Comprehensive multi-source research with parallel discovery, fact-checking validation, deep analysis, and polished synthesis. Use when the user needs thorough investigation of complex topics requiring multiple perspectives, source validation, and professional reporting. Automatically determines research angles and delegates to specialist agents.
+---
+
+# Research Skill
+
+Conducts rigorous multi-phase research using specialist agent delegation. This skill orchestrates a complete research workflow from discovery through final report synthesis.
+
+## When to Use This Skill
+
+Trigger this skill when the user needs:
+- Comprehensive research requiring 10+ quality sources
+- Multiple perspectives or research angles on a complex topic
+- Fact-checking and source validation
+- Analysis of patterns and causal relationships
+- Professional report with executive summary
+
+**Example triggers:**
+- "Research the impact of X comprehensively"
+- "I need deep analysis on Y with multiple sources"
+- "Investigate Z thoroughly and create a report"
+- "Do comprehensive research on [topic]"
+
+## Workflow Overview
+
+The skill follows a 4-phase workflow:
+
+1. **Discovery (Parallel)**: Spawn multiple research agents exploring different angles
+2. **Validation**: Fact-checker validates sources and identifies contradictions
+3. **Analysis**: Deep analysis identifies patterns, causal chains, insights
+4. **Synthesis**: Report-synthesizer creates polished deliverables
+
+## Step-by-Step Process
+
+### Step 0: Get Current Date/Time
+
+**CRITICAL FIRST STEP**: Before starting any research, get the current date and time:
+
+```bash
+date "+%Y-%m-%d %H:%M:%S %Z"
+```
+
+Use this timestamp for:
+- All file headers and metadata
+- Ensuring searches are time-appropriate (don't search for future data)
+- Including "as of [DATE]" context in findings
+- Timestamping all reports and outputs
+
+### Step 1: Parse Research Question & Determine Angles
+
+Analyze the research question to identify:
+- Primary research question
+- Key dimensions or perspectives to explore
+- Appropriate depth level (default: deep)
+- Number of parallel streams (default: 4, range: 3-5)
+
+**Example angle breakdown for "Why is crypto suffering?":**
+- Stream 1: Market analysis & price trends
+- Stream 2: Regulatory & policy impact
+- Stream 3: Economic & macro factors
+- Stream 4: Industry events & technology
+
+### Step 2: Initialize Research Workspace
+
+Create organized directory structure:
+
+```bash
+mkdir -p ./research-output/{progress,sources,analysis,report}
+```
+
+Create coordinator status file at `./research-output/progress/coordinator-status.md`:
+
+```markdown
+---
+research_question: "[question]"
+streams: [N]
+depth: [level]
+started: [timestamp]
+status: discovery_phase
+---
+
+## Research Angles (Parallel Streams)
+
+### Stream 1: [Angle 1]
+- Focus: [specific focus]
+- Status: Initializing
+- Output: sources/stream-1-sources-YYYY-MM-DD.md
+
+[Repeat for each stream]
+
+## Phase Status
+- [ ] Phase 0: Initialization
+- [ ] Phase 1: Discovery (parallel)
+- [ ] Phase 2: Validation
+- [ ] Phase 3: Analysis
+- [ ] Phase 4: Synthesis
+```
+
+### Step 3: Phase 1 - Parallel Discovery
+
+Spawn multiple web-researcher agents in parallel using the Task tool:
+
+```python
+# For each research angle, spawn a web-researcher agent
+# Use PARALLEL execution - call all Task tools in single message
+
+Task(
+    subagent_type="web-researcher",
+    description="Stream 1: [Angle description]",
+    prompt="""
+Research [specific angle] for the question: [research_question]
+
+## Your Research Focus
+[Detailed description of what this stream should investigate]
+
+## Key Areas to Cover
+- [Specific area 1]
+- [Specific area 2]
+- [Specific area 3]
+
+## Deliverables Required
+1. **10-20 quality sources** with:
+   - Source name and URL
+   - Credibility assessment (A/B/C tier)
+   - Key findings summary
+   - Specific data points with dates
+
+2. **Source diversity**:
+   - Primary sources (government, official data, on-chain)
+   - Secondary sources (established media, research firms)
+   - Geographic diversity where applicable
+
+3. **Structured output** at ./research-output/sources/stream-[N]-sources-YYYY-MM-DD.md:
+```markdown
+# Stream [N]: [Angle Name]
+**Date**: [Current date from Step 0]
+**Research Period**: [Date range of sources examined]
+
+## Executive Summary
+[3-5 bullet points of key findings]
+
+## Key Sources
+
+### [Source 1 Name]
+- **Type**: Primary/Secondary/Tertiary
+- **URL**: [link]
+- **Credibility**: A/B/C tier
+- **Key Findings**:
+  - [Finding with specific data]
+  - [Finding with dates]
+- **Relevant Quotes**: [If applicable]
+
+[Repeat for 10-20 sources]
+
+## Additional Context
+[Background information, trends, patterns observed]
+```
+
+Research rigorously using:
+- Multiple search queries with different angles
+- Adversarial search (test contrary perspectives)
+- Source diversity (not just top results)
+- Primary source prioritization
+- Date verification for current events
+"""
+)
+
+# Repeat for streams 2, 3, 4, etc.
+# CRITICAL: Call all Task tools in SINGLE message for parallel execution
+```
+
+**After spawning all agents:** Monitor progress and wait for all streams to complete.
+
+### Step 4: Phase 2 - Validation
+
+Once all discovery streams complete, delegate to fact-checker agent:
+
+```python
+Task(
+    subagent_type="fact-checker",
+    description="Validate crypto research sources",
+    prompt="""
+Validate all sources collected across [N] research streams.
+
+## Source Files to Validate
+- ./research-output/sources/stream-1-sources-[YYYY-MM-DD].md
+- ./research-output/sources/stream-2-sources-[YYYY-MM-DD].md
+- ./research-output/sources/stream-3-sources-[YYYY-MM-DD].md
+- [Add all stream files with today's date]
+
+## Validation Tasks
+
+1. **Cross-Reference Claims**: Check if key claims are corroborated across multiple streams
+2. **Source Credibility**: Assess reliability (official docs, reputable news, etc.)
+3. **Recency Verification**: Confirm dates and ensure information is current
+4. **Contradiction Detection**: Identify conflicting information between sources
+5. **Critical Data Validation**: Verify specific data points, statistics, dates
+
+## Output Format
+
+Create: ./research-output/sources/validated-sources-YYYY-MM-DD.md
+
+Structure:
+```markdown
+# Validated Sources - [Research Topic]
+**Validation Date**: [Current date]
+**Source Period**: [Date range of sources validated]
+
+## Executive Summary
+- Total sources reviewed: X
+- High credibility (A-tier): X
+- Medium credibility (B-tier): X
+- Low credibility (C-tier): X
+- Contradictions found: X
+- Critical findings validated: X
+
+## Source Credibility Tiers
+
+### A-Tier: High Credibility
+[List sources with official status, multiple corroborations]
+
+### B-Tier: Medium Credibility
+[List sources with single corroboration or reputable but unverified]
+
+### C-Tier: Low Credibility / Needs Review
+[List sources with conflicts or unverified claims]
+
+## Cross-Stream Validation
+
+### Consensus Findings
+[Claims validated across 3+ streams]
+
+### Contradictions & Conflicts
+[Areas where sources disagree with resolution recommendations]
+
+## Critical Data Points Verified
+[List key facts with validation status and confidence levels]
+
+## Red Flags / Areas Needing Human Review
+[List concerning discrepancies or unverifiable claims]
+
+## Recommendations for Analysis Phase
+[Guidance on which sources to prioritize]
+```
+
+Provide thorough validation with confidence levels and specific source citations.
+"""
+)
+```
+
+### Step 5: Phase 3 - Analysis
+
+Delegate to deep-research-agent for comprehensive analysis:
+
+```python
+Task(
+    subagent_type="deep-research-agent",
+    description="Analyze research findings",
+    prompt="""
+Conduct deep analysis of comprehensive research on: [research_question]
+
+## Input Materials
+
+Read and analyze:
+1. **Validated Sources**: ./research-output/sources/validated-sources-[YYYY-MM-DD].md
+2. **Stream 1**: ./research-output/sources/stream-1-sources-[YYYY-MM-DD].md
+3. **Stream 2**: ./research-output/sources/stream-2-sources-[YYYY-MM-DD].md
+4. **Stream 3**: ./research-output/sources/stream-3-sources-[YYYY-MM-DD].md
+[Add all streams with today's date]
+
+## Analysis Framework
+
+### 1. Root Cause Analysis
+Identify and rank primary, secondary, tertiary causes with confidence levels
+
+### 2. Pattern Recognition
+Identify recurring themes across all streams:
+- Convergence points where multiple factors intersect
+- Amplification mechanisms
+- Feedback loops
+
+### 3. Causal Chain Mapping
+Trace cause-and-effect relationships with evidence grades
+
+### 4. Comparative Analysis
+Compare to historical events or analogous situations if applicable
+
+### 5. Stakeholder Impact Analysis
+Assess differential impacts across affected parties
+
+### 6. Forward-Looking Implications
+Short-term (1-3mo), medium-term (3-12mo), long-term (1-3yr) predictions
+
+## Output Structure
+
+Create: ./research-output/analysis/comprehensive-analysis-YYYY-MM-DD.md
+
+```markdown
+# Comprehensive Analysis: [Research Question]
+**Analysis Date**: [Current date]
+**Data Period**: [Date range of analyzed sources]
+
+## Executive Summary
+[3-5 key findings ranked by importance]
+
+## Root Cause Hierarchy
+- **Primary Cause (Highest Impact)**: [with evidence and confidence %]
+- **Secondary Causes**: [2-3 major factors]
+- **Tertiary Causes**: [3-5 amplifying factors]
+
+## Pattern Analysis
+[Cross-stream convergence points, amplification mechanisms, feedback loops]
+
+## Causal Chain Map
+[Visual text representation of cause → effect pathways]
+
+## Strategic Insights
+[5-7 key insights with evidence → implication → forward-looking assessment]
+
+## Unanswered Questions & Research Gaps
+[Areas requiring further investigation]
+
+## Forward-Looking Implications
+- Short-term (1-3 months): [predictions with confidence]
+- Medium-term (3-12 months): [trajectories]
+- Long-term (1-3 years): [structural changes]
+
+## Recommendations for Synthesis Phase
+- Priority themes to emphasize
+- Narrative structure suggestions
+- Key visualizations needed
+```
+
+Provide evidence-based analysis with confidence levels throughout.
+"""
+)
+```
+
+### Step 6: Phase 4 - Synthesis
+
+Delegate to report-synthesizer for final polished reports:
+
+```python
+Task(
+    subagent_type="report-synthesizer",
+    description="Synthesize final research report",
+    prompt="""
+Synthesize all research findings into comprehensive, publication-ready reports.
+
+## Research Question
+[research_question]
+
+## Input Materials
+1. **Comprehensive Analysis**: ./research-output/analysis/comprehensive-analysis-[YYYY-MM-DD].md
+2. **Validated Sources**: ./research-output/sources/validated-sources-[YYYY-MM-DD].md
+3. **All Stream Files**: ./research-output/sources/stream-*-[YYYY-MM-DD].md
+
+## Deliverables
+
+### 1. Executive Summary (./research-output/report/executive-summary-YYYY-MM-DD.md)
+**Target**: C-suite, policymakers, board members
+**Length**: 2-3 pages
+**Content**:
+- **Report metadata**: Date generated, data period covered, "as of [DATE]" context
+- Single-paragraph bottom line
+- 5 critical insights with confidence levels
+- Timeline of key events
+- Root cause breakdown (weighted)
+- Forward-looking implications (3 time horizons)
+- Stakeholder recommendations
+- Leading indicators to watch
+
+### 2. Full Report (./research-output/report/full-report-YYYY-MM-DD.md)
+**Target**: Analysts, traders, researchers
+**Length**: 15-20 pages
+**Content**:
+- **Report metadata**: Date generated, data period covered, "as of [DATE]" context
+- Complete table of contents
+- Methodology documentation
+- Detailed timeline
+- Root cause analysis with evidence grades
+- Multi-stream findings synthesis
+- Cross-stream pattern analysis
+- Stakeholder impact assessment
+- Risk scenarios with probabilities
+- Research gaps identified
+- Comprehensive appendices
+
+## Synthesis Requirements
+1. **Coherent Narrative**: Clear story from crisis → causes → implications → future
+2. **Evidence-Based**: Every claim backed by specific data
+3. **Executive-Friendly**: Non-expert readable summary
+4. **Analyst-Rigorous**: Satisfies sophisticated participants
+5. **Actionable**: Specific recommendations and leading indicators
+6. **Professional**: Clean formatting, proper tables, clear structure
+7. **Properly Attributed**: Confidence levels and source quality noted
+
+Deliver publication-ready reports suitable for wide distribution.
+"""
+)
+```
+
+### Step 7: Finalize & Present Results
+
+After synthesis completes:
+
+1. **Update coordinator status** to mark all phases complete
+2. **Present results** to user with summary:
+   - Research question answered
+   - Key findings (3-5 bullets)
+   - Overall confidence level
+   - Location of deliverables
+3. **Provide next steps** or areas for follow-up if applicable
+
+## Output Directory Structure
+
+```
+research-output/
+├── progress/
+│   └── coordinator-status.md                    # Master progress tracker
+├── sources/
+│   ├── stream-1-sources-YYYY-MM-DD.md          # Discovery stream 1
+│   ├── stream-2-sources-YYYY-MM-DD.md          # Discovery stream 2
+│   ├── stream-N-sources-YYYY-MM-DD.md          # Discovery stream N
+│   └── validated-sources-YYYY-MM-DD.md         # Fact-checked sources
+├── analysis/
+│   └── comprehensive-analysis-YYYY-MM-DD.md    # Deep analysis findings
+└── report/
+    ├── executive-summary-YYYY-MM-DD.md         # 2-3 page summary
+    └── full-report-YYYY-MM-DD.md               # 15-20 page comprehensive report
+```
+
+## Quality Standards
+
+### Minimum Requirements
+- **Sources**: 30+ quality sources across all streams (10-20 per stream)
+- **Credibility**: 80%+ A/B tier sources
+- **Validation**: All major claims cross-referenced
+- **Analysis**: Root causes identified with confidence levels
+- **Reports**: Both executive and full versions delivered
+
+### Success Metrics
+- Source diversity across streams ✅
+- Geographic/institutional diversity ✅
+- Primary source prioritization ✅
+- Temporal accuracy (dates verified) ✅
+- Calculation accuracy (math checks out) ✅
+- Clear traceability (sources → conclusions) ✅
+
+## Advanced Patterns
+
+### Adjusting Stream Count
+- **3 streams**: Simpler topics with clear dimensions
+- **4 streams**: Default for most complex topics
+- **5 streams**: Highly multifaceted topics requiring maximum coverage
+
+### Depth Levels
+- **Shallow**: 5-10 sources per stream, basic validation
+- **Medium**: 10-15 sources per stream, standard validation
+- **Deep** (default): 15-20 sources per stream, comprehensive validation
+
+### Custom Research Angles
+If user specifies particular angles to explore, use those instead of auto-determining.
+
+## Error Handling
+
+### Discovery Phase Failures
+- If a stream fails, continue with remaining streams
+- Minimum 2 successful streams required to proceed
+- Log failures in coordinator-status.md
+
+### Validation Issues
+- Flag low-confidence findings for human review
+- Escalate critical contradictions
+- Document data gaps prominently
+
+### Analysis Gaps
+- Acknowledge uncertainties explicitly
+- Note areas requiring additional research
+- Suggest follow-up questions
+
+## Integration with Other Workflows
+
+This skill can be used:
+- Standalone for ad-hoc research needs
+- Within larger workflows requiring comprehensive background research
+- As a component of decision-making processes
+- For due diligence and fact-checking initiatives
+
+## Related Skills & Agents
+
+- **web-researcher**: Used for individual research streams (Phase 1)
+- **fact-checker**: Source validation (Phase 2)
+- **deep-research-agent**: Analysis (Phase 3)
+- **report-synthesizer**: Final deliverables (Phase 4)
+
+## References
+
+See [Research Methodology Best Practices](./references/research-methodology.md) for:
+- Adversarial search techniques
+- Source credibility assessment
+- Cross-referencing strategies
+- Research rigor standards
+
+---
+
+**Last Updated**: 2025-10-17
+**Skill Type**: Level 2 (Skill with Delegation)
+**Dependencies**: web-researcher, fact-checker, deep-research-agent, report-synthesizer
