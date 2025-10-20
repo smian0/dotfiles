@@ -54,14 +54,14 @@ install_dependencies() {
         fi
         
         # Install required packages
-        brew install stow pass gnupg pinentry-mac git node
+        brew install stow pass gnupg pinentry-mac git node mosh
         
     elif [[ "$OS" == "ubuntu" ]]; then
         # Update package list
         sudo apt-get update
         
         # Install required packages
-        sudo apt-get install -y stow pass gnupg2 git curl nodejs npm
+        sudo apt-get install -y stow pass gnupg2 git curl nodejs npm mosh
         
     else
         warn "Unknown OS. Please install manually: stow, pass, gpg, git"

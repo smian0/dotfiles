@@ -56,6 +56,49 @@ Python-based MCP configuration extraction from Claude Code settings.
 ### **claude-mcp-extract.sh** (Legacy)
 Shell wrapper for Python MCP extraction script.
 
+## Network & Remote Access
+
+### **configure-mosh-firewall.sh**
+Configure macOS firewall to allow Mosh (Mobile Shell) connections.
+
+**Usage:** `./configure-mosh-firewall.sh`
+
+Features:
+- Adds mosh-server to firewall allowed applications
+- Configures incoming connections (UDP 60000-61000)
+- Reloads firewall rules
+- Verifies configuration
+
+For detailed Mosh setup and troubleshooting, see [../docs/REMOTE-ACCESS.md](../docs/REMOTE-ACCESS.md)
+
+## Chrome Automation Scripts
+
+### **launch-chrome-debug.sh**
+Launch Chrome with remote debugging enabled for automation via Chrome DevTools Protocol.
+
+**Usage:** `./launch-chrome-debug.sh [PROFILE_NAME] [DEBUG_PORT] [USER_DATA_DIR]`
+
+Features:
+- Launches Chrome with CDP enabled on specified port (default 9222)
+- Copies profile data to temporary directory
+- Configures security flags for WebSocket connections
+- Verifies successful startup and provides connection details
+
+### **perplexity-search.sh**
+Automated search on Perplexity AI using Chrome DevTools Protocol.
+
+**Usage:** `./perplexity-search.sh "search query" [debug_port]`
+
+Process:
+1. Connects to Chrome via CDP WebSocket
+2. Navigates to Perplexity.ai
+3. Fills and submits search query
+4. Extracts and displays results
+
+**Prerequisites:** Chrome with remote debugging, Python 3, websocket-client package
+
+For detailed Chrome automation documentation, see [../docs/CHROME_AUTOMATION.md](../docs/CHROME_AUTOMATION.md)
+
 ## Subdirectories
 
 ### **claude-oauth/**

@@ -89,6 +89,14 @@ install-crystal: ## Install Crystal configuration
 	@echo -e "$(GREEN)[INFO]$(NC) Installing Crystal configuration..."
 	stow crystal
 
+setup-mosh: ## Configure mosh for remote access (optional)
+	@echo -e "$(GREEN)[INFO]$(NC) Configuring mosh..."
+	./scripts/setup-mosh.sh
+
+test-mosh: ## Run mosh diagnostic tests
+	@echo -e "$(GREEN)[INFO]$(NC) Running mosh tests..."
+	./scripts/test-mosh.sh
+
 
 # Backup and restore
 backup: ## Create a backup of current configurations
