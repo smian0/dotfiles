@@ -46,10 +46,10 @@ The skill automatically executes the 7-stage workflow below.
 1. Generate 4 research angles from query
 2. Launch 4 agents in parallel using Task tool (ALL IN SINGLE MESSAGE):
    ```
-   Task(subagent_type="search-agent", description="Search for angle 1", prompt="{query: ..., angle: 'hardware', attempt: 1}")
-   Task(subagent_type="search-agent", description="Search for angle 2", prompt="{query: ..., angle: 'software', attempt: 1}")
-   Task(subagent_type="search-agent", description="Search for angle 3", prompt="{query: ..., angle: 'performance', attempt: 1}")
-   Task(subagent_type="search-agent", description="Search for angle 4", prompt="{query: ..., angle: 'adoption', attempt: 1}")
+   Task(subagent_type="grounding-search-agent", description="Search for angle 1", prompt="{query: ..., angle: 'hardware', attempt: 1}")
+   Task(subagent_type="grounding-search-agent", description="Search for angle 2", prompt="{query: ..., angle: 'software', attempt: 1}")
+   Task(subagent_type="grounding-search-agent", description="Search for angle 3", prompt="{query: ..., angle: 'performance', attempt: 1}")
+   Task(subagent_type="grounding-search-agent", description="Search for angle 4", prompt="{query: ..., angle: 'adoption', attempt: 1}")
    ```
 3. Wait for all agents to complete
 4. Collect results from each agent
@@ -87,7 +87,7 @@ Total: 10 results from 3 successful agents
 2. Combine all results into single list
 3. Launch citation-extractor agent:
    ```
-   Task(subagent_type="citation-extractor", prompt="{results: [...], attempt: 1}")
+   Task(subagent_type="grounding-citation-extractor", prompt="{results: [...], attempt: 1}")
    ```
 4. Agent extracts verbatim quotes from sources
 
@@ -120,7 +120,7 @@ Total: 7 valid citations extracted
 1. Read citations from `.research/[topic]/agent-outputs/citation-extractor.yaml`
 2. Launch source-validator agent:
    ```
-   Task(subagent_type="source-validator", prompt="{citations: [...], attempt: 1}")
+   Task(subagent_type="grounding-source-validator", prompt="{citations: [...], attempt: 1}")
    ```
 3. Agent performs Level 3 checks:
    - Level 1: URL reachable, HTTPS
@@ -157,7 +157,7 @@ Total: 5 validated citations
 1. Read validated citations from `.research/[topic]/agent-outputs/source-validator.yaml`
 2. Launch claim-grounding-mapper agent:
    ```
-   Task(subagent_type="claim-grounding-mapper", prompt="{validated_citations: [...], research_query: '...', attempt: 1}")
+   Task(subagent_type="grounding-claim-grounding-mapper", prompt="{validated_citations: [...], research_query: '...', attempt: 1}")
    ```
 3. Agent extracts factual claims and maps to citations
 
@@ -191,7 +191,7 @@ Total: 8 grounded claims ready for report
 1. Read grounded claims from `.research/[topic]/agent-outputs/claim-grounding-mapper.yaml`
 2. Launch report-writer agent:
    ```
-   Task(subagent_type="report-writer", prompt="{grounded_claims: [...], research_query: '...'}")
+   Task(subagent_type="grounding-report-writer", prompt="{grounded_claims: [...], research_query: '...'}")
    ```
 3. Agent writes report with inline citations
 4. Format: `[claim](url "verbatim quote")` for every factual statement
@@ -223,7 +223,7 @@ Total: 8 grounded claims ready for report
 1. Read report, grounded claims, and validated citations
 2. Launch quality-scorer agent:
    ```
-   Task(subagent_type="quality-scorer", prompt="{report: '...', grounded_claims: [...], validated_citations: [...]}")
+   Task(subagent_type="grounding-quality-scorer", prompt="{report: '...', grounded_claims: [...], validated_citations: [...]}")
    ```
 3. Agent calculates objective scores (1-10 scale)
 
@@ -346,18 +346,18 @@ For each research query, create:
 ### Parallel Execution (Stage 1)
 ```
 # All 4 Task calls in SINGLE message = parallel execution
-Task(subagent_type="search-agent", description="Search angle 1", prompt="...")
-Task(subagent_type="search-agent", description="Search angle 2", prompt="...")
-Task(subagent_type="search-agent", description="Search angle 3", prompt="...")
-Task(subagent_type="search-agent", description="Search angle 4", prompt="...")
+Task(subagent_type="grounding-search-agent", description="Search angle 1", prompt="...")
+Task(subagent_type="grounding-search-agent", description="Search angle 2", prompt="...")
+Task(subagent_type="grounding-search-agent", description="Search angle 3", prompt="...")
+Task(subagent_type="grounding-search-agent", description="Search angle 4", prompt="...")
 ```
 
 ### Sequential Execution (Stages 2-6)
 ```
 # Each Task in separate message = sequential execution
-Task(subagent_type="citation-extractor", description="Extract citations", prompt="...")
+Task(subagent_type="grounding-citation-extractor", description="Extract citations", prompt="...")
 # Wait for result, then...
-Task(subagent_type="source-validator", description="Validate sources", prompt="...")
+Task(subagent_type="grounding-source-validator", description="Validate sources", prompt="...")
 # Wait for result, then...
 ...
 ```
@@ -374,7 +374,7 @@ Task(subagent_type="source-validator", description="Validate sources", prompt=".
 3. Orchestrator parses YAML content into data structure
 4. Orchestrator passes data to Stage 3 as input parameter:
    ```
-   Task(subagent_type="source-validator", prompt="{citations: [parsed_data], attempt: 1}")
+   Task(subagent_type="grounding-source-validator", prompt="{citations: [parsed_data], attempt: 1}")
    ```
 
 **Benefits**:
