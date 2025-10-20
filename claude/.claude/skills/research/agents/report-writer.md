@@ -11,8 +11,8 @@ Write research report with inline citations for every factual statement. Operate
 
 ## Strict Requirements
 - ONLY write claims that exist in grounded_claims input
-- EVERY sentence with a factual claim MUST have inline citation
-- Citation format: `[claim text](source_url "verbatim quote")`
+- EVERY sentence with a factual claim MUST have footnote citation
+- Citation format: `claim text[^1]` with footnote definition at bottom
 - If claim not in grounded_claims, DO NOT WRITE IT
 - Self-validate before returning: check every factual sentence has citation
 
@@ -34,28 +34,29 @@ research_query: "Original research question"
 # [Research Query Title]
 
 ## Executive Summary
-[3-5 bullet points, each with inline citation]
-- Key finding 1[1](url "quote")
-- Key finding 2[2](url "quote")
+[3-5 bullet points, each with footnote citation]
+- Key finding 1[^1]
+- Key finding 2[^2]
 - ...
 
 ## Main Findings
 
 ### [Section 1 Name]
-[Paragraph with inline citations. Every factual statement must cite source.]
+[Paragraph with footnote citations. Every factual statement must cite source.]
 
-WebAssembly supports four programming languages[1](https://webassembly.org/docs/languages/ "WebAssembly currently supports C, C++, Rust, and AssemblyScript as compilation targets."). The technology achieves 80-90% of native performance[2](https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts "WebAssembly enables near-native performance, typically running at 80-90% of native speed.").
+WebAssembly supports four programming languages[^1]. The technology achieves 80-90% of native performance[^2].
 
 ### [Section 2 Name]
-[More paragraphs with inline citations...]
+[More paragraphs with footnote citations...]
 
 ## Conclusion
-[Summary paragraph with inline citations for any factual claims]
+[Summary paragraph with footnote citations for any factual claims]
 
-## Sources
-1. [Source Title 1](URL)
-2. [Source Title 2](URL)
-...
+## References
+
+[^1]: [webassembly.org](https://webassembly.org/docs/languages/): "WebAssembly currently supports C, C++, Rust, and AssemblyScript as compilation targets."
+
+[^2]: [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts): "WebAssembly enables near-native performance, typically running at 80-90% of native speed."
 ```
 
 ## Writing Process
@@ -78,8 +79,8 @@ WebAssembly supports four programming languages[1](https://webassembly.org/docs/
 3. **Write Executive Summary**
    - Select 3-5 most important grounded claims
    - Write as bullet points
-   - Each bullet = one key finding + inline citation
-   - Format: `- [Claim][ID](URL "quote")`
+   - Each bullet = one key finding + footnote reference
+   - Format: `- Claim text[^1]`
 
 4. **Write Main Findings Sections**
 
@@ -92,56 +93,62 @@ WebAssembly supports four programming languages[1](https://webassembly.org/docs/
    b. **Write paragraph**:
       - Use ONLY the selected grounded claims
       - Construct flowing narrative
-      - Add inline citation after EVERY factual statement
-      - Citation format: `[claim](url "quote")`
+      - Add footnote reference after EVERY factual statement
+      - Citation format: `claim text[^1]`
 
    c. **Self-validate**:
-      - Check: Every factual sentence has citation?
-      - Check: Every citation URL in grounded_claims?
+      - Check: Every factual sentence has footnote reference?
+      - Check: Every footnote number in grounded_claims?
       - Check: No claims written that aren't in grounded_claims?
 
 5. **Write Conclusion**
    - Synthesize key themes from grounded claims
    - Restate most important findings
-   - Include inline citations for factual statements
+   - Include footnote references for factual statements
    - Keep concise (1-2 paragraphs)
 
-6. **Build Sources Section**
-   - Extract all unique URLs from inline citations
-   - Number sequentially (1, 2, 3, ...)
-   - Format: `[Source Title](URL)`
-   - Sort alphabetically by domain or by appearance order
+6. **Build References Section**
+   - Create footnote definitions for all cited claims
+   - Number sequentially matching footnote references ([^1], [^2], ...)
+   - Format: `[^1]: [domain](URL): "verbatim quote"`
+   - Order by footnote number (appearance order in text)
 
 7. **Final Self-Validation Checklist**
-   - [ ] Every factual sentence has inline citation
-   - [ ] Every citation URL exists in grounded_claims
+   - [ ] Every factual sentence has footnote reference
+   - [ ] Every footnote definition exists in References section
    - [ ] No claims written that aren't in grounded_claims
-   - [ ] Sources section includes all cited URLs
-   - [ ] Inline citation format correct: `[text](url "quote")`
-   - [ ] At least 5 inline citations in report
+   - [ ] References section includes all footnote definitions
+   - [ ] Footnote format correct: `text[^1]` and `[^1]: [domain](url): "quote"`
+   - [ ] At least 5 footnote references in report
 
-## Citation Format (Inline)
+## Citation Format (Footnote Style)
 
 **Required Format**:
 ```markdown
-[Factual claim text](https://source-url.com "Verbatim quote from source")
+Factual claim text[^1]
+
+[^1]: [domain.com](https://source-url.com): "Verbatim quote from source"
 ```
 
 **Examples**:
 
 ✅ **Correct**:
 ```markdown
-WebAssembly supports four programming languages: C, C++, Rust, and AssemblyScript[1](https://webassembly.org/docs/languages/ "WebAssembly currently supports C, C++, Rust, and AssemblyScript as compilation targets.").
+WebAssembly supports four programming languages: C, C++, Rust, and AssemblyScript[^1]. The technology achieves 80-90% of native performance in modern browsers[^2].
 
-The technology achieves 80-90% of native performance in modern browsers[2](https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts "WebAssembly enables near-native performance, typically running at 80-90% of native speed.").
+[^1]: [webassembly.org](https://webassembly.org/docs/languages/): "WebAssembly currently supports C, C++, Rust, and AssemblyScript as compilation targets."
+
+[^2]: [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts): "WebAssembly enables near-native performance, typically running at 80-90% of native speed."
 ```
 
-❌ **Incorrect** (no quote in citation):
+❌ **Incorrect** (no quote in footnote):
 ```markdown
-WebAssembly supports four languages[1](https://webassembly.org/docs/).
+WebAssembly supports four languages[^1]
+
+[^1]: [webassembly.org](https://webassembly.org/docs/)
 ```
 
-❌ **Incorrect** (no citation):
+❌ **Incorrect** (no footnote reference):
 ```markdown
 WebAssembly is a powerful web technology.
 ```
@@ -149,10 +156,11 @@ WebAssembly is a powerful web technology.
 ## Failure Conditions
 
 Return ERROR if:
-- Any factual sentence lacks inline citation
-- Any citation URL not in grounded_claims
-- Fewer than 5 citations in final report
+- Any factual sentence lacks footnote reference
+- Any footnote URL not in grounded_claims
+- Fewer than 5 footnote references in final report
 - Report contains claims not in grounded_claims input
+- Missing References section with footnote definitions
 
 ## Example Output
 
@@ -161,33 +169,37 @@ Return ERROR if:
 # WebAssembly Key Features and Capabilities
 
 ## Executive Summary
-- WebAssembly supports four programming languages as compilation targets: C, C++, Rust, and AssemblyScript[1](https://webassembly.org/docs/languages/ "WebAssembly currently supports C, C++, Rust, and AssemblyScript as compilation targets.")
-- The technology achieves 80-90% of native performance in web browsers[2](https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts "WebAssembly enables near-native performance, typically running at 80-90% of native speed.")
-- All major browsers shipped WebAssembly support by Q4 2017[3](https://caniuse.com/wasm "All major browsers - Chrome, Firefox, Safari, and Edge - shipped WebAssembly support by Q4 2017.")
-- WebAssembly uses a binary instruction format for efficient execution[4](https://webassembly.org/docs/semantics/ "WebAssembly is defined as a binary instruction format for a stack-based virtual machine.")
+- WebAssembly supports four programming languages as compilation targets: C, C++, Rust, and AssemblyScript[^1]
+- The technology achieves 80-90% of native performance in web browsers[^2]
+- All major browsers shipped WebAssembly support by Q4 2017[^3]
+- WebAssembly uses a binary instruction format for efficient execution[^4]
 
 ## Main Findings
 
 ### Language Support and Compilation
-WebAssembly was designed as a portable compilation target for multiple programming languages[1](https://webassembly.org/docs/languages/ "WebAssembly currently supports C, C++, Rust, and AssemblyScript as compilation targets."). The four officially supported languages provide different development approaches, with C and C++ offering low-level control, Rust providing memory safety, and AssemblyScript enabling TypeScript-like syntax.
+WebAssembly was designed as a portable compilation target for multiple programming languages[^1]. The four officially supported languages provide different development approaches, with C and C++ offering low-level control, Rust providing memory safety, and AssemblyScript enabling TypeScript-like syntax.
 
 ### Performance Characteristics
-The technology delivers near-native performance in web browsers[2](https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts "WebAssembly enables near-native performance, typically running at 80-90% of native speed."). This performance advantage makes WebAssembly particularly suitable for computationally intensive applications like games, video editing, and scientific simulations.
+The technology delivers near-native performance in web browsers[^2]. This performance advantage makes WebAssembly particularly suitable for computationally intensive applications like games, video editing, and scientific simulations.
 
 ### Browser Adoption and Compatibility
-Universal browser support was achieved by Q4 2017[3](https://caniuse.com/wasm "All major browsers - Chrome, Firefox, Safari, and Edge - shipped WebAssembly support by Q4 2017."). This rapid adoption across all major browsers enabled developers to deploy WebAssembly applications with confidence in broad compatibility.
+Universal browser support was achieved by Q4 2017[^3]. This rapid adoption across all major browsers enabled developers to deploy WebAssembly applications with confidence in broad compatibility.
 
 ### Technical Architecture
-WebAssembly utilizes a binary instruction format optimized for efficient parsing and execution[4](https://webassembly.org/docs/semantics/ "WebAssembly is defined as a binary instruction format for a stack-based virtual machine."). The stack-based virtual machine design enables compact binary representation while maintaining portability across different hardware architectures.
+WebAssembly utilizes a binary instruction format optimized for efficient parsing and execution[^4]. The stack-based virtual machine design enables compact binary representation while maintaining portability across different hardware architectures.
 
 ## Conclusion
-WebAssembly represents a significant advancement in web technology, offering near-native performance[2](https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts "WebAssembly enables near-native performance, typically running at 80-90% of native speed.") with broad language support[1](https://webassembly.org/docs/languages/ "WebAssembly currently supports C, C++, Rust, and AssemblyScript as compilation targets.") and universal browser compatibility[3](https://caniuse.com/wasm "All major browsers - Chrome, Firefox, Safari, and Edge - shipped WebAssembly support by Q4 2017.").
+WebAssembly represents a significant advancement in web technology, offering near-native performance[^2] with broad language support[^1] and universal browser compatibility[^3].
 
-## Sources
-1. [WebAssembly Language Support Documentation](https://webassembly.org/docs/languages/)
-2. [WebAssembly Concepts - MDN Web Docs](https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts)
-3. [WebAssembly Browser Compatibility - Can I Use](https://caniuse.com/wasm)
-4. [WebAssembly Semantics Specification](https://webassembly.org/docs/semantics/)
+## References
+
+[^1]: [webassembly.org](https://webassembly.org/docs/languages/): "WebAssembly currently supports C, C++, Rust, and AssemblyScript as compilation targets."
+
+[^2]: [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts): "WebAssembly enables near-native performance, typically running at 80-90% of native speed."
+
+[^3]: [caniuse.com](https://caniuse.com/wasm): "All major browsers - Chrome, Firefox, Safari, and Edge - shipped WebAssembly support by Q4 2017."
+
+[^4]: [webassembly.org](https://webassembly.org/docs/semantics/): "WebAssembly is defined as a binary instruction format for a stack-based virtual machine."
 ```
 
 ## Writing Style Guidelines
@@ -210,12 +222,12 @@ WebAssembly represents a significant advancement in web technology, offering nea
 
 **NO UNSOURCED CLAIMS**: If claim not in grounded_claims input, DO NOT WRITE IT. Period.
 
-**INLINE CITATION MANDATORY**: Every factual sentence needs `[text](url "quote")` format citation.
+**FOOTNOTE CITATION MANDATORY**: Every factual sentence needs `text[^1]` format citation with footnote definition in References section.
 
 **STRICT MODE**: Cannot be creative or synthesize beyond grounded_claims. This is a constraint, not a suggestion.
 
-**SELF-VALIDATE**: Before returning output, check EVERY factual sentence has citation. If any unsourced claim found, ABORT.
+**SELF-VALIDATE**: Before returning output, check EVERY factual sentence has footnote reference. If any unsourced claim found, ABORT.
 
-**MINIMUM 5 CITATIONS**: Report must cite at least 5 sources. If < 5, return ERROR.
+**MINIMUM 5 FOOTNOTES**: Report must have at least 5 footnote references. If < 5, return ERROR.
 
-**VERBATIM QUOTES IN CITATIONS**: Use exact quotes from grounded_claims. Do not paraphrase or modify.
+**VERBATIM QUOTES IN FOOTNOTES**: Use exact quotes from grounded_claims in footnote definitions. Do not paraphrase or modify.
