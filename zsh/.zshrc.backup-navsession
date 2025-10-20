@@ -207,7 +207,6 @@ _check_theme_health() {
 # Plugin configuration
 plugins=(
     git
-    zoxide
     brew
     macos
     zsh-autosuggestions
@@ -550,11 +549,224 @@ function netinfo() {
 # =============================================================================
 # Navigation & Session Management
 # =============================================================================
-# Load navigation and session management tools (zoxide, sesh, custom functions)
-# Get the directory where this .zshrc is located
-ZSHRC_DIR="${${(%):-%x}:A:h}"
-if [[ -f "$ZSHRC_DIR/navigation-session.zsh" ]]; then
-    source "$ZSHRC_DIR/navigation-session.zsh"
+# Load navigation and session management tools (zoxide, sesh, ccmanager, etc.)
+if [[ -f ~/.config/zsh/navigation-session.zsh ]]; then
+    source ~/.config/zsh/navigation-session.zsh
+elif [[ -f ~/dotfiles/zsh/navigation-session.zsh ]]; then
+    source ~/dotfiles/zsh/navigation-session.zsh
+fi
+
+    # Kill session
+    alias sk='sesh kill'
+
+    # List all sessions
+    alias sl='sesh list'
+
+    # Connect to session in current directory
+    alias sc='sesh connect .'
+
+    # Create named session in current directory
+    # Usage: sn <name>
+    sn() {
+        if [[ -z "$1" ]]; then
+            echo "Usage: sn <session-name>"
+            echo "Creates a named session in current directory"
+            echo ""
+            echo "Example: sn api-dev"
+            return 1
+        fi
+
+        # Check if session exists
+        if tmux has-session -t "$1" 2>/dev/null; then
+            # Session exists, connect to it
+            tmux attach -t "$1"
+        else
+            # Create new session
+            tmux new -s "$1"
+        fi
+    }
+
+    # Create session with automatic suffix
+    # Usage: scs <suffix>
+    scs() {
+        local dir_name=$(basename "$PWD")
+        if [[ -z "$1" ]]; then
+            echo "Usage: scs <suffix>"
+            echo "Creates session named: ${dir_name}-<suffix>"
+            echo ""
+            echo "Example in ~/dotfiles:"
+            echo "  scs api    → creates 'dotfiles-api' session"
+            echo "  scs docs   → creates 'dotfiles-docs' session"
+            return 1
+        fi
+
+        local session_name="${dir_name}-$1"
+
+        # Check if session exists
+        if tmux has-session -t "$session_name" 2>/dev/null; then
+            # Session exists, connect to it
+            tmux attach -t "$session_name"
+        else
+            # Create new session
+            tmux new -s "$session_name"
+        fi
+    }
+
+    # Create session in isolated context directory (separate Claude conversations)
+    # Usage: scc <context-name>
+    scc() {
+        if [[ -z "$1" ]]; then
+            echo "Usage: scc <context-name>"
+            echo "Creates isolated context directory with separate Claude session"
+            echo ""
+            echo "Example in ~/dotfiles:"
+            echo "  scc api    → creates session in ~/dotfiles/.contexts/api"
+            echo "  scc web    → creates session in ~/dotfiles/.contexts/web"
+            echo ""
+            echo "Each context has its OWN Claude Code conversation!"
+            return 1
+        fi
+
+        # Create .contexts directory in current location
+        local contexts_dir="$PWD/.contexts"
+        local ctx_dir="$contexts_dir/$1"
+
+        # Create context directory if it doesn't exist
+        if [[ ! -d "$ctx_dir" ]]; then
+            mkdir -p "$ctx_dir"
+            echo "# Context: $1" > "$ctx_dir/CONTEXT.md"
+            echo "✅ Created context directory: $ctx_dir"
+        fi
+
+        # Session name based on parent dir and context
+        local parent_name=$(basename "$PWD")
+        local session_name="${parent_name}-ctx-$1"
+
+        # Change to context directory and create/attach session
+        cd "$ctx_dir"
+
+        if tmux has-session -t "$session_name" 2>/dev/null; then
+            tmux attach -t "$session_name"
+        else
+            tmux new -s "$session_name"
+        fi
+    }
+
+    # ============================================================
+    # Decision Guide: Which Tool to Use?
+    # ============================================================
+    # 1. Git repo + want visual interface → ccm (ccmanager) - see below
+    # 2. Git repo + want manual control    → gwt/gwl/gwr (below)
+    # 3. Non-git directory or simple use   → scc (above)
+    # ============================================================
+
+    # Git worktree + tmux + Claude helper functions
+    # Create git worktree with tmux session (manual approach)
+    gwt() {
+        if [[ -z "$1" ]]; then
+            echo "Usage: gwt <branch-name> [worktree-name]"
+            echo ""
+            echo "Creates git worktree + tmux session with separate Claude conversation"
+            echo ""
+            echo "Example:"
+            echo "  gwt feature-api           → worktree for feature-api branch"
+            echo "  gwt main main-work        → worktree named 'main-work' for main"
+            return 1
+        fi
+
+        local branch="$1"
+        local worktree_name="${2:-$branch}"
+        local repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+
+        if [[ -z "$repo_root" ]]; then
+            echo "❌ Not in a git repository"
+            return 1
+        fi
+
+        local repo_name=$(basename "$repo_root")
+        local worktrees_dir="$repo_root-worktrees"
+        local worktree_path="$worktrees_dir/$worktree_name"
+
+        mkdir -p "$worktrees_dir"
+        echo "📦 Creating worktree: $worktree_path"
+
+        if git show-ref --verify --quiet "refs/heads/$branch"; then
+            git worktree add "$worktree_path" "$branch"
+        elif git ls-remote --heads origin "$branch" 2>/dev/null | grep -q "$branch"; then
+            git worktree add "$worktree_path" -b "$branch" "origin/$branch"
+        else
+            echo "📝 Creating new branch: $branch"
+            git worktree add "$worktree_path" -b "$branch"
+        fi
+
+        cd "$worktree_path"
+        local session_name="${repo_name}-wt-${worktree_name}"
+
+        if tmux has-session -t "$session_name" 2>/dev/null; then
+            tmux attach -t "$session_name"
+        else
+            tmux new -s "$session_name"
+        fi
+    }
+
+    # List git worktrees with sessions
+    gwl() {
+        local repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+        if [[ -z "$repo_root" ]]; then
+            echo "❌ Not in a git repository"
+            return 1
+        fi
+        echo "📋 Git Worktrees:"
+        git worktree list
+        echo ""
+        echo "🖥️  Active tmux sessions:"
+        sl | grep "$(basename "$repo_root")-wt-" || echo "  (no worktree sessions)"
+    }
+
+    # Remove git worktree and session
+    gwr() {
+        if [[ -z "$1" ]]; then
+            echo "Usage: gwr <worktree-name>"
+            echo "List worktrees with: gwl"
+            return 1
+        fi
+
+        local repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+        if [[ -z "$repo_root" ]]; then
+            echo "❌ Not in a git repository"
+            return 1
+        fi
+
+        local repo_name=$(basename "$repo_root")
+        local worktrees_dir="$repo_root-worktrees"
+        local worktree_path="$worktrees_dir/$1"
+        local session_name="${repo_name}-wt-$1"
+
+        if tmux has-session -t "$session_name" 2>/dev/null; then
+            echo "🗑️  Killing tmux session: $session_name"
+            tmux kill-session -t "$session_name"
+        fi
+
+        if [[ -d "$worktree_path" ]]; then
+            echo "🗑️  Removing worktree: $worktree_path"
+            git worktree remove "$worktree_path"
+            echo "✅ Removed: $1"
+        else
+            echo "❌ Worktree not found: $worktree_path"
+            return 1
+        fi
+    }
+fi
+
+# =============================================================================
+# CCManager - Git Worktree + Claude Session Manager
+# =============================================================================
+# CCManager - Robust git worktree + Claude session manager (592⭐)
+# Use for git repos: Visual interface for managing worktrees + Claude Code sessions
+# Install: npm install -g ccmanager
+# Usage: ccm (in any git repo)
+if command -v ccmanager >/dev/null 2>&1; then
+    alias ccm='ccmanager'
 fi
 
 # =============================================================================
@@ -826,16 +1038,31 @@ function dotfiles_welcome() {
         echo "   Type 'sysinfo' for system information"
         echo ""
         echo "🚀 Smart Navigation & Sessions:"
-        echo "   z <dir>   - Jump to directory       zi - Interactive search"
-        echo "   ss        - Select/create session   sc - Session in current dir"
-        echo "   sl        - List sessions           sk - Kill session"
+        echo "   z <dir>                 - Jump to frequently used directory"
+        echo "   zi                      - Interactive directory search"
+        echo "   ss                      - Select/create tmux session"
+        echo "   sc                      - Session in current directory"
+        echo "   📖 ~/dotfiles/docs/NAVIGATION_SESSION_MANAGEMENT.md"
         echo ""
-        echo "🤖 Claude Code with Alternative Models:"
-        echo "   claude    - Standard Anthropic      glm  - Z.AI/ChatGLM"
-        echo "   kimi      - Moonshot AI             deep - DeepSeek"
+        echo "🤖 AI Tools Available:"
+        echo "   kimi                    - Kimi AI assistant (interactive)"
+        echo "   glm                     - ChatGLM assistant (interactive)"
+        echo "   deep                    - DeepSeek AI assistant (interactive)"
+        echo "   kimi 'your question'    - One-shot Kimi query"
+        echo "   glm 'your question'     - One-shot ChatGLM query"
+        echo "   deep 'your question'    - One-shot DeepSeek query"
+        echo "   claude 'your question'  - One-shot Claude query"
         echo ""
-        echo "🔧 MCP Tools:"
-        echo "   mcpm      - Interactive MCP configuration menu"
+        echo "🔧 MCP Configuration Tools:"
+        echo "   mcpls                   - List available MCP servers"
+        echo "   mcps                    - Quick MCP setup (global servers)"
+        echo "   mcpm                    - Interactive MCP extraction menu"
+        echo "   mcp-status              - Show MCP configuration status"
+        echo ""
+        echo "🔍 Environment Debugging:"
+        echo "   envcheck                - Compare system vs shell environment"
+        echo "   envdebug                - Full environment diagnostic"
+        echo "   envsync                 - Sync shell to system values"
         echo ""
     fi
 }

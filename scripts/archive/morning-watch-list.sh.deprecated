@@ -1,0 +1,390 @@
+#!/usr/bin/env bash
+#
+# morning-watch-list.sh
+#
+# Generates daily pre-market watch list for swing trading based on portfolio CSVs
+# and latest daily updates. Prioritizes stocks by proximity to entry zones.
+#
+# Usage:
+#   ./morning-watch-list.sh [--portfolio=NAME] [--all]
+#
+# Options:
+#   --portfolio=NAME   Process specific portfolio (default: all portfolios)
+#   --all              Process all portfolios and combine results
+#   --json             Output in JSON format
+#   --help             Show this help message
+#
+# Examples:
+#   ./morning-watch-list.sh --portfolio=quantum-computing
+#   ./morning-watch-list.sh --all
+#
+
+set -euo pipefail
+
+# Configuration
+PORTFOLIOS_DIR="$HOME/dotfiles/research/stocks/portfolios"
+RESEARCH_DIR="$HOME/dotfiles/research/stocks"
+CURRENT_MONTH=$(date +%Y-%m)
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+BOLD='\033[1m'
+NC='\033[0m' # No Color
+
+# Default options
+PORTFOLIO_NAME=""
+PROCESS_ALL=false
+OUTPUT_JSON=false
+
+# Parse command line arguments
+for arg in "$@"; do
+    case $arg in
+        --portfolio=*)
+            PORTFOLIO_NAME="${arg#*=}"
+            ;;
+        --all)
+            PROCESS_ALL=true
+            ;;
+        --json)
+            OUTPUT_JSON=true
+            ;;
+        --help)
+            head -n 20 "$0" | tail -n +2 | sed 's/^# //'
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $arg"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
+# Function to get latest price from daily update
+get_latest_price() {
+    local ticker="$1"
+    local daily_update="$RESEARCH_DIR/$CURRENT_MONTH/$ticker/daily-update_$(date +%Y-%m-%d).md"
+
+    # Try today's update first
+    if [[ -f "$daily_update" ]]; then
+        # Extract price from table format or regular format
+        # Look for: | **Current Price** | $XX.XX | ... or **Current Price:** $XX.XX
+        grep -E "Current Price|Last Close|^## 📊 Price Action" "$daily_update" -A 3 | grep -oE '\$[0-9]+\.[0-9]+' | head -1 | tr -d '$' || echo ""
+    else
+        # Try yesterday's update
+        daily_update="$RESEARCH_DIR/$CURRENT_MONTH/$ticker/daily-update_$(date -v-1d +%Y-%m-%d).md"
+        if [[ -f "$daily_update" ]]; then
+            grep -E "Current Price|Last Close|^## 📊 Price Action" "$daily_update" -A 3 | grep -oE '\$[0-9]+\.[0-9]+' | head -1 | tr -d '$' || echo ""
+        else
+            echo ""
+        fi
+    fi
+}
+
+# Function to get RSI from daily update
+get_rsi() {
+    local ticker="$1"
+    local daily_update="$RESEARCH_DIR/$CURRENT_MONTH/$ticker/daily-update_$(date +%Y-%m-%d).md"
+
+    if [[ -f "$daily_update" ]]; then
+        # Extract RSI value - look for patterns like "RSI: 55-65" or "RSI (14): 60.5"
+        grep -E "RSI|### RSI" "$daily_update" -A 2 | grep -oE '[0-9]+(\.[0-9]+)?(-[0-9]+(\.[0-9]+)?)?' | head -1 || echo ""
+    else
+        daily_update="$RESEARCH_DIR/$CURRENT_MONTH/$ticker/daily-update_$(date -v-1d +%Y-%m-%d).md"
+        if [[ -f "$daily_update" ]]; then
+            grep -E "RSI|### RSI" "$daily_update" -A 2 | grep -oE '[0-9]+(\.[0-9]+)?(-[0-9]+(\.[0-9]+)?)?' | head -1 || echo ""
+        else
+            echo ""
+        fi
+    fi
+}
+
+# Function to calculate distance from entry zone
+calculate_distance() {
+    local current_price="$1"
+    local entry_low="$2"
+    local entry_high="$3"
+
+    # Use awk for floating point math
+    awk -v price="$current_price" -v low="$entry_low" -v high="$entry_high" 'BEGIN {
+        if (price >= low && price <= high) {
+            # Within entry zone - calculate position within zone
+            range = high - low
+            if (range > 0) {
+                position = ((price - low) / range) * 100
+                printf "WITHIN|%.1f%% from low", position
+            } else {
+                printf "AT|0.0%%"
+            }
+        } else if (price < low) {
+            # Below entry zone
+            distance = ((low - price) / low) * 100
+            printf "BELOW|%.1f%%", distance
+        } else {
+            # Above entry zone
+            distance = ((price - high) / high) * 100
+            printf "ABOVE|%.1f%%", distance
+        }
+    }'
+}
+
+# Function to determine watch tier
+get_watch_tier() {
+    local distance_str="$1"
+    local risk_level="$2"
+
+    # Parse distance
+    local status=$(echo "$distance_str" | cut -d'|' -f1)
+    local percent=$(echo "$distance_str" | cut -d'|' -f2 | sed 's/%//' | sed 's/ from.*//')
+
+    # Extreme risk stocks go to tier 3 by default unless at entry
+    if [[ "$risk_level" == "extreme" && "$status" != "WITHIN" ]]; then
+        echo "3"
+        return
+    fi
+
+    case "$status" in
+        WITHIN)
+            echo "1"  # Immediate watch
+            ;;
+        BELOW)
+            # Below entry is good for limit orders
+            if (( $(echo "$percent < 5" | bc -l) )); then
+                echo "1"
+            else
+                echo "2"
+            fi
+            ;;
+        ABOVE)
+            if (( $(echo "$percent < 5" | bc -l) )); then
+                echo "1"  # Very close, watch for dip
+            elif (( $(echo "$percent < 10" | bc -l) )); then
+                echo "2"  # Close watch
+            else
+                echo "3"  # Distant
+            fi
+            ;;
+        AT)
+            echo "1"
+            ;;
+    esac
+}
+
+# Function to process a single portfolio
+process_portfolio() {
+    local portfolio_file="$1"
+    local portfolio_name=$(basename "$portfolio_file" .csv)
+
+    echo -e "${BOLD}Processing Portfolio: $portfolio_name${NC}"
+    echo ""
+
+    # Skip header and process each stock
+    local tier1_stocks=()
+    local tier2_stocks=()
+    local tier3_stocks=()
+
+    while IFS=, read -r ticker entry_low entry_high earnings risk notes; do
+        # Skip header
+        [[ "$ticker" == "ticker" ]] && continue
+
+        # Get current price
+        local current_price=$(get_latest_price "$ticker")
+        if [[ -z "$current_price" ]]; then
+            echo -e "${YELLOW}⚠️  $ticker: No recent price data${NC}"
+            continue
+        fi
+
+        # Calculate distance from entry
+        local distance=$(calculate_distance "$current_price" "$entry_low" "$entry_high")
+        local tier=$(get_watch_tier "$distance" "$risk")
+
+        # Get RSI
+        local rsi=$(get_rsi "$ticker")
+        [[ -z "$rsi" ]] && rsi="N/A"
+
+        # Build stock info string
+        local stock_info="$ticker|$current_price|$entry_low|$entry_high|$distance|$rsi|$risk|$earnings|$notes"
+
+        case "$tier" in
+            1)
+                tier1_stocks+=("$stock_info")
+                ;;
+            2)
+                tier2_stocks+=("$stock_info")
+                ;;
+            3)
+                tier3_stocks+=("$stock_info")
+                ;;
+        esac
+    done < "$portfolio_file"
+
+    # Output results
+    echo ""
+    echo -e "${GREEN}${BOLD}═══════════════════════════════════════════════════════════${NC}"
+    echo -e "${GREEN}${BOLD}  🎯 TIER 1: IMMEDIATE WATCH (Today's Opportunities)${NC}"
+    echo -e "${GREEN}${BOLD}═══════════════════════════════════════════════════════════${NC}"
+    echo ""
+
+    if [[ ${#tier1_stocks[@]} -eq 0 ]]; then
+        echo -e "${YELLOW}No stocks in Tier 1 today.${NC}"
+    else
+        for stock in "${tier1_stocks[@]}"; do
+            print_stock_detail "$stock" "1"
+        done
+    fi
+
+    echo ""
+    echo -e "${BLUE}${BOLD}═══════════════════════════════════════════════════════════${NC}"
+    echo -e "${BLUE}${BOLD}  📋 TIER 2: CLOSE WATCH (Set Alerts)${NC}"
+    echo -e "${BLUE}${BOLD}═══════════════════════════════════════════════════════════${NC}"
+    echo ""
+
+    if [[ ${#tier2_stocks[@]} -eq 0 ]]; then
+        echo -e "${YELLOW}No stocks in Tier 2.${NC}"
+    else
+        for stock in "${tier2_stocks[@]}"; do
+            print_stock_detail "$stock" "2"
+        done
+    fi
+
+    echo ""
+    echo -e "${BOLD}═══════════════════════════════════════════════════════════${NC}"
+    echo -e "${BOLD}  🚫 TIER 3: DO NOT TRADE TODAY${NC}"
+    echo -e "${BOLD}═══════════════════════════════════════════════════════════${NC}"
+    echo ""
+
+    if [[ ${#tier3_stocks[@]} -eq 0 ]]; then
+        echo "All stocks are actionable!"
+    else
+        for stock in "${tier3_stocks[@]}"; do
+            IFS='|' read -r ticker current entry_low entry_high distance rsi risk earnings notes <<< "$stock"
+            local status=$(echo "$distance" | cut -d'|' -f1)
+            local percent=$(echo "$distance" | cut -d'|' -f2)
+            echo -e "${ticker}: ${RED}$status $percent${NC} - Wait for pullback"
+        done
+    fi
+
+    echo ""
+}
+
+# Function to print detailed stock information
+print_stock_detail() {
+    local stock_info="$1"
+    local tier="$2"
+
+    IFS='|' read -r ticker current entry_low entry_high distance rsi risk earnings notes <<< "$stock_info"
+
+    local status=$(echo "$distance" | cut -d'|' -f1)
+    local percent=$(echo "$distance" | cut -d'|' -f2)
+
+    echo -e "${BOLD}### $ticker${NC}"
+    echo -e "**Current:** \$$current | **Entry:** \$$entry_low-\$$entry_high | **Status:** $status $percent"
+    echo -e "**RSI:** $rsi | **Risk:** $risk | **Earnings:** $earnings"
+
+    if [[ "$tier" == "1" ]]; then
+        echo ""
+        echo -e "${GREEN}**Intraday Strategy:**${NC}"
+
+        # Generate entry strategy based on status
+        case "$status" in
+            WITHIN)
+                local mid_entry=$(awk -v low="$entry_low" -v high="$entry_high" 'BEGIN {printf "%.2f", (low + high) / 2}')
+                echo "- ⏰ **9:30-10:00 AM**: Watch for dip toward \$$entry_low"
+                echo "- 📊 **Entry Trigger**: Price < \$$mid_entry with volume confirmation"
+                ;;
+            ABOVE)
+                echo "- ⏰ **Monitor all day**: Watch for pullback to entry zone"
+                echo "- 📊 **Entry Trigger**: Price dips to \$$entry_high with volume"
+                ;;
+            BELOW)
+                echo "- ⏰ **Set limit order**: At \$$entry_low"
+                echo "- 📊 **Alternative**: Market order if bounces above \$$entry_low on volume"
+                ;;
+        esac
+
+        # Calculate stop loss (7-10% below entry)
+        local stop_loss=$(awk -v entry="$entry_low" 'BEGIN {printf "%.2f", entry * 0.93}')
+        local target1=$(awk -v entry="$entry_high" 'BEGIN {printf "%.2f", entry * 1.15}')
+
+        echo "- 🛑 **Stop Loss**: \$$stop_loss"
+        echo "- 🎯 **Target 1**: \$$target1 (+15%)"
+        echo "- 💰 **Position Size**: $(get_position_size "$risk")"
+
+        if [[ -n "$notes" ]]; then
+            echo ""
+            echo -e "${YELLOW}**Notes:** $notes${NC}"
+        fi
+    elif [[ "$tier" == "2" ]]; then
+        echo -e "**Alert:** Set price alert at \$$entry_high"
+        echo -e "**Strategy:** Wait for $(echo "$percent" | sed 's/\..*//') pullback"
+    fi
+
+    echo ""
+    echo "---"
+    echo ""
+}
+
+# Function to determine position size based on risk
+get_position_size() {
+    local risk="$1"
+    case "$risk" in
+        low) echo "3-5%" ;;
+        medium) echo "2-3%" ;;
+        high) echo "2% max" ;;
+        extreme) echo "1% max or avoid" ;;
+        *) echo "2%" ;;
+    esac
+}
+
+# Main execution
+main() {
+    echo ""
+    echo -e "${BOLD}╔═══════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BOLD}║                                                           ║${NC}"
+    echo -e "${BOLD}║          📊 MORNING WATCH LIST - $(date +%Y-%m-%d)          ║${NC}"
+    echo -e "${BOLD}║                                                           ║${NC}"
+    echo -e "${BOLD}╚═══════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${BOLD}Generated:${NC} $(date '+%Y-%m-%d %H:%M %Z')"
+    echo ""
+
+    # Determine which portfolios to process
+    if [[ -n "$PORTFOLIO_NAME" ]]; then
+        # Process specific portfolio
+        local portfolio_file="$PORTFOLIOS_DIR/${PORTFOLIO_NAME}.csv"
+        if [[ ! -f "$portfolio_file" ]]; then
+            echo -e "${RED}Error: Portfolio file not found: $portfolio_file${NC}"
+            exit 1
+        fi
+        process_portfolio "$portfolio_file"
+    else
+        # Process all portfolios
+        local portfolio_files=("$PORTFOLIOS_DIR"/*.csv)
+        for portfolio_file in "${portfolio_files[@]}"; do
+            [[ -f "$portfolio_file" ]] || continue
+            process_portfolio "$portfolio_file"
+            echo ""
+        done
+    fi
+
+    echo ""
+    echo -e "${BOLD}═══════════════════════════════════════════════════════════${NC}"
+    echo -e "${BOLD}  📝 KEY REMINDERS${NC}"
+    echo -e "${BOLD}═══════════════════════════════════════════════════════════${NC}"
+    echo ""
+    echo "✅ First 15 minutes (9:30-9:45 AM) best for Tier 1 entries"
+    echo "✅ Require volume confirmation (above average) for all entries"
+    echo "✅ Never chase price above entry zone - set alerts instead"
+    echo "✅ Adjust position size based on risk level"
+    echo "✅ Always use stop losses - no exceptions"
+    echo ""
+    echo -e "${YELLOW}⚠️  This is based on latest available data. Run /deep-stock-research"
+    echo -e "   for current prices before market open.${NC}"
+    echo ""
+}
+
+# Run main
+main
