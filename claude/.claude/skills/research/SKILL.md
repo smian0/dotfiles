@@ -40,16 +40,16 @@ The skill automatically executes the 7-stage workflow below.
 
 ### Stage 1: Parallel Search (4 Angles)
 
-**Orchestration**: PARALLEL - Launch 4 search-agent instances simultaneously
+**Orchestration**: PARALLEL - Launch 4 research-web-researcher instances simultaneously
 
 **Process**:
 1. Generate 4 research angles from query
 2. Launch 4 agents in parallel using Task tool (ALL IN SINGLE MESSAGE):
    ```
-   Task(subagent_type="search-agent", description="Search for angle 1", prompt="{query: ..., angle: 'hardware', attempt: 1}")
-   Task(subagent_type="search-agent", description="Search for angle 2", prompt="{query: ..., angle: 'software', attempt: 1}")
-   Task(subagent_type="search-agent", description="Search for angle 3", prompt="{query: ..., angle: 'performance', attempt: 1}")
-   Task(subagent_type="search-agent", description="Search for angle 4", prompt="{query: ..., angle: 'adoption', attempt: 1}")
+   Task(subagent_type="research-web-researcher", description="Search for angle 1", prompt="{query: ..., angle: 'hardware', attempt: 1}")
+   Task(subagent_type="research-web-researcher", description="Search for angle 2", prompt="{query: ..., angle: 'software', attempt: 1}")
+   Task(subagent_type="research-web-researcher", description="Search for angle 3", prompt="{query: ..., angle: 'performance', attempt: 1}")
+   Task(subagent_type="research-web-researcher", description="Search for angle 4", prompt="{query: ..., angle: 'adoption', attempt: 1}")
    ```
 3. Wait for all agents to complete
 4. Collect results from each agent
@@ -64,7 +64,7 @@ The skill automatically executes the 7-stage workflow below.
 - **Hard fail**: If <2 agents succeed, ABORT workflow
   - Show user: "Stage 1 failed: Only X/4 search agents succeeded (minimum 2 required)"
 
-**Output**: Save all search results to `.research/[YYYY-MM-DD-topic]/agent-outputs/search-agent-*.yaml`
+**Output**: Save all search results to `.research/[YYYY-MM-DD-topic]/agent-outputs/research-web-researcher-*.yaml`
 
 **User Sees**:
 ```
@@ -83,7 +83,7 @@ Total: 10 results from 3 successful agents
 **Orchestration**: SEQUENTIAL - Process all search results
 
 **Process**:
-1. Read search results from `.research/[topic]/agent-outputs/search-agent-*.yaml`
+1. Read search results from `.research/[topic]/agent-outputs/research-web-researcher-*.yaml`
 2. Combine all results into single list
 3. Launch citation-extractor agent:
    ```
@@ -318,10 +318,10 @@ For each research query, create:
 ```
 .research/[YYYY-MM-DD-topic]/
 ├── agent-outputs/
-│   ├── search-agent-1.yaml
-│   ├── search-agent-2.yaml
-│   ├── search-agent-3.yaml
-│   ├── search-agent-4.yaml
+│   ├── research-web-researcher-1.yaml
+│   ├── research-web-researcher-2.yaml
+│   ├── research-web-researcher-3.yaml
+│   ├── research-web-researcher-4.yaml
 │   ├── citation-extractor.yaml
 │   ├── source-validator.yaml
 │   ├── claim-grounding-mapper.yaml
@@ -346,10 +346,10 @@ For each research query, create:
 ### Parallel Execution (Stage 1)
 ```
 # All 4 Task calls in SINGLE message = parallel execution
-Task(subagent_type="search-agent", description="Search angle 1", prompt="...")
-Task(subagent_type="search-agent", description="Search angle 2", prompt="...")
-Task(subagent_type="search-agent", description="Search angle 3", prompt="...")
-Task(subagent_type="search-agent", description="Search angle 4", prompt="...")
+Task(subagent_type="research-web-researcher", description="Search angle 1", prompt="...")
+Task(subagent_type="research-web-researcher", description="Search angle 2", prompt="...")
+Task(subagent_type="research-web-researcher", description="Search angle 3", prompt="...")
+Task(subagent_type="research-web-researcher", description="Search angle 4", prompt="...")
 ```
 
 ### Sequential Execution (Stages 2-6)
@@ -402,4 +402,4 @@ Task(subagent_type="source-validator", description="Validate sources", prompt=".
 
 **Last Updated**: 2025-10-20
 **Version**: 2.0 (Strict Grounding Architecture)
-**Dependencies**: 6 small agents (search-agent, citation-extractor, source-validator, claim-grounding-mapper, report-writer, quality-scorer)
+**Dependencies**: 6 small agents (research-web-researcher, citation-extractor, source-validator, claim-grounding-mapper, report-writer, quality-scorer)
