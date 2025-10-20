@@ -103,11 +103,6 @@ if [[ -d "$HOME/go/bin" ]]; then
     path=("$HOME/go/bin" $path)
 fi
 
-# Node.js tools
-if [[ -d "$HOME/.npm-global/bin" ]]; then
-    path=($path "$HOME/.npm-global/bin")
-fi
-
 # Bun
 if [[ -d "$HOME/.bun/bin" ]]; then
     export BUN_INSTALL="$HOME/.bun"
@@ -305,9 +300,6 @@ alias ls='ls -G'
 alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
-
-# Safe file deletion - use trash instead of rm
-alias rm='trash'
 
 # Standard grep with color support
 alias grep='grep --color=auto'
