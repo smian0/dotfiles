@@ -1,12 +1,27 @@
 #!/bin/bash
+set -euo pipefail
 
-# GLM wrapper script - uses pass for secure API key storage
-export ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic
-export ANTHROPIC_AUTH_TOKEN=$(pass show llm/glm_api_key 2>/dev/null | head -1)
+# GLM wrapper - Runs Claude Code with Z.AI/GLM models via environment variables
 
-# Add MCP servers for Z.AI web search capabilities
-claude mcp add -s project zai-mcp-server --env Z_AI_API_KEY=${ANTHROPIC_AUTH_TOKEN} Z_AI_MODE=ZAI -- npx -y @z_ai/mcp-server 2>/dev/null || true
-claude mcp add -s project -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header "Authorization: Bearer $ANTHROPIC_AUTH_TOKEN" 2>/dev/null || true
+# Get Z.AI API key from pass
+ZAI_API_KEY=$(pass show llm/glm_api_key 2>/dev/null | head -1)
 
-# Use claude from PATH (dynamically found)
+if [ -z "$ZAI_API_KEY" ]; then
+    echo "Error: Could not retrieve Z.AI API key from pass" >&2
+    echo "Run: pass show llm/glm_api_key" >&2
+    exit 1
+fi
+
+echo "Launching Claude with GLM models (Z.AI)..." >&2
+
+# Export GLM-specific environment variables
+export ANTHROPIC_AUTH_TOKEN="$ZAI_API_KEY"
+export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
+export API_TIMEOUT_MS="3000000"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="glm-4.6"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="glm-4.6"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="glm-4.5-air"
+
+# Launch Claude Code with all arguments
+# Environment variables override settings.json
 exec claude "$@"
