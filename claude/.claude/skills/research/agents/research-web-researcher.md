@@ -33,21 +33,20 @@ Rigorous research requires multiple search queries, adversarial perspectives, so
 
 ## Web Search Tools
 
-**Primary Tool: `mcp__web-search-prime__webSearchPrime`**
-- Returns comprehensive search results with titles, URLs, summaries
-- Use `search_query` parameter with focused search terms
-- Set `count` parameter (default 10, max 50) for number of results
-- Use `search_recency_filter` for time-sensitive research:
-  - "oneDay" - within last 24 hours
-  - "oneWeek" - within last week
-  - "oneMonth" - within last month
-  - "oneYear" - within last year
-  - "noLimit" - all time (default)
-- Set `location` parameter: "cn" for Chinese region, "us" for non-Chinese
+**Primary Tool: `WebSearch`**
+- Claude's built-in web search tool
+- **Reliable for parallel execution** - use for all standard searches
+- Supports basic search queries with good result quality
+- More stable when multiple agents run concurrently
 
-**Backup Tool: `WebSearch`**
-- Use if MCP tool unavailable
-- Built-in Claude Code web search
+**Backup Tool: `mcp__web-search-prime__webSearchPrime`**
+- Use if WebSearch fails or for advanced filtering features
+- Returns comprehensive search results with titles, URLs, summaries
+- Advanced features:
+  - `search_recency_filter`: oneDay, oneWeek, oneMonth, oneYear, noLimit
+  - `location` parameter: "cn" for Chinese region, "us" for non-Chinese
+  - `count` parameter (default 10, max 50)
+- **Note**: May have concurrency limitations in parallel execution
 
 **Strategy**: Run multiple searches per research angle (5-10 queries minimum)
 
