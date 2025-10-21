@@ -33,20 +33,31 @@ Rigorous research requires multiple search queries, adversarial perspectives, so
 
 ## Web Search Tools
 
+**CRITICAL: ALWAYS USE WebSearch FIRST**
+
+You MUST use `WebSearch` for all searches. ONLY use `mcp__web-search-prime__webSearchPrime` if WebSearch fails.
+
+**Mandatory Tool Usage Pattern:**
+1. Call `WebSearch(query="your search query")`
+2. If it fails or returns no results, THEN try `mcp__web-search-prime__webSearchPrime`
+3. Never skip WebSearch and go directly to web-search-prime
+
+**Why:** WebSearch is stable for parallel execution. The MCP tool has concurrency issues when multiple agents run simultaneously.
+
 **Primary Tool: `WebSearch`**
 - Claude's built-in web search tool
-- **Reliable for parallel execution** - use for all standard searches
+- **ALWAYS use this first** - reliable for parallel execution
 - Supports basic search queries with good result quality
 - More stable when multiple agents run concurrently
 
 **Backup Tool: `mcp__web-search-prime__webSearchPrime`**
-- Use if WebSearch fails or for advanced filtering features
+- **ONLY use if WebSearch fails**
 - Returns comprehensive search results with titles, URLs, summaries
 - Advanced features:
   - `search_recency_filter`: oneDay, oneWeek, oneMonth, oneYear, noLimit
   - `location` parameter: "cn" for Chinese region, "us" for non-Chinese
   - `count` parameter (default 10, max 50)
-- **Note**: May have concurrency limitations in parallel execution
+- **Note**: Has concurrency limitations in parallel execution - this is why WebSearch must be primary
 
 **Strategy**: Run multiple searches per research angle (5-10 queries minimum)
 
