@@ -1,1 +1,0 @@
-mcp/check.sh

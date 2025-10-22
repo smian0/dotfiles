@@ -22,6 +22,7 @@ This repository contains comprehensive documentation covering all aspects of set
 | **Install dotfiles** | [Setup Guide](SETUP.md) | Quick Start |
 | **Command reference** | [API Reference](API-REFERENCE.md) | Makefile Commands |
 | **Package details** | [Package Guide](PACKAGE-GUIDE.md) | Core Packages |
+| **Session management** | [Session Management](SESSION_MANAGEMENT_QUICK.md) | Quick Reference |
 | **Security setup** | [Security Guide](SECURITY.md) | GPG Setup |
 | **Troubleshooting** | [Troubleshooting](TROUBLESHOOTING.md) | Common Issues |
 
@@ -80,6 +81,27 @@ This repository contains comprehensive documentation covering all aspects of set
 - Return codes and error handling
 
 ### 🔷 Specialized Guides
+
+#### [🎯 Session Management Quick Reference](SESSION_MANAGEMENT_QUICK.md)
+**Purpose**: Essential commands for sessions, navigation, and mobile access
+**Audience**: All users
+**Contents**:
+- Claude Code session concepts (directory-based)
+- Essential navigation commands (zoxide)
+- Session management (sesh, tmux)
+- ccmanager for separate Claude sessions
+- Mobile SSH workflows
+- Quick troubleshooting
+
+#### [📱 iPhone Claude Code Setup](IOS_CLAUDE_CODE_SETUP.md)
+**Purpose**: Using Claude Code from iPhone via Tailscale + Mosh
+**Audience**: Mobile developers, remote workers
+**Contents**:
+- Tailscale private network setup
+- Mosh connection from iPhone
+- Mobile-optimized workflows
+- Session management on mobile
+- Integration with existing dotfiles
 
 #### [🤖 Claude Configuration](CLAUDE.md)
 **Purpose**: AI integration setup and usage

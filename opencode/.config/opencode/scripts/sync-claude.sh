@@ -40,24 +40,36 @@ sync_configs() {
     # Sync and transform agents
     if [[ -d "$source_dir/agents" ]]; then
         log_info "Copying agents..."
-        find "$source_dir/agents" -name "*.md" -type f | while read -r agent; do
+        find "$source_dir/agents" -type d -name "templates" -prune -o -name "*.md" -type f -print | while read -r agent; do
             local rel_path="${agent#$source_dir/agents/}"
             local dest_file="$dest_dir/agent/$rel_path"
+            local basename=$(basename "$agent")
+
             mkdir -p "$(dirname "$dest_file")"
             cp "$agent" "$dest_file"
-            "$TRANSFORM_SCRIPT" "$dest_file" 2>/dev/null || true
+
+            # Only transform actual agent configs, not READMEs or documentation
+            if [[ ! "$basename" =~ ^README ]]; then
+                "$TRANSFORM_SCRIPT" "$dest_file" 2>/dev/null || true
+            fi
         done
     fi
     
     # Sync and transform commands
     if [[ -d "$source_dir/commands" ]]; then
         log_info "Copying commands..."
-        find "$source_dir/commands" -name "*.md" -type f | while read -r cmd; do
+        find "$source_dir/commands" -type d -name "templates" -prune -o -name "*.md" -type f -print | while read -r cmd; do
             local rel_path="${cmd#$source_dir/commands/}"
             local dest_file="$dest_dir/command/$rel_path"
+            local basename=$(basename "$cmd")
+
             mkdir -p "$(dirname "$dest_file")"
             cp "$cmd" "$dest_file"
-            "$TRANSFORM_SCRIPT" "$dest_file" 2>/dev/null || true
+
+            # Only transform actual command configs, not READMEs or documentation
+            if [[ ! "$basename" =~ ^README ]]; then
+                "$TRANSFORM_SCRIPT" "$dest_file" 2>/dev/null || true
+            fi
         done
     fi
     

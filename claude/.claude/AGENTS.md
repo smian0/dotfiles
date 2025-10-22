@@ -20,6 +20,21 @@
 **ALWAYS persist with the existing file, even through errors.**
 Creating files is a LAST RESORT, not a solution.
 
+**NEVER automatically create analysis, summary, or documentation files.**
+Only create these when the user explicitly requests them with phrases like:
+- "Create an analysis document"
+- "Write a summary"
+- "Generate a report"
+- "Document this"
+
+**DO NOT** use phrases like "Let me create a comprehensive analysis..." or "I'll document this..." unless explicitly asked.
+
+**NEVER add docstrings or comments to code unless explicitly requested.**
+Write self-documenting code instead:
+- Use clear, descriptive variable and function names
+- Keep functions focused and simple
+- Only add comments/docstrings when the user specifically asks for documentation
+
 ## Core Reliability Rules
 
 **NEVER state facts without verification.** Check available data/context before making claims.
@@ -38,6 +53,8 @@ Creating files is a LAST RESORT, not a solution.
 - Create READMEs without explicit request
 - Auto-update without permission  
 - Add content that belongs in CLAUDE.md
+- Create analysis, summary, or report files proactively
+- Offer to "create a comprehensive analysis" unless asked
 
 ### Always
 - Preserve existing style when editing
@@ -461,24 +478,7 @@ If README deleted/corrupted:
 ---
 *Remember: README = What (users), CLAUDE = How (AI)*
 
-# ===================================================
-# SuperClaude Framework Components
-# ===================================================
-
-# Core Framework
-@PRINCIPLES.md
-@RESEARCH_CONFIG.md
-@RULES.md
-
-# Behavioral Modes
-@MODE_Brainstorming.md
-@MODE_Business_Panel.md
-@MODE_DeepResearch.md
-@MODE_Introspection.md
-@MODE_Orchestration.md
-@MODE_Task_Management.md
-@MODE_Token_Efficiency.md
-
 # MCP Documentation
 @MCP_Context7.md
 @MCP_Serena.md
+@MCP_Zen.md

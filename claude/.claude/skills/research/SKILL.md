@@ -55,9 +55,16 @@ The skill automatically executes the 7-stage workflow below.
 4. Collect results from each agent
 
 **Retry Logic** (per agent, 3 attempts):
-- Attempt 1: Standard search
-- Attempt 2: Adversarial search (different keywords)
-- Attempt 3: Alternative sources (academic, documentation, forums)
+- **Attempt 1 - Standard**: Direct keywords from angle
+  - Example: "quantum error correction"
+
+- **Attempt 2 - Adversarial**: Challenge assumption, flip perspective
+  - Use OR operators to expand, synonyms to diversify
+  - Example: "quantum computing challenges" OR "quantum fault tolerance limits"
+
+- **Attempt 3 - Citation Mining**: Find seminal sources, check what cites them
+  - Add qualifiers: "review paper", "survey", "comprehensive analysis"
+  - Target: arxiv.org, scholar.google.com, official documentation
 
 **Failure Handling**:
 - **Soft fail**: If 1-2 agents fail, continue with successful ones
@@ -144,8 +151,29 @@ Total: 7 valid citations extracted
 - 7 citations checked
 - 5 validated (avg credibility: 8.6/10)
 - 2 rejected (1 quote not found, 1 low credibility)
+
+Bias Check:
+- ✓ Multiple perspectives (3 pro, 1 cautionary, 1 neutral)
+- ✓ No funding conflicts detected
+
 Total: 5 validated citations
 ```
+
+**Source Evaluation Framework**:
+
+Validators use **CRAAP Test Enhanced** for credibility scoring:
+- **Currency**: Published ≤2 years (or seminal if >2 years with high impact)
+- **Relevance**: Directly addresses research angle (not tangential)
+- **Authority**: Verifiable author expertise (credentials, position, publications)
+- **Accuracy**: Claims cited, methodology described, limitations acknowledged
+- **Purpose**: Educational/research intent (not marketing/opinion)
+- **+ Bias Check**: Flag emotional language, missing counterarguments, funding conflicts
+
+**Credibility Tiers**:
+- **9-10**: Peer-reviewed, primary research, government data
+- **7-8**: Expert analysis, industry reports, established news
+- **5-6**: Technical blogs with citations, documentation
+- **<5**: Reject (opinion, marketing, uncited claims)
 
 ---
 
@@ -227,12 +255,28 @@ Total: 8 grounded claims ready for report
    ```
 3. Agent calculates objective scores (1-10 scale)
 
-**Scoring Breakdown**:
-- Grounding (5 pts): Citation coverage percentage
-- Source Quality (2 pts): Average credibility score
-- Diversity (1 pt): Unique source count (need 5+)
-- Completeness (1 pt): All query aspects covered
-- Clarity (1 pt): Structure and readability
+**Scoring Breakdown** (Objective Criteria):
+
+1. **Grounding (5 pts)**: Citation coverage percentage
+   - 5/5: 100% cited
+   - 0/5: <80% cited
+
+2. **Source Quality (2 pts)**: Average credibility score
+   - 2/2: Avg ≥8/10
+   - 1/2: Avg 6-7.9/10
+   - 0/2: Avg <6/10
+
+3. **Diversity (1 pt)**: Unique sources AND perspectives
+   - 1/1: ≥5 sources from 3+ types (academic, industry, news)
+   - 0/1: <5 sources OR echo chamber (all same type)
+
+4. **Completeness (1 pt)**: All query aspects covered
+   - 1/1: Each research angle has ≥1 validated claim
+   - 0/1: Missing coverage for any angle
+
+5. **Clarity (1 pt)**: Structure and readability
+   - 1/1: Has exec summary, sections, inline citations, no jargon
+   - 0/1: Missing structure or unclear
 
 **No Retry**: Scoring is objective calculation (no retries needed)
 
@@ -400,6 +444,7 @@ Task(subagent_type="source-validator", description="Validate sources", prompt=".
 
 ---
 
-**Last Updated**: 2025-10-20
-**Version**: 2.0 (Strict Grounding Architecture)
+**Last Updated**: 2025-10-21
+**Version**: 2.1 (Enhanced Evaluation Criteria)
+**Changes**: Added CRAAP framework, concrete scoring criteria, enhanced search tactics, bias transparency
 **Dependencies**: 6 small agents (research-web-researcher, citation-extractor, source-validator, claim-grounding-mapper, report-writer, quality-scorer)

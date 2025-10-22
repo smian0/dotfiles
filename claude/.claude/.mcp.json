@@ -12,20 +12,6 @@
       "scope": "library",
       "type": "stdio"
     },
-    "mcp_markdown": {
-      "args": [
-        "reloaderoo",
-        "proxy",
-        "--",
-        "python3",
-        "/Users/smian/dotfiles/claude/.claude/mcp_servers/mcp_markdown/server.py"
-      ],
-      "command": "npx",
-      "env": {
-        "MCPDEV_PROXY_AUTO_RESTART": "true"
-      },
-      "type": "stdio"
-    },
     "serena": {
       "args": [
         "--from",
@@ -44,7 +30,7 @@
       "purpose": "code-analysis",
       "scope": "project"
     },
-    "zen": {
+    "mcp_zen_proxy": {
       "args": [
         "reloaderoo",
         "proxy",
@@ -57,6 +43,36 @@
         "MCPDEV_PROXY_AUTO_RESTART": "true"
       },
       "type": "stdio"
+    },
+    "privacy_pdf": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "reloaderoo",
+        "proxy",
+        "--",
+        "python3",
+        "/Users/smian/.claude/mcp_servers/privacy_pdf/server.py"
+      ],
+      "description": "Privacy-preserving PDF extraction with MinerU + PII redaction for safe LLM analysis (auto-restart enabled)",
+      "env": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      }
+    },
+    "mcp_markdown": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "reloaderoo",
+        "proxy",
+        "--",
+        "python3",
+        "/Users/smian/dotfiles/claude/.claude/mcp_servers/mcp_markdown/server.py"
+      ],
+      "description": "Markdown analysis and manipulation for Obsidian vault",
+      "env": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      }
     }
   }
 }

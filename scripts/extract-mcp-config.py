@@ -1,1 +1,0 @@
-mcp/extract-config.py

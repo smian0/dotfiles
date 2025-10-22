@@ -1,1 +1,0 @@
-research/fact-checker.md

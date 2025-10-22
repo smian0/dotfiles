@@ -9,17 +9,38 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "Ollama (OpenAI Compatible)",
       "options": {
-        "baseURL": "http://localhost:3304/v1"
+        "baseURL": "http://localhost:11434/v1"
       },
       "models": {
         "gpt-oss:20b": {
-          "name": "GPT-OSS 20B (OpenAI Compatible)"
+          "name": "GPT-OSS 20B (OpenAI Compatible)",
+          "limit": {
+            "context": 131072,
+            "output": 131072
+          }
         },
         "gpt-oss:120b": {
-          "name": "GPT-OSS 120B (OpenAI Compatible)"
+          "name": "GPT-OSS 120B (OpenAI Compatible)",
+          "limit": {
+            "context": 131072,
+            "output": 131072
+          }
         },
         "deepseek-v3.1:671b": {
-          "name": "DeepSeek V3.1 671B (OpenAI Compatible)"
+          "name": "DeepSeek V3.1 671B (OpenAI Compatible)",
+          "limit": {
+            "context": 131072,
+            "output": 131072
+          }
+        },
+        "kimi-k2:1t-cloud": {
+          "name": "Kimi K2 1T Cloud (OpenAI Compatible)",
+          "limit": {
+            "context": 262144,
+            "output": 262144
+          },
+          "reasoning": true,
+          "tool_call": true
         }
       }
     },
@@ -104,6 +125,24 @@
           "reasoning": true,
           "temperature": true,
           "tool_call": true
+        },
+        "kimi-k2:1t-cloud": {
+          "id": "kimi-k2:1t-cloud",
+          "name": "Kimi K2 1T Cloud (256k context)",
+          "options": {
+            "reasoningEffort": "high",
+            "think": "high",
+            "effort": "high",
+            "reasoning_effort": "high"
+          },
+          "limit": {
+            "context": 262144,
+            "output": 262144
+          },
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true
         }
       }
     },
@@ -112,32 +151,6 @@
     }
   },
   "mcp": {
-    "context7": {
-      "command": [
-        "npx",
-        "-y",
-        "@upstash/context7-mcp"
-      ],
-      "type": "local",
-      "enabled": true
-    },
-    "playwright": {
-      "command": [
-        "npx",
-        "@playwright/mcp@latest"
-      ],
-      "type": "local",
-      "enabled": true
-    },
-    "sequential-thinking": {
-      "command": [
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
-      ],
-      "type": "local",
-      "enabled": true
-    },
     "serena": {
       "command": [
         "uvx",
@@ -145,6 +158,8 @@
         "git+https://github.com/oraios/serena",
         "serena",
         "start-mcp-server",
+        "--context",
+        "ide-assistant",
         "--enable-web-dashboard",
         "false",
         "--enable-gui-log-window",
@@ -153,40 +168,61 @@
       "type": "local",
       "enabled": true
     },
-    "markdown": {
+    "context7": {
       "command": [
-        "/Users/smian/.pyenv/versions/3.12.1/bin/python",
-        "/Users/smian/.claude/mcp_servers/mcp_markdown/server.py"
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
       ],
       "type": "local",
-      "enabled": true
+      "enabled": true,
+      "environment": {}
+    },
+    "web-search-prime": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer a24f09170ffc4a16958a9986c475561b.MWYL7fnGDHQesuuR"
+      }
     },
     "zen": {
       "command": [
-        "uv",
-        "run",
-        "--directory",
-        "/Users/smian/github-ck/zen-mcp-server-private",
-        "python",
-        "server.py"
+        "npx",
+        "reloaderoo",
+        "proxy",
+        "--",
+        "/Users/smian/github/zen-mcp-server/.zen_venv/bin/python",
+        "/Users/smian/github/zen-mcp-server/server_proxy.py"
       ],
       "type": "local",
-      "enabled": true
+      "enabled": true,
+      "environment": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      }
     },
-    "streamable-mcp-server": {
-      "type": "remote",
-      "url": "http://127.0.0.1:12306/mcp",
-      "enabled": false
+    "mcp_markdown": {
+      "command": [
+        "npx",
+        "reloaderoo",
+        "proxy",
+        "--",
+        "python3",
+        "/Users/smian/dotfiles/claude/.claude/mcp_servers/mcp_markdown/server.py"
+      ],
+      "type": "local",
+      "enabled": true,
+      "environment": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      }
     }
   },
   "tools": {
-    "mcp__markdown__*": true,
-    "mcp__serena__*": true,
     "mcp__context7__*": true,
-    "mcp__playwright__*": true,
-    "mcp__sequential_thinking__*": true,
-    "mcp__zen__*": true,
-    "mcp__streamable_mcp_server__*": true
+    "mcp__mcp_markdown__*": true,
+    "mcp__serena__*": true,
+    "mcp__web_search_prime__*": true,
+    "mcp__zen__*": true
   },
   "agent": {
     "claude-primary": {
@@ -218,46 +254,6 @@
     "small-direct": {
       "model": "ollamat/gpt-oss:120b",
       "reasoningEffort": "low"
-    },
-    "mcp-manager": {
-      "model": "ollamat/gpt-oss:120b",
-      "reasoningEffort": "low",
-      "description": "MCP Server Manager - List, analyze, and manage Model Context Protocol servers and tools"
-    },
-    "build": {
-      "model": "ollamat/gpt-oss:120b",
-      "system": "You are a helpful AI assistant.",
-      "temperature": 0.2
-    },
-    "researcher": {
-      "model": "ollamat/gpt-oss:120b",
-      "mode": "subagent",
-      "system": "You are a research assistant specializing in gathering and analyzing information.",
-      "temperature": 0.3,
-      "description": "Research subagent for information gathering"
-    },
-    "coder": {
-      "model": "ollamat/gpt-oss:120b",
-      "mode": "subagent",
-      "system": "You are a coding assistant specializing in writing clean, efficient code.",
-      "temperature": 0.2,
-      "description": "Coding subagent for implementation tasks"
-    },
-    "mcp-checker": {
-      "model": "github-copilot/claude-sonnet-4",
-      "temperature": 0.1,
-      "description": "MCP Server availability checker - Verify configured MCP servers and tools"
-    },
-    "mcp-simple": {
-      "model": "github-copilot/claude-sonnet-4",
-      "temperature": 0.1,
-      "description": "Simple MCP status check"
-    },
-    "news-fetcher": {
-      "model": "github-copilot/claude-sonnet-4",
-      "temperature": 0.3,
-      "system": "You are a news fetcher agent specialized in retrieving top headlines from Google News. When asked for news, use the webfetch tool to access https://news.google.com, extract the top 10-15 headlines, and format them as a numbered list with brief descriptions and source publications. Focus only on Google News as your source. Be direct and efficient - users want quick access to current news.",
-      "description": "Fetches and displays top news headlines from Google News only"
     }
   }
 }

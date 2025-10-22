@@ -1,0 +1,23 @@
+{
+  "archived_date": "2025-10-22T03:09:48Z",
+  "reason": "High context usage (17.5k tokens, 27 tools), not actively used. Can re-enable when needed for Chrome automation.",
+  "original_location": "~/dotfiles/.mcp.json (project-level)",
+  "restore_instructions": "Add config block to .mcp.json mcpServers section, or use: jq '.mcpServers[\"chrome-devtools\"] = .config' archived/chrome-devtools.json",
+  "config": {
+  "type": "stdio",
+  "command": "npx",
+  "args": [
+    "reloaderoo",
+    "proxy",
+    "--",
+    "npx",
+    "-y",
+    "chrome-devtools-mcp@latest",
+    "--browserUrl",
+    "http://127.0.0.1:9223"
+  ],
+  "env": {
+    "MCPDEV_PROXY_AUTO_RESTART": "true"
+  }
+}
+}

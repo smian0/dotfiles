@@ -1,6 +1,12 @@
-# Claude Code Command Orchestrators
+# Claude Code Commands
 
-This directory contains top-level orchestration commands that coordinate multiple agents to execute complex workflows automatically.
+This directory contains commands organized by purpose:
+- **`trading/`** - Stock trading and market analysis commands
+- **`research/`** - Research tools and templates
+- **`dev/`** - Development and meta-framework tools
+- **`tools/`** - General utility commands
+
+Commands coordinate multiple agents to execute complex workflows automatically.
 
 ## Available Orchestrators
 
@@ -56,18 +62,126 @@ This directory contains top-level orchestration commands that coordinate multipl
 
 ---
 
+### `/deep-stock-research` - Stock Analysis Orchestrator
+**Purpose**: Execute stock research with multiple analysis types (comprehensive, swing trading, daily updates)
+
+**What it orchestrates**:
+- Multi-turn Perplexity queries across 5 dimensions (Fundamentals, Catalysts, Technical, Risks, Outlook)
+- Browser automation via `comet-devtools` MCP (Comet Browser on port 9223)
+- Audit trail creation (query, response, metadata preservation)
+- Multi-stock portfolio consolidation
+
+**Example Usage**:
+```bash
+# Comprehensive deep research (6-8 Perplexity queries)
+/deep-stock-research NVDA
+
+# Focused swing trading analysis
+/deep-stock-research LSCC --type=swing-trading
+
+# Daily technical update with audit trail
+/deep-stock-research AMBA --type=daily-update
+
+# Multi-stock portfolio - reads tickers from CSV file (RECOMMENDED)
+/deep-stock-research --portfolio=AI-chips-hidden-gems --type=daily-update
+
+# Multi-stock portfolio - explicit tickers (still creates consolidated summary)
+/deep-stock-research LSCC,AMBA,BRCHF,GSIT --type=daily-update --portfolio=AI-chips-hidden-gems
+```
+
+**Key Features**:
+- **Research Types**: Comprehensive (default), swing trading, daily updates
+- **CSV Portfolio Files**: Define stock lists in `~/dotfiles/research/stocks/portfolios/{name}.csv`
+- **Audit Trails**: Full transparency with raw query/response preservation
+- **Consolidated Summaries**: Multi-stock portfolio aggregation with action priorities
+- **Browser Automation**: Direct Perplexity Finance page interaction via MCP
+- **Automatic Archiving**: Saves to `~/dotfiles/research/stocks/YYYY-MM/`
+
+**Outputs**:
+- **Daily Update**: `daily-update_YYYY-MM-DD.md` + audit trail (3 files)
+- **Portfolio Summary**: `daily-summary_YYYY-MM-DD.md` (multi-stock only)
+- **Comprehensive Research**: `comprehensive-research_YYYY-MM-DD.md`
+
+**Typical Runtime**:
+- Daily update: 2-4 minutes (single query)
+- Swing trading: 5-10 minutes (3-4 queries)
+- Comprehensive: 15-25 minutes (6-8 queries)
+- Multi-stock daily: 8-16 minutes (4 stocks × 2-4 min)
+
+**Documentation**: See `~/dotfiles/research/stocks/CLAUDE.md` for detailed workflow
+
+---
+
+### `/flight-search` - Flight Search Command
+**Purpose**: Search for flights using Google Flights with predefined preferences
+
+**What it does**:
+- Searches Google Flights with specific filters (Economy exclude Basic, nonstop only, United Airlines)
+- Provides flexible date and route options
+- Returns formatted flight information with prices, times, and details
+
+**Example Usage**:
+```bash
+# Basic search
+/flight-search Find flights from MCO to SFO in December 2025
+
+# With city names
+/flight-search Search for flights from Orlando to San Francisco in December 2025
+
+# With specific return date
+/flight-search Look for flights from JFK to LAX in January 2026 returning January 10, 2026
+
+# One-way flight
+/flight-search Find one-way flights from Chicago to Miami in February 2025
+```
+
+**Key Features**:
+- Economy (exclude Basic) class by default
+- Nonstop flights only
+- United Airlines only
+- Flexible date ranges (full month or specific dates)
+- Handles both airport codes and city names
+- Provides price insights and booking recommendations
+
+**Output Format**:
+```
+## United Airlines Nonstop Flights from [ORIGIN] to [DESTINATION] in [MONTH] [YEAR]
+### Economy (Exclude Basic) Fares
+
+1. **$[PRICE] round trip** - [DATE]
+   - Departure: [TIME] from [ORIGIN] ([ORIGIN_CODE])
+   - Arrival: [TIME] at [DESTINATION] ([DESTINATION_CODE])
+   - Duration: [DURATION]
+   - Includes: [BAGGAGE_INFO]
+
+### Additional Information:
+- [NUMBER] nonstop flight options available
+- Price insights: [PRICE_INSIGHTS]
+- Booking recommendations: [BOOKING_RECOMMENDATIONS]
+- Alternative dates: [ALTERNATIVE_DATES]
+```
+
+**Implementation Files**:
+- `flight-search.md` - Command definition and usage
+- `flight-search-implementation.md` - Detailed Chrome automation steps
+- `flight-search-example.md` - Usage examples and expected outputs
+
+**Typical Runtime**: 1-2 minutes
+
+---
+
 ## Pattern Comparison
 
-Both orchestrators follow the same architectural pattern:
+All orchestrators follow the same architectural pattern:
 
-| Phase | `/research` | `/multi-agent` |
-|-------|-------------|----------------|
-| **Input** | Research question | Domain description |
-| **Planning** | research-planning-agent | domain-analyzer + orchestrator-builder |
-| **Execution** | Parallel web-researcher agents | Sequential file generation |
-| **Quality** | report-critique-agent (iterative) | YAML + structure validation |
-| **Output** | Research report in `.research/` | Working system in `.claude/` |
-| **Tracking** | TodoWrite (6 phases) | TodoWrite (9 phases) |
+| Phase | `/research` | `/multi-agent` | `/deep-stock-research` | `/flight-search` |
+|-------|-------------|----------------|------------------------|-----------------|
+| **Input** | Research question | Domain description | Stock ticker(s) + type | Flight search request |
+| **Planning** | research-planning-agent | domain-analyzer + orchestrator-builder | Query formulation (adaptive) | Parse route and dates |
+| **Execution** | Parallel web-researcher agents | Sequential file generation | Browser automation (Perplexity) | Chrome automation (Google Flights) |
+| **Quality** | report-critique-agent (iterative) | YAML + structure validation | Audit trail preservation | Filter validation + result formatting |
+| **Output** | Research report in `.research/` | Working system in `.claude/` | Stock analysis in `research/stocks/` | Formatted flight results |
+| **Tracking** | TodoWrite (6 phases) | TodoWrite (9 phases) | TodoWrite (varies by type) | Not applicable (single operation) |
 
 ## Design Principles
 
@@ -86,21 +200,24 @@ Clear phases with validation checkpoints:
 ### 3. Parallel Execution When Safe
 - `/research`: Parallel web-researcher streams (no conflicts)
 - `/multi-agent`: Sequential generation (file system safety)
+- `/deep-stock-research`: Sequential per-stock (browser state), parallel for multi-stock portfolios
 
 ### 4. Quality Gates
 - `/research`: Evidence grading, source diversity, critique iteration
 - `/multi-agent`: YAML syntax, structure validation, coordination checks
+- `/deep-stock-research`: Audit trail preservation, multi-stock consolidation, entry zone validation
 
 ### 5. Progress Visibility
-Both use TodoWrite extensively:
+All use TodoWrite extensively:
 - Users see phase transitions
 - Clear status on what's happening
 - Failures are obvious
 
 ### 6. Concise Results
-Neither dumps full content:
+None dump full content:
 - `/research`: Location + summary + key findings
 - `/multi-agent`: Location + structure + usage guide
+- `/deep-stock-research`: Summary table + file locations + action priorities
 
 ## Creating New Orchestrators
 

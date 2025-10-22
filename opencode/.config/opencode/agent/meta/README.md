@@ -1,6 +1,6 @@
 # Meta-Multi-Agent Framework
 
-A comprehensive framework for rapidly generating sophisticated multi-agent systems for any domain using Claude Code. Based on successful patterns from production multi-agent systems like CCPM.
+A comprehensive framework for rapidly generating sophisticated multi-agent systems for any domain using Claude Code. Based on successful patterns from production multi-agent systems like CCPM and the `/research` orchestrator.
 
 ## Overview
 
@@ -9,72 +9,111 @@ This framework enables you to create complete multi-agent systems that include:
 - **Parallel execution** - Safe concurrent work with conflict prevention
 - **Context management** - Domain knowledge and state tracking
 - **Communication protocols** - Agent coordination through files and events
-- **Template-driven generation** - Reusable patterns for rapid development
+- **Automated validation** - Quality gates and safety checks
 
-## Framework Components
+## How It Works
 
-### Core Agents
+### Orchestration Command: `/multi-agent`
+
+**The primary way to use this framework** is through the `/multi-agent` orchestration command located at `commands/multi-agent.md`. This command automatically coordinates all meta-framework agents to generate complete systems.
+
+**Usage**:
+```bash
+/multi-agent [domain description]
+```
+
+**Example**:
+```bash
+/multi-agent Create a multi-agent system for restaurant kitchen management that handles order processing, station coordination, inventory tracking, and quality control
+```
+
+The command orchestrates these agents in a 9-phase workflow:
+1. Parse domain requirements
+2. **Parallel**: domain-analyzer + context-architect analyze patterns
+3. orchestrator-builder designs command structure
+4. meta-multi-agent generates orchestrator command
+5. meta-multi-agent generates specialist agents (sequential for safety)
+6. parallel-coordinator generates coordination rules
+7. context-architect generates context documentation
+8. Validation phase (YAML syntax, structure, content)
+9. Documentation generation
+
+### Framework Components (Agents in `agents/meta/`)
+
+These agents are **spawned automatically** by the `/multi-agent` command:
+
 - **`meta-multi-agent`** - Main agent that generates complete multi-agent systems
 - **`domain-analyzer`** - Analyzes domain requirements and identifies patterns
+- **`context-architect`** - Builds context management and documentation systems
 - **`orchestrator-builder`** - Creates command orchestration structures
 - **`parallel-coordinator`** - Designs safe parallel execution strategies
-- **`context-architect`** - Builds context management and documentation systems
+- **`meta-sub-agent`** - Generates individual agent files
 
-### Template Library
-- **`orchestrator-command.template.md`** - Template for main orchestration commands
-- **`specialist-agent.template.md`** - Template for domain-specific agents
-- **`parallel-worker.template.md`** - Template for parallel execution coordinators
-- **`coordination-rules.template.md`** - Template for agent coordination rules
+**Note**: You typically don't invoke these agents directly. Use `/multi-agent` instead.
 
 ## Quick Start
 
-### Basic Usage
-```
-@meta-multi-agent Create a multi-agent system for managing a restaurant kitchen
-```
+### Recommended: Use the Orchestrator Command
+```bash
+# Full automation - recommended approach
+/multi-agent Create a multi-agent system for managing a restaurant kitchen
 
-### Advanced Usage
-```
-@meta-multi-agent Create a multi-agent system for:
+# With detailed requirements
+/multi-agent Create a multi-agent system for:
 - Domain: Software deployment pipeline
 - Requirements: Handle CI/CD, testing, deployment, rollback
 - Parallelization: Tests and builds can run in parallel
 - Context: Kubernetes environment with multiple environments
 ```
 
+### Advanced: Manual Agent Invocation
+For specialized use cases, you can invoke individual agents:
+```bash
+# Generate a single agent (not a complete system)
+@meta-sub-agent Create an inventory-tracker agent for restaurant management
+
+# Manual system generation (not recommended - use /multi-agent instead)
+@meta-multi-agent Create a multi-agent system for [domain]
+```
+
+**Warning**: Manual invocation requires you to coordinate agents yourself. Use `/multi-agent` for automated orchestration.
+
 ## Generated System Structure
 
-When you use the meta-multi-agent, it creates a complete `.claude` directory structure:
+When you run `/multi-agent [domain]`, it creates a complete `.claude` directory structure:
 
 ```
 .claude/
-├── commands/{domain}/
+├── commands/{domain-slug}/
 │   ├── main-workflow.md          # Primary orchestrator command
-│   ├── {operation}-{action}.md   # Specific operation commands
-│   └── parallel-execute.md       # Parallel execution command
-├── agents/
-│   ├── {domain}-coordinator.md   # Main coordination agent
+│   └── {operation}-{action}.md   # Specific operation commands (optional)
+│
+├── agents/{domain-slug}/         # Separate directory per domain
 │   ├── {specialist}-agent.md     # Domain specialist agents
-│   └── parallel-worker.md        # Parallel execution worker
-├── rules/
-│   ├── {domain}-coordination.md  # Coordination protocols
+│   └── {coordinator}-agent.md    # Coordination agents
+│
+├── rules/{domain-slug}/
+│   ├── coordination-protocol.md  # How agents communicate
 │   ├── file-access-rules.md      # Conflict prevention rules
-│   └── communication-protocol.md # Agent communication rules
-├── context/
+│   └── error-escalation.md       # When to fail vs retry
+│
+├── context/{domain-slug}/
 │   ├── {domain}-overview.md      # Domain knowledge base
 │   ├── workflow-patterns.md      # Common workflow patterns
-│   └── progress-tracking.md      # State management structure
-└── templates/
-    └── {domain}-templates/       # Domain-specific templates
+│   └── progress-tracking.md      # State management templates
+│
+└── {domain-slug}-README.md       # Complete usage documentation
 ```
+
+**Note**: Generated agents go in `agents/{domain-slug}/` to keep them separate from framework agents in `agents/meta/` and `agents/research/`.
 
 ## Example: Restaurant Kitchen Management System
 
 Let's walk through creating a multi-agent system for restaurant kitchen management:
 
 ### 1. Generate the System
-```
-@meta-multi-agent Create a multi-agent system for restaurant kitchen management that handles:
+```bash
+/multi-agent Create a multi-agent system for restaurant kitchen management that handles:
 - Order processing and prioritization
 - Kitchen station coordination (prep, grill, salad, dessert)
 - Inventory tracking and alerts
@@ -87,6 +126,15 @@ Requirements:
 - Quality checks at multiple stages
 - Integration with POS system and service staff
 ```
+
+**What happens**: The `/multi-agent` command automatically:
+- Analyzes restaurant kitchen domain patterns
+- Designs orchestration architecture
+- Generates all files (commands, agents, rules, context)
+- Validates YAML syntax and structure
+- Creates comprehensive documentation
+
+**Runtime**: ~2-5 minutes for complete system generation
 
 ### 2. Generated Commands
 The system would generate commands like:
@@ -104,18 +152,39 @@ Specialized agents would include:
 - **service-liaison** - Coordinates with front-of-house
 
 ### 4. Usage Example
-After generation, you could run:
+After generation completes, you get a complete working system:
+
+**Generated files**:
 ```
-/kitchen:process-orders lunch-rush
+.claude/
+├── commands/restaurant-kitchen/
+│   └── main-workflow.md
+├── agents/restaurant-kitchen/
+│   ├── kitchen-coordinator.md
+│   ├── station-manager.md
+│   ├── inventory-tracker.md
+│   ├── quality-controller.md
+│   └── service-liaison.md
+├── rules/restaurant-kitchen/
+│   └── coordination-protocol.md, file-access-rules.md, error-escalation.md
+├── context/restaurant-kitchen/
+│   └── domain-overview.md, workflow-patterns.md, progress-tracking.md
+└── restaurant-kitchen-README.md
 ```
 
-This would:
-1. Analyze incoming orders
-2. Break down orders by kitchen station requirements
-3. Spawn parallel station-manager agents for each station
-4. Coordinate timing between stations
-5. Handle quality control checkpoints
-6. Coordinate with service staff for pickup
+**Run the system**:
+```bash
+/restaurant-kitchen:main-workflow lunch-rush
+```
+
+**What happens**:
+1. Main workflow command validates prerequisites
+2. Analyzes incoming orders
+3. Spawns parallel station-manager agents (prep, grill, salad, dessert)
+4. Each agent works on its assigned station (file-level parallelism)
+5. quality-controller validates checkpoints
+6. service-liaison coordinates handoff
+7. Results consolidated and reported
 
 ## Key Patterns
 
@@ -132,6 +201,10 @@ Agents communicate through progress files:
 ```markdown
 # station-grill-progress.md
 ---
+station: grill
+agent: station-manager-grill
+status: in_progress
+orders: 3
 ---
 
 ## Completed Orders
@@ -237,12 +310,42 @@ To improve the meta-multi-agent framework:
 3. **Add coordination patterns** - Document new coordination strategies
 4. **Improve documentation** - Make the framework easier to understand and use
 
-## Examples Repository
+## Comparison with Research System
 
-See the `examples/` directory for complete generated systems:
-- **Restaurant Management** - Kitchen, service, and inventory coordination
-- **Software Deployment** - CI/CD pipeline with testing and deployment
-- **Event Planning** - Vendor coordination, timeline management, logistics
-- **Content Creation** - Writing, editing, review, and publishing workflows
+The meta-multi-agent framework mirrors the `/research` orchestrator pattern:
+
+| Aspect | `/research` | `/multi-agent` |
+|--------|-------------|----------------|
+| **Purpose** | Conduct research | Generate systems |
+| **Input** | Research question | Domain description |
+| **Agents** | research/ agents (8) | meta/ agents (6) |
+| **Parallel Phase** | web-researcher streams | domain-analyzer + context-architect |
+| **Quality Loop** | Critique → iterate (3x) | Validation → regenerate if needed |
+| **Output** | Research report | Complete .claude system |
+| **Runtime** | 8-15 minutes | 2-5 minutes |
+
+Both follow the same orchestration principles:
+- ✅ Full automation (no manual intervention)
+- ✅ Phased execution with TodoWrite tracking
+- ✅ Parallel execution when safe
+- ✅ Quality validation checkpoints
+- ✅ Concise final output
+
+## See Also
+
+- **[`commands/multi-agent.md`](../../commands/multi-agent.md)** - The orchestration command (start here)
+- **[`commands/README.md`](../../commands/README.md)** - Pattern comparison and usage
+- **[`ARCHITECTURE.md`](../../ARCHITECTURE.md)** - Complete system architecture documentation
+- **[`agents/research/`](../research/)** - Parallel research system for comparison
 
 ---
+
+**Meta-Multi-Agent Framework v1.0**
+
+*Transform any domain into a sophisticated multi-agent system in 2-5 minutes with the `/multi-agent` orchestration command.*
+
+**Quick Links**:
+- Run: `/multi-agent [your domain description]`
+- Docs: [`commands/multi-agent.md`](../../commands/multi-agent.md)
+- Architecture: [`ARCHITECTURE.md`](../../ARCHITECTURE.md)
+- Comparison: [`commands/README.md`](../../commands/README.md)

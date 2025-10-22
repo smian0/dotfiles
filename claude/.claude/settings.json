@@ -40,52 +40,14 @@
       "mcp__serena__think_about_task_adherence",
       "mcp__serena__think_about_whether_you_are_done",
       "mcp__serena__prepare_for_new_conversation",
-      "mcp__sequential-thinking__sequentialthinking",
       "mcp__context7__resolve-library-id",
       "mcp__context7__get-library-docs",
-      "mcp__playwright__browser_close",
-      "mcp__playwright__browser_resize",
-      "mcp__playwright__browser_console_messages",
-      "mcp__playwright__browser_handle_dialog",
-      "mcp__playwright__browser_evaluate",
-      "mcp__playwright__browser_file_upload",
-      "mcp__playwright__browser_fill_form",
-      "mcp__playwright__browser_install",
-      "mcp__playwright__browser_press_key",
-      "mcp__playwright__browser_type",
-      "mcp__playwright__browser_navigate",
-      "mcp__playwright__browser_navigate_back",
-      "mcp__playwright__browser_network_requests",
-      "mcp__playwright__browser_take_screenshot",
-      "mcp__playwright__browser_snapshot",
-      "mcp__playwright__browser_click",
-      "mcp__playwright__browser_drag",
-      "mcp__playwright__browser_hover",
-      "mcp__playwright__browser_select_option",
-      "mcp__playwright__browser_tabs",
-      "mcp__playwright__browser_wait_for",
-      "mcp__time__get_current_time",
-      "mcp__time__convert_time",
-      "mcp__marksman__get_document_outline",
-      "mcp__marksman__find_wiki_links",
-      "mcp__marksman__find_embedded_content",
-      "mcp__marksman__find_block_references",
-      "mcp__marksman__find_callouts",
-      "mcp__marksman__parse_obsidian_links",
-      "mcp__marksman__extract_dataview_fields",
-      "mcp__marksman__build_vault_graph",
-      "mcp__marksman__find_cross_references",
-      "mcp__marksman__extract_frontmatter",
-      "mcp__marksman__find_code_blocks",
-      "mcp__marksman__find_task_lists",
-      "mcp__marksman__analyze_document_structure",
-      "mcp__marksman__lint_document",
-      "mcp__marksman__auto_fix_document",
-      "mcp__marksman__health_check",
-      "mcp__web-search-prime__webSearchPrime",
       "mcp__zen__retrieve_tools",
       "mcp__zen__call_tool",
-      "mcp__zen__restart_server"
+      "mcp__zen__restart_server",
+      "mcp__privacy_pdf__pdf_extract_redact",
+      "mcp__privacy_pdf__validate_redaction",
+      "mcp__privacy_pdf__analyze_redacted_content"
     ],
     "deny": [
       "Read(./.env)",
@@ -95,6 +57,18 @@
   },
   "enableAllProjectMcpServers": true,
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/PreToolUse/check-rm-bypass.sh",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "startup",
@@ -141,6 +115,9 @@
   "statusLine": {
     "type": "command",
     "command": "$HOME/.claude/scripts/statusline.sh"
+  },
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true
   },
   "alwaysThinkingEnabled": true
 }

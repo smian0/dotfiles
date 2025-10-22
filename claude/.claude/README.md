@@ -7,10 +7,9 @@ This directory contains configuration files and resources for Claude Code, organ
 ```
 claude/.claude/
 ├── .mcp.json                  # MCP server configuration (auto-generated)
-├── CLAUDE.md                  # Main behavioral configuration 
+├── CLAUDE.md                  # Main behavioral configuration
 ├── CLAUDE_BEST_PRACTICES.md   # Guidelines for effective Claude.md usage
 ├── PROFILE_USAGE_GUIDE.md     # Comprehensive profile management guide
-├── __main__.py                # SuperClaude Framework Management Hub
 ├── settings.json              # Claude Code settings and permissions
 ├── profiles/                  # MCP profile configurations (minimal, backend, full)
 ├── agents/                    # Specialized agent personas (14 agents)
@@ -150,7 +149,7 @@ The main behavioral configuration file that defines:
 - Core development principles and file operation priorities
 - Response behavior and verification protocols
 - Code guidelines and performance optimization rules
-- SuperClaude Framework component integration
+- MCP server documentation and usage patterns
 
 ### settings.json
 Contains Claude Code settings including:
@@ -184,4 +183,4 @@ claude-profile switch full
 # Restart Claude for browser automation, markdown processing, etc.
 ```
 
-The configuration follows the SuperClaude Framework principles for modular, extensible AI assistance while maintaining consistency across development workflows.
+The configuration provides modular, extensible AI assistance while maintaining consistency across development workflows through MCP servers, specialized agents, and behavioral guidelines.

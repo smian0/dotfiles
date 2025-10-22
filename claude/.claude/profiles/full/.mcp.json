@@ -50,23 +50,6 @@
       "description": "Semantic code analysis & project memory - LSP integration, symbol operations, session persistence",
       "purpose": "code-analysis",
       "scope": "project"
-    },
-    "zen": {
-      "command": "npx",
-      "args": [
-        "reloaderoo",
-        "proxy",
-        "--",
-        "/Users/smian/github/zen-mcp-server/.zen_venv/bin/python",
-        "/Users/smian/github/zen-mcp-server/server.py"
-      ],
-      "description": "AI orchestration with Universal Intelligence - multi-model workflows, cross-domain expertise, hot-reload enabled",
-      "env": {
-        "MCPDEV_PROXY_AUTO_RESTART": "true"
-      },
-      "purpose": "ai-orchestration",
-      "scope": "universal",
-      "type": "stdio"
     }
   }
 }
