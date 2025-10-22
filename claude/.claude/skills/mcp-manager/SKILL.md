@@ -54,7 +54,7 @@ MCP configurations exist at multiple levels (in order of precedence):
 
 **DO NOT EDIT:**
 - `~/.claude.json` - This is Claude Code's internal state/cache file (4+ MB)
-- Contains: Session history, UI state, cached server info
+- Contains: Session history, UI state, **cached server configurations**
 - Managed automatically by Claude Code
 - Editing this file can corrupt your Claude Code installation
 
@@ -67,6 +67,34 @@ MCP configurations exist at multiple levels (in order of precedence):
 **Legacy names (don't use):**
 - `claude.json`, `claude_config.json`, `claude_desktop_config.json`
 - These are old naming conventions - use `.mcp.json` instead
+
+### 🔍 Understanding State File Caching
+
+**CRITICAL: Claude Code caches MCP server configs in ~/.claude.json**
+
+When you add servers to `.mcp.json` files, Claude Code:
+1. Reads the `.mcp.json` configuration
+2. **Copies the server config into `~/.claude.json` cache**
+3. Launches the server processes
+4. Keeps servers "connected" even if you remove them from `.mcp.json`
+
+**This means:**
+- ❌ Manual removal from `.mcp.json` alone won't disconnect the server
+- ❌ Server processes may continue running (orphaned processes)
+- ❌ Cache in `~/.claude.json` persists even after IDE restart
+- ✅ Use `claude mcp remove <server-name>` to properly clean up both config and cache
+- ✅ Use `claude mcp list` to see what's actually active (not just configured)
+
+**Why this happens:**
+- Performance optimization - cached configs load faster
+- Session persistence - servers stay connected across IDE restarts
+- Process management - Claude Code tracks running server processes
+
+**When cache gets out of sync:**
+1. You manually edit `.mcp.json` (add/remove servers)
+2. IDE restart doesn't rebuild cache
+3. Old servers remain in `~/.claude.json` and show as "connected"
+4. Need `claude mcp remove` to clean up properly
 
 ### Configuration Files
 
@@ -184,14 +212,58 @@ For each MCP server:
 
 **When to use:** Uninstalling an MCP server.
 
-**Steps:**
+**⚠️ RECOMMENDED METHOD: Use Claude CLI**
 
-1. **Remove from `.mcp.json`**
-2. **Remove all permissions from `settings.json`**
-3. **Validate no orphaned references**
-4. **Restart Claude Code**
+```bash
+# This is the BEST way to remove a server
+claude mcp remove <server-name>
+```
 
-**Critical:** Must remove BOTH server definition AND permissions to maintain consistency.
+**Why use `claude mcp remove`:**
+- ✅ Removes from `.mcp.json` configuration files
+- ✅ Cleans up cached config in `~/.claude.json` state file
+- ✅ Kills any running server processes
+- ✅ Prevents "still connected" ghost servers
+- ✅ Handles all cleanup automatically
+
+**Verify removal:**
+```bash
+# Check what servers are actually active
+claude mcp list
+```
+
+**ALTERNATIVE: Manual Removal (Not Recommended)**
+
+If you must manually remove (e.g., scripting, automation):
+
+1. **Kill any running processes:**
+   ```bash
+   pkill -f "server-name"
+   pkill -f "reloaderoo.*server-name"
+   ```
+
+2. **Remove from `.mcp.json`:**
+   ```bash
+   jq 'del(.mcpServers["server-name"])' ~/.claude/.mcp.json > /tmp/mcp.json
+   mv /tmp/mcp.json ~/.claude/.mcp.json
+   ```
+
+3. **Remove permissions from `settings.json`:**
+   ```bash
+   # Remove all permissions starting with "mcp__server-name__"
+   jq '.permissions.allow |= map(select(startswith("mcp__server-name__") | not))' ~/.claude/settings.json > /tmp/settings.json
+   mv /tmp/settings.json ~/.claude/settings.json
+   ```
+
+4. **Clean up cache using Claude CLI:**
+   ```bash
+   # Even with manual removal, use this to clean cache
+   claude mcp remove server-name
+   ```
+
+5. **Restart Claude Code**
+
+**Critical:** Manual removal can leave orphaned processes and cache entries. Always use `claude mcp remove` when possible.
 
 ### 5. Validate Configuration
 
@@ -308,7 +380,48 @@ Comprehensive validation of MCP configurations.
 
 ## Best Practices
 
-### 1. Always Validate After Editing
+### 1. Use Claude CLI for MCP Operations
+
+**ALWAYS use `claude mcp` commands for server management:**
+
+```bash
+# List active servers (shows actual state, not just config)
+claude mcp list
+
+# Add a server (interactive)
+claude mcp add
+
+# Remove a server (cleans up config + cache + processes)
+claude mcp remove <server-name>
+
+# Show server details
+claude mcp show <server-name>
+```
+
+**Why Claude CLI over manual editing:**
+- ✅ Automatically cleans up state file cache (`~/.claude.json`)
+- ✅ Kills orphaned processes
+- ✅ Validates configuration syntax
+- ✅ Prevents ghost servers
+- ✅ Ensures consistency across all config levels
+
+**When to manually edit `.mcp.json`:**
+- Bulk operations (adding multiple servers at once)
+- Automation scripts
+- Version control operations (syncing between machines)
+- Complex environment variable configurations
+
+**After manual edits:**
+```bash
+# Validate syntax
+jq . ~/.claude/.mcp.json
+
+# Restart Claude Code to pick up changes
+# Then verify:
+claude mcp list
+```
+
+### 2. Always Validate After Manual Editing
 
 **Manual edits are error-prone.** After editing `.mcp.json` or `settings.json`:
 
@@ -318,21 +431,24 @@ Comprehensive validation of MCP configurations.
 
 If validation fails, fix issues before restarting Claude Code.
 
-### 2. Use Scripts for Add/Remove Operations
+### 3. Check Actual State with `claude mcp list`
 
-**Don't manually edit JSON files** for adding/removing servers. Use the provided scripts:
+**Don't trust config files alone.** Use `claude mcp list` to see what's actually running:
 
 ```bash
-# Add server
-./scripts/add-mcp-server.sh
+# What's configured (may be outdated)
+jq -r '.mcpServers | keys[]' ~/.claude/.mcp.json
 
-# Remove server
-./scripts/remove-mcp-server.sh my-server
+# What's actually active (truth)
+claude mcp list
 ```
 
-Scripts ensure consistency and prevent orphaned permissions.
+If there's a mismatch, you likely have:
+- Cached servers in `~/.claude.json`
+- Orphaned processes
+- Need to use `claude mcp remove` for cleanup
 
-### 3. Sync User Configs to Dotfiles Regularly
+### 4. Sync User Configs to Dotfiles Regularly
 
 **Version control your MCP configurations:**
 
@@ -346,14 +462,14 @@ git add claude/.claude/.mcp.json
 git commit -m "feat: add new MCP server for X"
 ```
 
-### 4. Project MCP Servers Go in Project .claude/
+### 5. Project MCP Servers Go in Project .claude/
 
 **Don't pollute user configs with project-specific servers.**
 
 - User level: Development tools (serena, context7, zen)
 - Project level: Project-specific integrations (project APIs, databases)
 
-### 5. Auto-Restart Configuration
+### 6. Auto-Restart Configuration
 
 For MCP servers under active development:
 
@@ -373,7 +489,7 @@ For MCP servers under active development:
 
 **Benefit:** Server auto-restarts on file changes without IDE restart.
 
-### 6. Permission Naming Convention
+### 7. Permission Naming Convention
 
 Always use the format: `mcp__<server-name>__<tool-name>`
 
@@ -388,6 +504,50 @@ This makes it easy to find and remove all permissions for a server.
 ---
 
 ## Common Issues & Troubleshooting
+
+### Issue: Server Still Shows as "Connected" After Removal
+
+**Symptoms:** Removed server from `.mcp.json` but still appears in MCP server list with status "✔ connected".
+
+**Root Cause:** Server config cached in `~/.claude.json` state file, orphaned processes still running.
+
+**Solutions (in order):**
+
+1. **Use Claude CLI to remove properly:**
+   ```bash
+   claude mcp remove <server-name>
+   claude mcp list  # Verify it's gone
+   ```
+
+2. **If still showing, kill orphaned processes:**
+   ```bash
+   # Find all processes for this server
+   ps aux | grep -i "server-name"
+
+   # Kill them
+   pkill -f "server-name/server.py"
+   pkill -f "reloaderoo.*server-name"
+   ```
+
+3. **Restart Claude Code completely** (not just reload window)
+
+4. **Last resort - manual cache cleanup:**
+   ```bash
+   # ⚠️ DANGEROUS - Only if above steps fail
+   # Backup first!
+   cp ~/.claude.json ~/.claude.json.backup
+
+   # Remove server from cache using jq
+   jq 'del(.mcpServers["server-name"])' ~/.claude.json > /tmp/claude.json
+   mv /tmp/claude.json ~/.claude.json
+
+   # Restart Claude Code
+   ```
+
+**Prevention:**
+- ✅ Always use `claude mcp remove` instead of manual editing
+- ✅ Use `claude mcp list` to check actual state (not just config files)
+- ❌ Don't manually edit `.mcp.json` for removals
 
 ### Issue: MCP Server Not Loading
 
