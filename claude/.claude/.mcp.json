@@ -1,17 +1,5 @@
 {
   "mcpServers": {
-    "context7": {
-      "args": [
-        "-y",
-        "@upstash/context7-mcp"
-      ],
-      "command": "npx",
-      "description": "Official library documentation lookup - curated docs, framework patterns",
-      "env": {},
-      "purpose": "documentation",
-      "scope": "library",
-      "type": "stdio"
-    },
     "serena": {
       "args": [
         "--from",
@@ -79,6 +67,18 @@
         "Authorization": "Bearer a24f09170ffc4a16958a9986c475561b.MWYL7fnGDHQesuuR"
       },
       "description": "Z.AI web search with content size control and domain filtering"
+    },
+    "context7": {
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "command": "npx",
+      "description": "Official library documentation lookup - curated docs, framework patterns",
+      "env": {},
+      "purpose": "documentation",
+      "scope": "library",
+      "type": "stdio"
     }
   }
 }
