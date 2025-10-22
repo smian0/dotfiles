@@ -58,21 +58,6 @@
       "env": {
         "MCPDEV_PROXY_AUTO_RESTART": "true"
       }
-    },
-    "mcp_markdown": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "reloaderoo",
-        "proxy",
-        "--",
-        "python3",
-        "/Users/smian/dotfiles/claude/.claude/mcp_servers/mcp_markdown/server.py"
-      ],
-      "description": "Markdown analysis and manipulation for Obsidian vault",
-      "env": {
-        "MCPDEV_PROXY_AUTO_RESTART": "true"
-      }
     }
   }
 }
