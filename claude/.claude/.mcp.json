@@ -58,6 +58,27 @@
       "env": {
         "MCPDEV_PROXY_AUTO_RESTART": "true"
       }
+    },
+    "zai-mcp-server": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@z_ai/mcp-server"
+      ],
+      "env": {
+        "Z_AI_API_KEY": "a24f09170ffc4a16958a9986c475561b.MWYL7fnGDHQesuuR",
+        "Z_AI_MODE": "ZAI"
+      },
+      "description": "Z.AI multimodal analysis (image/video) and AI-powered tools"
+    },
+    "web-search-prime": {
+      "type": "http",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer a24f09170ffc4a16958a9986c475561b.MWYL7fnGDHQesuuR"
+      },
+      "description": "Z.AI web search with content size control and domain filtering"
     }
   }
 }
