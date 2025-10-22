@@ -501,6 +501,61 @@ Always use the format: `mcp__<server-name>__<tool-name>`
 
 This makes it easy to find and remove all permissions for a server.
 
+### 8. Working with Stow-Managed Configurations
+
+**⚠️ CRITICAL: Do not break Stow symlinks!**
+
+If your dotfiles use GNU Stow, `~/.claude/.mcp.json` is a **symlink** to `~/dotfiles/claude/.claude/.mcp.json`.
+
+**WRONG - Breaks symlink:**
+```bash
+# This overwrites the symlink with a regular file!
+jq '.mcpServers["new-server"] = {...}' ~/.claude/.mcp.json > /tmp/mcp.json
+mv /tmp/mcp.json ~/.claude/.mcp.json  # ❌ Destroys symlink
+```
+
+**RIGHT - Preserves symlink:**
+```bash
+# Option 1: Modify the source file in dotfiles
+jq '.mcpServers["new-server"] = {...}' ~/dotfiles/claude/.claude/.mcp.json > /tmp/mcp.json
+mv /tmp/mcp.json ~/dotfiles/claude/.claude/.mcp.json
+
+# Option 2: Use sponge (moreutils package)
+jq '.mcpServers["new-server"] = {...}' ~/.claude/.mcp.json | sponge ~/.claude/.mcp.json
+
+# Option 3: Edit in place with temporary file in same directory
+jq '.mcpServers["new-server"] = {...}' ~/.claude/.mcp.json > ~/.claude/.mcp.json.tmp
+mv ~/.claude/.mcp.json.tmp ~/.claude/.mcp.json
+```
+
+**If you accidentally break the symlink:**
+```bash
+# 1. Remove the regular file
+rm ~/.claude/.mcp.json ~/.claude/MCP_*.md
+
+# 2. Re-stow to recreate symlinks
+cd ~/dotfiles
+stow -R claude
+
+# 3. Verify symlinks
+ls -la ~/.claude/.mcp.json  # Should show -> ../dotfiles/...
+```
+
+**Verification:**
+```bash
+# Check if file is a symlink
+ls -la ~/.claude/.mcp.json
+
+# Should show: lrwxr-xr-x ... .mcp.json -> ../dotfiles/claude/.claude/.mcp.json
+# NOT: -rw-r--r-- ... .mcp.json
+```
+
+**Why this matters:**
+- Stow symlinks keep configs version-controlled
+- Breaking symlinks creates drift between `~/.claude/` and `~/dotfiles/`
+- Claude Code may not detect configuration changes properly
+- MCP servers may fail to load
+
 ---
 
 ## Common Issues & Troubleshooting
@@ -549,16 +604,48 @@ This makes it easy to find and remove all permissions for a server.
 - ✅ Use `claude mcp list` to check actual state (not just config files)
 - ❌ Don't manually edit `.mcp.json` for removals
 
+### Issue: MCP Servers Not Loading After Configuration Changes
+
+**Symptoms:** Servers configured in `.mcp.json` but not appearing in `claude mcp list`.
+
+**Root Cause:** Broken Stow symlink - `.mcp.json` is a regular file instead of symlink.
+
+**Detection:**
+```bash
+ls -la ~/.claude/.mcp.json
+
+# Bad (regular file):  -rw-r--r-- ... .mcp.json
+# Good (symlink):      lrwxr-xr-x ... .mcp.json -> ../dotfiles/...
+```
+
+**Solution:**
+```bash
+# 1. Verify dotfiles source has correct config
+jq -r '.mcpServers | keys[]' ~/dotfiles/claude/.claude/.mcp.json
+
+# 2. Remove broken regular file
+rm ~/.claude/.mcp.json
+
+# 3. Re-stow to recreate symlink
+cd ~/dotfiles && stow -R claude
+
+# 4. Verify symlink
+ls -la ~/.claude/.mcp.json  # Should be symlink now
+
+# 5. Restart Claude Code
+```
+
 ### Issue: MCP Server Not Loading
 
 **Symptoms:** Server defined in `.mcp.json` but not available in Claude Code.
 
 **Solutions:**
-1. Check JSON syntax: `jq . ~/.claude/.mcp.json`
-2. Verify command exists: `which npx` or `which uvx`
-3. Test command manually: `npx -y package-name --help`
-4. Check Claude Code logs: `~/.claude/logs/`
-5. Restart Claude Code completely
+1. Check if symlink is broken: `ls -la ~/.claude/.mcp.json`
+2. Check JSON syntax: `jq . ~/.claude/.mcp.json`
+3. Verify command exists: `which npx` or `which uvx`
+4. Test command manually: `npx -y package-name --help`
+5. Check Claude Code logs: `~/.claude/logs/`
+6. Restart Claude Code completely
 
 ### Issue: Orphaned Permissions
 
