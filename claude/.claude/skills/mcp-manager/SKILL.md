@@ -7,48 +7,60 @@ description: Comprehensive MCP server configuration management for user and proj
 
 ## Overview
 
-This skill manages Model Context Protocol (MCP) server configurations across user and project levels. It ensures consistency between `.mcp.json` (server definitions) and `settings.json` (tool permissions), provides sync workflows, and validates configurations.
+This skill manages Model Context Protocol (MCP) server configurations using a **declarative sync model**:
+
+**📄 `~/.claude/.mcp.json`** = Source of truth (version-controlled manifest)
+**🔧 User-level MCP registration** = Runtime state (via `claude mcp add --scope user`)
+**🤖 This skill** = Keeps them in sync automatically
 
 **Use this skill when:**
 - Adding or removing MCP servers
-- Syncing configurations between user and project levels
+- Syncing `~/.claude/.mcp.json` to user-level registration
 - Validating MCP server consistency
 - Debugging MCP server issues
 - Setting up new projects with MCP servers
 
 **Key Technologies:**
-- `.mcp.json`: Server definitions (command, args, env)
-- `settings.json`: Tool permissions and hooks
-- jq: JSON processing
+- `~/.claude/.mcp.json`: Declarative manifest (version-controlled)
+- `claude mcp add/remove`: Server registration CLI
+- `~/.claude.json`: Runtime state (auto-managed by Claude Code)
+- `jq`: JSON processing
 - Stow: Dotfiles symlink management
 
 ---
 
 ## Core Concepts
 
-### Configuration Hierarchy
+### Declarative Sync Model
 
-MCP configurations exist at multiple levels (in order of precedence):
+**How it works:**
 
-1. **User Global** (`~/.mcp.json`)
-   - Personal utility servers available everywhere
-   - Lowest priority (can be overridden)
-   - Example: web-search, personal API tools
+1. **Define** servers in `~/.claude/.mcp.json` (version-controlled manifest)
+2. **Run sync** script to register them at user level: `~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh`
+3. **Claude Code** loads servers from user-level registration
+4. **Repeat** sync whenever you modify `~/.claude/.mcp.json`
 
-2. **Claude Global** (`~/.claude/.mcp.json`)
-   - Claude Code global development tools
-   - Available to all Claude Code sessions
-   - Example: context7, serena, code analysis tools
+**Why this model:**
+- ✅ Version-controlled: `~/.claude/.mcp.json` tracked in dotfiles
+- ✅ Team-shareable: Commit and push MCP config changes
+- ✅ Declarative: Manifest describes desired state
+- ✅ Automated: Sync script ensures runtime matches manifest
+- ✅ Stow-friendly: Symlinked to `~/dotfiles/claude/.claude/.mcp.json`
 
-3. **Project Shared** (`<project>/.mcp.json`)
+### Configuration Levels
+
+MCP servers can be configured at multiple levels:
+
+1. **User-level** (via `claude mcp add --scope user`)
+   - Registered in `~/.claude.json` (managed by Claude Code)
+   - Synced from `~/.claude/.mcp.json` manifest
+   - Available to all projects
+   - Example: context7, serena, zen, code analysis tools
+
+2. **Project-level** (`<project>/.mcp.json`)
    - Project-specific servers for the team
    - Committed to git, shared via version control
-   - Overrides user-level configs
-
-4. **Project Private** (`<project>/.claude/.mcp.json`)
-   - Your private project-specific overrides
-   - Usually gitignored (personal to you)
-   - Highest priority
+   - Example: project APIs, databases, custom tools
 
 ### ⚠️ IMPORTANT: State File vs Config Files
 
@@ -139,41 +151,50 @@ For each MCP server:
 
 ## Workflows
 
-### 1. Check Configuration Consistency
+### 1. Sync User-Level MCP Servers (PRIMARY WORKFLOW)
 
-**When to use:** Before committing changes, after editing MCP configs, during troubleshooting.
-
-```bash
-# Check user-level consistency
-./scripts/check-mcp-consistency.sh
-
-# Check project-level consistency
-./scripts/check-mcp-consistency.sh --project
-```
-
-**What it checks:**
-- `.mcp.json` servers have matching `settings.json` permissions
-- No orphaned permissions
-- Valid JSON syntax
-- Required fields present
-
-### 2. Sync User ↔ Dotfiles
-
-**When to use:** After modifying `~/.claude/.mcp.json`, to version control changes.
+**When to use:** After modifying `~/.claude/.mcp.json`, or when servers aren't loading.
 
 ```bash
-# Sync from user to dotfiles
-./scripts/sync-mcp-to-dotfiles.sh
+# Dry-run to see what would change
+~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh --dry-run
 
-# Sync from dotfiles to user (after pulling changes)
-./scripts/sync-dotfiles-to-mcp.sh
+# Actually sync servers
+~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh
 ```
 
 **What it does:**
-- Copies `.mcp.json` between locations
-- Preserves formatting
-- Creates backup before overwriting
-- Validates syntax
+- Reads servers from `~/.claude/.mcp.json` manifest
+- Registers each server at user level via `claude mcp add --scope user`
+- Skips servers already registered
+- Handles stdio, HTTP, and SSE transports
+- Handles environment variables and headers
+- Shows final server list with connection status
+
+**This is the PRIMARY way to manage user-level MCP servers.**
+
+### 2. Adding/Removing User-Level Servers
+
+**Adding a server:**
+
+1. Edit `~/.claude/.mcp.json` to add server definition
+2. Run sync script: `~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh`
+3. Verify: `claude mcp list`
+4. Commit: `cd ~/dotfiles && git add claude/.claude/.mcp.json && git commit`
+
+**Removing a server:**
+
+1. Remove from `~/.claude/.mcp.json`
+2. Run: `claude mcp remove <server-name>`
+3. Commit: `cd ~/dotfiles && git add claude/.claude/.mcp.json && git commit`
+
+**Alternative (manual):**
+```bash
+# Add directly (bypasses manifest)
+claude mcp add --scope user <name> <command> [args...]
+
+# But you should also update ~/.claude/.mcp.json to keep manifest in sync
+```
 
 ### 3. Add MCP Server
 
