@@ -47,6 +47,53 @@ Write self-documenting code instead:
 
 **Reference user's previous statements and established context.** Don't make them repeat information.
 
+## File Path References
+
+**When referencing files in your responses, always use paths that are clickable in the IDE.**
+
+### Smart Path Selection
+
+**Use relative paths from project root when:**
+- Listing files you created, modified, or read
+- Showing results from operations (builds, tests, generations)
+- Reporting errors or issues with specific files
+- Recommending files for the user to check
+- Referencing files in explanations or documentation
+
+**Path Format:**
+- ✅ `.claude/skills/sow-generator/output/SOW_Addendum_41.pdf` (clickable)
+- ✅ `src/components/Header.tsx` (clickable)
+- ✅ `.tools/docling/README.md` (clickable)
+- ❌ `SOW_Addendum_41.pdf` (not clickable when outside current directory)
+- ❌ `Header.tsx` (ambiguous, not clickable)
+
+### Context-Aware Exceptions
+
+**Filename only is acceptable when:**
+- File is in current working directory AND context is clear
+- Discussing file naming conventions abstractly
+- File doesn't exist yet (hypothetical examples)
+- Listing options where full path would be repetitive noise
+
+**Example - Smart Usage:**
+```markdown
+✅ SOW successfully generated!
+
+What was created:
+1. SOW PDF: .claude/skills/sow-generator/output/SOW_Addendum_41_Peter_Scholtens.pdf (86 KB)
+2. Intro Email: .claude/skills/sow-generator/output/SOW_Intro_Email_41_Peter_Scholtens.md
+
+Both files are ready for review.
+```
+
+### Tool Arguments vs Response Display
+
+**Different rules apply:**
+- **Tool arguments**: Follow tool requirements (may need absolute or relative paths)
+- **Response display**: Always use project-relative paths for user clickability
+
+**Why this matters:** IDE interfaces make relative paths clickable. Bare filenames or absolute paths often aren't clickable, reducing usability.
+
 ## README Management Rules
 
 ### Never
