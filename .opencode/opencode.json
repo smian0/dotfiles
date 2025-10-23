@@ -1,29 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "streamable-mcp-server": {
-      "type": "remote",
-      "url": "http://127.0.0.1:12306/mcp",
-      "enabled": true
-    },
-    "joke-dev": {
-      "command": [
-        "npx",
-        "reloaderoo",
-        "proxy",
-        "--log-level",
-        "debug",
-        "--",
-        "python3",
-        "/Users/smian/dotfiles/claude/.claude/mcp_servers/simple_joke_server.py"
-      ],
-      "type": "local",
-      "enabled": true,
-      "environment": {
-        "MCPDEV_PROXY_AUTO_RESTART": "true",
-        "MCPDEV_PROXY_LOG_LEVEL": "debug"
-      }
-    },
     "web-search-prime": {
       "type": "remote",
       "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
@@ -47,8 +24,6 @@
     }
   },
   "tools": {
-    "mcp__joke_dev__*": true,
-    "mcp__streamable_mcp_server__*": true,
     "mcp__web_search_prime__*": true,
     "mcp__zai_mcp_server__*": true
   }
