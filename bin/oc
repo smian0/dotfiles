@@ -123,20 +123,28 @@ else
 fi
 
 # Launch opencode with environment variables available
-# Use the current binary to ensure upgrades work properly
-OPENCODE_BINARY="/Users/smian/.npm-global/bin/opencode"
-OPENCODE_BACKUP="/Users/smian/.npm-global/bin/opencode.original"
+OPENCODE_PR_SOURCE="/tmp/opencode-pr3083"
 
-# Try current binary first (this gets updated by npm)
-if [[ -x "$OPENCODE_BINARY" ]]; then
-    [[ "$DEBUG_MODE" == "true" ]] && echo "Using current opencode binary: $OPENCODE_BINARY"
-    exec "$OPENCODE_BINARY" "${FORWARD_ARGS[@]}"
-# Fallback to backup binary if current one doesn't exist
-elif [[ -x "$OPENCODE_BACKUP" ]]; then
-    [[ "$DEBUG_MODE" == "true" ]] && echo "Using backup opencode binary: $OPENCODE_BACKUP"
-    exec "$OPENCODE_BACKUP" "${FORWARD_ARGS[@]}"
+# Check if PR source exists
+if [[ -d "$OPENCODE_PR_SOURCE" ]]; then
+    [[ "$DEBUG_MODE" == "true" ]] && echo "Using OpenCode PR #3083 from source"
+    cd "$OPENCODE_PR_SOURCE"
+    exec bun run packages/opencode/src/index.ts "${FORWARD_ARGS[@]}"
 else
-    echo "Error: opencode binary not found at $OPENCODE_BINARY or $OPENCODE_BACKUP" >&2
-    echo "Try running: npm install -g opencode-ai" >&2
-    exit 1
+    # Fallback to installed binary
+    OPENCODE_BINARY="/Users/smian/.npm-global/bin/opencode"
+    OPENCODE_BACKUP="/Users/smian/.npm-global/bin/opencode.backup-0.15.14"
+
+    if [[ -x "$OPENCODE_BINARY" ]]; then
+        [[ "$DEBUG_MODE" == "true" ]] && echo "Using current opencode binary: $OPENCODE_BINARY"
+        exec "$OPENCODE_BINARY" "${FORWARD_ARGS[@]}"
+    elif [[ -x "$OPENCODE_BACKUP" ]]; then
+        [[ "$DEBUG_MODE" == "true" ]] && echo "Using backup opencode binary: $OPENCODE_BACKUP"
+        exec "$OPENCODE_BACKUP" "${FORWARD_ARGS[@]}"
+    else
+        echo "Error: opencode not found" >&2
+        echo "PR source missing at: $OPENCODE_PR_SOURCE" >&2
+        echo "Binary not found at: $OPENCODE_BINARY" >&2
+        exit 1
+    fi
 fi
