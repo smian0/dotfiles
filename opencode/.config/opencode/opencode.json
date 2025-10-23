@@ -4,6 +4,7 @@
   "model": "github-copilot/claude-sonnet-4",
   "small_model": "ollamat/gpt-oss:120b",
   "autoupdate": true,
+  "plugin": ["opencode-skills"],
   "provider": {
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
