@@ -187,10 +187,16 @@ Ollama cloud models available at `http://localhost:11434` or `http://localhost:1
 
 Before claiming skill work is complete:
 ```bash
-# Check for unreferenced files
+# Check for unreferenced files (checks all relevant file types)
 cd .claude/skills/<skill-name>
-for f in $(find . -name "*.md" ! -name "SKILL.md"); do
-  grep -q "$(basename $f)" SKILL.md || echo "❌ UNREFERENCED: $f"
+find . -type f \( \
+  -name "*.md" -o -name "*.py" -o -name "*.sh" -o \
+  -name "*.json" -o -name "*.yaml" -o -name "*.yml" -o \
+  -name "*.txt" -o -name "*.template" -o \
+  -name "Dockerfile" -o -name "docker-compose.yml" \
+\) ! -name "SKILL.md" ! -path "*/output/*" ! -path "*/.state/*" ! -path "*/cache/*" | \
+while read f; do
+  grep -q "$(basename "$f")" SKILL.md || echo "⚠️ Unreferenced: $f"
 done
 ```
 

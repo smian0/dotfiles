@@ -187,6 +187,40 @@ scripts/package_skill.py <path/to/skill-folder>
 
 Then iterate based on usage.
 
+## Helper Scripts
+
+This skill includes utility scripts for skill development:
+
+**init_skill.py** - Creates new skill from templates
+```bash
+scripts/init_skill.py <skill-name> --path .claude/skills
+```
+- Generates SKILL.md from assets/templates/SKILL.template.md
+- Creates basic directory structure (scripts/, references/, assets/)
+- Adds example files to get started
+
+**package_skill.py** - Validates and packages skills
+```bash
+scripts/package_skill.py <path/to/skill>
+```
+- Checks SKILL.md format and frontmatter
+- Validates directory structure
+- Prepares skill for distribution
+
+**quick_validate.py** - Quick validation checks
+```bash
+scripts/quick_validate.py <path/to/skill>
+```
+- Validates SKILL.md frontmatter
+- Checks for required fields
+- Fast pre-check before packaging
+
+**Templates** in assets/templates/:
+- `SKILL.template.md` - Main skill template
+- `example-script.template.py` - Script template
+- `api-reference.template.md` - Reference docs template
+- `example-asset.template.txt` - Asset placeholder template
+
 ## Progressive Disclosure
 
 Skills load in three levels:
