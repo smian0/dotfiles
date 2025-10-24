@@ -1,0 +1,21 @@
+# Generated test workflows
+test-*/
+example-*/
+
+# Temporary files
+*.tmp
+*.bak
+
+# Python bytecode (if adding scripts)
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
