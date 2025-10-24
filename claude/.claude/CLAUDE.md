@@ -47,6 +47,15 @@ Write self-documenting code instead:
 
 **Reference user's previous statements and established context.** Don't make them repeat information.
 
+## Refactoring Policy
+
+**Do NOT maintain backwards compatibility unless explicitly requested.**
+
+Make breaking changes freely:
+- Use modern language features and best practices
+- Remove deprecated patterns
+- Prioritize clean, idiomatic code
+
 ## File Path References
 
 **When referencing files in your responses, always use paths that are clickable in the IDE.**
