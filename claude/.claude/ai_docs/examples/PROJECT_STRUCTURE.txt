@@ -1,0 +1,280 @@
+Claude + Agno Multi-Agent Orchestration Project
+==============================================
+
+claude-agno-orchestration/
+│
+├── 📄 README.md                          Complete quick start guide
+├── 📄 requirements.txt                   Python dependencies (agno, claude-agent-sdk)
+├── 📄 pyproject.toml                     Project metadata & packaging
+├── 📄 .env.example                       Environment variables template
+├── 📄 .gitignore                         Git ignore patterns
+│
+├── 📁 src/                               🏗️  Source Code
+│   └── orchestration/                    Main package
+│       ├── __init__.py                   Package exports
+│       │
+│       ├── 🤖 agents/                    Agent Definitions
+│       │   ├── __init__.py               Export all agents
+│       │   ├── base.py                   ⭐ BaseAgent class & factory
+│       │   ├── research.py               🔍 ResearchAgent (facts, data)
+│       │   ├── calculator.py             🧮 CalculatorAgent (math, numbers)
+│       │   ├── code_analyzer.py          💻 CodeAnalyzerAgent (code quality)
+│       │   ├── documentation.py          📚 DocumentationAgent (docs checker)
+│       │   ├── sentiment.py              😊 SentimentAgent (sentiment analysis)
+│       │   └── security.py               🔒 SecurityAgent (security scanning)
+│       │
+│       ├── 🎭 orchestrators/             Orchestration Patterns
+│       │   ├── __init__.py               Export orchestrators
+│       │   ├── base.py                   ⭐ BaseOrchestrator class
+│       │   ├── direct.py                 🎯 DirectOrchestrator (function calls)
+│       │   ├── mcp.py                    🛠️  MCPOrchestrator (tool-based)
+│       │   └── hybrid.py                 🔄 HybridOrchestrator (mixed)
+│       │
+│       ├── 🔧 tools/                     Claude SDK Tools
+│       │   ├── __init__.py
+│       │   └── agno_bridges.py           🌉 MCP tool wrappers for Agno agents
+│       │
+│       ├── 🔄 workflows/                 Pre-built Workflows
+│       │   ├── __init__.py
+│       │   ├── code_review.py            📋 Complete code review system
+│       │   ├── data_analysis.py          📊 Data processing pipeline
+│       │   └── research_synthesis.py     🔬 Multi-step research workflow
+│       │
+│       └── ⚙️  config/                   Configuration Management
+│           ├── __init__.py
+│           ├── agent_config.py           Agent configuration loader
+│           └── settings.py               Global settings manager
+│
+├── 📁 examples/                          🎓 Example Scripts
+│   ├── 01_simple_calculation.py          ✨ Simple: Research + Calculate (EASIEST)
+│   ├── 02_code_review_system.py          💻 Intermediate: Parallel code review
+│   ├── 03_research_assistant.py          🔬 Advanced: Multi-step research
+│   ├── 04_data_pipeline.py               📊 Advanced: Data processing workflow
+│   └── 05_custom_workflow.py             🚀 Expert: Build your own workflow
+│
+├── 📁 tests/                             🧪 Test Suite
+│   ├── __init__.py
+│   ├── conftest.py                       Pytest configuration & fixtures
+│   │
+│   ├── unit/                             🔬 Unit Tests (fast, isolated)
+│   │   ├── test_agents.py                Test each agent individually
+│   │   ├── test_orchestrators.py         Test orchestration logic
+│   │   └── test_tools.py                 Test MCP bridge tools
+│   │
+│   ├── integration/                      🔗 Integration Tests (real composition)
+│   │   ├── test_workflows.py             Test complete workflows
+│   │   └── test_end_to_end.py            Full system tests
+│   │
+│   └── fixtures/                         📦 Test Data
+│       ├── sample_code.py                Sample code for testing
+│       ├── sample_data.json              Sample data
+│       └── mock_agents.py                Mock agents for fast testing
+│
+├── 📁 config/                            ⚙️  Configuration Files
+│   ├── agents.yaml                       Agent definitions (model, instructions)
+│   ├── workflows.yaml                    Workflow configurations
+│   └── models.yaml                       Model configurations (Claude, GPT, etc)
+│
+├── 📁 docs/                              📖 Documentation
+│   ├── architecture.md                   🏗️  System architecture overview
+│   ├── agents.md                         🤖 Agent development guide
+│   ├── orchestration.md                  🎭 Orchestration patterns explained
+│   ├── workflows.md                      🔄 Workflow examples
+│   ├── testing.md                        🧪 Testing guide
+│   │
+│   └── api/                              📚 API Documentation
+│       ├── agents.md                     Agent API reference
+│       ├── orchestrators.md              Orchestrator API reference
+│       └── tools.md                      Tools API reference
+│
+└── 📁 scripts/                           🛠️  Utility Scripts
+    ├── setup.sh                          Initial project setup
+    ├── test.sh                           Run all tests
+    ├── demo.sh                           Run all examples sequentially
+    └── benchmark.sh                      Performance benchmarking
+
+
+═══════════════════════════════════════════════════════════════════════════════
+KEY COMPONENTS BREAKDOWN
+═══════════════════════════════════════════════════════════════════════════════
+
+1. AGENTS (src/orchestration/agents/)
+   ├── Individual, specialized AI workers
+   ├── Each agent = single responsibility
+   ├── Testable in isolation
+   ├── Reusable across workflows
+   └── Example: ResearchAgent only does research
+
+2. ORCHESTRATORS (src/orchestration/orchestrators/)
+   ├── Coordinate multiple agents
+   ├── Three patterns: Direct, MCP, Hybrid
+   ├── Handle agent composition
+   ├── Manage execution flow
+   └── Example: Run agent1 → agent2 → synthesize
+
+3. WORKFLOWS (src/orchestration/workflows/)
+   ├── Pre-built multi-agent systems
+   ├── Packaged, reusable solutions
+   ├── Domain-specific (code review, research, etc)
+   └── Example: CodeReviewWorkflow = analyzer + docs + security
+
+4. TOOLS (src/orchestration/tools/)
+   ├── Bridge between Claude SDK and Agno
+   ├── Wrap agents as MCP tools
+   ├── Enable tool discovery
+   └── Example: @tool decorator wraps ResearchAgent
+
+5. EXAMPLES (examples/)
+   ├── Real, working demonstrations
+   ├── Progressive complexity (01 → 05)
+   ├── Copy-paste starting points
+   └── Learn by example
+
+
+═══════════════════════════════════════════════════════════════════════════════
+USAGE PATTERNS
+═══════════════════════════════════════════════════════════════════════════════
+
+PATTERN 1: Use Pre-built Workflow
+┌────────────────────────────────────────┐
+│ from orchestration.workflows import    │
+│   CodeReviewWorkflow                   │
+│                                        │
+│ workflow = CodeReviewWorkflow()       │
+│ review = workflow.run(code)           │
+└────────────────────────────────────────┘
+
+PATTERN 2: Use Individual Agents
+┌────────────────────────────────────────┐
+│ from orchestration.agents import       │
+│   ResearchAgent, CalculatorAgent      │
+│                                        │
+│ research = ResearchAgent()            │
+│ result = research.run("query")        │
+└────────────────────────────────────────┘
+
+PATTERN 3: Build Custom Workflow
+┌────────────────────────────────────────┐
+│ from orchestration import              │
+│   DirectOrchestrator                  │
+│                                        │
+│ orch = DirectOrchestrator()           │
+│ orch.add_agent('research', agent1)    │
+│ orch.add_agent('analyze', agent2)     │
+│ result = orch.run("task")             │
+└────────────────────────────────────────┘
+
+PATTERN 4: Extend with New Agent
+┌────────────────────────────────────────┐
+│ from orchestration.agents import       │
+│   BaseAgent                           │
+│                                        │
+│ class CustomAgent(BaseAgent):        │
+│     def _create_agent(self):          │
+│         return Agent(...)             │
+│                                        │
+│ custom = CustomAgent()                │
+└────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTING STRATEGY
+═══════════════════════════════════════════════════════════════════════════════
+
+Unit Tests (tests/unit/)
+  ├── Fast (mocked agents)
+  ├── Test one agent at a time
+  ├── Run on every commit
+  └── Example: test_research_agent()
+
+Integration Tests (tests/integration/)
+  ├── Slower (real agents)
+  ├── Test agent composition
+  ├── Test workflows end-to-end
+  └── Example: test_code_review_workflow()
+
+Test Pyramid:
+           ┌──────┐
+          /  E2E   \      ← Few, slow, comprehensive
+         /──────────\
+        / Integration \    ← Some, medium speed
+       /──────────────\
+      /  Unit Tests    \  ← Many, fast, focused
+     └──────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+DEVELOPMENT WORKFLOW
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Clone & Setup
+   $ git clone <repo>
+   $ cd claude-agno-orchestration
+   $ ./scripts/setup.sh
+
+2. Explore Examples
+   $ python examples/01_simple_calculation.py    # Start here!
+   $ python examples/02_code_review_system.py
+   $ python examples/03_research_assistant.py
+
+3. Run Tests
+   $ ./scripts/test.sh                           # All tests
+   $ pytest tests/unit/                          # Unit tests only
+   $ pytest tests/integration/                   # Integration tests
+
+4. Build Custom Agent
+   $ cd src/orchestration/agents
+   $ # Create my_agent.py (copy from base.py)
+   $ # Add to __init__.py
+   $ pytest tests/unit/test_agents.py::test_my_agent
+
+5. Build Custom Workflow
+   $ cd examples
+   $ # Copy 05_custom_workflow.py
+   $ # Modify for your use case
+   $ python my_custom_workflow.py
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FILE SIZE ESTIMATES
+═══════════════════════════════════════════════════════════════════════════════
+
+src/orchestration/agents/base.py              ~150 lines (core framework)
+src/orchestration/agents/research.py          ~80  lines (simple agent)
+src/orchestration/orchestrators/direct.py     ~120 lines (orchestration)
+src/orchestration/workflows/code_review.py    ~200 lines (complete workflow)
+examples/01_simple_calculation.py             ~60  lines (basic example)
+tests/unit/test_agents.py                     ~150 lines (comprehensive tests)
+
+Total LOC Estimate: ~2,000-3,000 lines
+  ├── Source code:      ~1,500 lines
+  ├── Tests:            ~800 lines
+  ├── Examples:         ~400 lines
+  └── Docs/Config:      ~300 lines
+
+
+═══════════════════════════════════════════════════════════════════════════════
+KEY ADVANTAGES
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ Testable          Each agent tests independently
+✅ Modular           Add agents without breaking existing code
+✅ Reusable          Agents work across multiple workflows
+✅ Production-Ready  Error handling, logging, monitoring
+✅ Well-Documented   Examples, API docs, architecture guide
+✅ Extensible        Easy to add new agents/workflows
+✅ Type-Safe         Type hints throughout
+✅ Fast Development  Start with examples, extend as needed
+
+
+═══════════════════════════════════════════════════════════════════════════════
+NEXT STEPS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Review this structure - Does it make sense for your use case?
+2. Suggest modifications - Any changes to directory layout or components?
+3. Approve plan - Give the go-ahead to start implementation
+4. Implement Phase 1 - Build foundation (BaseAgent, BaseOrchestrator)
+5. Test & Iterate - Build incrementally, test frequently
+
+Ready to proceed? 🚀

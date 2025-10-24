@@ -1,0 +1,19 @@
+# Claude + Agno Multi-Agent Orchestration
+# Python dependencies
+
+# Core dependencies
+agno>=1.7.0
+claude-agent-sdk>=0.1.0
+
+# For testing
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.0.0
+
+# For code quality
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+
+# For documentation
+pyyaml>=6.0
