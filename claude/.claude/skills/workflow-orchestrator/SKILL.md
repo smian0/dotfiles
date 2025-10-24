@@ -47,21 +47,105 @@ Ask user to describe their workflow:
 "Should this be mandatory or optional?"
 ```
 
-### Step 2: Map Skills to Phases
+### Step 2: Gather Complete Workflow Information
 
-Create a workflow mapping table:
+**Collect all information needed for template variable derivation.**
 
-| Phase | Skill(s) | Trigger | Mandatory? |
-|-------|----------|---------|------------|
-| 1. [Phase Name] | [skill-name] | [when this phase starts] | Yes/No |
-| 2. [Phase Name] | [skill-name] | [when this phase starts] | Yes/No |
-| 3. [Phase Name] | [skill-name] | [when this phase starts] | Yes/No |
+Ask user detailed questions to populate template variables (see `references/template-variables-guide.md` for complete list):
 
-**Validation:**
-- Each phase has at least one skill
-- Skills are in logical order
-- Verify all skills exist (check `.claude/skills/` directory)
-- Identify any missing skills that need to be created first
+#### 2.1: Core Workflow Details
+
+**Questions:**
+1. "What is the workflow name?" → `{workflow_name}`
+2. "What is the main purpose of this workflow?" → `{workflow_purpose}`
+3. "What phrase would trigger this workflow?" → `{workflow_trigger_phrase}`
+   - Example: "implement a feature", "deploy to production"
+4. "Is this mandatory or optional?" → `{enforcement_level}`
+
+#### 2.2: Phases and Skills
+
+**For each phase, ask:**
+
+```
+Phase [N]:
+- "What is the phase name?" → {phase_N_name}
+- "Which skill handles this?" → {phase_N_skill}
+- "What is the purpose of this phase?" → {phase_N_purpose}
+  Example: "Refine requirements into concrete design"
+- "What does this phase output/produce?" → {phase_N_output_description}
+  Example: "Concrete design document with integration points"
+```
+
+**Create mapping table:**
+
+| # | Phase Name | Skill | Purpose | Output |
+|---|------------|-------|---------|--------|
+| 1 | [Name] | [skill] | [Purpose] | [Output description] |
+| 2 | [Name] | [skill] | [Purpose] | [Output description] |
+| 3 | [Name] | [skill] | [Purpose] | [Output description] |
+
+#### 2.3: Trigger Examples
+
+Ask for 2-3 concrete examples of when this workflow applies:
+
+```
+"Give me examples of when you'd use this workflow:"
+→ {trigger_example_1}: "Implement user authentication"
+→ {trigger_example_2}: "Add payment processing"
+```
+
+#### 2.4: Command Category (for Pattern B)
+
+If generating Pattern B, ask:
+
+```
+"What command category should this be in?"
+→ {command_category}: "dev", "deploy", "docs", etc.
+
+"Give an example of how you'd invoke this:"
+→ {example_argument}: "Add OAuth2 authentication"
+```
+
+#### 2.5: Validation
+
+**Verify completeness:**
+- [ ] Each phase has: name, skill, purpose, output
+- [ ] All skills exist (check `.claude/skills/` directory)
+- [ ] Phase order makes logical sense
+- [ ] Trigger examples are specific and realistic
+
+**If missing skills:**
+- Identify which skills need to be created first
+- Ask user if they want to create them now or use placeholders
+
+### Step 2.6: Derive All Template Variables
+
+**Use the complete variable derivation guide**: `references/template-variables-guide.md`
+
+**Derivation process:**
+
+1. **Load derivation formulas** from template variables guide
+2. **Compute derived variables** from user input:
+   ```python
+   # Example derivations:
+   workflow_slug = workflow_name.lower().replace(' ', '-')
+   phase_1_objective = f"Use {phase_1_name.lower()} to {phase_1_purpose}"
+   phase_1_verification_1 = f"✓ {phase_1_skill} completed successfully"
+   phase_1_verification_2 = f"✓ {phase_1_output_description} produced"
+   phase_1_to_phase_2_handoff = f"Pass {phase_1_output_description} to {phase_2_name}"
+   # ... (see guide for all 62+ formulas)
+   ```
+
+3. **Apply smart defaults** for any missing optional variables (see guide)
+
+4. **Validate completeness**:
+   - All required variables populated (see guide's validation checklist)
+   - Derived variables make logical sense
+   - No placeholder/undefined values remain
+
+**Output**: Complete variable dictionary ready for template substitution
+
+**Verification**: Run checklist from `template-variables-guide.md` before proceeding
 
 ### Step 3: Determine Pattern Selection
 
@@ -89,56 +173,131 @@ Ask user which patterns to generate (or generate all by default):
 
 ### Step 4: Generate Pattern A (Orchestrator Skill)
 
-Use template from `assets/templates/orchestrator-skill.template.md`:
+**Use template**: `assets/templates/orchestrator-skill.template.md`
 
 **Location**: `.claude/skills/{workflow-slug}/SKILL.md`
 
-**Template Variables:**
-- `{workflow_slug}`: kebab-case identifier (e.g., "feature-development")
-- `{workflow_name}`: Human-readable name (e.g., "Feature Development")
-- `{workflow_description}`: When to use this workflow
-- `{phase_N}`: Phase name
-- `{skill_N}`: Skill to invoke
-- `{trigger_N}`: When this phase starts
-- `{verification_N}`: How to verify phase completion
-
 **Actions:**
-1. Read template: `assets/templates/orchestrator-skill.template.md`
-2. Substitute variables with user's workflow details
-3. Write to `.claude/skills/{workflow-slug}/SKILL.md`
-4. Create `.gitignore` if needed
+
+1. **Load all derived variables** from Step 2.6
+
+2. **Read template**: `assets/templates/orchestrator-skill.template.md`
+
+3. **Substitute all 62+ variables** using derivations from Step 2.6:
+   - See `references/template-variables-guide.md` for complete variable list
+   - All variables must be populated (required + defaults for optional)
+   - Verify no `{undefined}` placeholders remain
+
+4. **Create skill directory**:
+   ```bash
+   mkdir -p .claude/skills/{workflow-slug}
+   ```
+
+5. **Write generated SKILL.md**:
+   ```bash
+   # Write fully-substituted content
+   cat > .claude/skills/{workflow-slug}/SKILL.md
+   ```
+
+6. **Create .gitignore** (if skill might generate outputs):
+   ```bash
+   cat > .claude/skills/{workflow-slug}/.gitignore << 'EOF'
+   # Generated test outputs
+   test-*/
+   *.tmp
+   EOF
+   ```
+
+**Verification:**
+```bash
+# Check file exists
+test -f .claude/skills/{workflow-slug}/SKILL.md && echo "✅ Pattern A created"
+
+# Verify no undefined variables
+! grep -q '{[a-z_]*}' .claude/skills/{workflow-slug}/SKILL.md || echo "⚠️ Undefined variables remain"
+```
 
 ### Step 5: Generate Pattern B (Workflow Command)
 
-Use template from `assets/templates/workflow-command.template.md`:
+**Use template**: `assets/templates/workflow-command.template.md`
 
 **Location**: `.claude/commands/{category}/{workflow-slug}.md`
 
-**Template Variables:**
-- Same as Pattern A
-- Plus: `{category}`: Command category (dev, deploy, docs, etc.)
-
 **Actions:**
-1. Read template: `assets/templates/workflow-command.template.md`
-2. Substitute variables
-3. Write to `.claude/commands/{category}/{workflow-slug}.md`
-4. Inform user of command usage: `/{category}:{workflow-slug} <args>`
+
+1. **Load all derived variables** from Step 2.6 (includes `{command_category}`)
+
+2. **Read template**: `assets/templates/workflow-command.template.md`
+
+3. **Substitute all 36+ variables** using derivations:
+   - See `references/template-variables-guide.md` section "Pattern B Specific"
+   - Includes command-specific variables: `example_argument`, `arguments_description`, `estimated_duration`
+
+4. **Create command directory**:
+   ```bash
+   mkdir -p .claude/commands/{command_category}
+   ```
+
+5. **Write generated command file**:
+   ```bash
+   cat > .claude/commands/{command_category}/{workflow-slug}.md
+   ```
+
+**Verification:**
+```bash
+test -f .claude/commands/{command_category}/{workflow-slug}.md && echo "✅ Pattern B created"
+```
+
+**Inform user of usage**:
+```
+Command created: /{command_category}:{workflow-slug} <args>
+Example: /{command_category}:{workflow-slug} {example_argument}
+```
 
 ### Step 6: Generate Pattern C (CLAUDE.md Rules)
 
-Use template from `assets/templates/claude-md-rules.template.md`:
+**Use template**: `assets/templates/claude-md-rules.template.md`
 
-**Output**: Suggested additions to `.claude/CLAUDE.md`
-
-**Template Variables:**
-- Same as Pattern A/B
+**Output**: Suggested additions to CLAUDE.md (NOT auto-appended)
 
 **Actions:**
-1. Read template: `assets/templates/claude-md-rules.template.md`
-2. Substitute variables
-3. **Display suggested rules to user** (don't auto-append to CLAUDE.md)
-4. Ask: "Would you like me to add these rules to CLAUDE.md?"
-5. If yes, append to `.claude/CLAUDE.md` or `~/.claude/CLAUDE.md`
+
+1. **Load all derived variables** from Step 2.6
+
+2. **Read template**: `assets/templates/claude-md-rules.template.md`
+
+3. **Substitute all 29+ variables** using derivations:
+   - See `references/template-variables-guide.md` section "Pattern C Specific"
+   - Includes: `workflow_trigger_condition`, `enforcement_level`, `exception_condition_1`, `exception_condition_2`
+
+4. **Display generated rules to user**:
+   ```markdown
+   ## Suggested CLAUDE.md Addition:
+
+   [Show fully-substituted template content]
+   ```
+
+5. **Ask user**: "Would you like me to add these rules to CLAUDE.md?"
+   - If YES:
+     ```bash
+     # Determine location
+     if [ -f .claude/CLAUDE.md ]; then
+       target=".claude/CLAUDE.md"
+     else
+       target="~/.claude/CLAUDE.md"
+     fi
+
+     # Append rules
+     cat >> $target << 'EOF'
+     [Generated rules content]
+     EOF
+     ```
+   - If NO: Skip, user can add manually later
+
+**Verification (if added)**:
+```bash
+grep -q "{workflow_name} Workflow" $target && echo "✅ Pattern C added"
+```
 
 ### Step 7: Verification & Documentation
 
@@ -237,6 +396,174 @@ Generated:
 - .claude/skills/deployment-workflow/SKILL.md
 - .claude/commands/deploy/production.md
 ```
+
+## Complete Worked Example
+
+**User request**: "Create a feature development workflow"
+
+### Step-by-Step Execution
+
+**Step 1: Analyze Requirements** ✓
+
+User provides:
+- Workflow name: "Feature Development"
+- Purpose: "Implementing new features"
+- Trigger: "implement a feature"
+- Enforcement: Mandatory
+
+**Step 2: Gather Information** ✓
+
+Phases collected:
+1. Brainstorming → superpowers:brainstorming → "Refine requirements" → Output: "Design document"
+2. Planning → superpowers:writing-plans → "Create implementation plan" → Output: "Task list with verification"
+3. Implementation → superpowers:test-driven-development → "Implement using TDD" → Output: "Feature with tests"
+4. Review → superpowers:requesting-code-review → "Validate implementation" → Output: "Approval"
+
+Trigger examples:
+- "Implement user authentication"
+- "Add payment processing"
+
+Command category: "dev"
+Example argument: "Add OAuth2 authentication"
+
+**Step 2.6: Derive Variables** ✓
+
+Using `template-variables-guide.md` formulas:
+
+```yaml
+# Core (7 variables)
+workflow_name: "Feature Development"
+workflow_slug: "feature-development"  # Derived: lowercase + hyphens
+workflow_description: "Complete feature development workflow using brainstorming, planning, TDD, and code review"
+workflow_purpose: "implementing new features"
+workflow_trigger_phrase: "implement a feature"
+phase_count: "4"
+command_category: "dev"
+
+# Triggers (4 variables)
+trigger_example_1: "Implement user authentication"
+trigger_example_2: "Add payment processing"
+trigger_pattern: "Implement [feature name]"
+trigger_conditions: "- User requests new feature\n- Task involves implementation"
+
+# Phase 1 (21 variables)
+phase_1_name: "Brainstorming"
+phase_1_skill: "superpowers:brainstorming"
+phase_1_purpose: "Refine requirements into concrete design"
+phase_1_objective: "Use brainstorming to refine user's feature request into concrete, actionable design"
+phase_1_skill_description: "Interactive design refinement using Socratic method"
+phase_1_prereq_1: "User has provided feature description"
+phase_1_prereq_2: "Context about existing system understood"
+phase_1_output_description: "Concrete design document with integration points"
+phase_1_result_summary: "Design approved by user"
+phase_1_verification_1: "✓ Design document complete"
+phase_1_verification_2: "✓ User approved design"
+phase_1_verification_3: "✓ Integration points identified"
+phase_1_verification_brief: "Design complete and approved"
+phase_1_to_phase_2_handoff: "Pass design document to planning phase"
+phase_1_failure_action: "Return to requirements gathering, clarify with user"
+phase_1_recovery_step_1: "Review brainstorming conversation for gaps"
+phase_1_recovery_step_2: "Ask user for additional context"
+phase_1_brief_description: "Refine requirements"
+phase_1_context_item_1: "Consider existing architecture"
+phase_1_context_item_2: "Follow project design patterns"
+phase_1_expected_result: "Design integrates with existing system"
+
+# Phase 2 (21 variables) - Similar structure
+# Phase 3 (21 variables) - Similar structure
+# Phase 4 (21 variables) - Similar structure
+
+# Completion (8 variables)
+deliverable_1_description: "Implemented feature with comprehensive tests"
+deliverable_2_description: "Design and implementation plan documents"
+deliverable_3_description: "Code review approval"
+output_location: "src/features/"
+final_verification_command_1: "pytest tests/ && echo '✅ Tests pass'"
+final_verification_command_2: "git status && echo '✅ Changes staged'"
+next_step_1: "Deploy to staging environment"
+next_step_2: "Update user documentation"
+
+# Pattern C specific (5 variables)
+workflow_trigger_description: "implementing any new feature"
+workflow_trigger_condition: "When implementing ANY new feature"
+enforcement_level: "MANDATORY"
+exception_condition_1: "User explicitly requests 'skip workflow'"
+exception_condition_2: "Task is trivial (single line fix)"
+
+# Total: 91 variables for 4-phase workflow
+```
+
+**Step 3: Pattern Selection** ✓
+
+User chooses: All three patterns (A, B, C)
+
+**Step 4: Generate Pattern A** ✓
+
+1. Read `orchestrator-skill.template.md`
+2. Substitute all 91 variables
+3. Write to `.claude/skills/feature-development/SKILL.md`
+4. Create `.gitignore`
+
+Result: 200+ line orchestrator skill with complete phase instructions
+
+**Step 5: Generate Pattern B** ✓
+
+1. Read `workflow-command.template.md`
+2. Substitute 40+ variables (subset + command-specific)
+3. Write to `.claude/commands/dev/feature-development.md`
+
+Result: Command invocable as `/dev:feature-development "Add OAuth"`
+
+**Step 6: Generate Pattern C** ✓
+
+1. Read `claude-md-rules.template.md`
+2. Substitute 30+ variables
+3. Display to user, ask permission
+4. User approves, append to `CLAUDE.md`
+
+Result: MANDATORY workflow rules enforced globally
+
+**Step 7: Verification** ✓
+
+```bash
+✅ Pattern A created: .claude/skills/feature-development/SKILL.md
+✅ Pattern B created: .claude/commands/dev/feature-development.md
+✅ Pattern C added to CLAUDE.md
+✅ No undefined variables
+✅ All skills exist and validated
+```
+
+**Final Output:**
+
+```markdown
+## Created Workflow: Feature Development
+
+### Pattern A: Orchestrator Skill
+**Location**: .claude/skills/feature-development/SKILL.md
+**Usage**: Invoke with `Skill("feature-development")`
+
+### Pattern B: Workflow Command
+**Location**: .claude/commands/dev/feature-development.md
+**Usage**: `/dev:feature-development <feature description>`
+**Example**: `/dev:feature-development Add OAuth2 authentication`
+
+### Pattern C: CLAUDE.md Rules
+**Added to**: CLAUDE.md
+**Enforcement**: MANDATORY for all feature implementation
+
+## Workflow Phases
+1. Brainstorming → superpowers:brainstorming
+2. Planning → superpowers:writing-plans
+3. Implementation → superpowers:test-driven-development
+4. Review → superpowers:requesting-code-review
+
+## Next Steps
+- Test workflow: `Skill("feature-development")` or `/dev:feature-development "test feature"`
+- Customize templates in generated files if needed
+- Share with team
+```
+
+---
 
 ## Workflow Naming Conventions
 
