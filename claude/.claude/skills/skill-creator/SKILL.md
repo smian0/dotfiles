@@ -111,6 +111,21 @@ See [🔗 Delegation Patterns](./references/delegation-patterns.md) for Level 2 
 **For Level 3:**
 Already delegated to `meta-multi-agent` in Step 0.1.
 
+### Step 4.5: Verify & Optimize
+
+**Ensure every file is referenced in SKILL.md - no orphaned documentation.**
+
+```bash
+# Check: does SKILL.md reference each file?
+for f in $(find . -name "*.md" -o -name "*.py" -o -name "*.sh"); do
+  grep -q "$(basename $f)" SKILL.md || echo "⚠️ Unreferenced: $f"
+done
+```
+
+**Delete unreferenced files.** If SKILL.md doesn't load it, it's unused.
+
+See [🔍 Skill Optimization](./references/skill-optimization.md) for detailed verification.
+
 ### Step 5: Package & Test
 
 ```bash
@@ -135,6 +150,7 @@ Load these for detailed guidance:
 - [📦 Bundled Resources Guide](./references/bundled-resources-guide.md) - Scripts, references, assets details
 - [⚙️ Skill Organization](./references/skill-organization.md) - Symlink pattern explained
 - [🔄 Multi-Workflow Composition](./references/multi-workflow-composition.md) - Directory-based workflows pattern for 2+ specialized operations
+- [🔍 Skill Optimization](./references/skill-optimization.md) - Verify all files referenced, eliminate bloat
 - [📝 Skill Creation Workflow](./references/skill-creation-workflow.md) - Detailed step-by-step instructions
 
 ## Quick Reference
