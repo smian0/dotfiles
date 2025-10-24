@@ -659,99 +659,26 @@ npx reloaderoo proxy -- python3 server.py
 
 ---
 
-## Workflow Examples
+## Examples & Checklists
 
-### Example 1: Setting Up New Project
+**For workflow-specific examples and checklists, see individual workflow files:**
 
-```bash
-# 1. Initialize project Claude config
-mkdir -p myproject/.claude
-cd myproject
+Each workflow file contains:
+- ✅ Complete step-by-step examples for that workflow
+- ✅ Workflow-specific checklists
+- ✅ Error handling examples
+- ✅ Common patterns and use cases
 
-# 2. Copy user MCP servers as starting point (optional)
-cp ~/.claude/.mcp.json .claude/.mcp.json
+**Quick links:**
+- [Sync User: Example](./workflows/sync-user.md#example) | [Add Server: Example & Checklist](./workflows/add-server.md#example)
+- [Remove Server: Example & Checklist](./workflows/remove-server.md#example) | [Validate: Example & Best Practices](./workflows/validate.md#example)
+- [Wrap Reloaderoo: Complete Example](./workflows/wrap-reloaderoo.md#complete-example)
 
-# 3. Add project-specific server
-../claude/.claude/skills/mcp-manager/scripts/add-mcp-server.sh
-
-# 4. Validate
-../claude/.claude/skills/mcp-manager/scripts/validate-mcp-config.sh --project
-
-# 5. Commit to git
-git add .claude/
-git commit -m "feat: add project MCP configuration"
-```
-
-### Example 2: Syncing Team Changes
-
-```bash
-# 1. Pull latest changes
-git pull origin main
-
-# 2. Check what changed in .mcp.json
-git diff HEAD~1 .claude/.mcp.json
-
-# 3. Validate configuration
-./scripts/validate-mcp-config.sh --project
-
-# 4. Restart Claude Code to load new servers
-```
-
-### Example 3: Removing Unused Server
-
-```bash
-# 1. Check current servers
-./scripts/check-mcp-consistency.sh --verbose
-
-# 2. Remove server
-./scripts/remove-mcp-server.sh old-server
-
-# 3. Verify removal
-./scripts/validate-mcp-config.sh
-
-# 4. Sync to dotfiles (if user-level)
-./scripts/sync-mcp-to-dotfiles.sh
-
-# 5. Commit
-git add claude/.claude/.mcp.json claude/.claude/settings.json
-git commit -m "chore: remove old-server MCP"
-```
-
----
-
-## Checklist
-
-When working with MCP configurations, use this checklist:
-
-**Before Adding a Server:**
-- [ ] Determine scope (user or project)
-- [ ] Test server command manually
-- [ ] Check for naming conflicts
-- [ ] Have API keys/credentials ready
-
-**After Adding a Server:**
-- [ ] Validate JSON syntax
-- [ ] Check consistency (servers + permissions)
-- [ ] Restart Claude Code
-- [ ] Test server functionality
-- [ ] Document configuration (if project-level)
-
-**Before Removing a Server:**
-- [ ] Check for dependencies (other configs using it)
-- [ ] Create backup
-- [ ] Identify all permissions to remove
-
-**After Removing a Server:**
-- [ ] Validate no orphaned permissions
-- [ ] Check consistency
-- [ ] Restart Claude Code
-- [ ] Update documentation
-
-**Before Committing Changes:**
-- [ ] Run full validation
-- [ ] Check git diff for unintended changes
-- [ ] Ensure no hardcoded paths
-- [ ] Update CLAUDE.md if needed
+**Why examples are in workflow files:**
+- Single source of truth (no duplication)
+- Examples stay in sync with workflow instructions
+- Easier to maintain and update
+- Each workflow has context-specific examples
 
 ---
 
