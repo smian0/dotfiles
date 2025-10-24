@@ -113,7 +113,7 @@ This command supports multiple research types:
 # Check if Comet is running on port 9223
 if ! ps aux | grep -i "comet.*9223" | grep -v grep > /dev/null; then
     echo "⚠️ Comet Browser not running. Launching..."
-    bash ~/dotfiles/scripts/launch-comet-debug.sh
+    bash ~/dotfiles/scripts/launch-comet.sh
     sleep 5
 fi
 ```
@@ -301,7 +301,7 @@ Track research completeness for each dimension (0-100%):
 ```bash
 # Ensure Comet Browser is running on port 9223
 # If not running, launch with:
-bash ~/dotfiles/scripts/launch-comet-debug.sh 9223 no
+bash ~/dotfiles/scripts/launch-comet.sh 9223 no
 ```
 
 **Browser Automation**:

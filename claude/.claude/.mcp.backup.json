@@ -1,0 +1,75 @@
+{
+  "mcpServers": {
+    "context7": {
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "command": "npx",
+      "description": "Official library documentation lookup - curated docs, framework patterns",
+      "env": {},
+      "purpose": "documentation",
+      "scope": "library",
+      "type": "stdio"
+    },
+    "serena": {
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide-assistant",
+        "--enable-web-dashboard",
+        "false",
+        "--enable-gui-log-window",
+        "false"
+      ],
+      "command": "uvx",
+      "description": "Semantic code analysis & project memory - IDE-optimized, excludes redundant tools, symbol operations",
+      "purpose": "code-analysis",
+      "scope": "project"
+    },
+    "zen": {
+      "args": [
+        "reloaderoo",
+        "proxy",
+        "--",
+        "/Users/smian/github/zen-mcp-server/.zen_venv/bin/python",
+        "/Users/smian/github/zen-mcp-server/server_proxy.py"
+      ],
+      "command": "npx",
+      "env": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      },
+      "type": "stdio"
+    },
+    "privacy_pdf": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "reloaderoo",
+        "proxy",
+        "--",
+        "python3",
+        "/Users/smian/.claude/mcp_servers/privacy_pdf/server.py"
+      ],
+      "description": "Privacy-preserving PDF extraction with MinerU + PII redaction for safe LLM analysis (auto-restart enabled)",
+      "env": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      }
+    },
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--browserUrl",
+        "http://127.0.0.1:9223"
+      ],
+      "description": "Comet Browser automation - currently pointing to Comet on port 9223",
+      "purpose": "browser-automation"
+    }
+  }
+}

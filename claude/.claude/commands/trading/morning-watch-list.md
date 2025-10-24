@@ -481,7 +481,7 @@ Continue processing other stocks, include warning in final watch list.
 **Solution:**
 ```bash
 # Launch Comet with debugging
-~/dotfiles/scripts/launch-comet-debug.sh
+~/dotfiles/scripts/launch-comet.sh
 
 # Or manually
 open -a "Comet" --args --remote-debugging-port=9223

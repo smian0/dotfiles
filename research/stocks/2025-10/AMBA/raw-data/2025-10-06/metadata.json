@@ -1,0 +1,69 @@
+{
+  "session_info": {
+    "date": "2025-10-06",
+    "timestamp": "2025-10-06T12:40:00-04:00",
+    "session_id": "amba-daily-update-2025-10-06",
+    "claude_version": "claude-sonnet-4-5-20250929"
+  },
+  "stock_info": {
+    "ticker": "AMBA",
+    "company": "Ambarella, Inc.",
+    "entry_zone_low": 80.00,
+    "entry_zone_high": 82.00,
+    "next_earnings_date": "2025-11-25",
+    "current_price": 86.16,
+    "price_change": 2.00,
+    "price_change_percent": 2.38
+  },
+  "perplexity_session": {
+    "url": "https://www.perplexity.ai/finance/AMBA",
+    "query_uid": "26_515",
+    "submit_button_uid": "26_522",
+    "response_detected_via": "Share button visible (uid 29_52)",
+    "wait_timeout_ms": 15000,
+    "actual_wait_time_ms": 25000
+  },
+  "mcp_tools_used": [
+    "mcp__comet-devtools__navigate_page",
+    "mcp__comet-devtools__take_snapshot",
+    "mcp__comet-devtools__fill",
+    "mcp__comet-devtools__click"
+  ],
+  "data_sources": {
+    "perplexity_cited_sources": [
+      "marketbeat.com",
+      "financhill.com",
+      "barchart.com",
+      "swingtradebot.com",
+      "ainvest.com",
+      "public.com",
+      "finance.yahoo.com",
+      "marketchameleon.com"
+    ],
+    "price_data_source": "Perplexity Finance Widget",
+    "technical_data_source": "Perplexity aggregated sources",
+    "data_timestamp": "2025-10-06T12:25:58-04:00"
+  },
+  "files_generated": {
+    "query": "01-query.md",
+    "perplexity_response": "02-perplexity-response.md",
+    "metadata": "metadata.json",
+    "daily_update": "../daily-update_2025-10-06.md"
+  },
+  "audit_trail": {
+    "query_sent_at": "2025-10-06T12:40:00-04:00",
+    "response_received_at": "2025-10-06T12:40:45-04:00",
+    "processing_duration_seconds": 45,
+    "data_extracted": true,
+    "daily_update_created": false
+  },
+  "technical_indicators_from_perplexity": {
+    "rsi_14_day": 57.5,
+    "macd": "positive in buy territory (2.5-2.7)",
+    "ma_50_day": "75.1",
+    "ma_200_day": "65.5-66.0",
+    "support_levels": ["82.2", "81.2", "80.3", "75.1 (50-day)"],
+    "resistance_levels": ["84-86", "93-94 (52-week high)"],
+    "average_daily_volume": "700k-900k shares"
+  }
+}

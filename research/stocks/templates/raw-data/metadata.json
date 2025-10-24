@@ -1,0 +1,49 @@
+{
+  "session_info": {
+    "date": "YYYY-MM-DD",
+    "timestamp": "YYYY-MM-DDTHH:MM:SSZ",
+    "session_id": "unique-session-id",
+    "claude_version": "claude-sonnet-4-5-20250929"
+  },
+  "stock_info": {
+    "ticker": "TICKER",
+    "company": "Company Name",
+    "entry_zone_low": 0.00,
+    "entry_zone_high": 0.00,
+    "next_earnings_date": "YYYY-MM-DD"
+  },
+  "perplexity_session": {
+    "url": "https://www.perplexity.ai/finance/TICKER",
+    "query_uid": "uid_number",
+    "submit_button_uid": "uid_number",
+    "response_detected_via": "Share Link button visible",
+    "wait_timeout_ms": 60000,
+    "actual_wait_time_ms": 0
+  },
+  "mcp_tools_used": [
+    "mcp__comet-devtools__navigate_page",
+    "mcp__comet-devtools__take_snapshot",
+    "mcp__comet-devtools__fill",
+    "mcp__comet-devtools__click",
+    "mcp__comet-devtools__wait_for"
+  ],
+  "data_sources": {
+    "perplexity_cited_sources": [],
+    "price_data_source": "Perplexity Finance",
+    "technical_data_source": "Perplexity aggregated sources"
+  },
+  "files_generated": {
+    "query": "01-query.md",
+    "perplexity_response": "02-perplexity-response.md",
+    "snapshot_pre": "03-snapshot-pre.json",
+    "snapshot_post": "04-snapshot-post.json",
+    "daily_update": "../daily-update_YYYY-MM-DD.md"
+  },
+  "audit_trail": {
+    "query_sent_at": "YYYY-MM-DDTHH:MM:SSZ",
+    "response_received_at": "YYYY-MM-DDTHH:MM:SSZ",
+    "processing_duration_seconds": 0,
+    "data_extracted": true,
+    "daily_update_created": true
+  }
+}

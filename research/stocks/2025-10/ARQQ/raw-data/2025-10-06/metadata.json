@@ -1,0 +1,85 @@
+{
+  "session_info": {
+    "date": "2025-10-06",
+    "timestamp": "2025-10-06T13:20:00-04:00",
+    "timezone": "EDT",
+    "session_type": "daily_update",
+    "claude_version": "claude-sonnet-4-5-20250929"
+  },
+  "stock_info": {
+    "ticker": "ARQQ",
+    "company_name": "Arqit Quantum, Inc.",
+    "entry_zone_low": 42.00,
+    "entry_zone_high": 45.00,
+    "expected_earnings_date": "2025-11-08",
+    "actual_earnings_date_estimate": "2025-12-10 to 2025-12-23",
+    "risk_level": "high",
+    "notes": "Quantum encryption - volatile penny stock - 10-15% below $50"
+  },
+  "perplexity_session": {
+    "platform": "Perplexity AI",
+    "access_method": "Comet Browser via MCP",
+    "browser_port": 9223,
+    "query_submission_time": "13:20:00",
+    "response_completion_time": "13:21:30",
+    "page_url": "https://www.perplexity.ai/",
+    "query_method": "follow-up textbox",
+    "query_uid": "14_461",
+    "response_detection": "wait_for Sources button"
+  },
+  "mcp_tools_used": [
+    "mcp__comet-devtools__select_page",
+    "mcp__comet-devtools__take_snapshot",
+    "mcp__comet-devtools__fill",
+    "mcp__comet-devtools__wait_for",
+    "mcp__comet-devtools__evaluate_script"
+  ],
+  "data_sources": {
+    "primary": "Perplexity AI",
+    "cited_sources": [
+      "finance.yahoo.com (7 citations)",
+      "arqit.com (3 citations)",
+      "stockanalysis.com (1 citation)",
+      "barchart.com (3 citations)",
+      "ainvest.com (1 citation)",
+      "stockta.com (1 citation)",
+      "marketchameleon.com (2 citations)"
+    ],
+    "total_distinct_sources": 7,
+    "total_citations": 18
+  },
+  "key_findings": {
+    "current_price": 49.92,
+    "price_range_oct_1_3": "41-52",
+    "recent_high": 52.30,
+    "entry_zone_reached": false,
+    "distance_from_entry": "10.9% above high end of target zone ($45)",
+    "rsi_14day": "high 70s to near 80",
+    "macd_status": "positive, bullish momentum",
+    "earnings_date_updated": true,
+    "earnings_shift": "From Nov 8 estimate to Dec 10-23 window",
+    "major_catalyst": "Fabric Networks purchased full Private Instance license for NetworkSecure",
+    "news_date": "Oct 4, 2025 (weekend)",
+    "volatility_status": "Overbought, consolidation risk",
+    "support_levels": ["mid-40s", "35.30 (Sept 29 low)"],
+    "resistance_levels": ["52-53 (recent highs)", "mid-50s"]
+  },
+  "technical_analysis": {
+    "trend": "Strong uptrend from late Sept",
+    "momentum": "Overbought, digestion risk",
+    "volume": "Elevated, expansion",
+    "pattern": "Consecutive higher highs from Sept 29",
+    "risk_level": "HIGH - overbought conditions after 2-week surge"
+  },
+  "file_references": {
+    "raw_query": "./01-query.md",
+    "raw_response": "./02-perplexity-response.md",
+    "metadata": "./metadata.json",
+    "daily_update": "../daily-update_2025-10-06.md"
+  },
+  "processing_timestamps": {
+    "query_saved": "2025-10-06T13:25:00-04:00",
+    "response_saved": "2025-10-06T13:25:30-04:00",
+    "metadata_saved": "2025-10-06T13:26:00-04:00"
+  }
+}

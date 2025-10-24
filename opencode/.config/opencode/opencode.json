@@ -160,7 +160,7 @@
           "options": {
             "reasoningEffort": "high",
             "think": "high",
-            "effort": "high",
+            "effort": "high", 
             "reasoning_effort": "high"
           },
           "limit": {

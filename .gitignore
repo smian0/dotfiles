@@ -156,3 +156,4 @@ claude/.claude/hooks/PostToolUse/logs
 # MLflow tracing
 mlflow.db
 mlruns/
+claude/.claude/ai_docs/examples/claude-agno-orchestration/outputs

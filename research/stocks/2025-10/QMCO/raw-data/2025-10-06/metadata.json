@@ -1,0 +1,87 @@
+{
+  "session_info": {
+    "date": "2025-10-06",
+    "timestamp": "2025-10-06T13:27:00-04:00",
+    "timezone": "EDT",
+    "session_type": "daily_update",
+    "claude_version": "claude-sonnet-4-5-20250929"
+  },
+  "stock_info": {
+    "ticker": "QMCO",
+    "company_name": "Quantum Corporation",
+    "entry_zone_low": 10.00,
+    "entry_zone_high": 11.00,
+    "expected_earnings_date": "2025-10-30",
+    "actual_earnings_date_estimate": "2025-11-12",
+    "risk_level": "high",
+    "notes": "Quantum Corp storage - not pure quantum play - wait for dip below $12"
+  },
+  "perplexity_session": {
+    "platform": "Perplexity AI",
+    "access_method": "Comet Browser via MCP",
+    "browser_port": 9223,
+    "query_submission_time": "13:27:00",
+    "response_completion_time": "13:28:30",
+    "page_url": "https://www.perplexity.ai/",
+    "query_method": "follow-up textbox",
+    "response_detection": "wait_for Sources button"
+  },
+  "mcp_tools_used": [
+    "mcp__comet-devtools__fill",
+    "mcp__comet-devtools__wait_for",
+    "mcp__comet-devtools__take_snapshot"
+  ],
+  "data_sources": {
+    "primary": "Perplexity AI",
+    "cited_sources": [
+      "globenewswire.com (5 citations)",
+      "finance.yahoo.com (2 citations)",
+      "investors.quantum.com (2 citations)",
+      "barrons.com (1 citation)",
+      "stockanalysis.com (2 citations)",
+      "stockinvest.us (1 citation)",
+      "tipranks.com (1 citation)",
+      "tradingview.com (1 citation)",
+      "marketbeat.com (2 citations)",
+      "investing.com (2 citations)"
+    ],
+    "total_distinct_sources": 10,
+    "total_citations": 19
+  },
+  "key_findings": {
+    "current_price": 11.65,
+    "price_change": -0.11,
+    "percent_change": -0.94,
+    "day_range": "10.93 - 11.95",
+    "entry_zone_reached": true,
+    "entry_zone_status": "AT HIGH END - within $10-11 target",
+    "distance_from_entry": "6.5% above low end, at high end",
+    "rsi_14day": "high 50s to low 60s",
+    "macd_status": "positive but not extreme, digestion phase",
+    "earnings_date_updated": true,
+    "earnings_shift": "From Oct 30 to Nov 12 estimate",
+    "major_catalyst": "Sharp rally from sub-$10 to $11+ last week",
+    "legal_risk": "Securities class action lawsuit ongoing - deadline reminder Oct 6",
+    "volatility_status": "Consolidating after sharp advance",
+    "support_levels": ["10.00 (entry zone low)", "9.78 (Sept low)"],
+    "resistance_levels": ["11.95 (Oct 6 high)", "12.00 (round number)"]
+  },
+  "technical_analysis": {
+    "trend": "Improving short-term, broke above $10",
+    "momentum": "Neutral-to-bullish, cooling after spike",
+    "volume": "1.8M (elevated)",
+    "pattern": "Consolidation after sharp rally",
+    "risk_level": "HIGH - legal overhang, not pure quantum play"
+  },
+  "file_references": {
+    "raw_query": "./01-query.md",
+    "raw_response": "./02-perplexity-response.md",
+    "metadata": "./metadata.json",
+    "daily_update": "../daily-update_2025-10-06.md"
+  },
+  "processing_timestamps": {
+    "query_saved": "2025-10-06T13:28:00-04:00",
+    "response_saved": "2025-10-06T13:28:30-04:00",
+    "metadata_saved": "2025-10-06T13:29:00-04:00"
+  }
+}

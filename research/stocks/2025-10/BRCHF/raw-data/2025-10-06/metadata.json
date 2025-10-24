@@ -1,0 +1,57 @@
+{
+  "session_info": {
+    "date": "2025-10-06",
+    "timestamp": "2025-10-06T12:55:00-04:00",
+    "session_id": "brchf-daily-update-2025-10-06",
+    "claude_version": "claude-sonnet-4-5-20250929"
+  },
+  "stock_info": {
+    "ticker": "BRCHF",
+    "company": "BrainChip Holdings Ltd",
+    "entry_zone": 0.155,
+    "volume_confirmation_required": true,
+    "next_earnings_date": "2026-03-03",
+    "current_price": 0.14,
+    "price_change": 0.01,
+    "price_change_percent": 8.81
+  },
+  "perplexity_session": {
+    "url": "https://www.perplexity.ai/finance/BRCHF",
+    "query_uid": "31_486",
+    "submit_button_uid": "31_493",
+    "response_detected_via": "Share button visible (uid 33_52)",
+    "wait_timeout_ms": 15000,
+    "actual_wait_time_ms": 15000
+  },
+  "mcp_tools_used": [
+    "mcp__comet-devtools__navigate_page",
+    "mcp__comet-devtools__take_snapshot",
+    "mcp__comet-devtools__fill",
+    "mcp__comet-devtools__click"
+  ],
+  "data_sources": {
+    "perplexity_cited_sources": [
+      "tipranks.com",
+      "marketbeat.com",
+      "stockanalysis.com",
+      "barchart.com"
+    ],
+    "price_data_source": "Perplexity Finance Widget",
+    "data_timestamp": "2025-10-06T12:05:50-04:00"
+  },
+  "technical_indicators_from_perplexity": {
+    "rsi_14_day": "44.16-54.76",
+    "macd": "slightly positive <0.01 (weak buy signal)",
+    "ma_50_day": "0.14",
+    "ma_200_day": "0.16",
+    "support_levels": ["0.1457", "0.1354"],
+    "resistance_levels": ["0.156", "0.1717", "0.1874"],
+    "average_daily_volume": "280,000 shares"
+  },
+  "liquidity_warning": {
+    "todays_volume": 290,
+    "average_volume": 280000,
+    "percentage_of_average": 0.1,
+    "concern_level": "EXTREME - Volume 99.9% below average"
+  }
+}

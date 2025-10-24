@@ -1,0 +1,68 @@
+{
+  "session_info": {
+    "date": "2025-10-06",
+    "timestamp": "2025-10-06T13:00:00-04:00",
+    "session_id": "gsit-daily-update-2025-10-06",
+    "claude_version": "claude-sonnet-4-5-20250929"
+  },
+  "stock_info": {
+    "ticker": "GSIT",
+    "company": "GSI Technology, Inc.",
+    "entry_zone_low": 4.10,
+    "entry_zone_high": 4.60,
+    "next_earnings_date": "2025-10-23",
+    "current_price": 4.81,
+    "price_change": -0.10,
+    "price_change_percent": -2.04
+  },
+  "perplexity_session": {
+    "url": "https://www.perplexity.ai/finance/GSIT",
+    "query_uid": "36_495",
+    "submit_button_uid": "36_502",
+    "response_detected_via": "Share button visible (uid 39_52 and uid 39_197)",
+    "wait_timeout_ms": 15000,
+    "actual_wait_time_ms": 25000
+  },
+  "mcp_tools_used": [
+    "mcp__comet-devtools__navigate_page",
+    "mcp__comet-devtools__take_snapshot",
+    "mcp__comet-devtools__fill",
+    "mcp__comet-devtools__click"
+  ],
+  "data_sources": {
+    "perplexity_cited_sources": [
+      "barchart.com",
+      "tipranks.com",
+      "marketbeat.com",
+      "marketchameleon.com",
+      "stockinvest.us",
+      "stockanalysis.com"
+    ],
+    "price_data_source": "Perplexity Finance Widget",
+    "technical_data_source": "Perplexity aggregated sources",
+    "data_timestamp": "2025-10-06T12:32:18-04:00"
+  },
+  "files_generated": {
+    "query": "01-query.md",
+    "perplexity_response": "02-perplexity-response.md",
+    "metadata": "metadata.json",
+    "daily_update": "../daily-update_2025-10-06.md"
+  },
+  "audit_trail": {
+    "query_sent_at": "2025-10-06T13:00:00-04:00",
+    "response_received_at": "2025-10-06T13:05:30-04:00",
+    "processing_duration_seconds": 330,
+    "data_extracted": true,
+    "daily_update_created": false
+  },
+  "technical_indicators_from_perplexity": {
+    "rsi_14_day": "77-82 (overbought)",
+    "macd": "positive and rising (bullish momentum)",
+    "ma_50_day": "3.03-3.66 (low-to-mid 3s)",
+    "ma_200_day": "low-to-mid 3s",
+    "support_levels": ["4.55-4.60", "4.10", "3.68-3.70"],
+    "resistance_levels": ["4.75-5.16", "5.4-5.7"],
+    "average_daily_volume": "elevated (380K today above average)",
+    "atr": "0.25-0.31"
+  }
+}

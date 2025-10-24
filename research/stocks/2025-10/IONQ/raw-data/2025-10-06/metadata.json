@@ -1,0 +1,87 @@
+{
+  "session_info": {
+    "date": "2025-10-06",
+    "timestamp": "2025-10-06T13:20:00-04:00",
+    "session_id": "quantum-portfolio-daily-update",
+    "claude_version": "claude-sonnet-4-5-20250929"
+  },
+  "stock_info": {
+    "ticker": "IONQ",
+    "company_name": "IonQ, Inc.",
+    "entry_zone_low": 62.00,
+    "entry_zone_high": 65.00,
+    "expected_earnings_date": "2025-11-15",
+    "actual_earnings_date_estimate": "2025-11-05",
+    "risk_level": "high"
+  },
+  "perplexity_session": {
+    "url": "https://www.perplexity.ai/search/provide-detailed-swing-trading-wCdq6srKQKOKZLZ5WM3GzA",
+    "query_method": "follow-up",
+    "browser": "Comet",
+    "remote_debugging_port": 9223,
+    "response_detection_method": "wait_for Sources button",
+    "response_complete": true
+  },
+  "mcp_tools_used": [
+    "mcp__comet-devtools__list_pages",
+    "mcp__comet-devtools__select_page",
+    "mcp__comet-devtools__take_snapshot",
+    "mcp__comet-devtools__fill",
+    "mcp__comet-devtools__wait_for",
+    "mcp__comet-devtools__evaluate_script"
+  ],
+  "data_sources": [
+    {
+      "source": "investing.com",
+      "citation_count": 3
+    },
+    {
+      "source": "markets.financialcontent.com",
+      "citation_count": 2
+    },
+    {
+      "source": "finance.yahoo.com",
+      "citation_count": 4
+    },
+    {
+      "source": "marketbeat.com",
+      "citation_count": 3
+    },
+    {
+      "source": "stockinvest.us",
+      "citation_count": 3
+    },
+    {
+      "source": "benzinga.com",
+      "citation_count": 2
+    },
+    {
+      "source": "investors.ionq.com",
+      "citation_count": 2
+    }
+  ],
+  "total_sources": 7,
+  "total_citations": 19,
+  "processing_timestamps": {
+    "query_submitted": "2025-10-06T13:18:00-04:00",
+    "response_received": "2025-10-06T13:20:00-04:00",
+    "extraction_completed": "2025-10-06T13:21:00-04:00"
+  },
+  "file_references": {
+    "query_file": "./01-query.md",
+    "response_file": "./02-perplexity-response.md",
+    "daily_update_file": "../daily-update_2025-10-06.md",
+    "portfolio_csv": "~/dotfiles/research/stocks/portfolios/quantum-computing.csv"
+  },
+  "key_findings": {
+    "current_price": 78.75,
+    "price_change": 5.47,
+    "price_change_percent": 7.46,
+    "all_time_high": 76.15,
+    "entry_zone_reached": false,
+    "distance_from_entry": "21.2% above target zone",
+    "earnings_date_updated": true,
+    "new_earnings_estimate": "2025-11-05",
+    "major_catalyst": "Quantum networking breakthrough + AQ-64 milestone"
+  }
+}
