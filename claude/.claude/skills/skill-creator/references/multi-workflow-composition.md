@@ -246,6 +246,161 @@ If a skill grows from 1 → 2+ specialized workflows:
 - Each workflow is focused and testable
 - Adding new workflow doesn't touch existing code
 
+## Redundancy Analysis After Refactoring
+
+After splitting a skill into multi-workflow pattern, **check for redundant content** that now lives in both the main skill and workflow files.
+
+### Common Redundancy Patterns
+
+**1. Duplicated Examples**
+
+❌ **Problem:**
+```markdown
+# Main SKILL.md
+## Workflow Examples
+- Example: Sync user-level MCP servers
+  - Run: ~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh
+  - Expected: Servers appear in claude mcp list
+...
+
+# workflows/sync-user.md
+## Example
+Run: ~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh
+Expected: Servers appear in claude mcp list
+```
+
+✅ **Solution:**
+```markdown
+# Main SKILL.md
+## Examples & Checklists
+
+**For workflow-specific examples and checklists, see individual workflow files:**
+
+**Quick links:**
+- [Sync User: Example](./workflows/sync-user.md#example)
+- [Add Server: Example & Checklist](./workflows/add-server.md#example)
+```
+
+**2. Duplicated Checklists**
+
+❌ **Problem:**
+```markdown
+# Main SKILL.md
+## Checklist
+**Add Server:**
+- [ ] Configuration validated
+- [ ] Server shows as connected
+...
+
+# workflows/add-server.md
+## Checklist
+- [ ] Configuration validated
+- [ ] Server shows as connected
+```
+
+✅ **Solution:**
+Keep checklists ONLY in workflow files. Main skill references them:
+```markdown
+# Main SKILL.md
+See individual workflow files for complete checklists:
+- [Add Server Checklist](./workflows/add-server.md#checklist)
+```
+
+**3. Duplicated Error Handling**
+
+❌ **Problem:**
+Same troubleshooting steps in both main skill and workflow file.
+
+✅ **Solution:**
+- **Workflow-specific errors** → workflow file only
+- **Common errors across workflows** → main skill only
+- Reference shared errors from workflows: "See main skill troubleshooting"
+
+### Redundancy Detection Process
+
+**Step 1: Identify duplicate sections**
+
+Compare main SKILL.md against workflow files for:
+- Examples sections
+- Checklists sections
+- Troubleshooting steps
+- Best practices
+
+**Step 2: Determine ownership**
+
+Ask: "Is this specific to one workflow or shared across all?"
+- **Workflow-specific** → Keep in workflow file ONLY
+- **Shared across all** → Keep in main skill ONLY
+
+**Step 3: Replace with references**
+
+In main SKILL.md:
+```markdown
+## Examples & Checklists
+
+**For workflow-specific examples and checklists, see individual workflow files:**
+
+Each workflow file contains:
+- ✅ Complete step-by-step examples for that workflow
+- ✅ Workflow-specific checklists
+- ✅ Error handling examples
+- ✅ Common patterns and use cases
+
+**Quick links:**
+- [Workflow A: Example](./workflows/workflow-a.md#example)
+- [Workflow B: Checklist](./workflows/workflow-b.md#checklist)
+```
+
+**Step 4: Verify DRY compliance**
+
+Check that each piece of content exists in exactly ONE place:
+- [ ] No duplicated examples (reference instead)
+- [ ] No duplicated checklists (reference instead)
+- [ ] No duplicated error handling (reference instead)
+- [ ] Shared content in main skill ONLY
+- [ ] Workflow-specific content in workflow files ONLY
+
+### Benefits of Removing Redundancy
+
+**Single Source of Truth:**
+- Update example once, not in multiple places
+- Easier to keep content consistent
+- Reduces file size and cognitive load
+
+**Context Efficiency:**
+- Main skill stays focused on routing and shared logic
+- Workflow files contain complete, self-contained procedures
+- No confusion about which version is "correct"
+
+**File Length Management:**
+- Removing redundancy can reduce main skill by 5-15%
+- Makes skills easier to scan and understand
+- Improves load time and clarity
+
+### Example: mcp-manager Cleanup
+
+**Before redundancy removal:**
+```
+Main SKILL.md: 887 lines
+- Routing table
+- Shared protocols
+- Workflow Examples section (duplicates from workflow files)
+- Checklist section (duplicates from workflow files)
+```
+
+**After redundancy removal:**
+```
+Main SKILL.md: 814 lines (8% reduction)
+- Routing table
+- Shared protocols
+- Examples & Checklists reference section (22 lines with links)
+```
+
+**Impact:**
+- Removed 73 lines of duplicated content
+- Single source of truth maintained
+- Easier to update and maintain
+
 ## Checklist for Multi-Workflow Skills
 
 Creating a new multi-workflow skill:
@@ -262,6 +417,9 @@ Converting existing skill to multi-workflow:
 - [ ] Extracted workflows to separate files
 - [ ] Added routing table to main SKILL.md
 - [ ] Verified shared protocols not duplicated
+- [ ] **Performed redundancy analysis** (check for duplicate examples/checklists)
+- [ ] **Replaced duplicates with references** to workflow files
+- [ ] **Verified DRY compliance** (single source of truth)
 - [ ] Updated skill description
 - [ ] Tested workflow activation conditions
 
