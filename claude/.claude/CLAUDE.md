@@ -177,6 +177,49 @@ Ollama cloud models available at `http://localhost:11434` or `http://localhost:1
 
 **Usage:** Free under preview caps • Requires Ollama v0.12+ • Performance varies by system load
 
+## Skill Development Rules
+
+**When creating or modifying Claude Code skills:**
+
+### File Verification (MANDATORY)
+
+**Every file in a skill MUST be referenced in SKILL.md or deleted.**
+
+Before claiming skill work is complete:
+```bash
+# Check for unreferenced files
+cd .claude/skills/<skill-name>
+for f in $(find . -name "*.md" ! -name "SKILL.md"); do
+  grep -q "$(basename $f)" SKILL.md || echo "❌ UNREFERENCED: $f"
+done
+```
+
+**If SKILL.md doesn't load or reference a file, that file is orphaned - DELETE IT.**
+
+### No Redundant Documentation
+
+**Do NOT duplicate content across files:**
+- ❌ Copy script implementation details into SKILL.md
+- ❌ Duplicate reference file content in SKILL.md
+- ❌ Create "for Claude" documentation that SKILL.md never loads
+- ✅ Reference bundled resources: `See [file](./path/to/file.md)`
+- ✅ Scripts handle implementation, SKILL.md explains invocation
+
+### SKILL.md Length Guidelines
+
+**With scripts:** 50-120 lines (invocation guide)
+**Without scripts:** 200-500 lines (workflow procedures)
+
+**If SKILL.md exceeds these with scripts present → likely has duplication → refactor.**
+
+### Optimization Mindset
+
+**Lean skills load only what's needed:**
+- Each file serves a documented purpose
+- SKILL.md references all bundled resources
+- Reference files loaded on demand, not duplicated inline
+- Delete files that serve no clear purpose
+
 ## Development Principles
 
 ### DRY & YAGNI

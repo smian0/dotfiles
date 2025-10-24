@@ -64,22 +64,34 @@ Identify what to include:
 - **Workflows** - Specialized operation procedures (if 2+ distinct workflows)
 - **Delegation Points** (Level 2) - When to call specialists
 
+**For complex skills, also consider:**
+- **Phases** - Sequential stages of one operation
+- **Config** - Environment/settings management
+- **Data** - Reference data, fixtures, schemas
+- **Tests** - Validation infrastructure
+- **Output** - Generated file organization
+
 See [📦 Bundled Resources Guide](./references/bundled-resources-guide.md) for details.
 See [🔄 Multi-Workflow Composition](./references/multi-workflow-composition.md) if skill handles 2+ specialized operations.
+See [🏗️ Advanced Structure Patterns](./references/advanced-structure-patterns.md) for complex skills.
 
 ### Step 3: Initialize the Skill
 
 Create directory structure using **symlink pattern**:
 
 ```bash
+# Basic structure (always create these)
 mkdir -p .claude/skills/<skill-name>/{scripts,references,assets,workflows,agents,commands}
+
+# Advanced directories (create as needed - see advanced-structure-patterns.md)
+# mkdir -p .claude/skills/<skill-name>/{phases,config,data,tests,output,.state,cache,archived}
 
 # If skill has agents or commands, create symlinks:
 ln -s ../skills/<skill-name>/agents .claude/agents/<skill-name>
 ln -s ../skills/<skill-name>/commands .claude/commands/<skill-name>
 
 # Note: workflows/ is used for multi-workflow skills (2+ specialized operations)
-# See multi-workflow-composition.md for when to use workflows/
+# Note: phases/ is used for sequential stages of one operation (see advanced patterns)
 ```
 
 Create initial SKILL.md:
@@ -150,6 +162,7 @@ Load these for detailed guidance:
 - [📦 Bundled Resources Guide](./references/bundled-resources-guide.md) - Scripts, references, assets details
 - [⚙️ Skill Organization](./references/skill-organization.md) - Symlink pattern explained
 - [🔄 Multi-Workflow Composition](./references/multi-workflow-composition.md) - Directory-based workflows pattern for 2+ specialized operations
+- [🏗️ Advanced Structure Patterns](./references/advanced-structure-patterns.md) - phases/, config/, data/, tests/, output/, .state/, cache/, archived/
 - [🔍 Skill Optimization](./references/skill-optimization.md) - Verify all files referenced, eliminate bloat
 - [📝 Skill Creation Workflow](./references/skill-creation-workflow.md) - Detailed step-by-step instructions
 
