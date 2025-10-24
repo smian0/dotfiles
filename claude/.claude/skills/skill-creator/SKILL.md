@@ -61,20 +61,25 @@ Identify what to include:
 - **Scripts** - Repeatedly rewritten code
 - **References** - Documentation loaded as needed
 - **Assets** - Output resources (templates, boilerplate)
+- **Workflows** - Specialized operation procedures (if 2+ distinct workflows)
 - **Delegation Points** (Level 2) - When to call specialists
 
 See [📦 Bundled Resources Guide](./references/bundled-resources-guide.md) for details.
+See [🔄 Multi-Workflow Composition](./references/multi-workflow-composition.md) if skill handles 2+ specialized operations.
 
 ### Step 3: Initialize the Skill
 
 Create directory structure using **symlink pattern**:
 
 ```bash
-mkdir -p .claude/skills/<skill-name>/{scripts,references,assets,agents,commands}
+mkdir -p .claude/skills/<skill-name>/{scripts,references,assets,workflows,agents,commands}
 
 # If skill has agents or commands, create symlinks:
 ln -s ../skills/<skill-name>/agents .claude/agents/<skill-name>
 ln -s ../skills/<skill-name>/commands .claude/commands/<skill-name>
+
+# Note: workflows/ is used for multi-workflow skills (2+ specialized operations)
+# See multi-workflow-composition.md for when to use workflows/
 ```
 
 Create initial SKILL.md:
@@ -129,6 +134,7 @@ Load these for detailed guidance:
 - [🔗 Delegation Patterns](./references/delegation-patterns.md) - Level 2 Task() templates
 - [📦 Bundled Resources Guide](./references/bundled-resources-guide.md) - Scripts, references, assets details
 - [⚙️ Skill Organization](./references/skill-organization.md) - Symlink pattern explained
+- [🔄 Multi-Workflow Composition](./references/multi-workflow-composition.md) - Directory-based workflows pattern for 2+ specialized operations
 - [📝 Skill Creation Workflow](./references/skill-creation-workflow.md) - Detailed step-by-step instructions
 
 ## Quick Reference
