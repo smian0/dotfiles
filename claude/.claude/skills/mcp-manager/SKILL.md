@@ -1,6 +1,6 @@
 ---
 name: mcp-manager
-description: Comprehensive MCP server configuration management for user and project levels. Use when adding, removing, syncing, or validating MCP servers in .mcp.json files and settings.json permissions.
+description: Comprehensive MCP server configuration management with smart workflow routing for user and project levels. Use when adding, removing, syncing, validating, or wrapping MCP servers.
 ---
 
 # MCP Configuration Manager
@@ -26,6 +26,36 @@ This skill manages Model Context Protocol (MCP) server configurations using a **
 - `~/.claude.json`: Runtime state (auto-managed by Claude Code)
 - `jq`: JSON processing
 - Stow: Dotfiles symlink management
+
+---
+
+## Workflow Detection & Routing
+
+Claude automatically routes MCP management requests to specialized workflows based on user intent.
+
+**Routing Table:**
+
+| User Request Pattern | Workflow File | Trigger Conditions |
+|---------------------|---------------|-------------------|
+| "sync user MCP servers" | `workflows/sync-user.md` | User modified `.mcp.json` or servers not loading |
+| "add MCP server" | `workflows/add-server.md` | User wants to install new server |
+| "remove MCP server" | `workflows/remove-server.md` | User wants to uninstall server |
+| "validate MCP config" | `workflows/validate.md` | User wants to check configuration health |
+| "wrap MCP server with reloaderoo" | `workflows/wrap-reloaderoo.md` | User wants hot-reload for development |
+| Other MCP tasks | See sections below | Reference shared protocols and best practices |
+
+**Routing Instructions for Claude:**
+
+1. **Parse user request** - Identify which MCP operation they need
+2. **Check routing table** - Match user intent against workflow patterns
+3. **If workflow matches**:
+   - Announce: "I'm using the [workflow name] workflow"
+   - Read the workflow file: `Read workflows/[filename].md`
+   - Follow those specific instructions
+   - Return to main skill for shared protocols (Core Concepts, Best Practices, Troubleshooting)
+4. **If no workflow matches** - Use shared sections below for guidance
+
+**Note:** Routing is based on explicit user choice, not automatic pattern detection. User must clearly state which operation they want.
 
 ---
 
@@ -151,394 +181,50 @@ For each MCP server:
 
 ## Workflows
 
-### 1. Sync User-Level MCP Servers (PRIMARY WORKFLOW)
+This skill uses specialized workflow files for common MCP management tasks. Each workflow is self-contained with step-by-step instructions.
+
+### Available Workflows
+
+1. **[Sync User-Level MCP Servers](./workflows/sync-user.md)** (PRIMARY WORKFLOW)
+   - When: After modifying `~/.claude/.mcp.json` or servers not loading
+   - What: Syncs manifest to user-level registration
+   - Use: `~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh`
+
+2. **[Add MCP Server](./workflows/add-server.md)**
+   - When: Installing a new MCP server
+   - What: Configure server in `.mcp.json` and `settings.json`
+   - Use: Manual editing or `./scripts/add-mcp-server.sh`
+
+3. **[Remove MCP Server](./workflows/remove-server.md)**
+   - When: Uninstalling an MCP server
+   - What: Safely remove server and clean up
+   - Use: `claude mcp remove <server-name>` (recommended)
+
+4. **[Validate Configuration](./workflows/validate.md)**
+   - When: After manual edits, before committing
+   - What: Check syntax and consistency
+   - Use: `./scripts/validate-mcp-config.sh`
+
+5. **[Wrap with Reloaderoo](./workflows/wrap-reloaderoo.md)**
+   - When: Developing MCP server, want hot-reload
+   - What: Enable automatic restart on file changes
+   - Use: Wrap command with `npx reloaderoo proxy --`
+
+**How to use workflows:**
+
+When user requests a specific operation:
+1. Identify which workflow applies from routing table above
+2. Read the corresponding workflow file
+3. Follow the step-by-step instructions
+4. Reference back to main skill for shared concepts and troubleshooting
+
+**Workflow files contain:**
+- Trigger conditions (when to use)
+- Step-by-step execution instructions
+- Examples and common patterns
+- Error handling specific to that workflow
+- Integration points with main skill
 
-**When to use:** After modifying `~/.claude/.mcp.json`, or when servers aren't loading.
-
-```bash
-# Dry-run to see what would change
-~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh --dry-run
-
-# Actually sync servers
-~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh
-```
-
-**What it does:**
-- Reads servers from `~/.claude/.mcp.json` manifest
-- Registers each server at user level via `claude mcp add --scope user`
-- Skips servers already registered
-- Handles stdio, HTTP, and SSE transports
-- Handles environment variables and headers
-- Shows final server list with connection status
-
-**This is the PRIMARY way to manage user-level MCP servers.**
-
-### 2. Adding/Removing User-Level Servers
-
-**Adding a server:**
-
-1. Edit `~/.claude/.mcp.json` to add server definition
-2. Run sync script: `~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh`
-3. Verify: `claude mcp list`
-4. Commit: `cd ~/dotfiles && git add claude/.claude/.mcp.json && git commit`
-
-**Removing a server:**
-
-1. Remove from `~/.claude/.mcp.json`
-2. Run: `claude mcp remove <server-name>`
-3. Commit: `cd ~/dotfiles && git add claude/.claude/.mcp.json && git commit`
-
-**Alternative (manual):**
-```bash
-# Add directly (bypasses manifest)
-claude mcp add --scope user <name> <command> [args...]
-
-# But you should also update ~/.claude/.mcp.json to keep manifest in sync
-```
-
-### 3. Add MCP Server
-
-**When to use:** Installing a new MCP server.
-
-**Steps:**
-
-1. **Determine scope** (user or project)
-2. **Add server definition to `.mcp.json`**
-3. **Add tool permissions to `settings.json`**
-4. **Validate consistency**
-5. **Restart Claude Code**
-
-**Example: Adding a new server**
-
-```json
-// Add to .mcp.json
-{
-  "mcpServers": {
-    "my-server": {
-      "command": "npx",
-      "args": ["-y", "my-mcp-server"],
-      "type": "stdio",
-      "description": "My custom MCP server",
-      "env": {}
-    }
-  }
-}
-
-// Add to settings.json permissions.allow
-"mcp__my-server__tool1",
-"mcp__my-server__tool2"
-```
-
-### 4. Remove MCP Server
-
-**When to use:** Uninstalling an MCP server.
-
-**⚠️ RECOMMENDED METHOD: Use Claude CLI**
-
-```bash
-# This is the BEST way to remove a server
-claude mcp remove <server-name>
-```
-
-**Why use `claude mcp remove`:**
-- ✅ Removes from `.mcp.json` configuration files
-- ✅ Cleans up cached config in `~/.claude.json` state file
-- ✅ Kills any running server processes
-- ✅ Prevents "still connected" ghost servers
-- ✅ Handles all cleanup automatically
-
-**Verify removal:**
-```bash
-# Check what servers are actually active
-claude mcp list
-```
-
-**ALTERNATIVE: Manual Removal (Not Recommended)**
-
-If you must manually remove (e.g., scripting, automation):
-
-1. **Kill any running processes:**
-   ```bash
-   pkill -f "server-name"
-   pkill -f "reloaderoo.*server-name"
-   ```
-
-2. **Remove from `.mcp.json`:**
-   ```bash
-   jq 'del(.mcpServers["server-name"])' ~/.claude/.mcp.json > /tmp/mcp.json
-   mv /tmp/mcp.json ~/.claude/.mcp.json
-   ```
-
-3. **Remove permissions from `settings.json`:**
-   ```bash
-   # Remove all permissions starting with "mcp__server-name__"
-   jq '.permissions.allow |= map(select(startswith("mcp__server-name__") | not))' ~/.claude/settings.json > /tmp/settings.json
-   mv /tmp/settings.json ~/.claude/settings.json
-   ```
-
-4. **Clean up cache using Claude CLI:**
-   ```bash
-   # Even with manual removal, use this to clean cache
-   claude mcp remove server-name
-   ```
-
-5. **Restart Claude Code**
-
-**Critical:** Manual removal can leave orphaned processes and cache entries. Always use `claude mcp remove` when possible.
-
-### 5. Validate Configuration
-
-**When to use:** After any manual edits, before committing, during CI/CD.
-
-```bash
-# Full validation (both files)
-./scripts/validate-mcp-config.sh
-
-# Check syntax only
-./scripts/validate-mcp-config.sh --syntax-only
-
-# Check consistency only
-./scripts/validate-mcp-config.sh --consistency-only
-```
-
-**Validation checks:**
-- JSON syntax validity
-- Required fields present
-- Server-permission consistency
-- No duplicate server names
-- Valid command paths
-- Environment variable format
-
-### 6. Wrap MCP Server with Reloaderoo (Hot-Reload)
-
-**When to use:** Developing an MCP server and want automatic restarts without restarting Claude Code.
-
-**What is reloaderoo:** A proxy that watches your MCP server files and auto-restarts the server when changes are detected.
-
-**Benefits:**
-- ✅ No Claude Code restart needed after server code changes
-- ✅ Faster development iteration
-- ✅ Preserves Claude Code session state
-- ✅ Automatic change detection
-
-**Steps to wrap an existing server:**
-
-**Step 1: Install reloaderoo (if needed)**
-
-```bash
-# Test if installed
-npx reloaderoo --version
-
-# If not installed, npx will auto-download on first use
-```
-
-**Step 2: Modify server configuration**
-
-**Before (original config):**
-```json
-{
-  "mcpServers": {
-    "my-server": {
-      "command": "python3",
-      "args": ["server.py"],
-      "type": "stdio"
-    }
-  }
-}
-```
-
-**After (with reloaderoo):**
-```json
-{
-  "mcpServers": {
-    "my-server": {
-      "command": "npx",
-      "args": ["reloaderoo", "proxy", "--", "python3", "server.py"],
-      "type": "stdio",
-      "env": {
-        "MCPDEV_PROXY_AUTO_RESTART": "true"
-      }
-    }
-  }
-}
-```
-
-**Pattern for different server types:**
-
-**Node.js server:**
-```json
-{
-  "command": "npx",
-  "args": ["reloaderoo", "proxy", "--", "node", "server.js"]
-}
-```
-
-**Python with uvx:**
-```json
-{
-  "command": "npx",
-  "args": ["reloaderoo", "proxy", "--", "uvx", "my-mcp-server"]
-}
-```
-
-**NPX package:**
-```json
-{
-  "command": "npx",
-  "args": ["reloaderoo", "proxy", "--", "npx", "-y", "some-mcp-package"]
-}
-```
-
-**Step 3: Set auto-restart environment variable**
-
-Add to the server's `env` section:
-```json
-{
-  "env": {
-    "MCPDEV_PROXY_AUTO_RESTART": "true"
-  }
-}
-```
-
-**What this does:**
-- Enables automatic restart on file changes
-- Claude Code does NOT need to be restarted
-- Changes to server files are detected automatically
-- Server process reloads with new code
-
-**Step 4: Apply changes**
-
-```bash
-# If using sync script
-~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh
-
-# Or use Claude CLI
-claude mcp remove my-server
-claude mcp add --scope user my-server npx reloaderoo proxy -- python3 server.py
-
-# Restart Claude Code (one-time only)
-```
-
-**Step 5: Verify hot-reload works**
-
-1. Make a change to your server code (e.g., `server.py`)
-2. Save the file
-3. Check Claude Code MCP server list
-4. Server should show as "connected" (no restart needed)
-5. Test the server functionality with the changes
-
-**Step 6: Watch server logs (optional)**
-
-To see reload activity:
-```bash
-# Find the reloaderoo process
-ps aux | grep reloaderoo
-
-# Check Claude Code MCP logs
-tail -f ~/.claude/logs/mcp-*.log
-```
-
-**Common reloaderoo patterns:**
-
-**Watch specific files only:**
-```json
-{
-  "args": [
-    "reloaderoo",
-    "proxy",
-    "--watch", "server.py",
-    "--watch", "handlers/*.py",
-    "--",
-    "python3", "server.py"
-  ]
-}
-```
-
-**Ignore patterns:**
-```json
-{
-  "args": [
-    "reloaderoo",
-    "proxy",
-    "--ignore", "*.log",
-    "--ignore", "__pycache__",
-    "--",
-    "python3", "server.py"
-  ]
-}
-```
-
-**Troubleshooting:**
-
-**Server not auto-restarting:**
-1. ✅ Check `MCPDEV_PROXY_AUTO_RESTART` is `"true"` (string, not boolean)
-2. ✅ Verify reloaderoo in args: `["reloaderoo", "proxy", "--", ...]`
-3. ✅ Check file is being watched (not in ignore patterns)
-4. ✅ Ensure file changes are being saved
-
-**Server crashes on restart:**
-1. Test server manually: `python3 server.py`
-2. Check syntax errors in your changes
-3. Review MCP logs: `~/.claude/logs/`
-
-**Reloaderoo not installed:**
-```bash
-# Install globally (optional)
-npm install -g reloaderoo
-
-# Or let npx handle it automatically
-npx reloaderoo --version
-```
-
-**Example: Convert existing server to hot-reload**
-
-**Original:**
-```json
-{
-  "mcpServers": {
-    "custom-api": {
-      "command": "python3",
-      "args": ["/Users/me/projects/my-mcp/server.py"],
-      "type": "stdio",
-      "env": {
-        "API_KEY": "${API_KEY}"
-      }
-    }
-  }
-}
-```
-
-**With reloaderoo:**
-```json
-{
-  "mcpServers": {
-    "custom-api": {
-      "command": "npx",
-      "args": [
-        "reloaderoo",
-        "proxy",
-        "--watch", "/Users/me/projects/my-mcp/*.py",
-        "--",
-        "python3",
-        "/Users/me/projects/my-mcp/server.py"
-      ],
-      "type": "stdio",
-      "env": {
-        "API_KEY": "${API_KEY}",
-        "MCPDEV_PROXY_AUTO_RESTART": "true"
-      }
-    }
-  }
-}
-```
-
-**Result:**
-- Server code changes auto-reload
-- No Claude Code restart needed
-- API_KEY preserved across reloads
-- Development iteration 10x faster
-
----
 
 ## Available Scripts
 
