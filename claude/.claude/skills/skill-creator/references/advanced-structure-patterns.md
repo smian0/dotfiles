@@ -163,6 +163,20 @@ research/
 - ✅ User-customizable preferences
 - ✅ Schema definitions for validation
 
+**Distinction: config/ vs assets/**
+
+| Aspect | config/ | assets/ |
+|--------|---------|---------|
+| Purpose | Runtime configuration for the skill itself | Output templates for users to customize |
+| Usage | Skill reads these at runtime | Copied to user's project and modified |
+| Example | API keys, endpoint URLs, feature flags | Project template, README template, config file starter |
+| Gitignore | Yes (especially .env, secrets) | No (templates should be tracked) |
+| When populated | Before skill execution | After skill generates output |
+
+**Example distinction:**
+- `config/api-endpoints.json` - Skill reads this to know which API to call
+- `assets/templates/config.template.json` - Skill copies this for user to customize
+
 ### Structure
 
 ```

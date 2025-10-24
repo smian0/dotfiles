@@ -94,6 +94,38 @@ ln -s ../skills/<skill-name>/commands .claude/commands/<skill-name>
 # Note: phases/ is used for sequential stages of one operation (see advanced patterns)
 ```
 
+Create `.gitignore` (if using advanced patterns):
+
+```bash
+cat > .claude/skills/<skill-name>/.gitignore << 'EOF'
+# Generated outputs
+output/
+*.log
+logs/
+
+# State and cache
+.state/
+cache/
+
+# Secrets and local config
+config/.env
+config/local.*
+*.key
+*.pem
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS files
+.DS_Store
+Thumbs.db
+EOF
+```
+
 Create initial SKILL.md:
 ```yaml
 ---
@@ -129,12 +161,21 @@ Already delegated to `meta-multi-agent` in Step 0.1.
 
 ```bash
 # Check: does SKILL.md reference each file?
-for f in $(find . -name "*.md" -o -name "*.py" -o -name "*.sh"); do
-  grep -q "$(basename $f)" SKILL.md || echo "⚠️ Unreferenced: $f"
+# Checks: .md, .py, .sh, .json, .yaml/.yml, .txt, .template, Dockerfile
+find . -type f \( \
+  -name "*.md" -o -name "*.py" -o -name "*.sh" -o \
+  -name "*.json" -o -name "*.yaml" -o -name "*.yml" -o \
+  -name "*.txt" -o -name "*.template" -o \
+  -name "Dockerfile" -o -name "docker-compose.yml" \
+\) ! -name "SKILL.md" ! -path "*/output/*" ! -path "*/.state/*" ! -path "*/cache/*" | \
+while read f; do
+  grep -q "$(basename "$f")" SKILL.md || echo "⚠️ Unreferenced: $f"
 done
 ```
 
 **Delete unreferenced files.** If SKILL.md doesn't load it, it's unused.
+
+**Note:** Excludes output/, .state/, cache/ (generated content, not references).
 
 See [🔍 Skill Optimization](./references/skill-optimization.md) for detailed verification.
 

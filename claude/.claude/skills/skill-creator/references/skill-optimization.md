@@ -36,6 +36,38 @@ done
 - `SKILL.md` itself
 - `LICENSE.txt`
 - `.gitignore` or similar meta files
+- `README.md` (human documentation)
+- Generated files in `output/`, `.state/`, `cache/` (excluded from checks)
+- Dependency files: `requirements.txt`, `package.json`, `Dockerfile` (referenced once in setup)
+
+**Advanced Directory Checks:**
+
+If using advanced patterns (see [Advanced Structure Patterns](./advanced-structure-patterns.md)):
+
+```bash
+# Check config files (should be referenced in setup/configuration section)
+for f in $(find config -type f 2>/dev/null); do
+  grep -q "$(basename $f)" SKILL.md || echo "⚠️ Config: $f (document in Configuration section)"
+done
+
+# Check data files (should be referenced where used)
+for f in $(find data -type f 2>/dev/null); do
+  grep -q "$(basename $f)" SKILL.md || echo "⚠️ Data: $f (document purpose)"
+done
+
+# Check tests (should be referenced in testing section)
+for f in $(find tests -name "*.py" -o -name "*.js" 2>/dev/null); do
+  grep -q "test" SKILL.md || echo "⚠️ Tests exist but no testing section in SKILL.md"
+  break
+done
+
+# Check phases (each phase should be referenced in workflow)
+for d in $(find phases -maxdepth 1 -type d 2>/dev/null | tail -n +2); do
+  grep -q "$(basename $d)" SKILL.md || echo "⚠️ Phase: $d (not in workflow)"
+done
+```
+
+**Note:** Advanced directories require different verification - they should be documented in relevant sections (Configuration, Testing, Workflow), not necessarily by filename.
 
 ### 2. No Redundant Content
 
