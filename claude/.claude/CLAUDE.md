@@ -58,50 +58,14 @@ Make breaking changes freely:
 
 ## File Path References
 
-**When referencing files in your responses, always use paths that are clickable in the IDE.**
+**Use project-relative paths in responses** (e.g., `src/app.py`, `.claude/config.json`)
 
-### Smart Path Selection
+**Why:** Clickable in IDE. Bare filenames and absolute paths often aren't.
 
-**Use relative paths from project root when:**
-- Listing files you created, modified, or read
-- Showing results from operations (builds, tests, generations)
-- Reporting errors or issues with specific files
-- Recommending files for the user to check
-- Referencing files in explanations or documentation
-
-**Path Format:**
-- ✅ `.claude/skills/sow-generator/output/SOW_Addendum_41.pdf` (clickable)
-- ✅ `src/components/Header.tsx` (clickable)
-- ✅ `.tools/docling/README.md` (clickable)
-- ❌ `SOW_Addendum_41.pdf` (not clickable when outside current directory)
-- ❌ `Header.tsx` (ambiguous, not clickable)
-
-### Context-Aware Exceptions
-
-**Filename only is acceptable when:**
-- File is in current working directory AND context is clear
-- Discussing file naming conventions abstractly
-- File doesn't exist yet (hypothetical examples)
-- Listing options where full path would be repetitive noise
-
-**Example - Smart Usage:**
-```markdown
-✅ SOW successfully generated!
-
-What was created:
-1. SOW PDF: .claude/skills/sow-generator/output/SOW_Addendum_41_Peter_Scholtens.pdf (86 KB)
-2. Intro Email: .claude/skills/sow-generator/output/SOW_Intro_Email_41_Peter_Scholtens.md
-
-Both files are ready for review.
-```
-
-### Tool Arguments vs Response Display
-
-**Different rules apply:**
-- **Tool arguments**: Follow tool requirements (may need absolute or relative paths)
-- **Response display**: Always use project-relative paths for user clickability
-
-**Why this matters:** IDE interfaces make relative paths clickable. Bare filenames or absolute paths often aren't clickable, reducing usability.
+**Exceptions:**
+- Current directory files when context is clear
+- Hypothetical examples
+- Tool arguments (follow tool requirements)
 
 ## README Management Rules
 
@@ -155,52 +119,26 @@ bash ~/dotfiles/scripts/verify-*-stow.sh
 ## MCP Server Development Workflow
 
 ### Hot-Reload Instead of Restart
-When working with MCP (Model Context Protocol) server code:
 
-**NEVER suggest restarting the IDE** for MCP server changes.
+**NEVER suggest IDE restart for MCP server code changes.**
 
-**ALWAYS use the `restart_server` tool instead (if available):**
-1. Make code changes to MCP server files
-2. Call the `restart_server` tool (automatically available when using reloaderoo)
-3. Test changes immediately - no IDE restart needed
+**With auto-restart enabled** (`MCPDEV_PROXY_AUTO_RESTART: "true"` in `.mcp.json`):
+- Server auto-reloads on file save
+- Proceed immediately to test - no restart needed
 
-### Auto-Restart Configuration (CRITICAL)
-**IMPORTANT: When an MCP server is configured with `MCPDEV_PROXY_AUTO_RESTART: "true"` in the `.mcp.json` file:**
+**Without auto-restart:**
+- Use `restart_server` tool (when using reloaderoo)
+- Test changes immediately
 
-**DO NOT suggest ANY restart actions - neither IDE restart nor manual `restart_server` tool calls.**
+**MCP server file patterns:**
+- `*server.py`, `*mcp.py`, `*_server.js`
+- Directories: `mcp_servers/`, `servers/`, or paths containing "mcp"
+- MCP imports: `fastmcp`, `@modelcontextprotocol/sdk`
 
-**The server automatically restarts when source files change. You should:**
-1. **Acknowledge that changes are saved** and the server will auto-reload
-2. **Proceed immediately to test or use the updated functionality**
-3. **NEVER wait or ask the user to restart anything**
-4. **Simply state:** "The server will automatically reload with your changes. Let me test the updated functionality now."
-
-**This applies to ANY MCP server using reloaderoo with auto-restart enabled, including:**
-- Local development servers (e.g., `mcp_markdown`, custom Python/JS servers)
-- Servers with `"env": { "MCPDEV_PROXY_AUTO_RESTART": "true" }`
-- Any server wrapped with `npx reloaderoo proxy --`
-
-### MCP Server File Patterns
-Watch for these patterns that indicate MCP server development:
-- Files ending in `*server.py`, `*mcp.py`, `*_server.js`, etc.
-- Files in directories like `mcp_servers/`, `servers/`, or containing "mcp" in path
-- Files with MCP-related imports (fastmcp, @modelcontextprotocol/sdk, etc.)
-
-### Development Commands
-```bash
-# Instead of: "Restart IDE to pick up changes"
-# Use: "Call restart_server tool to reload MCP server"
-
-# Setup pattern in .mcp.json (or IDE-specific config):
-"command": "npx",
-"args": ["reloaderoo", "proxy", "--", "python3", "server.py"]
-```
-
-### Exceptions
-Only suggest IDE restart when:
-- Changing MCP configuration file itself (e.g., `.mcp.json`, `mcp_settings.json`)
-- Adding/removing MCP servers (not modifying existing ones)
-- MCP server fails to start initially
+**Only suggest IDE restart when:**
+- Changing `.mcp.json` configuration itself
+- Adding/removing MCP servers
+- Initial MCP server startup failure
 
 ## AI Agent Development Workflow
 
@@ -239,254 +177,74 @@ Ollama cloud models available at `http://localhost:11434` or `http://localhost:1
 
 **Usage:** Free under preview caps • Requires Ollama v0.12+ • Performance varies by system load
 
-## Cross-References
-
-### In README.md
-```markdown
-*For maintenance instructions, see [CLAUDE.md]*
-```
-
-### In CLAUDE.md  
-```markdown
-*For user documentation, see [README.md]*
-```
-
-## Quick Decision Tree
-
-**User asks about feature?** → Point to README
-**User asks about maintenance?** → Point to CLAUDE.md
-**Need to document for users?** → Update README
-**Need to add automation?** → Update CLAUDE.md
-**Content could go either place?** → README for what, CLAUDE for how
-
 ## Development Principles
 
-### DRY (Don't Repeat Yourself) & YAGNI (You Aren't Gonna Need It)
-- **DRY**: Avoid duplicating code patterns - use functions, templates, or shared utilities instead
-- **YAGNI**: Only add features/complexity when actually needed, not "just in case"
-- Examples: Reuse existing scripts, reference shared configs, add features only when there's an immediate use case
+### DRY & YAGNI
+- **DRY**: Avoid duplicating code patterns - use functions, templates, or shared utilities
+- **YAGNI**: Only add features when actually needed, not "just in case"
 
 ### Real-World Testing Over Mocking
-Prioritize understanding root causes and real end-user scenarios:
-- **Avoid mock objects/data** - Use real configurations, real files, real environment conditions
-- **Test actual user workflows** - Simulate complete operations from start to finish
-- **Debug root causes** - Investigate why something fails instead of mocking around problems
-- **End-to-end validation** - Test entire workflows, not just isolated components
+- Use real configurations, files, and environment conditions
+- Test actual user workflows end-to-end
+- Debug root causes instead of mocking around problems
 
 ### Clean Code & Self-Documentation
 
-**Core Principle: Code should explain itself through clarity, not comments.**
+**Code should explain itself through clarity, not comments.**
 
-#### Self-Documenting Code First
-- Use descriptive names: `calculate_monthly_payment(principal, rate, months)` not `calc(p, r, m)`
-- Structure reveals intent: Small, focused functions with clear purposes
-- Type hints over type documentation: Use language-native annotations
-- Named constants over magic numbers: `MAX_RETRIES = 3` not `3` with a comment
+**Self-documenting practices:**
+- Descriptive names: `calculate_monthly_payment(principal, rate, months)` not `calc(p, r, m)`
+- Type hints over documentation: Use language-native annotations
+- Named constants: `MAX_RETRIES = 3` not magic numbers
+- Small, focused functions with clear purposes
 
-#### Minimal, Purposeful Comments
-**Only comment when code cannot be made clearer.**
-
-Use comments ONLY for:
-- Non-obvious business logic or domain rules
-- Complex algorithms that need explanation
-- "Why" decisions were made (not "what" the code does)
-- Workarounds or edge cases that aren't apparent
+**Comments only for:**
+- Non-obvious business logic or algorithms
+- "Why" decisions (not "what" code does)
+- Workarounds or edge cases
 
 **Never comment:**
-- What the code obviously does
+- Obvious code behavior
 - Type information (use type hints)
 - Function entry/exit
-- Variable assignments that are self-explanatory
+- Self-explanatory assignments
 
-#### Lean Docstrings
-**Skip redundant descriptions. Document the non-obvious.**
+**Lean docstrings:**
+- Brief purpose for public APIs
+- Unexpected behavior or constraints
+- Skip obvious parameters and return types already in type hints
 
-Good docstrings:
-- Brief purpose statement for public APIs
-- Unexpected behavior or side effects
-- Important constraints or requirements
-- When to use vs alternatives
-
-Skip:
-- Obvious parameter descriptions
-- Return types already in type hints
-- Restating the function name in prose
-- Generic filler text
-
-#### Strategic Logging
-**Log meaningful events, not execution traces.**
-
-Good logging:
-- State changes: "User authentication failed: invalid token"
-- Important decisions: "Falling back to cache, API unavailable"
-- Errors with context: "Failed to parse config: missing required field 'api_key'"
-
-Avoid:
-- Function entry/exit logs
-- Debug breadcrumbs in production code
-- Logging every variable value
-- Redundant success messages
-
-#### Code Structure Over Comments
-**If you need comments to explain code sections, refactor instead.**
-
-Bad:
-```python
-# Calculate the total with tax
-subtotal = sum(item.price for item in cart)
-tax_rate = 0.08
-tax = subtotal * tax_rate
-total = subtotal + tax
-```
-
-Good:
-```python
-def calculate_total_with_tax(cart, tax_rate=0.08):
-    subtotal = sum(item.price for item in cart)
-    return subtotal * (1 + tax_rate)
-```
-
-#### Examples
-
-**❌ Over-Commented Verbose Code:**
-```python
-def process_user(user_id):
-    """
-    Process a user by their ID.
-
-    Args:
-        user_id (int): The ID of the user to process
-
-    Returns:
-        dict: A dictionary containing the processed user data
-    """
-    # Log that we're starting to process the user
-    logger.debug(f"Starting to process user {user_id}")
-
-    # Get the user from the database
-    user = db.get_user(user_id)
-
-    # Check if user exists
-    if not user:
-        # Log error if user not found
-        logger.error(f"User {user_id} not found")
-        return None
-
-    # Process the user data
-    processed = {
-        'name': user.name,  # Get user name
-        'email': user.email,  # Get user email
-        'active': True  # Set active status
-    }
-
-    # Log success
-    logger.debug(f"Successfully processed user {user_id}")
-
-    # Return the processed data
-    return processed
-```
-
-**✅ Clean Self-Documenting Code:**
-```python
-def process_user(user_id: int) -> dict | None:
-    user = db.get_user(user_id)
-
-    if not user:
-        logger.warning(f"User {user_id} not found")
-        return None
-
-    return {
-        'name': user.name,
-        'email': user.email,
-        'active': True
-    }
-```
-
-**When Comments ARE Appropriate:**
-```python
-def calculate_compound_interest(principal: float, rate: float, years: int) -> float:
-    # Using continuous compounding formula: A = Pe^(rt)
-    # More accurate for high-frequency compounding than discrete formula
-    return principal * math.exp(rate * years)
-
-def retry_with_backoff(func, max_attempts: int = 3):
-    # Exponential backoff prevents thundering herd problem
-    # when multiple clients retry failed requests simultaneously
-    for attempt in range(max_attempts):
-        try:
-            return func()
-        except TransientError:
-            wait_time = 2 ** attempt
-            time.sleep(wait_time)
-    raise MaxRetriesExceeded()
-```
+**Strategic logging:**
+- Log state changes and errors with context
+- Avoid function entry/exit logs and debug breadcrumbs
 
 ## README Quality Standards
 
-### Universal Structure
-```markdown
-# Project Name
-One-line description
-
-## Quick Start / TLDR
-Fastest way to get running (3-5 lines max)
-
-## Features / What's Included
-- Bullet points
-- Key capabilities
-- What makes it unique
-
-## Installation
-Step-by-step, tested commands
-
-## Usage
-Most common use cases with examples
-
-## Configuration (if needed)
-Only essential settings
-
-## Troubleshooting (if needed)
-Common issues only
-
----
-Last Updated: DATE
-```
+### Required Sections
+1. Title + one-line description
+2. Quick start (<30 seconds to run)
+3. Features/capabilities
+4. Installation (tested commands)
+5. Usage examples
+6. "Last Updated" timestamp
 
 ### Quality Checklist
-- [ ] Title describes what it does
-- [ ] Quick start works in <30 seconds
-- [ ] All commands copy-pasteable
+- [ ] All commands copy-pasteable and tested
 - [ ] Examples show real usage
-- [ ] No duplicate of code comments
-- [ ] Links work
 - [ ] No user-specific paths
-
-### By Project Type
-
-**CLI Tool:**
-Focus on: Commands, flags, examples, output samples
-
-**Library/Package:**
-Focus on: API, imports, code examples, types
-
-**Application:**
-Focus on: Screenshots, features, requirements, deployment
-
-**Configuration (dotfiles, etc):**
-Focus on: What it configures, prerequisites, effects
+- [ ] Links work
+- [ ] No code implementation details
 
 ### Length Guidelines
-- **Small project:** 50-100 lines
-- **Medium project:** 100-200 lines  
-- **Large project:** 200-300 lines max
-- **Complex:** Link to docs/ folder
+- Small: 50-100 lines
+- Medium: 100-200 lines
+- Large: 200-300 max (link to docs/ if longer)
 
 ### Never Include
-- Implementation details (that's code comments)
-- Internal architecture (unless contributing guide)
-- Changelog (separate file)
-- Personal information
+- Implementation details (use code comments)
+- Internal architecture (unless contributing)
 - Untested commands
+- Personal information
 
 ## Web Research Policy
 
