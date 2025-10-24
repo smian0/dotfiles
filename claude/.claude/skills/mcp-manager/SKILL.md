@@ -309,6 +309,235 @@ If you must manually remove (e.g., scripting, automation):
 - Valid command paths
 - Environment variable format
 
+### 6. Wrap MCP Server with Reloaderoo (Hot-Reload)
+
+**When to use:** Developing an MCP server and want automatic restarts without restarting Claude Code.
+
+**What is reloaderoo:** A proxy that watches your MCP server files and auto-restarts the server when changes are detected.
+
+**Benefits:**
+- ✅ No Claude Code restart needed after server code changes
+- ✅ Faster development iteration
+- ✅ Preserves Claude Code session state
+- ✅ Automatic change detection
+
+**Steps to wrap an existing server:**
+
+**Step 1: Install reloaderoo (if needed)**
+
+```bash
+# Test if installed
+npx reloaderoo --version
+
+# If not installed, npx will auto-download on first use
+```
+
+**Step 2: Modify server configuration**
+
+**Before (original config):**
+```json
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "python3",
+      "args": ["server.py"],
+      "type": "stdio"
+    }
+  }
+}
+```
+
+**After (with reloaderoo):**
+```json
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "npx",
+      "args": ["reloaderoo", "proxy", "--", "python3", "server.py"],
+      "type": "stdio",
+      "env": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      }
+    }
+  }
+}
+```
+
+**Pattern for different server types:**
+
+**Node.js server:**
+```json
+{
+  "command": "npx",
+  "args": ["reloaderoo", "proxy", "--", "node", "server.js"]
+}
+```
+
+**Python with uvx:**
+```json
+{
+  "command": "npx",
+  "args": ["reloaderoo", "proxy", "--", "uvx", "my-mcp-server"]
+}
+```
+
+**NPX package:**
+```json
+{
+  "command": "npx",
+  "args": ["reloaderoo", "proxy", "--", "npx", "-y", "some-mcp-package"]
+}
+```
+
+**Step 3: Set auto-restart environment variable**
+
+Add to the server's `env` section:
+```json
+{
+  "env": {
+    "MCPDEV_PROXY_AUTO_RESTART": "true"
+  }
+}
+```
+
+**What this does:**
+- Enables automatic restart on file changes
+- Claude Code does NOT need to be restarted
+- Changes to server files are detected automatically
+- Server process reloads with new code
+
+**Step 4: Apply changes**
+
+```bash
+# If using sync script
+~/.claude/skills/mcp-manager/scripts/sync-user-mcp.sh
+
+# Or use Claude CLI
+claude mcp remove my-server
+claude mcp add --scope user my-server npx reloaderoo proxy -- python3 server.py
+
+# Restart Claude Code (one-time only)
+```
+
+**Step 5: Verify hot-reload works**
+
+1. Make a change to your server code (e.g., `server.py`)
+2. Save the file
+3. Check Claude Code MCP server list
+4. Server should show as "connected" (no restart needed)
+5. Test the server functionality with the changes
+
+**Step 6: Watch server logs (optional)**
+
+To see reload activity:
+```bash
+# Find the reloaderoo process
+ps aux | grep reloaderoo
+
+# Check Claude Code MCP logs
+tail -f ~/.claude/logs/mcp-*.log
+```
+
+**Common reloaderoo patterns:**
+
+**Watch specific files only:**
+```json
+{
+  "args": [
+    "reloaderoo",
+    "proxy",
+    "--watch", "server.py",
+    "--watch", "handlers/*.py",
+    "--",
+    "python3", "server.py"
+  ]
+}
+```
+
+**Ignore patterns:**
+```json
+{
+  "args": [
+    "reloaderoo",
+    "proxy",
+    "--ignore", "*.log",
+    "--ignore", "__pycache__",
+    "--",
+    "python3", "server.py"
+  ]
+}
+```
+
+**Troubleshooting:**
+
+**Server not auto-restarting:**
+1. ✅ Check `MCPDEV_PROXY_AUTO_RESTART` is `"true"` (string, not boolean)
+2. ✅ Verify reloaderoo in args: `["reloaderoo", "proxy", "--", ...]`
+3. ✅ Check file is being watched (not in ignore patterns)
+4. ✅ Ensure file changes are being saved
+
+**Server crashes on restart:**
+1. Test server manually: `python3 server.py`
+2. Check syntax errors in your changes
+3. Review MCP logs: `~/.claude/logs/`
+
+**Reloaderoo not installed:**
+```bash
+# Install globally (optional)
+npm install -g reloaderoo
+
+# Or let npx handle it automatically
+npx reloaderoo --version
+```
+
+**Example: Convert existing server to hot-reload**
+
+**Original:**
+```json
+{
+  "mcpServers": {
+    "custom-api": {
+      "command": "python3",
+      "args": ["/Users/me/projects/my-mcp/server.py"],
+      "type": "stdio",
+      "env": {
+        "API_KEY": "${API_KEY}"
+      }
+    }
+  }
+}
+```
+
+**With reloaderoo:**
+```json
+{
+  "mcpServers": {
+    "custom-api": {
+      "command": "npx",
+      "args": [
+        "reloaderoo",
+        "proxy",
+        "--watch", "/Users/me/projects/my-mcp/*.py",
+        "--",
+        "python3",
+        "/Users/me/projects/my-mcp/server.py"
+      ],
+      "type": "stdio",
+      "env": {
+        "API_KEY": "${API_KEY}",
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      }
+    }
+  }
+}
+```
+
+**Result:**
+- Server code changes auto-reload
+- No Claude Code restart needed
+- API_KEY preserved across reloads
+- Development iteration 10x faster
+
 ---
 
 ## Available Scripts
@@ -490,9 +719,9 @@ git commit -m "feat: add new MCP server for X"
 - User level: Development tools (serena, context7, zen)
 - Project level: Project-specific integrations (project APIs, databases)
 
-### 6. Auto-Restart Configuration
+### 6. Use Reloaderoo for Development Servers
 
-For MCP servers under active development:
+For MCP servers under active development, wrap them with reloaderoo for hot-reload:
 
 ```json
 {
@@ -509,6 +738,8 @@ For MCP servers under active development:
 ```
 
 **Benefit:** Server auto-restarts on file changes without IDE restart.
+
+**See Workflow 6 for detailed setup instructions:** [Wrap MCP Server with Reloaderoo](#6-wrap-mcp-server-with-reloaderoo-hot-reload)
 
 ### 7. Permission Naming Convention
 
@@ -722,19 +953,23 @@ stow -R claude
 
 **Symptoms:** Server changes don't take effect automatically.
 
-**Checklist:**
-1. ✅ `MCPDEV_PROXY_AUTO_RESTART: "true"` in env
-2. ✅ Using `reloaderoo proxy` wrapper
+**Solution:** See [Workflow 6: Wrap MCP Server with Reloaderoo](#6-wrap-mcp-server-with-reloaderoo-hot-reload) for complete setup and troubleshooting.
+
+**Quick Checklist:**
+1. ✅ `MCPDEV_PROXY_AUTO_RESTART: "true"` in env (string, not boolean)
+2. ✅ Using `reloaderoo proxy` wrapper in args
 3. ✅ Watching correct source files
 4. ✅ reloaderoo installed: `npx reloaderoo --version`
 
-**Debug:**
+**Quick Debug:**
 ```bash
 # Test reloaderoo manually
 npx reloaderoo proxy -- python3 server.py
 # Make a change to server.py
 # Should see "Reloading..." in output
 ```
+
+**For detailed troubleshooting, see Workflow 6.**
 
 ---
 
