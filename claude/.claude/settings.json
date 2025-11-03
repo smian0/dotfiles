@@ -5,6 +5,42 @@
   },
   "includeCoAuthoredBy": false,
   "permissions": {
+    "allowedTools": [
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)",
+      "Grep(*)",
+      "Glob(*)",
+      "Bash(make *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git status)",
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(stow *)",
+      "Bash(echo *)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(chmod *)",
+      "Bash(mkdir *)",
+      "Bash(mv *)",
+      "Bash(cp *)",
+      "Bash(source *)",
+      "Bash(sed *)",
+      "Bash(grep *)",
+      "Bash(docker-compose *)",
+      "Bash(docker exec *)",
+      "Bash(rm *)",
+      "Bash(touch *)",
+      "Bash(jq *)",
+      "Bash(command -v *)",
+      "Bash(brew *)",
+      "Bash(npm *)",
+      "Bash(python3 *)",
+      "Bash(bash *)",
+      "Bash(pkill *)"
+    ],
     "allow": [
       "WebFetch(domain:www.npmjs.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
@@ -49,11 +85,7 @@
       "mcp__privacy_pdf__validate_redaction",
       "mcp__privacy_pdf__analyze_redacted_content"
     ],
-    "deny": [
-      "Read(./.env)",
-      "Read(./secrets/**)",
-      "Read(./pass/**)"
-    ]
+    "deny": ["Read(./.env)", "Read(./secrets/**)", "Read(./pass/**)"]
   },
   "enableAllProjectMcpServers": true,
   "hooks": {
@@ -119,5 +151,5 @@
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": false
 }
