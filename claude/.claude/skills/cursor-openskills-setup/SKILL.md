@@ -5,309 +5,146 @@ description: Set up OpenSkills for Cursor IDE with proper configuration, global 
 
 # Cursor + OpenSkills Setup Skill
 
-## Purpose
-
-Guide users through complete setup of OpenSkills for Cursor IDE, including:
-- Installing prerequisites
-- Creating proper AGENTS.md format
-- Optionally syncing global user rules (version-controlled)
-- Verification and testing
-
 ## When to Use
 
-Use this skill when:
 - Setting up Cursor IDE to work with Claude Code skills
 - Configuring a new project for OpenSkills
 - Setting up a new machine with dotfiles
-- Troubleshooting OpenSkills integration in Cursor
+- Troubleshooting OpenSkills integration
 
-## Prerequisites Check
+## Bundled Resources
 
-Before starting, verify:
+This skill includes all necessary scripts and templates:
 
-1. **Node.js installed** (v20.6+):
-   ```bash
-   node --version
-   ```
+- `scripts/init-project.sh` - Initialize OpenSkills in any project
+- `scripts/sync-user-rules.sh` - Sync user rule to Cursor DB (global setup)
+- `scripts/backup-user-rules.sh` - Backup current user rules
+- `scripts/restore-user-rules.sh` - Restore from backup
+- `scripts/verify-setup.sh` - Automated verification
+- `scripts/load-skill.sh` - Manual skill loading helper
+- `templates/AGENTS.md.template` - Official AGENTS.md format
+- `templates/openskills-user-rule.md` - Global user rule template
+- `templates/openskills-loader.mdc` - Optional .mdc helper
 
-2. **openskills CLI installed**:
-   ```bash
-   openskills --version
-   ```
+**Base directory** is provided when skill loads. Use it to reference bundled resources.
 
-3. **Cursor IDE installed**
+## Prerequisites
 
-If any are missing, install them first.
+1. **Node.js** v20.6+: `node --version`
+2. **openskills CLI**: `openskills --version`
+3. **Cursor IDE** installed
 
-## Workflow
-
-### Phase 1: Install OpenSkills CLI
-
-**If openskills not installed:**
-
+**If missing:**
 ```bash
 npm i -g openskills
 ```
 
-**Verify:**
+## Quick Start
+
+### Project Setup (AGENTS.md)
+
+**Use the bundled script:**
 ```bash
-openskills --version
-# Should show 1.2.1 or higher
+<base-dir>/scripts/init-project.sh
 ```
 
-### Phase 2: Choose Setup Type
+This creates AGENTS.md with proper format and optionally installs skills.
 
-Ask the user:
+### Global Setup (User Rules)
 
-**"What would you like to set up?"**
-
-**A. Project-Level Setup** (AGENTS.md in current project)
-- For: Setting up one specific project
-- Creates: AGENTS.md with proper format
-- Scope: Single project only
-
-**B. Global User Rule Setup** (All Cursor projects)
-- For: OpenSkills awareness across ALL projects
-- Creates: Version-controlled user rule synced to Cursor DB
-- Scope: Global (all projects on this machine)
-
-**C. Both** (Recommended for new machines)
-- Complete setup with both project and global config
-
-### Phase 3: Project-Level Setup
-
-**If user chose A or C:**
-
-1. **Check current directory:**
-   ```bash
-   pwd
-   ```
-
-   Confirm this is the project where AGENTS.md should be created.
-
-2. **Check for existing AGENTS.md:**
-   ```bash
-   ls -la AGENTS.md
-   ```
-
-3. **If AGENTS.md exists:**
-   - Ask: "AGENTS.md already exists. Overwrite? (y/N)"
-   - If no, skip to Phase 4
-
-4. **Create AGENTS.md with official format:**
-
-   **Use the init script if dotfiles are available:**
-   ```bash
-   ~/dotfiles/scripts/init-cursor-openskills.sh
-   ```
-
-   **Or create manually:**
-
-   Create AGENTS.md with this exact structure:
-
-   ```markdown
-   # AI Agent Instructions
-
-   <skills_system priority="1">
-
-   ## Available Skills
-
-   <!-- SKILLS_TABLE_START -->
-   <usage>
-   When users ask you to perform tasks, check if any of the available
-   skills below can help complete the task more effectively.
-
-   How to use skills:
-   - Invoke: Bash("openskills read <skill-name>")
-   - The skill content will load with detailed instructions
-   - Base directory provided in output for resolving bundled resources
-
-   Usage notes:
-   - Only use skills listed in <available_skills> below
-   - Do not invoke a skill that is already loaded in your context
-   </usage>
-
-   <available_skills>
-   <!-- Skills will be added here by 'openskills sync' -->
-   </available_skills>
-   <!-- SKILLS_TABLE_END -->
-
-   </skills_system>
-   ```
-
-5. **Sync skills to AGENTS.md:**
-
-   **Ask user:** "Do you want to install skills from Anthropic marketplace? (y/N)"
-
-   **If yes:**
-   ```bash
-   openskills install anthropics/skills
-   ```
-
-   **Otherwise:**
-   - Skills at `~/.claude/skills/` will be discovered automatically
-
-6. **Run sync:**
-   ```bash
-   openskills sync
-   ```
-
-   This populates AGENTS.md with skill metadata.
-
-7. **Verify AGENTS.md:**
-   ```bash
-   grep "<skill>" AGENTS.md
-   ```
-
-   Should show skill entries.
-
-### Phase 4: Global User Rule Setup
-
-**If user chose B or C:**
-
-1. **Check if dotfiles cursor package exists:**
-   ```bash
-   ls -la ~/dotfiles/cursor/user-rules/openskills.md
-   ```
-
-2. **If missing:**
-   - Inform user they need the cursor package from dotfiles
-   - Ask if they want to skip global setup
-
-3. **If exists, backup current user rules:**
-   ```bash
-   ~/dotfiles/cursor/scripts/backup-user-rules.sh
-   ```
-
-4. **Sync the version-controlled rule:**
-   ```bash
-   ~/dotfiles/cursor/scripts/sync-user-rules.sh
-   ```
-
-5. **Prompt user to restart Cursor:**
-   - "Restart Cursor IDE or reload window (Cmd+Shift+P → 'Developer: Reload Window')"
-
-### Phase 5: Verification
-
-**Verify the setup works:**
-
-1. **List available skills:**
-   ```bash
-   openskills list
-   ```
-
-   Should show skills from `~/.claude/skills/` (global).
-
-2. **Test skill loading:**
-   ```bash
-   openskills read research | head -30
-   ```
-
-   Should output the research skill's SKILL.md content.
-
-3. **Check AGENTS.md format:**
-   ```bash
-   grep -A 2 "SKILLS_TABLE_START" AGENTS.md
-   ```
-
-   Verify proper markers are present.
-
-4. **If global user rule was set up:**
-
-   **Verify it's in Cursor DB:**
-   ```bash
-   sqlite3 "$HOME/Library/Application Support/Cursor/User/globalStorage/state.vscdb" \
-     "SELECT value FROM ItemTable WHERE key = 'aicontext.personalContext';" | head -5
-   ```
-
-   Should show OpenSkills content.
-
-### Phase 6: Testing in Cursor IDE
-
-**Provide testing instructions:**
-
-**If project-level setup:**
-
-1. Open the project in Cursor IDE
-2. In Cursor chat, ask: "What skills are available?"
-3. Cursor should reference AGENTS.md
-4. Try invoking a skill: "Use the research skill to analyze React hooks"
-5. Cursor should invoke: `Bash("openskills read research")`
-
-**If global user rule setup:**
-
-1. Open ANY project in Cursor (even without AGENTS.md)
-2. Cursor should have basic OpenSkills awareness
-3. When a project HAS AGENTS.md, Cursor knows how to use it
-
-### Phase 7: Troubleshooting
-
-**If AGENTS.md sync fails:**
-
-- Check markers are present: `grep SKILLS_TABLE AGENTS.md`
-- Ensure openskills is installed: `openskills --version`
-- Try running sync with verbose output
-
-**If Cursor doesn't see skills:**
-
-- Verify AGENTS.md is at project root
-- Check AGENTS.md has proper XML format
-- Restart Cursor IDE
-- Try reading AGENTS.md manually in Cursor chat
-
-**If global user rule doesn't work:**
-
-- Verify sync completed: Check backup file was created
-- Restart Cursor (not just reload)
-- Check database: Run verification command from Phase 5
-
-## Summary Checklist
-
-At completion, verify:
-
-- [ ] openskills CLI installed (`openskills --version`)
-- [ ] AGENTS.md created with proper format (if project setup)
-- [ ] AGENTS.md contains `<!-- SKILLS_TABLE_START -->` markers
-- [ ] Skills synced to AGENTS.md (`grep "<skill>" AGENTS.md`)
-- [ ] Global user rule synced (if global setup chosen)
-- [ ] Backup created (check `.backups/` directory)
-- [ ] Cursor restarted
-- [ ] Tested in Cursor (skills invokable)
-
-## Post-Setup Notes
-
-**For the user:**
-
-**Project-level setup:**
-- AGENTS.md is now at project root
-- Version-control it: `git add AGENTS.md && git commit -m "Add OpenSkills"`
-- Other team members can use the same AGENTS.md
-
-**Global user rule:**
-- Changes persist across ALL projects
-- To update: Edit `~/dotfiles/cursor/user-rules/openskills.md` and re-sync
-- Version-controlled in dotfiles git repo
-- Sync on other machines after git pull
-
-**Adding more skills:**
+**For OpenSkills awareness in ALL Cursor projects:**
 ```bash
-openskills install <org>/<repo>
+<base-dir>/scripts/sync-user-rules.sh
+```
+
+Then restart Cursor IDE.
+
+### Verification
+
+**Check everything is configured:**
+```bash
+<base-dir>/scripts/verify-setup.sh
+```
+
+Or with verbose output:
+```bash
+<base-dir>/scripts/verify-setup.sh --verbose
+```
+
+## Setup Workflow
+
+**Ask user:** "What would you like to set up?"
+
+### Option A: Project-Level Only
+1. Run `<base-dir>/scripts/init-project.sh` in project directory
+2. Creates AGENTS.md with official format
+3. Syncs skills via `openskills sync`
+4. Scope: Single project only
+
+### Option B: Global User Rule Only
+1. Run `<base-dir>/scripts/sync-user-rules.sh`
+2. Syncs template to Cursor's SQLite DB
+3. Restart Cursor IDE
+4. Scope: ALL projects on this machine
+
+### Option C: Both (Recommended)
+1. Run project setup in desired project
+2. Then run global user rule sync
+3. Restart Cursor
+4. Complete setup for both project and global
+
+## Testing
+
+**Project setup:**
+- Open project in Cursor
+- Ask: "What skills are available?"
+- Cursor should reference AGENTS.md
+
+**Global setup:**
+- Open any project in Cursor
+- Cursor has OpenSkills awareness
+- When AGENTS.md present, knows how to invoke skills
+
+## Troubleshooting
+
+**AGENTS.md not working:**
+```bash
+# Verify format
+grep "SKILLS_TABLE_START" AGENTS.md
+
+# Re-sync
 openskills sync
+```
+
+**User rule not working:**
+```bash
+# Verify in database
+sqlite3 "$HOME/Library/Application Support/Cursor/User/globalStorage/state.vscdb" \
+  "SELECT value FROM ItemTable WHERE key = 'aicontext.personalContext';" | head -5
+
+# Re-sync
+<base-dir>/scripts/sync-user-rules.sh
+```
+
+**Restore from backup:**
+```bash
+<base-dir>/scripts/restore-user-rules.sh <backup-file>
 ```
 
 ## Reference
 
-- Official OpenSkills: https://github.com/numman-ali/openskills
-- Dotfiles cursor package: `~/dotfiles/cursor/README.md`
-- User rule scripts: `~/dotfiles/cursor/scripts/`
+**Bundled templates:**
+- `templates/AGENTS.md.template` - Copy this for manual setup
+- `templates/openskills-user-rule.md` - User rule source
+- `templates/openskills-loader.mdc` - Optional project helper
+
+**Official spec:** https://github.com/numman-ali/openskills
 
 ## Success Criteria
 
-Setup is complete when:
-
-1. User can run `openskills list` and see skills
-2. User can run `openskills read <skill>` and see content
-3. AGENTS.md exists with proper format (if project setup)
-4. Cursor recognizes skills in AGENTS.md (if project setup)
-5. Cursor has OpenSkills awareness globally (if user rule setup)
-6. User knows how to add more skills and update config
+- [ ] openskills CLI installed
+- [ ] AGENTS.md has proper markers (if project setup)
+- [ ] Skills synced to AGENTS.md
+- [ ] User rule synced to Cursor DB (if global setup)
+- [ ] Verification script passes
+- [ ] Skills invokable in Cursor
