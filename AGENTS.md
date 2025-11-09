@@ -1,162 +1,99 @@
-# CLAUDE.md
+# AI Agent Instructions
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+<skills_system priority="1">
 
-## Repository Overview
+## Available Skills
 
-This is a personal dotfiles repository for consistent environment setup across macOS and Ubuntu Linux machines, featuring modular package management via GNU Stow, multiple Claude Code profiles for AI development, and integrated Task Master AI for project management.
+<!-- SKILLS_TABLE_START -->
+<usage>
+When users ask you to perform tasks, check if any of the available
+skills below can help complete the task more effectively.
 
-## Core Architecture
+How to use skills:
+- Invoke: Bash("openskills read <skill-name>")
+- The skill content will load with detailed instructions
+- Base directory provided in output for resolving bundled resources
 
-### Package Management System
-The repository uses **GNU Stow** for symlink management, where each top-level directory (e.g., `git/`, `zsh/`, `vim/`) is a Stow package that gets symlinked to the home directory. The installation system supports multiple profiles (minimal, development, full, work) defined in `profiles/` directory.
+Usage notes:
+- Only use skills listed in <available_skills> below
+- Do not invoke a skill that is already loaded in your context
+</usage>
 
-### Multi-Level Claude Configuration
-- **Global settings**: `~/.claude/` (from `claude/` package)
-- **User-specific**: Additional Claude configurations via `claude-user/` package
-- **Project-specific**: `claude-project/` package for per-project settings
-- Hierarchical CLAUDE.md files allow directory-specific configurations
+<available_skills>
 
-### Installation & Profile System
-The `install.sh` script detects OS (macOS/Ubuntu), installs dependencies (Homebrew/apt), and uses profile files to determine which packages to install. Profiles cascade - later profiles can override earlier ones.
+<skill>
+<name>research</name>
+<description>Comprehensive multi-source research with strict grounding (100% citation requirement). NO DATA > BAD DATA.</description>
+<location>project</location>
+</skill>
 
-## Essential Commands
+<skill>
+<name>skill-creator</name>
+<description>Guide for creating effective skills with intelligent architecture assessment. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities. Automatically determines whether to create a simple skill, a skill with subagent delegation, or a complete multi-agent system based on complexity analysis.</description>
+<location>project</location>
+</skill>
 
-### Build & Development
+<skill>
+<name>mcp-builder</name>
+<description>Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>fastmcp-builder</name>
+<description>Guide for creating high-quality MCP (Model Context Protocol) servers using FastMCP v2 and uv single-file scripts. Use when building MCP servers to integrate external APIs or services with Python. This skill exclusively uses FastMCP v2 framework and uv for dependency management.</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>pdf-analysis</name>
+<description>Analyze PDFs with automatic PII redaction. Use when user provides PDF path(s) and analysis question. Supports single PDF or batch processing with parallel execution.</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>mcp-manager</name>
+<description>Comprehensive MCP server configuration management with smart workflow routing for user and project levels. Use when adding, removing, syncing, validating, or wrapping MCP servers.</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>tech-stack-advisor</name>
+<description>Advises on technology stack choices through comparative analysis. Use when comparing frameworks, libraries, or technical approaches.</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>cursor-openskills-setup</name>
+<description>Set up OpenSkills for Cursor IDE with proper configuration, global user rules, and verification. Use when setting up a new machine or project with Cursor + OpenSkills integration.</description>
+<location>project</location>
+</skill>
+
+</available_skills>
+<!-- SKILLS_TABLE_END -->
+
+</skills_system>
+
+## Dotfiles Project Context
+
+This dotfiles repository uses OpenSkills for cross-IDE skill compatibility (Claude Code + Cursor).
+
+### Using Skills
+
+**In Claude Code:** Use the `Skill` tool to invoke skills automatically.
+
+**In Cursor/Other IDEs:** Invoke via Bash command:
 ```bash
-# Installation
-make bootstrap      # Complete setup for new machines
-make install        # Install development profile
-make install-minimal # Essential tools only
-
-# Development
-make test           # Run full test suite
-make lint           # Lint shell scripts
-make format         # Format shell scripts
-
-# Maintenance
-make backup         # Create backup of configurations
-make restore        # Restore from latest backup
-make status         # Show installation status
-make doctor         # Run comprehensive health check
-make update         # Update repository and tools
+openskills read <skill-name>
 ```
 
-### Testing
+**List available skills:**
 ```bash
-# Run specific test types
-make test-quick     # Quick validation tests
-make test-unit      # Unit tests only
-make test-integration # Integration tests
-make test-e2e       # End-to-end tests in Docker
-make docker-test    # Run all tests in Docker container
+openskills list
 ```
 
-### Task Master Integration
-```bash
-# If Task Master is initialized in a project
-task-master next    # Get next task to work on
-task-master show <id> # View task details
-task-master set-status --id=<id> --status=done # Mark complete
-```
+### Skills Location
 
-## Key Scripts & Utilities
+Skills are stored at `~/.claude/skills/` (global) and automatically discovered by OpenSkills.
 
-### API Key Management (`scripts/api-key-manager.sh`)
-Manages encrypted API keys using `pass` password store. Keys are GPG-encrypted and can be synced across machines.
-
-### Backup/Restore (`scripts/backup-restore.sh`)
-Creates timestamped backups in `~/.dotfiles-backups/`, supports selective backup (exclude secrets), and includes Homebrew package lists.
-
-### Deployment Scripts
-- `deploy-claude-project.sh`: Deploy Claude configurations to projects
-- `deploy-claude-user.sh`: Set up user-level Claude configurations
-- `fix-claude-ssh-auth.sh`: Fix SSH authentication for remote Claude sessions
-
-## Testing Infrastructure
-
-The repository includes comprehensive testing via ShellSpec framework, Docker-based E2E testing environments, and GitHub Actions CI/CD. Test fixtures and helpers are in `tests/` directory.
-
-## Security Considerations
-
-- Pre-commit hooks prevent secret commits (`git/hooks/pre-commit`)
-- GPG key management utilities in `scripts/gpg-manager.sh`
-- Password store integration for API keys
-- Audit commands: `make check-secrets` and `make audit`
-
-## Package-Specific Notes
-
-### Zsh Configuration
-- Sources LLM tools from `zsh/llm-tools.zsh`
-- Includes agents-md support via `zsh/agents-md.zsh`
-- SSH agent auto-configuration for GitHub keys
-- Claude OAuth token management for SSH sessions
-
-### Chrome Automation
-The `chrome-automation/` package includes Chrome keeper service for automated browser management with LaunchDaemon configuration for macOS.
-
-## Development Workflow
-
-1. Clone to `~/.dotfiles`
-2. Run `make bootstrap` for initial setup
-3. Use `make install-<profile>` for specific configurations
-4. Create backups before major changes with `make backup`
-5. Test changes with `make test` before committing
-
-## Claude Configuration Management
-
-### When to Check Configuration Status
-You should verify configuration status when:
-1. **Any Claude configuration file is modified**
-2. **New configuration files are added**
-3. **Configuration files are deleted**
-4. **User reports issues** with Claude functionality not working
-5. **After making configuration changes**
-
-### Verification Steps
-When changes are detected:
-
-1. **Validate configuration syntax** - Check JSON/YAML files for syntax errors
-2. **Test functionality** - Verify key features still work (statusline, hooks, etc.)
-3. **Check file permissions** - Ensure configurations are readable
-
-### Configuration Change Detection
-When working with Claude configurations, monitor for:
-- Invalid JSON/YAML syntax
-- Missing required configuration keys
-- File permission issues
-- Broken references to scripts or resources
-
-### Critical Configuration Files
-Priority files that should be monitored closely:
-1. `settings.json` - Main Claude configuration
-2. `hooks/` - Event handlers and automation scripts
-3. `.mcp.json` - MCP server configuration
-4. `profiles/` - Configuration profiles
-5. Custom scripts and statusline configurations
-
-### Reporting Format
-When reporting configuration status to the user, use this format:
-```
-Claude Configuration Status:
-✅ All systems operational
-- Configuration files: Valid syntax
-- Key features: Working
-- Last check: [timestamp]
-```
-
-Or for issues:
-```
-⚠️ Claude Configuration Issues Detected:
-- settings.json has syntax error (line 15)
-- Missing required hook script
-- Recommended action: [specific fix]
-```
-
-## Important File Locations
-
-- Main Makefile: Source of truth for all commands
-- Installation profiles: `profiles/*.txt`
-- Stow ignore patterns: `.stow-global-ignore`
-- Claude configurations: `claude/.claude/`
-- Task Master config: `.taskmaster/`
+For more information, see the [OpenSkills documentation](https://github.com/numman-ali/openskills).

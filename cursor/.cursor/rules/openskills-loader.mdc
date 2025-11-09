@@ -1,0 +1,74 @@
+---
+description: OpenSkills integration - enables Claude Code skills in Cursor IDE
+alwaysApply: true
+---
+
+# OpenSkills Integration
+
+You have access to specialized skills through the OpenSkills system, which brings Claude Code's skill system to Cursor IDE.
+
+## Available Skills
+
+Check `AGENTS.md` in the project root for the full list of available skills and their descriptions.
+
+## How to Use Skills
+
+When you need specialized functionality (research, PDF analysis, MCP server creation, brainstorming, TDD, etc.):
+
+### Method 1: Read AGENTS.md First
+1. Check `AGENTS.md` to see available skills
+2. Read the skill file directly: `.agent/skills/<skill-name>/SKILL.md`
+
+### Method 2: CLI Approach (if terminal access available)
+```bash
+# List available skills
+openskills list
+
+# Load a skill
+openskills read <skill-name>
+```
+
+### Method 3: Direct File Access
+Use the Read tool to load: `.agent/skills/<skill-name>/SKILL.md`
+
+## Skill Structure
+
+Skills follow Claude Code's format and are located in `.agent/skills/`:
+
+```
+.agent/skills/<skill-name>/
+├── SKILL.md           # Main instructions with YAML frontmatter
+├── references/        # Documentation files (loaded on demand)
+├── scripts/          # Helper scripts
+└── assets/           # Templates and configs
+```
+
+## Progressive Disclosure
+
+Skills use progressive disclosure - full instructions load only when invoked, keeping your context window clean. This is especially important in Cursor where context management differs from Claude Code.
+
+## When to Use Skills
+
+Skills provide proven workflows for complex tasks. Check AGENTS.md and consider using a skill when:
+
+- You need structured research with source grounding
+- Working with PDFs that require PII redaction
+- Creating MCP servers or AI agents
+- Implementing features with TDD workflow
+- Debugging complex issues systematically
+- Brainstorming and refining ideas
+- Code review before merging
+- Writing documentation or skills themselves
+
+## Difference from Claude Code
+
+**Claude Code**: Has native `Skill` tool that auto-loads skills based on context
+
+**Cursor + OpenSkills**: Requires explicit skill loading via file reading or CLI
+
+This is intentional - it gives you control over when skills are loaded into context.
+
+## Example Usage
+
+```
+User: "I need to research the best state management library for React"
