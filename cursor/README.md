@@ -5,16 +5,11 @@ Cursor IDE configuration files managed with GNU Stow, including optional OpenSki
 ## Architecture
 
 - `.cursor/mcp.json` - Model Context Protocol (MCP) server configuration
-- `.cursor/rules/openskills-loader.mdc` - **Optional** project-level helper (not global!)
-- `scripts/load-skill.sh` - **Optional** CLI helper for loading skills
-- `user-rules/openskills.md` - **Version-controlled User Rule** for global OpenSkills awareness
-- `scripts/sync-user-rules.sh` - Sync user rules to Cursor's database
-- `scripts/backup-user-rules.sh` - Backup current user rules
-- `scripts/restore-user-rules.sh` - Restore from backup
+- `.cursor/rules/openskills-loader.mdc` - **Optional** project-level helper template (not global!)
 - Global configuration with project-specific override capability
 - Automatic backup preservation system
 
-**Note**: The `.mdc` file is project-level only (not read globally). For global awareness, use User Rules instead.
+**For OpenSkills setup**, use the `cursor-openskills-setup` Claude Code skill instead of manual configuration. The skill includes all necessary scripts and templates as a self-contained vertical slice.
 
 ## Installation
 
@@ -57,34 +52,36 @@ According to the [official documentation](https://github.com/numman-ali/openskil
 
 **That's it!** No `.mdc` files, no special Cursor configuration required.
 
-#### Quick Start (Official Method)
+#### Quick Start - Use the Skill
 
-**Initialize a project:**
-
-```bash
-cd /path/to/your/project
-~/dotfiles/scripts/init-cursor-openskills.sh
+**In Claude Code:**
+```
+Use the cursor-openskills-setup skill
 ```
 
-This creates:
-- `AGENTS.md` - Skill registry with official format
-- Optionally installs skills from Anthropic marketplace
+The skill will guide you through:
+1. Installing prerequisites (Node.js, openskills CLI)
+2. Creating AGENTS.md with proper format
+3. Optionally setting up global user rules
+4. Verification and testing
 
-**Use skills in Cursor:**
-
-In Cursor chat, the AI will invoke skills via:
+**Direct Usage:**
 ```bash
-openskills read <skill-name>
+# Initialize a project
+~/.claude/skills/cursor-openskills-setup/scripts/init-project.sh
+
+# Set up global user rule
+~/.claude/skills/cursor-openskills-setup/scripts/sync-user-rules.sh
+
+# Verify setup
+~/.claude/skills/cursor-openskills-setup/scripts/verify-setup.sh
 ```
 
-This is handled automatically when Cursor reads AGENTS.md.
+**All scripts and templates are bundled in the skill** - no external dependencies.
 
-#### Optional Helpers (This Dotfiles Package)
+#### Optional Helper (This Package)
 
-The `.mdc` file and helper script are **convenience additions**:
-
-- **`.cursor/rules/openskills-loader.mdc`**: Reminds Cursor about OpenSkills (not required)
-- **`scripts/load-skill.sh`**: Manual CLI helper for copying skill content (optional)
+- **`.cursor/rules/openskills-loader.mdc`**: Project-level template reminding Cursor about OpenSkills (optional, not required by official spec)
 
 #### Available Skills
 
@@ -136,11 +133,9 @@ That's the complete official setup. Cursor reads AGENTS.md and automatically kno
 
 ### Optional (This Package Adds)
 
-➕ **`.cursor/rules/openskills-loader.mdc`** - Reminds Cursor about OpenSkills (helpful but not required)
-➕ **`scripts/load-skill.sh`** - Manual CLI helper for copying skill content
-➕ **Enhanced AGENTS.md template** - Includes additional context and examples
+➕ **`.cursor/rules/openskills-loader.mdc`** - Project-level helper that reminds Cursor about OpenSkills (helpful but not required by official spec)
 
-These extras improve the experience but aren't part of the official spec.
+This extra improves the experience but isn't part of the official OpenSkills specification. All other setup tools (scripts, templates, AGENTS.md format) are bundled in the `cursor-openskills-setup` skill.
 
 ## Global User Rules (Option 3)
 
@@ -157,61 +152,67 @@ We provide scripts to sync version-controlled rules to this database.
 
 ### Setup Global User Rule
 
-**1. Edit the version-controlled rule:**
-```bash
-# Edit the source of truth
-code ~/dotfiles/cursor/user-rules/openskills.md
-```
+**Use the skill's bundled script:**
 
-**2. Sync to Cursor:**
 ```bash
-~/dotfiles/cursor/scripts/sync-user-rules.sh
+# Sync the bundled template to Cursor
+~/.claude/skills/cursor-openskills-setup/scripts/sync-user-rules.sh
 ```
 
 This:
+- Uses the bundled user rule template from the skill
 - Backs up current user rules automatically
-- Updates the SQLite database
+- Updates Cursor's SQLite database
 - Prompts you to restart Cursor
 
-**3. Restart Cursor** (or reload: Cmd+Shift+P → "Developer: Reload Window")
+**Restart Cursor** (or reload: Cmd+Shift+P → "Developer: Reload Window")
 
 ### Management Commands
 
+**All commands are in the skill:**
+
 ```bash
-# Sync version-controlled rule to Cursor
-~/dotfiles/cursor/scripts/sync-user-rules.sh [rule-file]
+SKILL_DIR=~/.claude/skills/cursor-openskills-setup
+
+# Sync bundled template to Cursor
+$SKILL_DIR/scripts/sync-user-rules.sh
+
+# Or sync a custom rule file
+$SKILL_DIR/scripts/sync-user-rules.sh /path/to/custom-rule.md
 
 # Backup current Cursor user rules
-~/dotfiles/cursor/scripts/backup-user-rules.sh [output-file]
+$SKILL_DIR/scripts/backup-user-rules.sh [output-file]
 
 # Restore from backup
-~/dotfiles/cursor/scripts/restore-user-rules.sh <backup-file>
+$SKILL_DIR/scripts/restore-user-rules.sh <backup-file>
+
+# Verify setup
+$SKILL_DIR/scripts/verify-setup.sh
 ```
 
-### Version Control Workflow
+### Customization
 
-**When you make changes:**
+**To customize the user rule:**
+
+1. Copy the template from the skill
+2. Edit it
+3. Sync your custom version
+
 ```bash
-# 1. Edit the rule
-code ~/dotfiles/cursor/user-rules/openskills.md
+# Copy template
+cp ~/.claude/skills/cursor-openskills-setup/templates/openskills-user-rule.md ~/my-custom-rule.md
 
-# 2. Test locally
-~/dotfiles/cursor/scripts/sync-user-rules.sh
+# Edit it
+code ~/my-custom-rule.md
 
-# 3. Commit to git
-cd ~/dotfiles
-git add cursor/user-rules/openskills.md
-git commit -m "Update OpenSkills user rule"
-
-# 4. On other machines, pull and sync
-git pull
-~/dotfiles/cursor/scripts/sync-user-rules.sh
+# Sync custom version
+~/.claude/skills/cursor-openskills-setup/scripts/sync-user-rules.sh ~/my-custom-rule.md
 ```
 
 ### Backups
 
 - Automatic backups created before each sync
-- Stored in: `cursor/user-rules/.backups/`
+- Stored in: `~/.claude/skills/cursor-openskills-setup/.backups/`
 - `.gitignore`'d (may contain sensitive data)
 
 ### Pros & Cons
@@ -236,4 +237,4 @@ git pull
 
 ## Last Updated
 
-2025-11-09
+2025-11-11
