@@ -4,6 +4,7 @@
 # dependencies = [
 #   "agno",
 #   "ollama",
+#   "click",
 # ]
 #
 # [tool.uv.sources]
@@ -11,40 +12,56 @@
 # ///
 
 """
-Simple CLI Agent Template
+Simple CLI Agent with Click
 
-A minimal Agno agent for interactive chat or single-task execution.
-~15 lines of actual code for a fully functional AI assistant.
+Minimal Agno agent CLI using Click command groups.
+Provides query and interactive chat modes.
 
 Usage:
-  Interactive CLI:  ./simple_cli_agent.py
-  Single prompt:    Uncomment the print_response line
+  Single query: ./simple_cli_agent.py query "What is Python?"
+  Chat mode:    ./simple_cli_agent.py chat
 """
 
+import click
 from agno.agent import Agent
 from agno.models.ollama import Ollama
 
-# Create agent with minimal configuration
-agent = Agent(
-    model=Ollama(
-        id="glm-4.6:cloud",
-        options={"num_ctx": 198000}  # 198K context window - full capacity
-    ),
-    instructions="""
-        You are a helpful AI assistant.
-        Provide clear, concise, and accurate responses.
-        Be friendly and professional.
-    """,
-    markdown=True,
-    # Automatic retry with exponential backoff (recommended)
-    exponential_backoff=True,
-    retries=3,
-    delay_between_retries=15,  # With exponential backoff: 15s, 30s, 60s
-)
 
-if __name__ == "__main__":
-    # Option 1: Interactive CLI (default)
+@click.group()
+@click.pass_context
+def cli(ctx):
+    """Simple AI Assistant"""
+    ctx.obj = Agent(
+        model=Ollama(
+            id="glm-4.6:cloud",
+            options={"num_ctx": 198000}  # 198K context window - full capacity
+        ),
+        instructions="""
+            You are a helpful AI assistant.
+            Provide clear, concise, and accurate responses.
+            Be friendly and professional.
+        """,
+        markdown=True,
+        exponential_backoff=True,
+        retries=3,
+        delay_between_retries=15,
+    )
+
+
+@cli.command()
+@click.argument('prompt')
+@click.pass_obj
+def query(agent, prompt):
+    """Execute single query"""
+    agent.print_response(prompt, stream=True)
+
+
+@cli.command()
+@click.pass_obj
+def chat(agent):
+    """Start interactive chat"""
     agent.cli_app(stream=True)
 
-    # Option 2: Single prompt (uncomment to use)
-    # agent.print_response("What is the capital of France?", stream=True)
+
+if __name__ == "__main__":
+    cli()

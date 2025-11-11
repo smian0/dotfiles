@@ -45,13 +45,16 @@ Choose the approach that fits your task complexity.
 
 ## Decision Guide: CLI Agent vs Workflow
 
+**All agents use Click command groups** for consistent, professional CLI organization.
+
 ### Use Simple CLI Agent When:
 - ✅ Single agent with no multi-step orchestration
-- ✅ Interactive chat or single prompt/response pattern
+- ✅ Interactive chat or single/batch query patterns
 - ✅ No parallel processing needed
 - ✅ No custom data transformations between steps
-- ✅ **Examples**: "CLI chatbot", "Q&A agent", "simple assistant", "single-task agent"
-- ✅ **Result**: ~10-20 lines of code
+- ✅ **Examples**: "CLI chatbot", "Q&A agent", "research assistant", "code analyzer"
+- ✅ **Structure**: Click group with 2-5 commands (query, chat, batch, etc.)
+- ✅ **Result**: ~30-70 lines (Click + agent config + commands)
 
 ### Use Complex Workflow When:
 - ✅ Multi-step sequential processing (step1 → step2 → step3)
@@ -59,15 +62,17 @@ Choose the approach that fits your task complexity.
 - ✅ Custom data transformations (JSON parsing, file I/O, synthesis)
 - ✅ Performance optimization and debugging needed
 - ✅ **Examples**: "analyze images then research", "parallel research workflow", "vision → parse → research → synthesize"
-- ✅ **Result**: 50-200 lines with full debugging and optimization
+- ✅ **Structure**: Workflow with steps, Click CLI wrapper optional
+- ✅ **Result**: 70-250 lines (workflow + debugging + CLI)
 
-**When in doubt:** Start with CLI agent. Upgrade to workflow when complexity grows.
+**When in doubt:** Start with Click-based CLI agent. Upgrade to workflow when you need multi-step orchestration.
 
 ## Quick Start
 
-### Simple CLI Agent (10 Lines)
+### Simple CLI Agent with Click
 
-For single-agent interactive chat or simple tasks:
+All Agno agents use Click command groups for professional CLI organization.
+Start with 2 commands (query + chat), easily add more as your agent grows.
 
 ```bash
 # Create single-file CLI agent
@@ -75,51 +80,77 @@ cd <project_root>
 mkdir -p agno_agents
 uv init --script agno_agents/my_agent.py --python 3.12
 
-# Add minimal dependencies
+# Add dependencies
 uv add --script agno_agents/my_agent.py ../../libs/agno --editable
-uv add --script agno_agents/my_agent.py ollama
+uv add --script agno_agents/my_agent.py ollama click
 ```
 
-**Minimal agent code** (`agno_agents/my_agent.py`):
+**Agent with Click commands** (`agno_agents/my_agent.py`):
 
 ```python
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ["agno", "ollama"]
+# dependencies = ["agno", "ollama", "click"]
 # [tool.uv.sources]
 # agno = { path = "../../libs/agno", editable = true }
 # ///
 
+import click
 from agno.agent import Agent
 from agno.models.ollama import Ollama
 
-agent = Agent(
-    model=Ollama(
-        id="glm-4.6:cloud",
-        options={"num_ctx": 198000}  # 198K context window - full capacity
-    ),
-    instructions="You are a helpful AI assistant.",
-    markdown=True,
-    # Automatic retry with exponential backoff (recommended)
-    exponential_backoff=True,
-    retries=3,
-    delay_between_retries=15,  # With exponential backoff: 15s, 30s, 60s
-)
 
-if __name__ == "__main__":
-    # Interactive CLI
+@click.group()
+@click.pass_context
+def cli(ctx):
+    """AI Assistant with multiple modes"""
+    ctx.obj = Agent(
+        model=Ollama(
+            id="glm-4.6:cloud",
+            options={"num_ctx": 198000}  # 198K context window - full capacity
+        ),
+        instructions="You are a helpful AI assistant.",
+        markdown=True,
+        exponential_backoff=True,
+        retries=3,
+        delay_between_retries=15,  # 15s, 30s, 60s
+    )
+
+
+@cli.command()
+@click.argument('prompt')
+@click.pass_obj
+def query(agent, prompt):
+    """Execute single query"""
+    agent.print_response(prompt, stream=True)
+
+
+@cli.command()
+@click.pass_obj
+def chat(agent):
+    """Interactive chat mode"""
     agent.cli_app(stream=True)
 
-    # OR single prompt
-    # agent.print_response("Your prompt here", stream=True)
+
+if __name__ == "__main__":
+    cli()
 ```
 
-**Run it:**
+**Usage:**
 
 ```bash
 chmod +x agno_agents/my_agent.py
-./agno_agents/my_agent.py
+
+# Single query
+./agno_agents/my_agent.py query "What is Python?"
+
+# Interactive chat
+./agno_agents/my_agent.py chat
+
+# Built-in help
+./agno_agents/my_agent.py --help
+./agno_agents/my_agent.py query --help
 ```
 
 **That's it!** See `assets/simple_cli_agent.py` for the complete template.
@@ -489,6 +520,177 @@ if run_response.is_paused:
 ```
 
 Use `agent.arun()` and `agent.acontinue_run()` for async workflows.
+
+### 2.6. CLI Organization with Click Command Groups
+
+**All Agno agents use Click for professional CLI organization.** This provides:
+- ✅ Multiple operation modes (query, chat, batch, etc.)
+- ✅ Consistent UX across all agents
+- ✅ Built-in help system
+- ✅ Easy scalability (add commands as agent grows)
+- ✅ Configuration management via global options
+
+#### Simple Pattern: Query + Chat Commands
+
+**Minimal Click structure (~30 lines):**
+
+```python
+import click
+from agno.agent import Agent
+from agno.models.ollama import Ollama
+
+
+@click.group()
+@click.pass_context
+def cli(ctx):
+    """AI Assistant"""
+    ctx.obj = Agent(
+        model=Ollama(id="glm-4.6:cloud", options={"num_ctx": 198000}),
+        instructions="You are a helpful assistant.",
+        markdown=True,
+    )
+
+
+@cli.command()
+@click.argument('prompt')
+@click.pass_obj
+def query(agent, prompt):
+    """Execute single query"""
+    agent.print_response(prompt, stream=True)
+
+
+@cli.command()
+@click.pass_obj
+def chat(agent):
+    """Interactive chat mode"""
+    agent.cli_app(stream=True)
+
+
+if __name__ == "__main__":
+    cli()
+```
+
+**Usage:**
+```bash
+./agent.py query "What is Python?"
+./agent.py chat
+./agent.py --help
+```
+
+#### Adding Global Options
+
+**Configure agent via CLI options:**
+
+```python
+@click.group()
+@click.option('--model', default='glm-4.6:cloud', help='Model to use')
+@click.option('--debug/--no-debug', default=False, help='Enable debug mode')
+@click.pass_context
+def cli(ctx, model, debug):
+    """AI Assistant with configurable options"""
+    ctx.obj = Agent(
+        model=Ollama(id=model, options={"num_ctx": 198000}),
+        instructions="You are a helpful assistant.",
+        markdown=True,
+        debug_mode=debug,
+    )
+```
+
+**Usage:**
+```bash
+./agent.py --model gpt-oss:120b-cloud query "Fast query"
+./agent.py --debug chat
+```
+
+#### Adding Batch Processing Command
+
+```python
+@cli.command()
+@click.option('--file', type=click.File('r'), required=True)
+@click.option('--output', type=click.File('w'))
+@click.pass_obj
+def batch(agent, file, output):
+    """Process queries from file"""
+    for line in file:
+        query = line.strip()
+        if query:
+            click.echo(f"\nQuery: {query}", file=output)
+            result = agent.run(query)
+            click.echo(result.content, file=output)
+```
+
+**Usage:**
+```bash
+echo -e "What is Python?\nExplain AI" > queries.txt
+./agent.py batch --file queries.txt --output results.txt
+```
+
+#### Advanced: Multi-Agent Command Groups
+
+**Organize multiple specialized agents:**
+
+```python
+@click.group()
+@click.option('--model', default='glm-4.6:cloud')
+@click.option('--debug/--no-debug', default=False)
+@click.pass_context
+def cli(ctx, model, debug):
+    """Multi-Agent System"""
+    ctx.ensure_object(dict)
+    ctx.obj['model'] = model
+    ctx.obj['debug'] = debug
+
+
+# Research command group
+@cli.group()
+def research():
+    """Research commands"""
+    pass
+
+
+@research.command()
+@click.argument('query')
+@click.pass_context
+def query(ctx, query):
+    """Quick research query"""
+    agent = Agent(
+        model=Ollama(id=ctx.obj['model'], options={"num_ctx": 198000}),
+        instructions="You are a research assistant.",
+        debug_mode=ctx.obj['debug']
+    )
+    agent.print_response(query, stream=True)
+
+
+# Code command group
+@cli.group()
+def code():
+    """Code analysis commands"""
+    pass
+
+
+@code.command()
+@click.argument('file', type=click.Path(exists=True))
+@click.pass_context
+def analyze(ctx, file):
+    """Analyze code file"""
+    agent = Agent(
+        model=Ollama(id=ctx.obj['model'], options={"num_ctx": 198000}),
+        instructions="You are a code analysis expert.",
+        debug_mode=ctx.obj['debug']
+    )
+    with open(file, 'r') as f:
+        code = f.read()
+    agent.print_response(f"Analyze:\n```\n{code}\n```", stream=True)
+```
+
+**Usage:**
+```bash
+./agent.py research query "AI trends"
+./agent.py code analyze script.py
+./agent.py --model gpt-oss:120b-cloud research query "Fast research"
+```
+
+**See `assets/click_agent_simple.py` and `assets/click_agent_advanced.py` for complete examples.**
 
 ### 3. Creating Steps
 
@@ -923,8 +1125,10 @@ See `references/debug_guide.md` for detailed documentation on all analysis types
 
 ## Templates
 
-**CLI Agents:**
-- **simple_cli_agent.py** - Minimal CLI agent (~15 lines) for interactive chat or single-task execution
+**CLI Agents (All use Click command groups):**
+- **simple_cli_agent.py** - Minimal Click agent (~30 lines) with query + chat commands
+- **click_agent_simple.py** - Complete Click agent (~45 lines) with query, chat, and batch commands
+- **click_agent_advanced.py** - Multi-agent CLI (~90 lines) with command groups, subgroups, and configuration passing
 
 **Workflows:**
 - **simple_workflow.py** - Minimal workflow example (single agent) with uv inline dependencies

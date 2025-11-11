@@ -6,6 +6,7 @@
 #   "fastapi>=0.118.0",
 #   "ollama",
 #   "sqlalchemy",
+#   "click",
 # ]
 #
 # [tool.uv.sources]
@@ -15,14 +16,18 @@
 # uv resolves the relative path ../../libs/agno from the script location
 
 """
-Simple Agno Workflow Example
+Simple Agno Workflow Example with Click CLI
 
-Demonstrates the minimal idiomatic pattern for an Agno workflow with debugging.
+Demonstrates the minimal idiomatic pattern for an Agno workflow with debugging
+and Click command-line interface.
 
 Usage:
-    uv run simple_workflow.py
+    ./simple_workflow.py run "Your prompt here"
+    ./simple_workflow.py run --prompt "Custom prompt"
+    ./simple_workflow.py run --help
 """
 
+import click
 from pathlib import Path
 from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
@@ -71,10 +76,27 @@ configure_workflow_debug(
     include_analysis=True,                     # Optimization analysis
 )
 
-# Execute workflow
-if __name__ == "__main__":
-    result = workflow.print_response(
-        input="What are the key benefits of using workflows?",
-        stream=True,
-        stream_intermediate_steps=True,
+# Click CLI
+@click.group()
+def cli():
+    """Simple Workflow CLI"""
+    pass
+
+
+@cli.command()
+@click.argument('prompt', required=False)
+@click.option('--prompt', '-p', 'prompt_opt', help='Prompt for workflow')
+@click.option('--stream/--no-stream', default=True, help='Stream output')
+def run(prompt, prompt_opt, stream):
+    """Execute workflow with a prompt"""
+    input_prompt = prompt or prompt_opt or "What are the key benefits of using workflows?"
+
+    workflow.print_response(
+        input=input_prompt,
+        stream=stream,
+        stream_intermediate_steps=stream,
     )
+
+
+if __name__ == "__main__":
+    cli()

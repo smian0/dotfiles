@@ -326,3 +326,90 @@ AGENT_DEBUG = False
 ```
 
 This makes the workflow easily configurable without editing code deep in the file.
+
+## CLI Organization with Click
+
+### Adding Click CLI to Workflows
+
+Workflows can be wrapped with Click command groups for better CLI UX:
+
+```python
+import click
+
+# ... workflow setup code ...
+
+@click.group()
+def cli():
+    """Workflow CLI"""
+    pass
+
+
+@cli.command()
+@click.argument('prompt', required=False)
+@click.option('--prompt', '-p', 'prompt_opt', help='Custom prompt')
+@click.option('--stream/--no-stream', default=True, help='Stream output')
+def run(prompt, prompt_opt, stream):
+    """Execute workflow"""
+    input_prompt = prompt or prompt_opt or "Default prompt"
+
+    workflow.print_response(
+        input=input_prompt,
+        stream=stream,
+        stream_intermediate_steps=stream,
+    )
+
+
+@cli.command()
+@click.option('--file', type=click.File('r'), required=True)
+def batch(file):
+    """Process multiple prompts from file"""
+    for line in file:
+        prompt = line.strip()
+        if prompt:
+            click.echo(f"\n{'='*60}")
+            click.echo(f"Prompt: {prompt}")
+            click.echo(f"{'='*60}")
+            workflow.print_response(input=prompt, stream=True)
+
+
+if __name__ == "__main__":
+    cli()
+```
+
+**Usage:**
+```bash
+./workflow.py run "Custom prompt"
+./workflow.py run --prompt "Another way"
+./workflow.py batch --file prompts.txt
+```
+
+### Workflow-Specific Commands
+
+Add specialized commands for workflow operations:
+
+```python
+@cli.command()
+def validate():
+    """Validate workflow configuration"""
+    click.echo("✓ Workflow configured with {len(workflow.steps)} steps")
+    for step in workflow.steps:
+        click.echo(f"  - {step.name}")
+
+
+@cli.command()
+@click.option('--verbose', is_flag=True, help='Show detailed debug info')
+def debug(verbose):
+    """Run workflow with debug output"""
+    workflow.debug_mode = True
+    workflow.print_response(
+        input="Debug test prompt",
+        stream=True,
+        stream_intermediate_steps=verbose,
+    )
+```
+
+**Benefits:**
+- Multiple operation modes (run, batch, validate, debug)
+- Consistent CLI UX with agents
+- Easy to add workflow-specific commands
+- Built-in help system
