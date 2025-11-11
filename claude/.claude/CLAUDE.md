@@ -166,16 +166,25 @@ bash ~/dotfiles/scripts/verify-*-stow.sh
 
 Ollama cloud models available at `http://localhost:11434` or `http://localhost:11434/v1`.
 
-| Model ID | Context | Tok/s | Best For | Tools | Notes |
-|----------|---------|-------|----------|-------|-------|
-| `gpt-oss:120b-cloud` | 128K | **174** | General purpose, research, high-throughput | ✅ | Fastest, most verbose |
-| `deepseek-v3.1:671b-cloud` | 160K | **56** | Reasoning, analysis, balanced tasks | ✅ | Hybrid thinking mode |
-| `qwen3-coder:480b-cloud` | 256K | **39** | Code generation, software engineering | ✅ | Best for coding |
-| `glm-4.6:cloud` | 198K | **25** | Autonomous agents, search, structured output | ✅ | Requires `ollama pull` first |
-| `kimi-k2:1t-cloud` | 256K | **15** | Frontend dev, UI tasks, concise responses | ❓ | Slowest, 1T MoE |
-| `qwen3-vl:235b-cloud` | 125K | N/A | Vision, OCR, GUI, multimodal | ✅ | Images/video, 32-lang OCR |
+**For model selection guidance**, Claude will automatically consult the `ollama-model-selector` skill when you ask questions like:
+- "Which model should I use for [task]?"
+- "What's the best model for coding/reasoning/vision?"
+- "Compare model A vs model B"
+- "I need a model with large context"
 
-**Usage:** Free under preview caps • Requires Ollama v0.12+ • Performance varies by system load
+**Manual invocation:**
+```bash
+openskills read ollama-model-selector
+```
+
+The skill provides:
+- Data-driven recommendations based on verified performance metrics
+- Task-specific model matching (coding, reasoning, vision, general)
+- Speed vs accuracy trade-off analysis
+- Context window considerations
+- Comprehensive model comparison table
+
+**Requirements:** Ollama v0.12+ • Performance varies by system load
 
 ## Skill Development Rules
 
@@ -227,6 +236,122 @@ done
 - Delete files that serve no clear purpose
 
 ## Development Principles
+
+### Performance & Architecture
+
+**Choose Native Over Abstraction When Speed Matters**
+
+**General Rule**: If operations repeat frequently, prefer native implementations over abstraction layers.
+
+**Decision Framework**:
+```
+Abstraction Layer (MCP, RPC, network calls):
+  ✓ External integrations (APIs, databases, services)
+  ✓ Cross-system communication
+  ✓ One-time or rare operations
+  ✗ Frequent local operations (10+ calls/minute)
+  ✗ Performance-critical paths
+
+Native Implementation (direct code):
+  ✓ Repeated local operations
+  ✓ Performance-critical paths
+  ✓ When you control both ends
+  ✗ External system integration
+```
+
+**Why**: Abstraction layers add 10-100x overhead from serialization, IPC, and network calls.
+
+**Self-Contained Architecture**
+
+**Principle**: Group related functionality in one location with all dependencies.
+
+**Structure**:
+```
+component/
+  ├── core/           # Implementation
+  ├── interfaces/     # CLI, API, or callable functions
+  ├── config/         # Settings and overrides
+  ├── tests/          # Unit tests
+  └── README.md       # Usage documentation
+```
+
+**Benefits**: Portable, version-controlled together, easy to understand scope.
+
+**Intelligent Caching Strategy**
+
+**KISS Caching Rules**:
+1. **Cache simple data types**: strings, numbers, dicts, lists
+2. **Don't cache complex objects**: dataclasses, datetime, custom types
+3. **When in doubt, skip caching**: Fast operations (<500ms) don't need it
+
+**Serialization Fix**:
+- Complex types that must cache → add minimal converter (4-6 lines max)
+- Don't add serialization to every dataclass preemptively
+- Fix when actually needed, not "just in case"
+
+**Fix Root Causes, Not Symptoms**
+
+**Anti-pattern**: Adding workarounds layer by layer
+```python
+# ❌ Symptom fixing
+if isinstance(result, dict):
+    result = reconstruct_object(result)
+elif cached:
+    result = convert_from_cache(result)
+else:
+    result = handle_fresh_result(result)
+```
+
+**Pattern**: Fix the root issue once
+```python
+# ✅ Root cause fix
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
+        return super().default(obj)
+```
+
+**Process**:
+1. Identify root cause (e.g., "datetime not JSON serializable")
+2. Fix at the source (add custom encoder)
+3. Or remove complexity (skip caching complex types)
+4. Never add conditional logic in every call site
+
+**Clean Interface Design**
+
+**Principle**: Hide implementation complexity behind simple interfaces.
+
+**Good Interface**:
+- One clear way to do each operation
+- Intuitive naming that matches user mental models
+- Consistent patterns across operations
+- No leaking implementation details
+
+**Example**:
+```bash
+# ✅ Clean - user thinks in domain terms
+vault query "status='active'"
+vault health check
+
+# ❌ Leaky - exposes implementation
+vault mcp_query --tool=mq_query --filter="status='active'"
+vault calculate_health_metrics --use-networkx --output=json
+```
+
+**Apply KISS Throughout**
+
+**At every decision point, ask**:
+1. Is this the simplest solution that works?
+2. Am I adding complexity for future needs that may never come?
+3. Can I remove a layer instead of adding one?
+4. Does this solve the root cause or just the symptom?
+
+**Red flags**:
+- "We might need this later" → YAGNI
+- "This handles all edge cases" → Premature generalization
+- "I'll add an abstraction layer" → Do you need it now?
+- "I'll cache everything" → Cache only what's slow
 
 ### DRY & YAGNI
 - **DRY**: Avoid duplicating code patterns - use functions, templates, or shared utilities

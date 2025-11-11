@@ -1,0 +1,66 @@
+{
+  "_metadata": {
+    "last_updated": "2025-11-11",
+    "data_version": "1.0",
+    "source": "Benchmark testing + Ollama API",
+    "notes": "Token speeds verified through actual testing. Use --update to refresh from Ollama API."
+  },
+  "models": {
+    "gpt-oss:120b-cloud": {
+      "tok_per_s": 114,
+      "context": 128,
+      "best_for": "General purpose, research, high-throughput tasks",
+      "tools": true,
+      "notes": "Fastest, most verbose"
+    },
+    "glm-4.6:cloud": {
+      "tok_per_s": 192,
+      "context": 198,
+      "best_for": "Advanced coding, full-stack development, legacy code refactoring, DevOps automation",
+      "tools": true,
+      "notes": ""
+    },
+    "deepseek-v3.1:671b-cloud": {
+      "tok_per_s": 76,
+      "context": 160,
+      "best_for": "Reasoning, analysis, balanced tasks with hybrid thinking mode",
+      "tools": true,
+      "notes": ""
+    },
+    "kimi-k2:1t-cloud": {
+      "tok_per_s": 33,
+      "context": 256,
+      "best_for": "Complex reasoning, code generation, mathematical problem-solving, long document analysis",
+      "tools": true,
+      "notes": "1T MoE model"
+    },
+    "kimi-k2-thinking:cloud": {
+      "tok_per_s": 72,
+      "context": 256,
+      "best_for": "Autonomous problem-solving, tool orchestration, advanced coding tasks, long-context planning",
+      "tools": true,
+      "notes": "Thinking agent with 200-300 tool calls"
+    },
+    "qwen3-coder:480b-cloud": {
+      "tok_per_s": 54,
+      "context": 256,
+      "best_for": "Code generation, debugging, real-time coding help across multiple languages",
+      "tools": true,
+      "notes": "Best for coding"
+    },
+    "minimax-m2:cloud": {
+      "tok_per_s": 74,
+      "context": 204,
+      "best_for": "Software development, agent development with tools, technical content creation",
+      "tools": true,
+      "notes": ""
+    },
+    "qwen3-vl:235b-cloud": {
+      "tok_per_s": 55,
+      "context": 256,
+      "best_for": "Vision tasks, OCR, GUI automation, multimodal reasoning",
+      "tools": true,
+      "notes": "Images/video, 32-lang OCR"
+    }
+  }
+}
