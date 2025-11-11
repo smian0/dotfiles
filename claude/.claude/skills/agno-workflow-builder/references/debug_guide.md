@@ -50,7 +50,7 @@ When `configure_workflow_debug()` is enabled, you get:
 ```
 🌳 My Workflow
 ├─ ✓ 0: Step 1
-│   ├─ Model: gpt-oss:120b-cloud (Ollama)
+│   ├─ Model: glm-4.6:cloud (Ollama)
 │   ├─ 🔧 tool_name() (0.64s) → ~1,510 tokens
 │      📊 6,737↓ 1,114↑ ⏱️ 9.87s
 ├─ ✓ 1: Step 2 (Parallel)

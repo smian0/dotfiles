@@ -95,7 +95,7 @@ from agno.agent import Agent
 from agno.models.ollama import Ollama
 
 agent = Agent(
-    model=Ollama(id="gpt-oss:120b-cloud"),
+    model=Ollama(id="glm-4.6:cloud"),
     instructions="You are a helpful AI assistant.",
     markdown=True,
     # Automatic retry with exponential backoff (recommended)
@@ -170,7 +170,7 @@ from agno.utils.workflow_config import configure_workflow_debug
 # Create agent
 agent = Agent(
     name="Assistant",
-    model=Ollama(id="gpt-oss:120b-cloud"),
+    model=Ollama(id="glm-4.6:cloud"),
     instructions="Your agent instructions here...",
     exponential_backoff=True,
     retries=3,
@@ -255,7 +255,7 @@ from agno.models.ollama import Ollama
 
 agent = Agent(
     name="Agent Name",
-    model=Ollama(id="gpt-oss:120b-cloud"),
+    model=Ollama(id="glm-4.6:cloud"),
     instructions="Clear, specific instructions...",
     markdown=True,
     # Automatic retry with exponential backoff (recommended for production)
@@ -285,7 +285,7 @@ for func in tools.functions.values():
 
 agent = Agent(
     name="Research Agent",
-    model=Ollama(id="gpt-oss:120b-cloud"),
+    model=Ollama(id="glm-4.6:cloud"),
     tools=[tools],
     instructions="Use duckduckgo_news to search for recent information...",
     markdown=True,
@@ -312,7 +312,7 @@ def create_specialized_agent(task_name: str) -> Agent:
 
     return Agent(
         name=f"{task_name} Specialist",
-        model=Ollama(id="gpt-oss:120b-cloud"),
+        model=Ollama(id="glm-4.6:cloud"),
         tools=[tools],
         instructions=f"Focus exclusively on {task_name}...",
         markdown=True,

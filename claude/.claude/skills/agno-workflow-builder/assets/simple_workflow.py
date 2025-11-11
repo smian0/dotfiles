@@ -39,7 +39,7 @@ DEBUG_VERBOSE = True
 # Create agent
 agent = Agent(
     name="Assistant",
-    model=Ollama(id="gpt-oss:120b-cloud"),
+    model=Ollama(id="glm-4.6:cloud"),
     instructions="You are a helpful assistant. Provide clear, concise responses.",
     markdown=True,
 )

@@ -26,7 +26,7 @@ from agno.models.ollama import Ollama
 
 # Create agent with minimal configuration
 agent = Agent(
-    model=Ollama(id="gpt-oss:120b-cloud"),
+    model=Ollama(id="glm-4.6:cloud"),
     instructions="""
         You are a helpful AI assistant.
         Provide clear, concise, and accurate responses.

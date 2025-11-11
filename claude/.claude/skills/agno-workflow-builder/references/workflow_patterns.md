@@ -32,7 +32,7 @@ for func in ddg_tools.functions.values():
 
 agent = Agent(
     name="Research Analyst",
-    model=Ollama(id="gpt-oss:120b-cloud"),
+    model=Ollama(id="glm-4.6:cloud"),
     tools=[ddg_tools],
     instructions="Clear, specific instructions for the agent...",
     markdown=True,
@@ -58,7 +58,7 @@ def create_specialized_agent(task_name: str, config: dict) -> Agent:
 
     return Agent(
         name=f"{task_name} Specialist",
-        model=config.get('model', Ollama(id="gpt-oss:120b-cloud")),
+        model=config.get('model', Ollama(id="glm-4.6:cloud")),
         tools=[tools],
         instructions=f"You specialize in {task_name}. {config.get('extra_instructions', '')}",
         markdown=True,
