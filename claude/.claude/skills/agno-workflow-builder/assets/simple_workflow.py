@@ -27,6 +27,10 @@ Usage:
     ./simple_workflow.py run --help
 """
 
+# Disable Agno telemetry before importing agno modules
+import os
+os.environ["AGNO_TELEMETRY"] = "false"
+
 import click
 from pathlib import Path
 from agno.agent import Agent

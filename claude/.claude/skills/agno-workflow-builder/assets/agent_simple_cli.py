@@ -26,6 +26,10 @@ With custom model:
   ./agent_simple_cli.py --model gpt-oss:120b-cloud query "Hello"
 """
 
+# Disable Agno telemetry before importing agno modules
+import os
+os.environ["AGNO_TELEMETRY"] = "false"
+
 import click
 from agno.agent import Agent
 from agno.models.ollama import Ollama

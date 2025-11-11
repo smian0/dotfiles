@@ -37,6 +37,10 @@ Usage:
     ./agent_advanced_cli.py --debug code analyze "test.py"
 """
 
+# Disable Agno telemetry before importing agno modules
+import os
+os.environ["AGNO_TELEMETRY"] = "false"
+
 import click
 from agno.agent import Agent
 from agno.models.ollama import Ollama

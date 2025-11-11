@@ -22,6 +22,10 @@ Usage:
   Chat mode:    ./simple_agent_cli.py chat
 """
 
+# Disable Agno telemetry before importing agno modules
+import os
+os.environ["AGNO_TELEMETRY"] = "false"
+
 import click
 from agno.agent import Agent
 from agno.models.ollama import Ollama

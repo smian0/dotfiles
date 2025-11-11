@@ -96,6 +96,10 @@ uv add --script agno_agents/my_agent.py ollama click
 # agno = { path = "../../libs/agno", editable = true }
 # ///
 
+# Disable Agno telemetry before importing agno modules
+import os
+os.environ["AGNO_TELEMETRY"] = "false"
+
 import click
 from agno.agent import Agent
 from agno.models.ollama import Ollama
@@ -156,6 +160,34 @@ chmod +x agno_agents/my_agent.py
 **That's it!** See `assets/simple_agent_cli.py` for the complete template.
 
 For complex multi-step workflows, continue to the section below.
+
+## Important Configuration
+
+### Disable Telemetry (Required)
+
+**All Agno agents and workflows must disable telemetry** before importing agno modules:
+
+```python
+# Disable Agno telemetry before importing agno modules
+import os
+os.environ["AGNO_TELEMETRY"] = "false"
+
+# Now import agno modules
+from agno.agent import Agent
+from agno.workflow import Workflow
+```
+
+**Why this matters:**
+- Privacy: Prevents sending usage data to external servers
+- Performance: Eliminates network calls during agent/workflow execution
+- Compliance: Required for enterprise and privacy-sensitive environments
+
+**Pattern:**
+- Place immediately after docstring, before any imports
+- Must come before any `agno.*` imports
+- Use in all agents, workflows, and custom executors
+
+All templates in `assets/` follow this pattern.
 
 ### Creating a New Workflow
 
