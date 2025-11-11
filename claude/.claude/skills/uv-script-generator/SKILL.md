@@ -13,7 +13,10 @@ Use this skill when the user requests:
 - "Create a uv script that..."
 - "Generate a Python script with uv dependencies..."
 - "Make a standalone Python script for..."
+- "Create a CLI tool that..."
 - Any Python script that should be executable with `uv run`
+
+**Default to Click CLI pattern** for any script that accepts arguments or options.
 
 ## Reference Documentation
 
@@ -34,21 +37,24 @@ Ask the user:
 
 Create the script with this structure:
 
-**For scripts with dependencies:**
+**For CLI scripts with Click (RECOMMENDED):**
 ```python
 #!/usr/bin/env -S uv run --script
 # /// script
 # dependencies = [
+#   "click",
 #   "package-name>=version",
-#   "another-package",
 # ]
 # requires-python = ">=3.12"
 # ///
 
-# Script code here
-import package_name
+import click
 
-def main():
+@click.command()
+@click.option('--option', help='Description')
+@click.argument('arg')
+def main(option, arg):
+    """Script description here"""
     # Implementation
     pass
 
@@ -56,12 +62,43 @@ if __name__ == "__main__":
     main()
 ```
 
-**For scripts without dependencies:**
+**For multi-command CLI scripts with Click:**
 ```python
 #!/usr/bin/env -S uv run --script
+# /// script
+# dependencies = ["click"]
+# requires-python = ">=3.12"
+# ///
 
-# Script code here
-import sys
+import click
+
+@click.group()
+def cli():
+    """Multi-command script description"""
+    pass
+
+@cli.command()
+@click.argument('input')
+def process(input):
+    """Process command"""
+    pass
+
+@cli.command()
+def analyze():
+    """Analyze command"""
+    pass
+
+if __name__ == "__main__":
+    cli()
+```
+
+**For simple scripts without CLI:**
+```python
+#!/usr/bin/env -S uv run --script
+# /// script
+# dependencies = ["package-name"]
+# requires-python = ">=3.12"
+# ///
 
 def main():
     # Implementation
@@ -113,25 +150,35 @@ uv run script_name.py
 
 ## Common Patterns
 
-### Web Scraping Script
+### Web Scraping CLI Script
 ```python
 #!/usr/bin/env -S uv run --script
 # /// script
 # dependencies = [
+#   "click",
 #   "requests<3",
 #   "beautifulsoup4",
 # ]
+# requires-python = ">=3.12"
 # ///
 
+import click
 import requests
 from bs4 import BeautifulSoup
 
-def main():
-    # Implementation
-    pass
+@click.command()
+@click.argument('url')
+@click.option('--selector', default='p', help='CSS selector to extract')
+def scrape(url, selector):
+    """Scrape content from URL using CSS selector"""
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    elements = soup.select(selector)
+    for el in elements:
+        click.echo(el.get_text())
 
 if __name__ == "__main__":
-    main()
+    scrape()
 ```
 
 ### CLI Tool with Rich Output
@@ -139,46 +186,214 @@ if __name__ == "__main__":
 #!/usr/bin/env -S uv run --script
 # /// script
 # dependencies = [
+#   "click",
 #   "rich",
-#   "typer",
 # ]
-# requires-python = ">=3.10"
+# requires-python = ">=3.12"
 # ///
 
+import click
 from rich.console import Console
-import typer
 
-app = typer.Typer()
 console = Console()
 
-@app.command()
-def main(name: str):
+@click.group()
+def cli():
+    """CLI tool with rich output"""
+    pass
+
+@cli.command()
+@click.argument('name')
+def greet(name):
+    """Greet someone"""
     console.print(f"[bold green]Hello {name}![/bold green]")
 
+@cli.command()
+@click.argument('message')
+def display(message):
+    """Display formatted message"""
+    console.print(f"[cyan]{message}[/cyan]")
+
 if __name__ == "__main__":
-    app()
+    cli()
 ```
 
-### Data Processing Script
+### Data Processing CLI Script
 ```python
 #!/usr/bin/env -S uv run --script
 # /// script
 # dependencies = [
+#   "click",
 #   "pandas>=2.0",
 #   "numpy",
 # ]
+# requires-python = ">=3.12"
 # ///
 
+import click
 import pandas as pd
 import numpy as np
 
-def main():
-    # Load and process data
-    pass
+@click.command()
+@click.argument('input_file', type=click.Path(exists=True))
+@click.option('--output', type=click.Path(), help='Output file path')
+@click.option('--format', type=click.Choice(['csv', 'json']), default='csv')
+def process(input_file, output, format):
+    """Process data file and save results"""
+    df = pd.read_csv(input_file)
+    # Process data
+    result = df.describe()
+
+    if output:
+        if format == 'csv':
+            result.to_csv(output)
+        else:
+            result.to_json(output)
+        click.echo(f"Results saved to {output}")
+    else:
+        click.echo(result)
 
 if __name__ == "__main__":
-    main()
+    process()
 ```
+
+## CLI Organization with Click
+
+### When to Use Click Command Groups
+
+Use Click command groups when your script needs:
+- Multiple related commands (like git: commit, push, pull)
+- Subcommands with different options
+- Shared configuration across commands
+- Professional CLI organization
+
+### Single Command Pattern
+
+For scripts with one main action:
+```python
+#!/usr/bin/env -S uv run --script
+# /// script
+# dependencies = ["click"]
+# requires-python = ">=3.12"
+# ///
+
+import click
+
+@click.command()
+@click.argument('input')
+@click.option('--verbose', '-v', is_flag=True, help='Verbose output')
+@click.option('--output', '-o', type=click.Path(), help='Output file')
+def process(input, verbose, output):
+    """Process input and optionally save to output file"""
+    if verbose:
+        click.echo(f"Processing {input}...")
+    # Implementation
+    result = f"Processed: {input}"
+
+    if output:
+        with open(output, 'w') as f:
+            f.write(result)
+        click.echo(f"Saved to {output}")
+    else:
+        click.echo(result)
+
+if __name__ == "__main__":
+    process()
+```
+
+### Command Group Pattern
+
+For scripts with multiple commands:
+```python
+#!/usr/bin/env -S uv run --script
+# /// script
+# dependencies = ["click"]
+# requires-python = ">=3.12"
+# ///
+
+import click
+
+@click.group()
+@click.option('--debug/--no-debug', default=False, help='Enable debug mode')
+@click.pass_context
+def cli(ctx, debug):
+    """Multi-command CLI tool"""
+    ctx.ensure_object(dict)
+    ctx.obj['debug'] = debug
+
+@cli.command()
+@click.argument('source')
+@click.pass_context
+def fetch(ctx, source):
+    """Fetch data from source"""
+    if ctx.obj['debug']:
+        click.echo(f"Debug: Fetching from {source}")
+    # Implementation
+    click.echo(f"Fetched data from {source}")
+
+@cli.command()
+@click.argument('data')
+@click.option('--format', type=click.Choice(['json', 'csv']), default='json')
+@click.pass_context
+def export(ctx, data, format):
+    """Export data in specified format"""
+    if ctx.obj['debug']:
+        click.echo(f"Debug: Exporting as {format}")
+    # Implementation
+    click.echo(f"Exported {data} as {format}")
+
+if __name__ == "__main__":
+    cli()
+```
+
+### Naming Convention for CLI Scripts
+
+Use `_cli.py` suffix for scripts with CLI interfaces:
+```bash
+# Good - immediately recognizable as CLI scripts
+data_processor_cli.py
+web_scraper_cli.py
+file_converter_cli.py
+
+# For simple non-CLI utilities
+calculate_stats.py
+parse_config.py
+```
+
+**Usage:**
+```bash
+# Single command
+./data_processor_cli.py input.txt --output result.txt
+
+# Command groups
+./web_scraper_cli.py fetch https://example.com
+./web_scraper_cli.py export data.json --format csv
+```
+
+### Click Features Reference
+
+**Arguments vs Options:**
+- `@click.argument()` - Required positional parameters
+- `@click.option()` - Optional flags and values
+
+**Common Option Types:**
+```python
+@click.option('--count', type=int, default=1, help='Number of times')
+@click.option('--name', prompt='Your name', help='User name')
+@click.option('--verbose', '-v', is_flag=True, help='Verbose mode')
+@click.option('--format', type=click.Choice(['json', 'xml']), default='json')
+@click.option('--file', type=click.Path(exists=True), help='Input file')
+```
+
+**Passing Context:**
+- `@click.pass_context` - Access Click context (for shared data)
+- `@click.pass_obj` - Pass custom object between commands
+
+**Built-in Utilities:**
+- `click.echo()` - Print output (better than print)
+- `click.style()` - Colored output
+- `click.confirm()` - Yes/No prompts
+- `click.progressbar()` - Progress bars
 
 ## Advanced Features
 
@@ -330,17 +545,33 @@ uv init --script my_tool.py --name "My Tool" --description "Does something usefu
 "Create a script that fetches weather data from an API and displays it nicely"
 
 **Your response:**
-1. Confirm dependencies: "I'll create a uv script using `requests` for API calls and `rich` for display. Should it be executable?"
-2. Generate the complete script with proper inline metadata
-3. Use Write tool to create the file
-4. Show how to run it: `uv run weather.py` or `chmod +x weather.py && ./weather.py`
-5. Explain that uv will automatically create the environment and install dependencies
+1. Confirm details: "I'll create a uv CLI script using `click` for the interface, `requests` for API calls, and `rich` for display. Should it support multiple cities as commands?"
+2. Generate the complete script with Click CLI pattern and proper inline metadata
+3. Use Write tool to create `weather_cli.py` (note the `_cli.py` suffix)
+4. Show usage examples:
+   ```bash
+   # Make executable
+   chmod +x weather_cli.py
+
+   # Get help
+   ./weather_cli.py --help
+
+   # Fetch weather
+   ./weather_cli.py fetch "San Francisco"
+
+   # Or with uv run
+   uv run weather_cli.py fetch "New York" --format json
+   ```
+5. Explain that uv will automatically create the environment and install dependencies on first run
 
 ## Important Notes
 
+- **Use Click for CLI scripts** - Provides professional argument parsing and help text
+- **Use `_cli.py` suffix** for scripts with CLI interfaces
 - **Always include the inline metadata block** for scripts with dependencies
 - **Always use proper TOML syntax** in the metadata block
 - **Place shebang first** if making executable
+- **Include `click` in dependencies** for any script with CLI arguments
 - **Use `if __name__ == "__main__":` pattern** for proper script structure
 - **Test commands are copy-pasteable** - verify syntax before showing to user
 
