@@ -1,9 +1,9 @@
 {
   "_metadata": {
     "last_updated": "2025-11-11",
-    "data_version": "1.0",
+    "data_version": "1.1",
     "source": "Benchmark testing + Ollama API",
-    "notes": "Token speeds verified through actual testing. Use --update to refresh from Ollama API."
+    "notes": "Token speeds verified through actual testing. Added qwen3-vl:235b-instruct-cloud model. Use --update to refresh from Ollama API."
   },
   "models": {
     "gpt-oss:120b-cloud": {
@@ -58,9 +58,16 @@
     "qwen3-vl:235b-cloud": {
       "tok_per_s": 55,
       "context": 256,
-      "best_for": "Vision tasks, OCR, GUI automation, multimodal reasoning",
+      "best_for": "General vision tasks, OCR, document analysis, basic multimodal reasoning, image understanding",
       "tools": true,
-      "notes": "Images/video, 32-lang OCR"
+      "notes": "Fastest vision model, 32-lang OCR, 256K context expandable to 1M tokens"
+    },
+    "qwen3-vl:235b-instruct-cloud": {
+      "tok_per_s": 50,
+      "context": 256,
+      "best_for": "Instruction-following vision tasks, visual agent operations, code generation from images, precise GUI automation, conversational AI with vision",
+      "tools": true,
+      "notes": "Optimized for instruction adherence, visual agent capabilities, 32-lang OCR, 256K context expandable to 1M tokens"
     }
   }
 }

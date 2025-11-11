@@ -95,12 +95,39 @@ def calculate_score(model: str, requirements: Dict[str, float]) -> float:
     max_speed = max(data["tok_per_s"] for data in PERFORMANCE_DATA.values())
     speed_score = model_data["tok_per_s"] / max_speed
     
-    # Task fit score
-    task_score = (
-        requirements.get("coding", 0) * 0.5 +
-        requirements.get("reasoning", 0) * 0.5 +
-        requirements.get("vision", 0) * 0.5
-    )
+    # Task fit score - check if model is actually good for the task
+    task_score = 0.0
+    best_for = model_data.get("best_for", "").lower()
+    
+    # Check vision capabilities
+    if requirements.get("vision", 0) > 0:
+        if any(term in best_for for term in ["vision", "ocr", "gui", "multimodal", "image"]):
+            # Extra weight for instruction-following and agent capabilities
+            if any(term in best_for for term in ["instruction", "agent", "conversational"]):
+                task_score += requirements.get("vision", 0) * 0.9
+            else:
+                task_score += requirements.get("vision", 0) * 0.8
+        else:
+            task_score += requirements.get("vision", 0) * 0.2
+    
+    # Check coding capabilities
+    if requirements.get("coding", 0) > 0:
+        if any(term in best_for for term in ["coding", "code", "debug", "software"]):
+            # Extra weight for code generation from images
+            if "code generation from images" in best_for:
+                task_score += requirements.get("coding", 0) * 0.9
+            else:
+                task_score += requirements.get("coding", 0) * 0.8
+        else:
+            task_score += requirements.get("coding", 0) * 0.3
+    
+    # Check reasoning capabilities
+    if requirements.get("reasoning", 0) > 0:
+        if any(term in best_for for term in ["reasoning", "analysis", "problem-solving", "mathematical"]):
+            task_score += requirements.get("reasoning", 0) * 0.8
+        else:
+            task_score += requirements.get("reasoning", 0) * 0.4
+    
     task_score = min(task_score, 1.0)  # Cap at 1.0
     
     # Context fit score
