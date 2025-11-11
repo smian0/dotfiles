@@ -1,6 +1,6 @@
 # Cursor Configuration Package
 
-Cursor IDE configuration files managed with GNU Stow, including optional OpenSkills helpers for Claude Code skill compatibility.
+Cursor IDE configuration files managed with GNU Stow, including optional OpenSkills helpers for Claude Code skill compatibility across multiple AI IDEs.
 
 ## Architecture
 
@@ -137,6 +137,29 @@ That's the complete official setup. Cursor reads AGENTS.md and automatically kno
 
 This extra improves the experience but isn't part of the official OpenSkills specification. All other setup tools (scripts, templates, AGENTS.md format) are bundled in the `cursor-openskills-setup` skill.
 
+## Cross-IDE Skill Reuse
+
+Claude Code skills at `~/.claude/skills/` can be reused across multiple AI IDEs without duplication:
+
+### OpenCode
+Uses [opencode-skills plugin](https://github.com/malhashemi/opencode-skills) to discover skills.
+
+**Setup:**
+The `opencode` stow package already includes a symlink at `~/.config/opencode/skills/` pointing to Claude Code skills. When you run `stow opencode`, this symlink is automatically created.
+
+Both Claude Code and opencode-skills use **Anthropic's Agent Skills Specification v1.0**, so skills work without modification. The plugin scans `~/.config/opencode/skills/` (XDG path, highest priority) and auto-registers skills as dynamic tools.
+
+### Cursor, Windsurf, Aider
+Use [OpenSkills CLI](https://github.com/numman-ali/openskills) to read skills from `~/.claude/skills/` directly.
+
+**No symlink needed** - OpenSkills CLI discovers skills at the Claude Code location automatically.
+
+### Result
+- **Physical files**: `~/.claude/skills/` (single source of truth)
+- **OpenCode**: Discovers via `~/.config/opencode/skills/` symlink (from stow)
+- **Cursor/others**: Read via `openskills` CLI
+- **No duplication**: All IDEs use the same skill files
+
 ## Global User Rules (Option 3)
 
 For truly global OpenSkills awareness across ALL projects, you can manage User Rules via version control.
@@ -237,4 +260,4 @@ code ~/my-custom-rule.md
 
 ## Last Updated
 
-2025-11-11
+2025-11-10
