@@ -457,7 +457,24 @@ print(result.content.title)  # Access structured fields
 
 ### Teams in Workflows
 
-Use teams **within workflow steps** for collaborative sub-tasks:
+Use teams **within workflow steps** for complex collaborative sub-tasks that require multiple specialists working together.
+
+#### When to Use Teams in Workflows (vs Parallel Steps)
+
+**Use Team in Workflow when:**
+- ✅ Multiple specialists need to **collaborate** on same sub-task
+- ✅ Agents need to see each other's findings (shared context)
+- ✅ Team leader should coordinate who does what based on emerging patterns
+- ✅ Task requires discussion, synthesis, or consensus
+- ✅ Example: Market research needing HN trends + web data + competitive analysis
+
+**Use Parallel Steps instead when:**
+- ❌ Tasks are **completely independent** (no coordination needed)
+- ❌ Each agent works on different data with no overlap
+- ❌ No need for agents to see each other's work
+- ❌ Example: Translating to 3 languages (independent tasks)
+
+#### Basic Pattern
 
 ```python
 from agno.workflow import Workflow, Step
@@ -482,6 +499,68 @@ workflow = Workflow(
 ```
 
 **Pattern**: Team for collaborative research → Individual agents for specialized tasks
+
+#### Complete Example: Team + Custom Executor + Agent
+
+For complex workflows, combine all three step types:
+
+```python
+from agno.workflow import Workflow, Step, StepOutput
+
+# 1. Define collaborative research team
+research_team = Team(
+    name="Market Research Team",
+    members=[hn_researcher, web_researcher, competitive_analyst],
+    instructions=[
+        "First, task HN researcher to find community discussions.",
+        "Second, task Web researcher to gather market data.",
+        "Third, task Competitive Analyst to synthesize findings.",
+    ],
+    show_members_responses=True,
+)
+
+# 2. Define custom executor for data processing
+def process_research_findings(step_output):
+    """Transform team research into structured insights"""
+    research_content = step_output.content if step_output else ""
+
+    processed = f"""# Key Insights
+{research_content[:500]}...
+
+## Recommendations
+[Based on collaborative team research]
+"""
+
+    return StepOutput(
+        name="Process Research",
+        content=processed,
+    )
+
+# 3. Define individual report writer
+report_writer = Agent(
+    name="Report Writer",
+    model=Ollama(id="glm-4.6:cloud", options={"num_ctx": 198000}),
+    role="Generate market analysis reports",
+    instructions=["Create professional report from processed insights."],
+)
+
+# 4. Assemble workflow
+market_research_workflow = Workflow(
+    name="Market Research Pipeline",
+    steps=[
+        Step(name="Collaborative Research", team=research_team),
+        Step(name="Process Findings", executor=process_research_findings),
+        Step(name="Generate Report", agent=report_writer),
+    ],
+)
+```
+
+**Why this pattern?**
+- **Team step**: Specialists collaborate with shared context
+- **Custom executor**: Transform collaborative output for next step
+- **Agent step**: Specialized task (writing) with processed insights
+
+**See**: `examples/workflow_with_team_research.py` for complete working example with market research workflow.
 
 ### When to Use Teams
 
