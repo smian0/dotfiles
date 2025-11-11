@@ -119,6 +119,8 @@ def cli(ctx):
         exponential_backoff=True,
         retries=3,
         delay_between_retries=15,  # 15s, 30s, 60s
+        # debug_mode=True,          # Uncomment for development/debugging
+        # debug_level=1,            # 1=basic, 2=detailed
     )
 
 
@@ -188,6 +190,59 @@ from agno.workflow import Workflow
 - Use in all agents, workflows, and custom executors
 
 All templates in `assets/` follow this pattern.
+
+### Enable Debug Mode for Development
+
+**Use debug mode when developing or troubleshooting agents** to see execution details:
+
+```python
+from agno.agent import Agent
+from agno.models.ollama import Ollama
+
+# Development: Enable debug output
+agent = Agent(
+    model=Ollama(id="glm-4.6:cloud"),
+    debug_mode=True,        # Show execution details
+    debug_level=1,          # 1=basic, 2=detailed (default: 1)
+)
+
+agent.print_response("Your query")
+```
+
+**Debug Levels:**
+- **`debug_level=1` (Basic)** - Shows:
+  - Agent ID, Session ID, Run ID
+  - Model name and endpoint
+  - System and user messages
+  - Request/response markers
+  - Basic execution flow
+
+- **`debug_level=2` (Detailed)** - Shows everything from level 1 plus:
+  - Full message details and formatting
+  - Tool call information and results
+  - Detailed execution traces
+  - More verbose internal logging
+
+**Per-Run Debug (Selective):**
+```python
+# Agent defaults to no debug
+agent = Agent(
+    model=Ollama(id="glm-4.6:cloud"),
+    debug_mode=False,  # Default: clean output
+)
+
+# Enable debug only for specific runs
+agent.print_response("Debug this query", debug_mode=True)
+agent.print_response("Normal output")  # No debug
+```
+
+**When to Use:**
+- **Development**: `debug_mode=True, debug_level=2` - See everything
+- **Testing**: `debug_mode=True, debug_level=1` - Track execution flow
+- **Production**: `debug_mode=False` - Clean output only
+- **Troubleshooting**: Enable per-run as needed
+
+**Note:** There is no `AGNO_DEBUG` environment variable. Use the `debug_mode` parameter instead.
 
 ### Creating a New Workflow
 

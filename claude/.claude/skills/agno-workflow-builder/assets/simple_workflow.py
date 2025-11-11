@@ -51,6 +51,8 @@ agent = Agent(
     model=Ollama(id="glm-4.6:cloud"),
     instructions="You are a helpful assistant. Provide clear, concise responses.",
     markdown=True,
+    # debug_mode=True,          # Uncomment for agent-level debugging
+    # debug_level=1,            # 1=basic, 2=detailed
 )
 
 # Create step

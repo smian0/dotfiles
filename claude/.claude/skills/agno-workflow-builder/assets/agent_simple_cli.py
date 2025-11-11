@@ -71,6 +71,7 @@ def cli(ctx, model, debug):
         """,
         markdown=True,
         debug_mode=debug,
+        # debug_level=1,            # 1=basic, 2=detailed (only if debug_mode=True)
         # Automatic retry with exponential backoff (recommended)
         exponential_backoff=True,
         retries=3,

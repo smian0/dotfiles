@@ -58,6 +58,8 @@ def cli(ctx):
         exponential_backoff=True,
         retries=3,
         delay_between_retries=15,
+        # debug_mode=True,          # Uncomment for development/debugging
+        # debug_level=1,            # 1=basic, 2=detailed
     )
 
 

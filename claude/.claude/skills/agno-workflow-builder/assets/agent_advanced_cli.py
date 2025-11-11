@@ -57,6 +57,7 @@ def create_agent(model_id, instructions, debug=False):
         instructions=instructions,
         markdown=True,
         debug_mode=debug,
+        # debug_level=1,            # 1=basic, 2=detailed (only if debug=True)
         exponential_backoff=True,
         retries=3,
         delay_between_retries=15,
