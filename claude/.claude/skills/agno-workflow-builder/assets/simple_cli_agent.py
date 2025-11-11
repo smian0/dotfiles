@@ -1,0 +1,43 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#   "agno",
+#   "ollama",
+# ]
+#
+# [tool.uv.sources]
+# agno = { path = "../../libs/agno", editable = true }
+# ///
+
+"""
+Simple CLI Agent Template
+
+A minimal Agno agent for interactive chat or single-task execution.
+~15 lines of actual code for a fully functional AI assistant.
+
+Usage:
+  Interactive CLI:  ./simple_cli_agent.py
+  Single prompt:    Uncomment the print_response line
+"""
+
+from agno.agent import Agent
+from agno.models.ollama import Ollama
+
+# Create agent with minimal configuration
+agent = Agent(
+    model=Ollama(id="gpt-oss:120b-cloud"),
+    instructions="""
+        You are a helpful AI assistant.
+        Provide clear, concise, and accurate responses.
+        Be friendly and professional.
+    """,
+    markdown=True,
+)
+
+if __name__ == "__main__":
+    # Option 1: Interactive CLI (default)
+    agent.cli_app(stream=True)
+
+    # Option 2: Single prompt (uncomment to use)
+    # agent.print_response("What is the capital of France?", stream=True)

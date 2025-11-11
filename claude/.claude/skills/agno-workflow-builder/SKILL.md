@@ -1,13 +1,17 @@
 ---
 name: agno-workflow-builder
-description: This skill should be used when building Agno workflows with multi-step AI agent orchestration. Use when the user requests to create, modify, or debug workflows involving sequential steps, parallel processing, tool integration, or performance optimization. Appropriate for tasks like "create a workflow to analyze images and research companies" or "add debugging to my workflow" or "implement parallel processing for faster execution."
+description: Build Agno AI agents and workflows. Use for simple CLI agents (single-agent chat/Q&A) OR complex workflows (multi-step, parallel processing, orchestration). Covers minimal CLI agents (~10 lines) to production workflows with debugging and optimization. Examples: "create a CLI chatbot", "build a research workflow", "add parallel processing".
 ---
 
-# Agno Workflow Builder
+# Agno Agent & Workflow Builder
 
 ## Overview
 
-Build production-ready Agno workflows with idiomatic patterns for agent orchestration, parallel processing, debugging, and performance optimization. This skill provides templates, reference patterns, and best practices for creating robust multi-step AI workflows.
+Build Agno AI solutions from simple CLI agents to production-ready workflows. This skill provides idiomatic patterns for:
+- **Simple CLI Agents**: Interactive chat, single-purpose assistants (~10 lines)
+- **Complex Workflows**: Multi-step orchestration, parallel processing, debugging, optimization
+
+Choose the approach that fits your task complexity.
 
 ## CRITICAL: Consult Agno Documentation
 
@@ -39,7 +43,81 @@ Build production-ready Agno workflows with idiomatic patterns for agent orchestr
 - When debugging workflow issues (reference actual implementation)
 - When uncertain about any pattern (verify against source)
 
+## Decision Guide: CLI Agent vs Workflow
+
+### Use Simple CLI Agent When:
+- ✅ Single agent with no multi-step orchestration
+- ✅ Interactive chat or single prompt/response pattern
+- ✅ No parallel processing needed
+- ✅ No custom data transformations between steps
+- ✅ **Examples**: "CLI chatbot", "Q&A agent", "simple assistant", "single-task agent"
+- ✅ **Result**: ~10-20 lines of code
+
+### Use Complex Workflow When:
+- ✅ Multi-step sequential processing (step1 → step2 → step3)
+- ✅ Parallel agent execution (research 3 topics simultaneously)
+- ✅ Custom data transformations (JSON parsing, file I/O, synthesis)
+- ✅ Performance optimization and debugging needed
+- ✅ **Examples**: "analyze images then research", "parallel research workflow", "vision → parse → research → synthesize"
+- ✅ **Result**: 50-200 lines with full debugging and optimization
+
+**When in doubt:** Start with CLI agent. Upgrade to workflow when complexity grows.
+
 ## Quick Start
+
+### Simple CLI Agent (10 Lines)
+
+For single-agent interactive chat or simple tasks:
+
+```bash
+# Create single-file CLI agent
+cd <project_root>
+mkdir -p agno_agents
+uv init --script agno_agents/my_agent.py --python 3.12
+
+# Add minimal dependencies
+uv add --script agno_agents/my_agent.py ../../libs/agno --editable
+uv add --script agno_agents/my_agent.py ollama
+```
+
+**Minimal agent code** (`agno_agents/my_agent.py`):
+
+```python
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["agno", "ollama"]
+# [tool.uv.sources]
+# agno = { path = "../../libs/agno", editable = true }
+# ///
+
+from agno.agent import Agent
+from agno.models.ollama import Ollama
+
+agent = Agent(
+    model=Ollama(id="gpt-oss:120b-cloud"),
+    instructions="You are a helpful AI assistant.",
+    markdown=True,
+)
+
+if __name__ == "__main__":
+    # Interactive CLI
+    agent.cli_app(stream=True)
+
+    # OR single prompt
+    # agent.print_response("Your prompt here", stream=True)
+```
+
+**Run it:**
+
+```bash
+chmod +x agno_agents/my_agent.py
+./agno_agents/my_agent.py
+```
+
+**That's it!** See `assets/simple_cli_agent.py` for the complete template.
+
+For complex multi-step workflows, continue to the section below.
 
 ### Creating a New Workflow
 
@@ -655,7 +733,11 @@ See `references/debug_guide.md` for detailed documentation on all analysis types
 
 ## Templates
 
-- **simple_workflow.py** - Minimal working example (single agent) with uv inline dependencies
+**CLI Agents:**
+- **simple_cli_agent.py** - Minimal CLI agent (~15 lines) for interactive chat or single-task execution
+
+**Workflows:**
+- **simple_workflow.py** - Minimal workflow example (single agent) with uv inline dependencies
 - **workflow_template.py** - Comprehensive template with all patterns (agents, parallel, custom executors, debugging) with uv inline dependencies
 - **test_workflow_template.py** - Complete test suite template for workflow validation
 
@@ -820,11 +902,18 @@ ls ../../libs/agno  # Should show the agno package
 ## When to Use This Skill
 
 Use this skill when:
-- Creating new Agno workflows from scratch
+
+**For Simple CLI Agents:**
+- Creating interactive chatbots or Q&A agents
+- Single-agent tasks with no orchestration
+- Quick prototypes or simple assistants
+
+**For Complex Workflows:**
+- Creating multi-step workflows from scratch
 - Adding parallel processing to existing workflows
 - Implementing debugging and optimization analysis
 - Setting up tool caching for rate-limited APIs
 - Building complex multi-agent orchestration
 - Optimizing workflow performance
 
-The skill provides idiomatic patterns that follow Agno best practices with `uv`-based dependency management, automatic testing, and comprehensive debugging.
+The skill provides idiomatic patterns for both minimal CLI agents (~10 lines) and production workflows with `uv`-based dependency management, automatic testing, and comprehensive debugging.
