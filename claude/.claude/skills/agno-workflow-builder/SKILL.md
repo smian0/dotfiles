@@ -98,6 +98,10 @@ agent = Agent(
     model=Ollama(id="gpt-oss:120b-cloud"),
     instructions="You are a helpful AI assistant.",
     markdown=True,
+    # Automatic retry with exponential backoff (recommended)
+    exponential_backoff=True,
+    retries=3,
+    retry_delay=15,  # With exponential backoff: 15s, 30s, 60s
 )
 
 if __name__ == "__main__":
@@ -168,6 +172,9 @@ agent = Agent(
     name="Assistant",
     model=Ollama(id="gpt-oss:120b-cloud"),
     instructions="Your agent instructions here...",
+    exponential_backoff=True,
+    retries=3,
+    retry_delay=15,
 )
 
 # Create workflow
@@ -251,8 +258,19 @@ agent = Agent(
     model=Ollama(id="gpt-oss:120b-cloud"),
     instructions="Clear, specific instructions...",
     markdown=True,
+    # Automatic retry with exponential backoff (recommended for production)
+    exponential_backoff=True,
+    retries=3,
+    retry_delay=15,
 )
 ```
+
+**Retry configuration (recommended):**
+- `exponential_backoff=True` - Enables automatic retries with exponential backoff
+- `retries=3` - Number of retry attempts (3 retries = up to 4 total attempts)
+- `retry_delay=15` - Initial delay in seconds (with exponential backoff: 15s, 30s, 60s)
+
+This handles transient model provider errors automatically, with the third retry occurring at ~1 minute.
 
 #### Agent with Tools and Caching
 
@@ -271,6 +289,9 @@ agent = Agent(
     tools=[tools],
     instructions="Use duckduckgo_news to search for recent information...",
     markdown=True,
+    exponential_backoff=True,
+    retries=3,
+    retry_delay=15,
 )
 ```
 
@@ -295,6 +316,9 @@ def create_specialized_agent(task_name: str) -> Agent:
         tools=[tools],
         instructions=f"Focus exclusively on {task_name}...",
         markdown=True,
+        exponential_backoff=True,
+        retries=3,
+        retry_delay=15,
     )
 ```
 

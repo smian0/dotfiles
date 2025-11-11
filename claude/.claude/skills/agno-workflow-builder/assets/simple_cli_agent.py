@@ -33,6 +33,10 @@ agent = Agent(
         Be friendly and professional.
     """,
     markdown=True,
+    # Automatic retry with exponential backoff (recommended)
+    exponential_backoff=True,
+    retries=3,
+    retry_delay=15,  # With exponential backoff: 15s, 30s, 60s
 )
 
 if __name__ == "__main__":
