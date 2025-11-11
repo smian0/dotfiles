@@ -59,10 +59,13 @@ Choose the approach that fits your task complexity.
 ### Use Complex Workflow When:
 - ✅ Multi-step sequential processing (step1 → step2 → step3)
 - ✅ Parallel agent execution (research 3 topics simultaneously)
+- ✅ Conditional branching (fact-check only if claims detected)
+- ✅ Iterative refinement (loop until quality threshold met)
+- ✅ Dynamic routing (route to specialist based on topic type)
 - ✅ Custom data transformations (JSON parsing, file I/O, synthesis)
 - ✅ Performance optimization and debugging needed
-- ✅ **Examples**: "analyze images then research", "parallel research workflow", "vision → parse → research → synthesize"
-- ✅ **Structure**: Workflow with steps, Click CLI wrapper optional
+- ✅ **Examples**: "analyze images then research", "parallel research workflow", "conditional fact-checking", "iterative research until complete", "route to blog/social/report pipeline"
+- ✅ **Structure**: Workflow with steps (Sequential, Parallel, Condition, Loop, Router, Steps), Click CLI wrapper optional
 - ✅ **Result**: 70-250 lines (workflow + debugging + CLI)
 
 **When in doubt:** Start with Click-based CLI agent. Upgrade to workflow when you need multi-step orchestration.
@@ -368,6 +371,30 @@ Determine the appropriate structure based on the task:
 - Combine sequential and parallel steps
 - Example: vision → parse → parallel research → synthesize → save
 - See reference workflow: `qwen_vision_workflow.py`
+
+**Conditional Branching**
+- Execute steps only when conditions are met
+- Use when optional processing depends on input/content analysis
+- Example: research → (if claims detected) → fact-check → write
+- Pattern: `Condition` with evaluator function
+
+**Iterative Refinement**
+- Repeat steps until quality threshold or max iterations
+- Use when output quality improves with iteration
+- Example: research loop until sufficient content → analyze
+- Pattern: `Loop` with end_condition function
+
+**Dynamic Routing**
+- Route to different pipelines based on input
+- Use when different topics/types need different workflows
+- Example: router → (tech = tech_pipeline, general = general_pipeline)
+- Pattern: `Router` with selector function
+
+**Nested Patterns (Advanced)**
+- Combine multiple patterns for sophisticated orchestration
+- Use for complex workflows with multiple strategies
+- Example: parallel conditions → loop if needed → route to specialist
+- Pattern: Condition + Loop + Parallel + Router combinations
 
 ### 2. Creating Agents
 
@@ -1106,6 +1133,381 @@ def synthesize_parallel(step_input: StepInput) -> StepOutput:
         success=True,
     )
 ```
+
+#### Condition Step (Conditional Branching)
+
+Execute steps only when specific conditions are met:
+
+```python
+from agno.workflow import Condition, Step
+
+def is_tech_topic(step_input) -> bool:
+    """Check if the topic is tech-related"""
+    message = step_input.input.lower() if step_input.input else ""
+    tech_keywords = ["ai", "machine learning", "technology", "software", "programming"]
+    return any(keyword in message for keyword in tech_keywords)
+
+# Condition with single step
+tech_condition = Condition(
+    name="Tech Topic Check",
+    description="Check if topic requires specialized tech research",
+    evaluator=is_tech_topic,
+    steps=[Step(name="Tech Research", agent=tech_researcher)],
+)
+
+# Condition with multiple steps
+def needs_fact_checking(step_input) -> bool:
+    """Determine if research contains claims needing verification"""
+    content = step_input.previous_step_content or ""
+    fact_indicators = ["study shows", "research indicates", "statistics", "data shows"]
+    return any(indicator in content.lower() for indicator in fact_indicators)
+
+fact_check_condition = Condition(
+    name="Fact Check Condition",
+    description="Verify facts if claims detected",
+    evaluator=needs_fact_checking,
+    steps=[
+        Step(name="Fact Verification", agent=fact_checker),
+        Step(name="Cross Reference", agent=cross_reference_agent),
+    ],
+)
+```
+
+**When to use:**
+- Conditional execution based on input analysis
+- Optional verification or enhancement steps
+- Dynamic workflow paths (e.g., fact-check only if needed)
+- Resource optimization (skip expensive steps when not needed)
+
+**Evaluator function:**
+- Takes `StepInput` as parameter
+- Returns `bool` (True = execute steps, False = skip)
+- Can access `step_input.input` (original input) or `step_input.previous_step_content`
+
+#### Loop Step (Iterative Execution)
+
+Repeat steps until quality threshold met or max iterations reached:
+
+```python
+from agno.workflow import Loop, Step
+from typing import List
+
+def quality_check(outputs: List[StepOutput]) -> bool:
+    """
+    Evaluate if results meet quality criteria
+    Returns True to break loop, False to continue
+    """
+    if not outputs:
+        return False
+
+    # Check total content length
+    total_length = sum(len(output.content or "") for output in outputs)
+
+    if total_length > 500:
+        print(f"✅ Quality check passed - substantial content ({total_length} chars)")
+        return True
+
+    print(f"❌ Quality check failed - need more content (current: {total_length} chars)")
+    return False
+
+# Simple loop
+research_loop = Loop(
+    name="Research Loop",
+    description="Research until quality threshold met",
+    steps=[Step(name="Deep Research", agent=researcher)],
+    end_condition=quality_check,
+    max_iterations=3,
+)
+
+# Loop with multiple steps
+refinement_loop = Loop(
+    name="Refinement Loop",
+    description="Iteratively refine output",
+    steps=[
+        Step(name="Draft", agent=writer),
+        Step(name="Review", agent=reviewer),
+    ],
+    end_condition=quality_check,
+    max_iterations=5,
+)
+```
+
+**When to use:**
+- Iterative refinement until quality threshold
+- Research depth control (gather more data if needed)
+- Self-correcting workflows (retry with improvements)
+- Content generation with quality gates
+
+**End condition function:**
+- Takes `List[StepOutput]` (outputs from all loop iterations)
+- Returns `bool` (True = break loop, False = continue)
+- Executes after each iteration
+- Loop stops at `max_iterations` even if condition not met
+
+#### Loop with Parallel Steps
+
+Combine loops with parallel execution for iterative multi-agent research:
+
+```python
+from agno.workflow import Loop, Parallel, Step
+
+research_loop = Loop(
+    name="Parallel Research Loop",
+    description="Iteratively research with multiple agents in parallel",
+    steps=[
+        Parallel(
+            Step(name="Research HackerNews", agent=hn_researcher),
+            Step(name="Research Web", agent=web_researcher),
+            name="Parallel Research",
+        ),
+        Step(name="Analysis", agent=analyst),
+    ],
+    end_condition=quality_check,
+    max_iterations=3,
+)
+```
+
+**Use case:** Parallel research that continues until sufficient content gathered.
+
+#### Router Step (Dynamic Routing)
+
+Route to different step sequences based on input analysis:
+
+```python
+from agno.workflow import Router, Step, Steps
+from typing import List
+
+def content_type_selector(step_input) -> List[Step]:
+    """Determine which content pipeline to use"""
+    topic = step_input.input.lower() if step_input.input else ""
+
+    if "blog" in topic or "article" in topic:
+        return [blog_post_pipeline]
+    elif "social" in topic or "tweet" in topic:
+        return [social_media_pipeline]
+    else:
+        return [report_pipeline]  # Default
+
+# Define different pipelines as Steps sequences
+blog_post_pipeline = Steps(
+    name="Blog Post Pipeline",
+    description="Complete blog post creation workflow",
+    steps=[
+        Step(name="Research", agent=researcher),
+        Step(name="Write Blog", agent=blog_writer),
+        Step(name="Edit", agent=editor),
+    ],
+)
+
+social_media_pipeline = Steps(
+    name="Social Media Pipeline",
+    description="Social media content creation",
+    steps=[
+        Step(name="Trend Analysis", agent=trend_analyst),
+        Step(name="Write Social Post", agent=social_writer),
+    ],
+)
+
+report_pipeline = Steps(
+    name="Report Pipeline",
+    description="Formal report generation",
+    steps=[
+        Step(name="Deep Research", agent=researcher),
+        Step(name="Write Report", agent=report_writer),
+        Step(name="Fact Check", agent=fact_checker),
+    ],
+)
+
+# Router step
+content_router = Router(
+    name="Content Type Router",
+    description="Route to appropriate content creation pipeline",
+    selector=content_type_selector,
+    choices=[blog_post_pipeline, social_media_pipeline, report_pipeline],
+)
+```
+
+**When to use:**
+- Different workflows for different input types
+- Topic-based routing (tech vs general, image vs video)
+- Complexity-based routing (simple vs deep analysis)
+- Format-based routing (blog vs report vs social media)
+
+**Selector function:**
+- Takes `StepInput` as parameter
+- Returns `List[Step]` or `List[Steps]` to execute
+- Can return single step or entire sequence
+- Must return one of the defined `choices`
+
+#### Steps Grouping (Sequence Composition)
+
+Group related steps into reusable sequences:
+
+```python
+from agno.workflow import Steps, Step
+
+# Define reusable sequence
+research_sequence = Steps(
+    name="Research Sequence",
+    description="Complete research workflow",
+    steps=[
+        Step(name="Initial Research", agent=researcher),
+        Step(name="Deep Dive", agent=specialist),
+        Step(name="Synthesis", agent=synthesizer),
+    ],
+)
+
+# Use in workflow
+workflow = Workflow(
+    name="Content Creation",
+    steps=[
+        research_sequence,  # Grouped sequence
+        Step(name="Write", agent=writer),
+        Step(name="Edit", agent=editor),
+    ],
+)
+```
+
+**When to use:**
+- Modular workflow design
+- Reusable step sequences
+- Cleaner workflow organization
+- Use with Router for different pipelines
+
+**Benefits:**
+- Encapsulation: Group related steps together
+- Reusability: Use same sequence in multiple workflows
+- Clarity: Named sequences document intent
+- Composition: Build complex workflows from simple sequences
+
+#### Nested Patterns (Advanced Composition)
+
+Combine patterns for sophisticated orchestration:
+
+**Parallel Conditions:**
+```python
+# Multiple conditional branches in parallel
+Parallel(
+    Condition(
+        name="Tech Check",
+        evaluator=is_tech_topic,
+        steps=[Step(name="Tech Research", agent=tech_researcher)],
+    ),
+    Condition(
+        name="Business Check",
+        evaluator=is_business_topic,
+        steps=[Step(name="Market Research", agent=market_researcher)],
+    ),
+    name="Conditional Parallel Research",
+)
+```
+
+**Condition with Loop:**
+```python
+# Conditional deep research with iterative refinement
+Condition(
+    name="Comprehensive Research Check",
+    evaluator=needs_deep_research,
+    steps=[
+        Loop(
+            name="Deep Research Loop",
+            steps=[Step(name="In-Depth Research", agent=researcher)],
+            end_condition=quality_check,
+            max_iterations=3,
+        ),
+    ],
+)
+```
+
+**Loop with Parallel Steps:**
+```python
+# Iterative parallel research
+Loop(
+    name="Parallel Research Loop",
+    steps=[
+        Parallel(
+            Step(name="Research A", agent=agent_a),
+            Step(name="Research B", agent=agent_b),
+            name="Parallel Research Phase",
+        ),
+        Step(name="Synthesis", agent=synthesizer),
+    ],
+    end_condition=quality_check,
+    max_iterations=3,
+)
+```
+
+**Router with Steps Sequences:**
+```python
+# Route to different complete workflows
+Router(
+    name="Media Type Router",
+    selector=media_type_selector,
+    choices=[
+        Steps(
+            name="Image Pipeline",
+            steps=[
+                Step(name="Generate Image", agent=image_gen),
+                Step(name="Analyze Image", agent=image_analyzer),
+            ],
+        ),
+        Steps(
+            name="Video Pipeline",
+            steps=[
+                Step(name="Generate Video", agent=video_gen),
+                Step(name="Analyze Video", agent=video_analyzer),
+            ],
+        ),
+    ],
+)
+```
+
+**Complex Multi-Pattern Workflow:**
+```python
+# Combining all patterns
+workflow = Workflow(
+    name="Advanced Multi-Pattern Workflow",
+    steps=[
+        # Parallel conditional research
+        Parallel(
+            Condition(
+                name="Tech Check",
+                evaluator=is_tech_topic,
+                steps=[Step(name="Tech Research", agent=tech_researcher)],
+            ),
+            Condition(
+                name="Business Check",
+                evaluator=is_business_topic,
+                steps=[
+                    Loop(
+                        name="Deep Business Research",
+                        steps=[Step(name="Market Research", agent=market_researcher)],
+                        end_condition=quality_check,
+                        max_iterations=3,
+                    ),
+                ],
+            ),
+            name="Conditional Research Phase",
+        ),
+        # Post-processing
+        Step(name="Research Post-Processing", executor=research_post_processor),
+        # Dynamic content routing
+        Router(
+            name="Content Type Router",
+            selector=content_type_selector,
+            choices=[blog_post_pipeline, report_pipeline, social_media_pipeline],
+        ),
+        # Final review
+        Step(name="Final Review", agent=reviewer),
+    ],
+)
+```
+
+**When to use nested patterns:**
+- Complex workflows requiring multiple orchestration strategies
+- Conditional iterative processing (loop only if condition met)
+- Parallel conditional branches (multiple optional paths)
+- Dynamic routing after parallel research phases
 
 ### 4. Assembling the Workflow
 
