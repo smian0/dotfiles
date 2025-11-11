@@ -95,7 +95,10 @@ from agno.agent import Agent
 from agno.models.ollama import Ollama
 
 agent = Agent(
-    model=Ollama(id="glm-4.6:cloud"),
+    model=Ollama(
+        id="glm-4.6:cloud",
+        options={"num_ctx": 131072}  # 128K context window
+    ),
     instructions="You are a helpful AI assistant.",
     markdown=True,
     # Automatic retry with exponential backoff (recommended)
@@ -170,7 +173,10 @@ from agno.utils.workflow_config import configure_workflow_debug
 # Create agent
 agent = Agent(
     name="Assistant",
-    model=Ollama(id="glm-4.6:cloud"),
+    model=Ollama(
+        id="glm-4.6:cloud",
+        options={"num_ctx": 131072}
+    ),
     instructions="Your agent instructions here...",
     exponential_backoff=True,
     retries=3,
@@ -272,6 +278,43 @@ agent = Agent(
 
 This handles transient model provider errors automatically, with the third retry occurring at ~1 minute.
 
+#### Context Window Configuration (CRITICAL)
+
+**⚠️ WARNING:** Ollama defaults to only **2048 tokens (2K)** for `num_ctx`, which is extremely low.
+
+For `glm-4.6:cloud` with 198K capacity, you must explicitly set `num_ctx` or risk **silent context truncation**:
+
+```python
+agent = Agent(
+    name="Agent Name",
+    model=Ollama(
+        id="glm-4.6:cloud",
+        options={
+            "num_ctx": 131072,  # 128K tokens (recommended)
+            "temperature": 0.6,
+        }
+    ),
+    instructions="Clear, specific instructions...",
+    markdown=True,
+    exponential_backoff=True,
+    retries=3,
+    delay_between_retries=15,
+)
+```
+
+**Context window recommendations for glm-4.6:cloud:**
+- **Conservative**: 65536 (64K tokens)
+- **Recommended**: 131072 (128K tokens)
+- **Maximum**: 198000 (198K tokens - full capacity)
+
+**Why this matters:**
+- Ollama **silently discards leading context** when limit exceeded
+- You won't know your conversation history is being truncated
+- Default 2K is only 1% of glm-4.6's actual capacity
+- Essential for agents with long conversations or large prompts
+
+**Always set `num_ctx`** in the `options` dict for production agents.
+
 #### Agent with Tools and Caching
 
 ```python
@@ -285,7 +328,10 @@ for func in tools.functions.values():
 
 agent = Agent(
     name="Research Agent",
-    model=Ollama(id="glm-4.6:cloud"),
+    model=Ollama(
+        id="glm-4.6:cloud",
+        options={"num_ctx": 131072}
+    ),
     tools=[tools],
     instructions="Use duckduckgo_news to search for recent information...",
     markdown=True,
@@ -312,7 +358,10 @@ def create_specialized_agent(task_name: str) -> Agent:
 
     return Agent(
         name=f"{task_name} Specialist",
-        model=Ollama(id="glm-4.6:cloud"),
+        model=Ollama(
+            id="glm-4.6:cloud",
+            options={"num_ctx": 131072}
+        ),
         tools=[tools],
         instructions=f"Focus exclusively on {task_name}...",
         markdown=True,
@@ -344,7 +393,10 @@ def send_email(recipient: str, subject: str, body: str) -> str:
     return f"Email sent to {recipient}"
 
 agent = Agent(
-    model=Ollama(id="glm-4.6:cloud"),
+    model=Ollama(
+        id="glm-4.6:cloud",
+        options={"num_ctx": 131072}
+    ),
     tools=[send_email],
     instructions="Help the user with email tasks, but always ask for confirmation.",
     markdown=True,
@@ -395,7 +447,10 @@ pprint.pprint_run_response(run_response)
 from agno.tools.wikipedia import WikipediaTools
 
 agent = Agent(
-    model=Ollama(id="glm-4.6:cloud"),
+    model=Ollama(
+        id="glm-4.6:cloud",
+        options={"num_ctx": 131072}
+    ),
     tools=[
         send_email,  # Custom tool with @tool(requires_confirmation=True)
         WikipediaTools(requires_confirmation_tools=["search_wikipedia"]),

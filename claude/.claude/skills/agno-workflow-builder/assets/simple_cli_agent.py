@@ -26,7 +26,10 @@ from agno.models.ollama import Ollama
 
 # Create agent with minimal configuration
 agent = Agent(
-    model=Ollama(id="glm-4.6:cloud"),
+    model=Ollama(
+        id="glm-4.6:cloud",
+        options={"num_ctx": 131072}  # 128K context window (critical!)
+    ),
     instructions="""
         You are a helpful AI assistant.
         Provide clear, concise, and accurate responses.
@@ -36,7 +39,7 @@ agent = Agent(
     # Automatic retry with exponential backoff (recommended)
     exponential_backoff=True,
     retries=3,
-    retry_delay=15,  # With exponential backoff: 15s, 30s, 60s
+    delay_between_retries=15,  # With exponential backoff: 15s, 30s, 60s
 )
 
 if __name__ == "__main__":
