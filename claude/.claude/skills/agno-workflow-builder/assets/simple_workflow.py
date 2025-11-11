@@ -2,7 +2,7 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#   "agno",
+#   "agno>=2.2.10",
 #   "fastapi>=0.118.0",
 #   "ollama",
 #   "sqlalchemy",
