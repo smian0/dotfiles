@@ -153,7 +153,7 @@ chmod +x agno_agents/my_agent.py
 ./agno_agents/my_agent.py query --help
 ```
 
-**That's it!** See `assets/simple_cli_agent.py` for the complete template.
+**That's it!** See `assets/simple_agent_cli.py` for the complete template.
 
 For complex multi-step workflows, continue to the section below.
 
@@ -690,7 +690,239 @@ def analyze(ctx, file):
 ./agent.py --model gpt-oss:120b-cloud research query "Fast research"
 ```
 
-**See `assets/click_agent_simple.py` and `assets/click_agent_advanced.py` for complete examples.**
+**See `assets/agent_simple_cli.py` and `assets/agent_advanced_cli.py` for complete examples.**
+
+### 2.7. Discovering and Testing CLI Interfaces
+
+**When you create or encounter an Agno agent with Click CLI, follow this progressive discovery workflow:**
+
+#### Step 1: Discover Top-Level Commands
+
+```bash
+# Always start with --help to see what's available
+./agent.py --help
+
+# Output shows:
+# Usage: agent.py [OPTIONS] COMMAND [ARGS]...
+#
+# Options:
+#   --model TEXT          Model to use (default: glm-4.6:cloud)
+#   --debug/--no-debug    Enable debug mode
+#   --help                Show this message and exit
+#
+# Commands:
+#   query  Execute single query
+#   chat   Interactive chat mode
+#   batch  Process queries from file
+```
+
+**Key information extracted:**
+- ✅ Available commands: `query`, `chat`, `batch`
+- ✅ Global options: `--model`, `--debug`
+- ✅ Default values: `glm-4.6:cloud` for model
+
+#### Step 2: Explore Command-Specific Options
+
+```bash
+# Get detailed help for each command
+./agent.py query --help
+
+# Output shows:
+# Usage: agent.py query [OPTIONS] PROMPT
+#
+# Execute single query
+#
+# Arguments:
+#   PROMPT  [required]
+#
+# Options:
+#   --stream/--no-stream  Stream response (default: True)
+#   --help                Show this message and exit
+```
+
+**Repeat for all commands:**
+```bash
+./agent.py chat --help
+./agent.py batch --help
+```
+
+#### Step 3: Test Basic Functionality
+
+**Start with simplest command:**
+```bash
+# Test query command with basic prompt
+./agent.py query "Hello, can you hear me?"
+
+# Verify streaming output appears
+# Check for errors or unexpected behavior
+```
+
+**Test with options:**
+```bash
+# Test global option
+./agent.py --model gpt-oss:120b-cloud query "Fast query"
+
+# Test command option
+./agent.py query "Test" --no-stream
+```
+
+#### Step 4: Test Interactive Features
+
+```bash
+# Test chat mode
+./agent.py chat
+
+# In chat:
+# - Try basic conversation
+# - Test 'exit' or 'quit' commands
+# - Verify streaming works
+# - Check error handling
+```
+
+#### Step 5: Test Advanced Features
+
+```bash
+# Test batch processing
+echo -e "What is Python?\nExplain AI\nDefine recursion" > test_queries.txt
+./agent.py batch --file test_queries.txt
+
+# Verify:
+# - All queries processed
+# - Output format correct
+# - No errors between queries
+```
+
+#### Progressive Discovery Workflow for Complex CLIs
+
+**For multi-agent CLIs with command groups:**
+
+```bash
+# 1. Top-level help
+./agent.py --help
+
+# Output might show:
+# Commands:
+#   research  Research commands
+#   code      Code analysis commands
+#   config    Show configuration
+
+# 2. Explore each command group
+./agent.py research --help
+
+# Output shows subcommands:
+# Commands:
+#   query  Quick research query
+#   deep   Perform deep research
+
+# 3. Test subcommand help
+./agent.py research query --help
+
+# 4. Test actual functionality
+./agent.py research query "AI trends"
+
+# 5. Explore other groups
+./agent.py code --help
+./agent.py code analyze --help
+./agent.py code analyze ./test.py
+```
+
+#### Self-Documenting CLI Best Practices
+
+**When creating CLIs, always include:**
+
+1. **Clear docstrings for all commands:**
+```python
+@cli.command()
+def query(agent, prompt):
+    """Execute a single query and return results
+
+    This command processes one prompt and exits. Use for:
+    - Quick questions
+    - Scripting/automation
+    - Testing agent responses
+
+    Examples:
+        ./agent.py query "What is Python?"
+        ./agent.py --model gpt-oss:120b-cloud query "Fast query"
+    """
+    agent.print_response(prompt, stream=True)
+```
+
+2. **Descriptive help text for options:**
+```python
+@click.option('--model', default='glm-4.6:cloud',
+              help='Ollama model to use (e.g., gpt-oss:120b-cloud, glm-4.6:cloud)')
+@click.option('--debug/--no-debug', default=False,
+              help='Enable verbose debug output with full trace')
+@click.option('--file', type=click.File('r'), required=True,
+              help='Path to file with queries (one per line)')
+```
+
+3. **Informative group descriptions:**
+```python
+@cli.group()
+def research():
+    """Research and information gathering commands
+
+    Tools for querying, analyzing, and synthesizing research.
+    Supports multiple sources, depth levels, and output formats.
+    """
+    pass
+```
+
+#### Testing Checklist for New CLIs
+
+When you create a new CLI, verify:
+
+- [ ] `--help` shows all commands
+- [ ] Each command has `--help` with clear description
+- [ ] Global options work across all commands
+- [ ] Command-specific options work correctly
+- [ ] Required arguments are clearly marked
+- [ ] Optional arguments have sensible defaults
+- [ ] Error messages are helpful (e.g., missing required args)
+- [ ] Examples in docstrings actually work
+- [ ] Interactive commands can be exited cleanly
+- [ ] Batch/file processing handles errors gracefully
+
+#### Common CLI Discovery Patterns
+
+**Pattern 1: Unknown CLI structure**
+```bash
+# 1. Start broad
+./unknown_agent.py --help
+
+# 2. Identify command categories
+# Look for: research, code, data, config, etc.
+
+# 3. Drill down systematically
+./unknown_agent.py research --help
+./unknown_agent.py research query --help
+./unknown_agent.py research query "test"
+```
+
+**Pattern 2: Testing option combinations**
+```bash
+# Test global + command options together
+./agent.py --debug --model gpt-oss:120b-cloud query "test" --no-stream
+
+# Verify precedence and interaction
+```
+
+**Pattern 3: Discovering hidden features**
+```bash
+# Look for:
+# - Config commands (often reveal defaults)
+# - Version commands
+# - Validate commands
+# - Debug commands
+
+./agent.py config  # Might show current configuration
+./agent.py validate  # Might validate setup
+```
+
+**Key Principle:**
+> Always use `--help` at every level before running commands. Click generates comprehensive help automatically - use it to understand the CLI's full capabilities.
 
 ### 3. Creating Steps
 
@@ -1125,10 +1357,10 @@ See `references/debug_guide.md` for detailed documentation on all analysis types
 
 ## Templates
 
-**CLI Agents (All use Click command groups):**
-- **simple_cli_agent.py** - Minimal Click agent (~30 lines) with query + chat commands
-- **click_agent_simple.py** - Complete Click agent (~45 lines) with query, chat, and batch commands
-- **click_agent_advanced.py** - Multi-agent CLI (~90 lines) with command groups, subgroups, and configuration passing
+**CLI Agents (All use Click command groups with `_cli.py` suffix):**
+- **simple_agent_cli.py** - Minimal Click agent (~30 lines) with query + chat commands
+- **agent_simple_cli.py** - Complete Click agent (~85 lines) with query, chat, and batch commands
+- **agent_advanced_cli.py** - Multi-agent CLI (~240 lines) with command groups, subgroups, and configuration passing
 
 **Workflows:**
 - **simple_workflow.py** - Minimal workflow example (single agent) with uv inline dependencies
