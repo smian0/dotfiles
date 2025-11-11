@@ -68,7 +68,23 @@ Choose the approach that fits your task complexity.
 - ✅ **Structure**: Workflow with steps (Sequential, Parallel, Condition, Loop, Router, Steps), Click CLI wrapper optional
 - ✅ **Result**: 70-250 lines (workflow + debugging + CLI)
 
-**When in doubt:** Start with Click-based CLI agent. Upgrade to workflow when you need multi-step orchestration.
+### Use Multi-Agent Team When:
+- ✅ Multiple specialist agents need to **collaborate** (not just run in parallel)
+- ✅ Need a team leader to **coordinate delegation** to members
+- ✅ Agents should **see each other's work** to avoid duplication
+- ✅ Complex task requiring **discussion and consensus** among agents
+- ✅ Agents need **shared context** throughout the task
+- ✅ **Examples**: "research team with HN/Web/Academic specialists", "support team with profile/technical/billing agents", "RAG team with searcher/analyzer/synthesizer"
+- ✅ **Structure**: Team with leader + members, delegation modes (sequential or all-at-once)
+- ✅ **Result**: 40-120 lines (team + members + coordination instructions)
+
+**Key Differences:**
+- **CLI Agent**: Single agent, no orchestration
+- **Team**: Multiple agents **collaborate** under leader coordination (shared context, delegation)
+- **Workflow**: Multiple steps/agents in **predefined flow** (sequential, parallel, conditional, loops)
+- **Parallel Steps**: Independent concurrent execution (no coordination or shared context)
+
+**When in doubt:** Start with Click-based CLI agent → Upgrade to Team for collaboration → Upgrade to Workflow for complex orchestration.
 
 ## Quick Start
 
@@ -246,6 +262,308 @@ agent.print_response("Normal output")  # No debug
 - **Troubleshooting**: Enable per-run as needed
 
 **Note:** There is no `AGNO_DEBUG` environment variable. Use the `debug_mode` parameter instead.
+
+## Multi-Agent Teams
+
+### What are Teams?
+
+Teams enable multiple specialist agents to **collaborate** under a team leader who coordinates their work. Unlike Parallel steps (which run independently), Teams provide:
+- **Shared context**: All members see the team's conversation history
+- **Coordinated delegation**: Team leader decides who to task and when
+- **Collaboration modes**: Sequential delegation or all-at-once discussion
+- **Context sharing**: Members can see each other's work to avoid duplication
+
+### Teams vs Workflows vs Parallel Steps
+
+**Team** (Collaborative):
+- Multiple agents work together under leader coordination
+- Shared context and communication
+- Team leader delegates tasks strategically
+- Best for: Complex problems requiring multiple specializations working together
+
+**Workflow with Parallel Steps** (Independent):
+- Agents execute in parallel without coordination
+- No shared context between parallel branches
+- Predefined execution flow
+- Best for: Independent tasks that can run concurrently (e.g., research 3 companies)
+
+**Workflow with Sequential Steps** (Orchestrated):
+- Predefined step-by-step execution
+- Data flows from step to step
+- Conditional logic, loops, routing
+- Best for: Complex multi-step processes with conditional branching
+
+### Creating a Basic Team
+
+```python
+from agno.team import Team
+from agno.agent import Agent
+from agno.models.ollama import Ollama
+from agno.tools.hackernews import HackerNewsTools
+from agno.tools.duckduckgo import DuckDuckGoTools
+
+# Create specialist agents
+hn_researcher = Agent(
+    name="HackerNews Researcher",
+    model=Ollama(id="glm-4.6:cloud", options={"num_ctx": 198000}),
+    role="Research tech topics from Hacker News",
+    tools=[HackerNewsTools()],
+    instructions="Find relevant tech discussions and trends on Hacker News.",
+)
+
+web_researcher = Agent(
+    name="Web Researcher",
+    model=Ollama(id="glm-4.6:cloud", options={"num_ctx": 198000}),
+    role="Research topics from the web",
+    tools=[DuckDuckGoTools()],
+    instructions="Find comprehensive information from web sources.",
+)
+
+# Create coordinated team
+research_team = Team(
+    name="Research Team",
+    model=Ollama(id="glm-4.6:cloud", options={"num_ctx": 198000}),
+    members=[hn_researcher, web_researcher],
+    instructions=[
+        "You are a research team coordinator.",
+        "First, ask the HackerNews researcher to find relevant discussions.",
+        "Then, ask the Web researcher to gather additional context.",
+        "Finally, synthesize findings into a comprehensive report.",
+    ],
+    markdown=True,
+    show_members_responses=True,  # Display member work
+)
+
+# Execute team task
+research_team.print_response(
+    "Research the latest AI developments",
+    stream=True
+)
+```
+
+### Delegation Modes
+
+#### Sequential Delegation (Default)
+
+Team leader delegates to members **one at a time** based on need:
+
+```python
+research_team = Team(
+    name="Research Team",
+    members=[hn_researcher, web_researcher, analyst],
+    instructions=[
+        "First, delegate to HN researcher for tech discussions.",
+        "Then, delegate to web researcher for broader context.",
+        "Finally, delegate to analyst for synthesis.",
+    ],
+    # delegate_task_to_all_members=False  # Default behavior
+)
+```
+
+**When to use:**
+- Tasks require sequential handoffs (research → analysis → writing)
+- Later agents depend on earlier agents' work
+- Clear workflow with defined order
+
+#### All-At-Once Delegation (Collaborative)
+
+All members receive the task **simultaneously** and collaborate:
+
+```python
+discussion_team = Team(
+    name="Discussion Team",
+    members=[reddit_researcher, hn_researcher, academic_researcher],
+    instructions=[
+        "You are a discussion master.",
+        "All members should research their specialty simultaneously.",
+        "Facilitate consensus among member findings.",
+    ],
+    delegate_task_to_all_members=True,  # Enable collaborative mode
+    show_members_responses=True,
+)
+```
+
+**When to use:**
+- Need diverse perspectives on same topic
+- Members should discuss and reach consensus
+- Parallel research with synthesis
+- Brainstorming or analysis requiring multiple viewpoints
+
+### Team Collaboration Features
+
+#### Share Member Interactions
+
+Enable members to see each other's actions **during execution**:
+
+```python
+support_team = Team(
+    name="Support Team",
+    members=[profile_agent, technical_agent, billing_agent],
+    instructions=["Coordinate to avoid duplicate work."],
+    share_member_interactions=True,  # Members see each other's actions
+    show_members_responses=True,
+)
+```
+
+**Benefit**: Agents avoid redundant work by seeing what teammates already did.
+
+#### Add Member Tools to Context
+
+Control whether team leader has access to member tools:
+
+```python
+team = Team(
+    name="Research Team",
+    members=[tool_using_agent_1, tool_using_agent_2],
+    add_member_tools_to_context=False,  # Leader doesn't have member tools
+)
+```
+
+**When `False` (recommended)**:
+- Team leader delegates to specialists for tool use
+- Cleaner separation of responsibilities
+- Forces proper delegation pattern
+
+**When `True`:**
+- Team leader can use member tools directly
+- May bypass delegation (less collaborative)
+
+### Team with Structured Output
+
+Teams can produce structured data using Pydantic schemas:
+
+```python
+from pydantic import BaseModel, Field
+from typing import List
+
+class ResearchReport(BaseModel):
+    title: str = Field(..., description="Report title")
+    summary: str = Field(..., description="Executive summary")
+    findings: List[str] = Field(..., description="Key findings")
+    sources: List[str] = Field(..., description="Source URLs")
+
+research_team = Team(
+    name="Research Team",
+    members=[hn_researcher, web_researcher],
+    instructions=["Coordinate research and produce structured report."],
+    output_schema=ResearchReport,  # Enforce structured output
+    markdown=True,
+)
+
+# Team output will conform to ResearchReport schema
+result = research_team.run("Research AI trends")
+print(result.content.title)  # Access structured fields
+```
+
+### Teams in Workflows
+
+Use teams **within workflow steps** for collaborative sub-tasks:
+
+```python
+from agno.workflow import Workflow, Step
+
+# Create team for research phase
+research_team = Team(
+    name="Research Team",
+    members=[hn_researcher, web_researcher, academic_researcher],
+    instructions=["Collaborate on comprehensive research."],
+    delegate_task_to_all_members=True,
+)
+
+# Use team in workflow step
+workflow = Workflow(
+    name="Content Creation",
+    steps=[
+        Step(name="Research", team=research_team),  # Team step
+        Step(name="Write", agent=writer),
+        Step(name="Edit", agent=editor),
+    ],
+)
+```
+
+**Pattern**: Team for collaborative research → Individual agents for specialized tasks
+
+### When to Use Teams
+
+**Use Teams when:**
+- ✅ Multiple specialists need to collaborate on same task
+- ✅ Need coordinated delegation (not just parallel execution)
+- ✅ Agents should see each other's work
+- ✅ Task requires discussion and consensus
+- ✅ Complex problem needing multiple perspectives
+
+**Use Parallel Steps instead when:**
+- ❌ Tasks are completely independent
+- ❌ No coordination or shared context needed
+- ❌ Simple concurrent execution sufficient
+
+**Use Sequential Steps instead when:**
+- ❌ Fixed, predefined workflow
+- ❌ No collaboration needed between agents
+- ❌ Clear handoff pattern (output of one → input of next)
+
+### Complete Team Example
+
+```python
+# Disable Agno telemetry before importing agno modules
+import os
+os.environ["AGNO_TELEMETRY"] = "false"
+
+from agno.team import Team
+from agno.agent import Agent
+from agno.models.ollama import Ollama
+from agno.tools.hackernews import HackerNewsTools
+from agno.tools.duckduckgo import DuckDuckGoTools
+from pydantic import BaseModel, Field
+from typing import List
+
+# Define structured output
+class TechReport(BaseModel):
+    title: str = Field(..., description="Report title")
+    summary: str = Field(..., description="Executive summary")
+    key_points: List[str] = Field(..., description="Key findings")
+    sources: List[str] = Field(..., description="Reference URLs")
+
+# Create specialist agents
+hn_specialist = Agent(
+    name="HN Specialist",
+    model=Ollama(id="glm-4.6:cloud", options={"num_ctx": 198000}),
+    role="Research Hacker News for tech discussions",
+    tools=[HackerNewsTools()],
+    instructions="Find trending tech discussions and developer perspectives.",
+)
+
+web_specialist = Agent(
+    name="Web Specialist",
+    model=Ollama(id="glm-4.6:cloud", options={"num_ctx": 198000}),
+    role="Research web for comprehensive context",
+    tools=[DuckDuckGoTools()],
+    instructions="Gather comprehensive web information and news.",
+)
+
+# Create collaborative team
+tech_research_team = Team(
+    name="Tech Research Team",
+    model=Ollama(id="glm-4.6:cloud", options={"num_ctx": 198000}),
+    members=[hn_specialist, web_specialist],
+    instructions=[
+        "You coordinate a tech research team.",
+        "Delegate to HN specialist for developer discussions.",
+        "Delegate to Web specialist for broader context.",
+        "Synthesize findings into comprehensive report.",
+    ],
+    output_schema=TechReport,
+    markdown=True,
+    show_members_responses=True,
+)
+
+# Execute team task
+if __name__ == "__main__":
+    tech_research_team.print_response(
+        "Research the latest developments in AI code generation",
+        stream=True
+    )
+```
 
 ### Creating a New Workflow
 
