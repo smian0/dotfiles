@@ -15,10 +15,11 @@ This skill manages Model Context Protocol (MCP) server configurations using a **
 
 **Use this skill when:**
 - Adding or removing MCP servers
-- Syncing `~/.claude/.mcp.json` to user-level registration
+- Syncing `~/.claude/.mcp.json` to user-level registration (including "sync to claude.json")
 - Validating MCP server consistency
 - Debugging MCP server issues
 - Setting up new projects with MCP servers
+- User says "sync to claude.json" or similar sync requests
 
 **Key Technologies:**
 - `~/.claude/.mcp.json`: Declarative manifest (version-controlled)
@@ -37,7 +38,7 @@ Claude automatically routes MCP management requests to specialized workflows bas
 
 | User Request Pattern | Workflow File | Trigger Conditions |
 |---------------------|---------------|-------------------|
-| "sync user MCP servers" | `workflows/sync-user.md` | User modified `.mcp.json` or servers not loading |
+| "sync user MCP servers", "sync to claude.json", "sync .mcp.json", "register MCP servers", "sync MCP config" | `workflows/sync-user.md` | User modified `.mcp.json` or servers not loading |
 | "add MCP server" | `workflows/add-server.md` | User wants to install new server |
 | "remove MCP server" | `workflows/remove-server.md` | User wants to uninstall server |
 | "validate MCP config" | `workflows/validate.md` | User wants to check configuration health |
