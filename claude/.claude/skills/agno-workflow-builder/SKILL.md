@@ -101,7 +101,7 @@ agent = Agent(
     # Automatic retry with exponential backoff (recommended)
     exponential_backoff=True,
     retries=3,
-    retry_delay=15,  # With exponential backoff: 15s, 30s, 60s
+    delay_between_retries=15,  # With exponential backoff: 15s, 30s, 60s
 )
 
 if __name__ == "__main__":
@@ -174,7 +174,7 @@ agent = Agent(
     instructions="Your agent instructions here...",
     exponential_backoff=True,
     retries=3,
-    retry_delay=15,
+    delay_between_retries=15,
 )
 
 # Create workflow
@@ -261,14 +261,14 @@ agent = Agent(
     # Automatic retry with exponential backoff (recommended for production)
     exponential_backoff=True,
     retries=3,
-    retry_delay=15,
+    delay_between_retries=15,
 )
 ```
 
 **Retry configuration (recommended):**
 - `exponential_backoff=True` - Enables automatic retries with exponential backoff
 - `retries=3` - Number of retry attempts (3 retries = up to 4 total attempts)
-- `retry_delay=15` - Initial delay in seconds (with exponential backoff: 15s, 30s, 60s)
+- `delay_between_retries=15` - Initial delay in seconds (with exponential backoff: 15s, 30s, 60s)
 
 This handles transient model provider errors automatically, with the third retry occurring at ~1 minute.
 
@@ -291,7 +291,7 @@ agent = Agent(
     markdown=True,
     exponential_backoff=True,
     retries=3,
-    retry_delay=15,
+    delay_between_retries=15,
 )
 ```
 
@@ -318,11 +318,123 @@ def create_specialized_agent(task_name: str) -> Agent:
         markdown=True,
         exponential_backoff=True,
         retries=3,
-        retry_delay=15,
+        delay_between_retries=15,
     )
 ```
 
 Use this pattern when creating multiple similar agents with different specializations.
+
+### 2.5. Human-in-the-Loop (User Confirmation)
+
+Add user confirmation for sensitive operations using Agno's built-in `requires_confirmation` pattern.
+
+#### Tool with Confirmation Required
+
+```python
+from agno.tools import tool
+from rich.console import Console
+from rich.prompt import Prompt
+
+console = Console()
+
+@tool(requires_confirmation=True)
+def send_email(recipient: str, subject: str, body: str) -> str:
+    """Send an email (requires user confirmation)"""
+    # Email sending logic here
+    return f"Email sent to {recipient}"
+
+agent = Agent(
+    model=Ollama(id="glm-4.6:cloud"),
+    tools=[send_email],
+    instructions="Help the user with email tasks, but always ask for confirmation.",
+    markdown=True,
+    exponential_backoff=True,
+    retries=3,
+    delay_between_retries=15,
+)
+```
+
+#### Handling Confirmation Flow
+
+```python
+# Run the agent
+run_response = agent.run("Send an email to john@example.com about the meeting")
+
+# Check if paused for confirmation
+if run_response.is_paused:
+    for tool in run_response.tools_requiring_confirmation:
+        # Show tool details to user
+        console.print(
+            f"Tool [bold blue]{tool.tool_name}({tool.tool_args})[/] requires confirmation."
+        )
+
+        # Prompt for confirmation
+        message = Prompt.ask(
+            "Do you want to continue?",
+            choices=["y", "n"],
+            default="y"
+        ).strip().lower()
+
+        if message == "n":
+            tool.confirmed = False
+            tool.confirmation_note = "User declined this operation"
+        else:
+            tool.confirmed = True
+
+    # Continue execution
+    run_response = agent.continue_run(run_response=run_response)
+
+# Print final response
+from agno.utils import pprint
+pprint.pprint_run_response(run_response)
+```
+
+#### Multiple Tools with Confirmation
+
+```python
+from agno.tools.wikipedia import WikipediaTools
+
+agent = Agent(
+    model=Ollama(id="glm-4.6:cloud"),
+    tools=[
+        send_email,  # Custom tool with @tool(requires_confirmation=True)
+        WikipediaTools(requires_confirmation_tools=["search_wikipedia"]),
+    ],
+    markdown=True,
+)
+
+# The confirmation loop handles ALL tools requiring confirmation
+run_response = agent.run("Search Wikipedia and email me the results")
+while run_response.is_paused:
+    for tool in run_response.tools_requiring_confirmation:
+        console.print(f"Confirm: {tool.tool_name}({tool.tool_args})")
+        tool.confirmed = Prompt.ask("Continue?", choices=["y", "n"]) == "y"
+    run_response = agent.continue_run(run_response=run_response)
+```
+
+**When to use:**
+- Sensitive operations (sending emails, making purchases, deleting data)
+- External API calls that cost money
+- Operations that modify important data
+- Any action requiring explicit user approval
+
+**Dependencies:** `pip install rich` (for console prompts)
+
+#### Async Version
+
+```python
+import asyncio
+
+# Async agent execution with confirmation
+run_response = asyncio.run(agent.arun("Send an email..."))
+if run_response.is_paused:
+    for tool in run_response.tools_requiring_confirmation:
+        console.print(f"Confirm: {tool.tool_name}({tool.tool_args})")
+        tool.confirmed = Prompt.ask("Continue?", choices=["y", "n"]) == "y"
+    run_response = asyncio.run(agent.acontinue_run(run_response=run_response))
+```
+
+Use `agent.arun()` and `agent.acontinue_run()` for async workflows.
 
 ### 3. Creating Steps
 
