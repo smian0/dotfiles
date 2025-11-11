@@ -562,6 +562,38 @@ market_research_workflow = Workflow(
 
 **See**: `examples/workflow_with_team_research.py` for complete working example with market research workflow.
 
+#### Verified Reference Example
+
+For a **tested, working** minimal example, see `examples/team_workflow_reference.py`:
+
+```python
+# Verified working pattern (tested end-to-end)
+research_team = Team(
+    name="Research Team",
+    members=[researcher_a, researcher_b],
+    instructions=["Coordinate research between specialists."],
+)
+
+workflow = Workflow(
+    name="Team Research Workflow",
+    steps=[
+        Step(name="Research Phase", team=research_team),
+        Step(name="Summarize", agent=summarizer),
+    ],
+)
+
+# Execute workflow
+result = workflow.run(input=topic, stream=False)  # stream=False returns result object
+print(result.content)
+```
+
+**Verified behaviors**:
+- Team coordinates 2 specialists sequentially
+- Agents see each other's responses (shared context)
+- Workflow passes team output to summarizer agent
+- Returns structured result with `.content` attribute
+- **Important**: Use `stream=False` to get result object (not generator)
+
 ### When to Use Teams
 
 **Use Teams when:**

@@ -215,8 +215,8 @@ market_research_workflow = Workflow(
 )
 @click.option(
     "--stream/--no-stream",
-    default=True,
-    help="Stream workflow output",
+    default=False,
+    help="Stream workflow output (note: stream=True returns generator, not result object)",
 )
 def main(topic: str, stream: bool):
     """
@@ -233,7 +233,16 @@ def main(topic: str, stream: bool):
         stream=stream,
     )
 
-    if result:
+    if stream:
+        # When stream=True, result is a generator
+        click.echo("\n" + "="*80)
+        click.echo("✅ Market Research Workflow Streaming...")
+        click.echo("="*80 + "\n")
+        for chunk in result:
+            if hasattr(chunk, 'content') and chunk.content:
+                click.echo(chunk.content)
+    elif result:
+        # When stream=False, result is a WorkflowOutput object
         click.echo("\n" + "="*80)
         click.echo("✅ Market Research Workflow Complete")
         click.echo("="*80 + "\n")
