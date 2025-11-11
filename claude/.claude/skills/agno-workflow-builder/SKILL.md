@@ -97,7 +97,7 @@ from agno.models.ollama import Ollama
 agent = Agent(
     model=Ollama(
         id="glm-4.6:cloud",
-        options={"num_ctx": 131072}  # 128K context window
+        options={"num_ctx": 198000}  # 198K context window - full capacity
     ),
     instructions="You are a helpful AI assistant.",
     markdown=True,
@@ -175,7 +175,7 @@ agent = Agent(
     name="Assistant",
     model=Ollama(
         id="glm-4.6:cloud",
-        options={"num_ctx": 131072}
+        options={"num_ctx": 198000}
     ),
     instructions="Your agent instructions here...",
     exponential_backoff=True,
@@ -290,7 +290,7 @@ agent = Agent(
     model=Ollama(
         id="glm-4.6:cloud",
         options={
-            "num_ctx": 131072,  # 128K tokens (recommended)
+            "num_ctx": 198000,  # 198K - USE THIS BY DEFAULT
             "temperature": 0.6,
         }
     ),
@@ -303,9 +303,8 @@ agent = Agent(
 ```
 
 **Context window recommendations for glm-4.6:cloud:**
-- **Conservative**: 65536 (64K tokens)
-- **Recommended**: 131072 (128K tokens)
-- **Maximum**: 198000 (198K tokens - full capacity)
+- **Recommended**: 198000 (198K tokens) - **USE THIS BY DEFAULT** for full capacity
+- **Minimum**: 65536 (64K tokens) - only for simple, short operations if needed
 
 **Why this matters:**
 - Ollama **silently discards leading context** when limit exceeded
@@ -330,7 +329,7 @@ agent = Agent(
     name="Research Agent",
     model=Ollama(
         id="glm-4.6:cloud",
-        options={"num_ctx": 131072}
+        options={"num_ctx": 198000}
     ),
     tools=[tools],
     instructions="Use duckduckgo_news to search for recent information...",
@@ -360,7 +359,7 @@ def create_specialized_agent(task_name: str) -> Agent:
         name=f"{task_name} Specialist",
         model=Ollama(
             id="glm-4.6:cloud",
-            options={"num_ctx": 131072}
+            options={"num_ctx": 198000}
         ),
         tools=[tools],
         instructions=f"Focus exclusively on {task_name}...",
@@ -395,7 +394,7 @@ def send_email(recipient: str, subject: str, body: str) -> str:
 agent = Agent(
     model=Ollama(
         id="glm-4.6:cloud",
-        options={"num_ctx": 131072}
+        options={"num_ctx": 198000}
     ),
     tools=[send_email],
     instructions="Help the user with email tasks, but always ask for confirmation.",
@@ -449,7 +448,7 @@ from agno.tools.wikipedia import WikipediaTools
 agent = Agent(
     model=Ollama(
         id="glm-4.6:cloud",
-        options={"num_ctx": 131072}
+        options={"num_ctx": 198000}
     ),
     tools=[
         send_email,  # Custom tool with @tool(requires_confirmation=True)

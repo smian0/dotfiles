@@ -28,7 +28,7 @@ from agno.models.ollama import Ollama
 agent = Agent(
     model=Ollama(
         id="glm-4.6:cloud",
-        options={"num_ctx": 131072}  # 128K context window (critical!)
+        options={"num_ctx": 198000}  # 198K context window - full capacity
     ),
     instructions="""
         You are a helpful AI assistant.
