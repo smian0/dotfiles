@@ -676,6 +676,133 @@ if __name__ == "__main__":
     )
 ```
 
+## Real-World Example: Market Analysis with yfinance + Teams
+
+For a complete, **tested working example** combining custom tools, teams, and workflows, see:
+**`examples/market_analysis_workflow.py`**
+
+### What This Example Demonstrates
+
+**Pattern**: Data Fetch → Team Analysis → Report Generation
+
+```python
+# Workflow structure (verified working)
+market_analysis_workflow = Workflow(
+    steps=[
+        Step(name="Fetch Market Data", executor=fetch_market_data),       # Custom executor with yfinance
+        Step(name="Analyst Team Review", team=analysis_team),             # 3-specialist team
+        Step(name="Generate Report", agent=report_writer),                # Final report agent
+    ],
+)
+```
+
+### Key Components
+
+**1. Custom yfinance Tools** (190 lines)
+- `YFinanceTools` class with 4 methods: `get_stock_info`, `get_price_history`, `get_financials`, `get_key_metrics`
+- Real market data from Yahoo Finance API
+- Returns formatted markdown data for agents to analyze
+
+**2. Specialist Team** (3 members)
+- **Fundamental Analyst**: Financial health, profitability, valuation metrics
+- **Technical Analyst**: Price trends, momentum, volatility analysis
+- **Risk Analyst**: Risk metrics, growth potential, risk-reward balance
+- Team leader coordinates sequential analysis with shared context
+
+**3. Custom Executor** (`fetch_market_data`)
+- Extracts ticker from workflow input
+- Calls all yfinance tools to gather comprehensive data
+- Returns `StepOutput(content=data)` for team analysis
+- **Critical**: `StepOutput` only accepts `content` parameter (no `name` parameter)
+
+**4. Report Writer Agent**
+- Receives raw data + team analysis
+- Generates professional markdown report with structured sections
+- Output: Executive Summary, Company Overview, Fundamental/Technical/Risk Analysis, Investment Thesis, Key Metrics Table
+
+### Verified Execution
+
+**Test command:**
+```bash
+python3 market_analysis_workflow.py AAPL
+```
+
+**What happens:**
+1. Fetches real AAPL data from yfinance (company info, prices, financials, metrics)
+2. Fundamental analyst reviews financial health → provides insights
+3. Technical analyst reviews price trends → provides insights
+4. Risk analyst reviews risks and growth → provides insights
+5. Report writer synthesizes all data + insights → generates comprehensive report
+
+**Output sample** (from actual execution):
+```markdown
+# Apple Inc. (AAPL) Market Analysis Report
+
+## 1. Executive Summary
+Apple Inc. demonstrates exceptional financial strength and robust technical momentum,
+justifying its premium valuation. However, its massive $4 trillion market cap presents
+significant growth challenges...
+
+## 3. Fundamental Analysis
+- Exceptional Profitability: 26.92% profit margin, 31.65% operating margin, 171.42% ROE
+- Strong Cash Generation: $78.9 billion free cash flow
+- Premium Valuation: P/E ratios over 36x
+- Stability Moat: Strong balance sheet and deeply integrated ecosystem
+
+## 4. Technical Analysis
+- Robust Uptrend: Trading just 2.9% below 52-week high
+- Consolidation Phase: Around $269 level
+- Key Resistance: $277.32
+- Low Volatility: 1.41% daily volatility
+
+## 5. Risk Assessment
+- Scale Constraints: $4 trillion market cap creates growth challenges
+- Regulatory Headwinds: Ongoing regulatory scrutiny
+- High Market Confidence: 0.74% short interest, 41 analysts with BUY ratings
+```
+
+### Key Learnings from This Example
+
+**Custom Tools Integration:**
+- Create `Toolkit` subclass with `register()` for each tool method
+- Tools automatically available to agents
+- Return formatted strings (markdown) for easy LLM consumption
+
+**StepOutput Gotcha:**
+```python
+# ❌ WRONG - causes TypeError
+return StepOutput(name="My Step", content=data)
+
+# ✅ CORRECT - only pass content
+return StepOutput(content=data)
+```
+
+**Team Collaboration Works:**
+- Each analyst receives market data + previous analysts' findings
+- Shared context enables synthesis that parallel steps cannot achieve
+- Team leader coordinates who analyzes what
+
+**Real API Integration:**
+- yfinance fetches live market data (not mocked)
+- Workflow handles real-world data formats
+- Error handling for API failures included in tools
+
+**Usage:**
+```bash
+# Default ticker (AAPL)
+./market_analysis_workflow.py
+
+# Custom ticker
+./market_analysis_workflow.py MSFT
+./market_analysis_workflow.py TSLA
+```
+
+This example shows how to build production-ready workflows that:
+1. Integrate with external APIs (yfinance)
+2. Use custom tools for data gathering
+3. Leverage teams for collaborative analysis
+4. Generate professional structured outputs
+
 ### Creating a New Workflow
 
 Create workflows as single-file `uv` scripts with inline dependencies:

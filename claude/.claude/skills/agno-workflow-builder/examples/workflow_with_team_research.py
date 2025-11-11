@@ -143,7 +143,6 @@ Full Research Data:
 """
 
     return StepOutput(
-        name="Process Research",
         content=processed,
     )
 
