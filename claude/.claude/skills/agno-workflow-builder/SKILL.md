@@ -1426,7 +1426,191 @@ Use regular tools (without async) when:
 - ❌ Custom @tool decorated functions (unless they use MCP internally)
 - ❌ Simple stateless API calls
 
-### 2.5. Human-in-the-Loop (User Confirmation)
+### 2.5. MCP Tools with Structured Output (Two-Model Pattern)
+
+When you need both **MCP tool invocation** AND **structured JSON output**, use Agno's `parser_model` parameter to separate responsibilities between models.
+
+#### Why Two Models?
+
+**The Challenge:**
+- Some models excel at tool calling but struggle with structured output
+- Other models excel at JSON parsing but lack tool calling support
+- You want to use the best model for each task
+
+**The Solution:**
+- **Main Model** (`model=`) - Handles tool invocation and reasoning
+- **Parser Model** (`parser_model=`) - Parses output into structured format
+
+#### Complete Working Pattern
+
+```python
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["agno", "ollama"]
+#
+# [tool.uv.sources]
+# agno = { path = "../../libs/agno", editable = true }
+# ///
+
+# Disable Agno telemetry before importing agno modules
+import os
+os.environ["AGNO_TELEMETRY"] = "false"
+
+import asyncio
+from typing import List
+from pydantic import BaseModel, Field
+from agno.agent import Agent
+from agno.models.ollama import Ollama
+from agno.tools.mcp import MCPTools
+
+
+class LibraryDocumentation(BaseModel):
+    """Structured documentation for a library"""
+    library_name: str = Field(..., description="Name of the library")
+    summary: str = Field(..., description="One-sentence summary")
+    key_features: List[str] = Field(..., description="5-7 key features")
+    use_cases: List[str] = Field(..., description="3-5 common use cases")
+    getting_started: str = Field(..., description="Quick start code example")
+
+
+async def async_main():
+    """Async entry point for MCP workflow with structured output"""
+
+    # Initialize Context7 MCP tools
+    mcp_tools = MCPTools(
+        command="npx -y @upstash/context7-mcp",
+        transport="stdio",
+    )
+
+    # CRITICAL: Use async context manager
+    async with mcp_tools:
+        # Initialize tools within the session
+        await mcp_tools.initialize()
+
+        print(f"✓ MCP tools initialized")
+        print(f"  Available tools: {list(mcp_tools.functions.keys())}\n")
+
+        # Create agent with TWO MODELS
+        agent = Agent(
+            name="Documentation Parser",
+            # Main model: Handles MCP tool invocation
+            model=Ollama(
+                id="glm-4.6:cloud",
+                options={"num_ctx": 198000}
+            ),
+            # Parser model: Converts output to structured JSON
+            parser_model=Ollama(id="gpt-oss:120b-cloud"),
+            tools=[mcp_tools],
+            instructions=[
+                "You are a documentation assistant.",
+                "WORKFLOW:",
+                "1. Use resolve-library-id MCP tool to find the library",
+                "2. Use get-library-docs MCP tool to fetch documentation",
+                "3. Extract and structure the information",
+                "NEVER answer from training data - always use MCP tools.",
+            ],
+            output_schema=LibraryDocumentation,  # Pydantic schema
+            markdown=False,
+            exponential_backoff=True,
+            retries=3,
+            delay_between_retries=15,
+        )
+
+        # Execute agent with MCP tools
+        response = await agent.arun("Fetch documentation for FastAPI")
+
+        # Access structured output
+        doc = response.content
+        print(f"Library: {doc.library_name}")
+        print(f"Summary: {doc.summary}")
+        print(f"Features: {len(doc.key_features)}")
+
+    # MCP session closes automatically
+
+
+def main():
+    """Synchronous entry point"""
+    asyncio.run(async_main())
+
+
+if __name__ == "__main__":
+    main()
+```
+
+#### Key Configuration
+
+**Two-Model Setup:**
+```python
+agent = Agent(
+    model=Ollama(id="glm-4.6:cloud"),           # Tool invocation
+    parser_model=Ollama(id="gpt-oss:120b-cloud"),  # JSON parsing
+    tools=[mcp_tools],
+    output_schema=LibraryDocumentation,
+)
+```
+
+**Workflow:**
+1. `glm-4.6:cloud` receives user query
+2. `glm-4.6:cloud` invokes MCP tools (Context7) to fetch documentation
+3. `glm-4.6:cloud` generates natural language response
+4. `gpt-oss:120b-cloud` parses response into structured JSON
+5. Pydantic validates against `LibraryDocumentation` schema
+
+#### Schema Design Best Practices
+
+**Keep schemas simple for parser models:**
+
+```python
+# ✅ GOOD - Flat structure with simple types
+class LibraryDoc(BaseModel):
+    name: str
+    summary: str
+    features: List[str]  # List of strings (simple)
+    use_cases: List[str]
+
+# ❌ AVOID - Complex nested structures
+class LibraryDoc(BaseModel):
+    name: str
+    features: List[Feature]  # Nested Pydantic models
+    metadata: Dict[str, Any]  # Complex nested dicts
+```
+
+**Why:** Parser models may struggle with deeply nested schemas. Start simple, add complexity only if needed.
+
+#### When to Use This Pattern
+
+**Use two-model pattern when:**
+- ✅ Main model can invoke tools but struggles with structured output
+- ✅ Need reliable JSON parsing from natural language
+- ✅ Want to optimize for both tool calling and output formatting
+- ✅ Different models excel at different aspects
+
+**Don't use when:**
+- ❌ Single model handles both well (e.g., Claude, GPT-4)
+- ❌ Output doesn't need to be structured
+- ❌ Extra latency from second model is unacceptable
+
+#### Model Recommendations
+
+**For Tool Invocation (main model):**
+- `glm-4.6:cloud` - 355B, excellent tool calling, 198K context
+- Any model with strong function calling support
+
+**For Structured Output (parser_model):**
+- `gpt-oss:120b-cloud` - Fast, reliable JSON parsing
+- `gpt-5-mini` - Excellent structured output support
+- `Osmosis/Osmosis-Structure-0.6B` - Specialized for structured output
+
+#### Reference Examples
+
+See complete working examples in `examples/`:
+- **`agno_mcp.py`** - Basic MCP tool integration (documentation lookup)
+- **`agno_mcp_structured.py`** - MCP + structured output with parser_model
+
+Both examples use Context7 MCP for documentation lookup and demonstrate the async initialization pattern.
+
+### 2.6. Human-in-the-Loop (User Confirmation)
 
 Add user confirmation for sensitive operations using Agno's built-in `requires_confirmation` pattern.
 
