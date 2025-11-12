@@ -146,11 +146,32 @@
           }
         ]
       }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "statusline hook precompact"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "statusline hook stop"
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
     "type": "command",
-    "command": "$HOME/.claude/scripts/statusline.sh"
+    "command": "/Users/smian/.local/bin/statusline",
+    "padding": 0
   },
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true
