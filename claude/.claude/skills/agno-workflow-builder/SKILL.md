@@ -1073,6 +1073,359 @@ def create_specialized_agent(task_name: str) -> Agent:
 
 Use this pattern when creating multiple similar agents with different specializations.
 
+### 2.4. Integrating MCP Tools (External Services)
+
+**CRITICAL:** MCP tools require proper async initialization or they will fail silently with cryptic errors.
+
+#### When to Use MCP Tools
+
+Use MCP (Model Context Protocol) tools when:
+- ✅ Integrating external services not covered by built-in Agno tools
+- ✅ Need access to proprietary APIs (Xero, Salesforce, custom services)
+- ✅ Want to use community-built MCP servers
+- ✅ Building workflows that interact with external systems
+
+**Examples:**
+- Xero accounting integration (xero-mcp-server)
+- Database queries (postgres-mcp, sqlite-mcp)
+- Custom API integrations
+- External data sources
+
+#### The Critical Async Pattern
+
+**⚠️ WARNING:** MCP tools will NOT work if you skip the async context manager pattern.
+
+**Symptoms of incorrect initialization:**
+- `ERROR: Session is not initialized`
+- XML-format tool calls that can't be parsed: `<invoke name="tool">...`
+- `unterminated string literal` errors
+- Tools appear registered but don't execute
+
+**Root Cause:** MCP tools created but never initialized - missing async context manager.
+
+#### Complete Working Pattern
+
+```python
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#   "agno",
+#   "ollama",
+#   "sqlalchemy",
+#   "click",
+# ]
+#
+# [tool.uv.sources]
+# agno = { path = "../../libs/agno", editable = true }
+# ///
+
+# Disable Agno telemetry before importing agno modules
+import os
+os.environ["AGNO_TELEMETRY"] = "false"
+
+import asyncio
+import click
+from pathlib import Path
+from agno.agent import Agent
+from agno.workflow import Workflow, Step
+from agno.models.ollama import Ollama
+from agno.db.sqlite import SqliteDb
+from agno.tools.mcp import MCPTools
+
+
+def create_workflow(mcp_tools: MCPTools, db_file: str) -> Workflow:
+    """Create workflow with initialized MCP tools
+
+    IMPORTANT: This function should NOT be async.
+    It receives already-initialized tools from the async context manager.
+    """
+    agent = Agent(
+        name="MCP Agent",
+        model=Ollama(
+            id="glm-4.6:cloud",
+            options={"num_ctx": 198000}
+        ),
+        tools=[mcp_tools],
+        instructions="Use the MCP tools to interact with external services.",
+        markdown=True,
+        exponential_backoff=True,
+        retries=3,
+        delay_between_retries=15,
+    )
+
+    workflow = Workflow(
+        name="MCP Workflow",
+        steps=[Step(name="Process", agent=agent)],
+        store_events=True,
+        db=SqliteDb(db_file=db_file),
+    )
+
+    return workflow
+
+
+async def async_main(input_data: str, debug: bool):
+    """Async entry point for MCP workflow execution
+
+    This pattern is REQUIRED for MCP tools to work correctly.
+    """
+    # Setup database
+    db_file = str(Path(__file__).parent / "tmp" / "workflow.db")
+    Path(db_file).parent.mkdir(parents=True, exist_ok=True)
+
+    # Setup environment variables for MCP server (if needed)
+    env_vars = {
+        "API_KEY": os.getenv("API_KEY", ""),
+        # Add other required env vars
+    }
+
+    # Initialize MCP tools
+    mcp_tools = MCPTools(
+        command="npx -y @xeroapi/xero-mcp-server@latest",  # Example: Xero MCP server
+        transport="stdio",
+        env=env_vars,
+    )
+
+    # CRITICAL: Use async context manager
+    async with mcp_tools:
+        # Initialize tools within the session
+        await mcp_tools.initialize()
+
+        if debug:
+            print("✓ MCP tools initialized")
+            print(f"  Available tools: {list(mcp_tools.functions.keys())}")
+
+        # Create workflow with initialized tools
+        workflow = create_workflow(mcp_tools, db_file)
+
+        # Execute workflow asynchronously
+        response = await workflow.arun(
+            input=input_data,
+            stream=False,  # Set True for streaming output
+        )
+
+        # Session stays open during entire workflow execution
+        print(response.content)
+
+    # MCP session closes automatically when exiting context manager
+
+
+# Click CLI wrapper
+@click.group()
+def cli():
+    """MCP Workflow CLI"""
+    pass
+
+
+@cli.command()
+@click.argument('input_data')
+@click.option('--debug/--no-debug', default=False, help='Enable debug output')
+def run(input_data, debug):
+    """Execute workflow with MCP tools"""
+    asyncio.run(async_main(input_data, debug))
+
+
+if __name__ == "__main__":
+    cli()
+```
+
+#### Key Architectural Changes
+
+**1. Separate workflow creation from execution:**
+```python
+# ✅ CORRECT - Workflow creation function (NOT async)
+def create_workflow(mcp_tools: MCPTools, db_file: str) -> Workflow:
+    """Receives already-initialized tools"""
+    agent = Agent(tools=[mcp_tools], ...)
+    return Workflow(steps=[...])
+
+# ✅ CORRECT - Async execution wrapper
+async def async_main(...):
+    async with mcp_tools:
+        await mcp_tools.initialize()
+        workflow = create_workflow(mcp_tools, ...)
+        response = await workflow.arun(input=...)
+```
+
+**2. Use `asyncio.run()` at entry point:**
+```python
+def main(input_data: str, debug: bool):
+    """Synchronous entry point that runs async workflow"""
+    asyncio.run(async_main(input_data, debug))
+
+if __name__ == "__main__":
+    # Option 1: Direct call
+    main("Process this", debug=False)
+
+    # Option 2: Click CLI wrapper (recommended)
+    cli()
+```
+
+**3. Execute with `await workflow.arun()`:**
+```python
+# ✅ CORRECT - Async execution
+response = await workflow.arun(input=data)
+
+# ❌ WRONG - Synchronous execution (won't work with MCP)
+response = workflow.run(input=data)
+```
+
+#### Common Mistakes and Solutions
+
+**❌ Mistake 1: Creating MCP tools without async context manager**
+```python
+# WRONG - Tools created but never initialized
+mcp_tools = MCPTools(command="...", transport="stdio")
+workflow = Workflow(steps=[Step(agent=Agent(tools=[mcp_tools]))])
+workflow.run(input="...")  # FAILS with "Session is not initialized"
+```
+
+**✅ Solution: Use async context manager**
+```python
+# CORRECT
+async with mcp_tools:
+    await mcp_tools.initialize()
+    workflow = create_workflow(mcp_tools, ...)
+    response = await workflow.arun(input=...)
+```
+
+**❌ Mistake 2: Using synchronous workflow.run() with MCP tools**
+```python
+# WRONG
+async with mcp_tools:
+    await mcp_tools.initialize()
+    workflow = create_workflow(mcp_tools, ...)
+    response = workflow.run(input=...)  # Should be arun()
+```
+
+**✅ Solution: Use await workflow.arun()**
+```python
+# CORRECT
+async with mcp_tools:
+    await mcp_tools.initialize()
+    workflow = create_workflow(mcp_tools, ...)
+    response = await workflow.arun(input=...)  # Async execution
+```
+
+**❌ Mistake 3: Making workflow creation function async**
+```python
+# WRONG - Creates confusion and isn't necessary
+async def create_workflow(mcp_tools: MCPTools) -> Workflow:
+    agent = Agent(tools=[mcp_tools], ...)
+    return Workflow(steps=[...])
+```
+
+**✅ Solution: Keep workflow creation synchronous**
+```python
+# CORRECT - Non-async function
+def create_workflow(mcp_tools: MCPTools) -> Workflow:
+    """Receives already-initialized tools from async context"""
+    agent = Agent(tools=[mcp_tools], ...)
+    return Workflow(steps=[...])
+```
+
+#### Troubleshooting MCP Initialization Issues
+
+**Symptom: XML-format tool calls**
+```
+⚠️  Could not parse content from Agent: unterminated string literal
+
+<invoke name="list-contacts">
+<parameter name="search">John Doe</parameter>
+</invoke>
+```
+
+**Diagnosis**: MCP session not initialized properly.
+
+**Fix**: Ensure you're using the async context manager pattern:
+```python
+async with mcp_tools:
+    await mcp_tools.initialize()
+    # ... rest of workflow
+```
+
+**Symptom: "Session is not initialized" error**
+```
+ERROR    Failed to initialize MCP toolkit: Session is not initialized
+```
+
+**Diagnosis**: Missing `await mcp_tools.initialize()` call.
+
+**Fix**: Add initialization inside async context:
+```python
+async with mcp_tools:
+    await mcp_tools.initialize()  # ← REQUIRED
+    workflow = create_workflow(mcp_tools, ...)
+```
+
+**Symptom: Tools registered but don't execute**
+```
+DEBUG   Added tool list-contacts from MCPTools
+DEBUG   Agent generated tool call: list-contacts
+# ... but no actual execution happens
+```
+
+**Diagnosis**: Using `workflow.run()` instead of `await workflow.arun()`.
+
+**Fix**: Use async execution:
+```python
+response = await workflow.arun(input=...)  # Not workflow.run()
+```
+
+#### Verification Steps
+
+After implementing MCP tools, verify correct initialization:
+
+```python
+async def async_main(input_data: str, debug: bool):
+    mcp_tools = MCPTools(command="...", transport="stdio", env=env_vars)
+
+    async with mcp_tools:
+        await mcp_tools.initialize()
+
+        # Verify tools are loaded
+        print(f"✓ Initialized {len(mcp_tools.functions)} tools:")
+        for tool_name in mcp_tools.functions.keys():
+            print(f"  - {tool_name}")
+
+        workflow = create_workflow(mcp_tools, db_file)
+        response = await workflow.arun(input=input_data)
+```
+
+**Expected output:**
+```
+✓ Initialized 5 tools:
+  - list-contacts
+  - create-contact
+  - create-invoice
+  - get-contact
+  - update-contact
+```
+
+**When you see tool execution (not just registration):**
+```
+DEBUG   Running: list-contacts(page=1)
+DEBUG   Calling MCP Tool 'list-contacts' with args: {'page': 1}
+DEBUG   Found 100 contacts (page 1):
+      Contact: John Doe
+      ID: abc-123-def
+```
+
+This confirms tools are actually executing, not just generating XML.
+
+#### When to Use This Pattern
+
+Use the async MCP pattern when:
+- ✅ Any MCP server integration (Xero, Postgres, custom servers)
+- ✅ External API tools that require session management
+- ✅ Tools that need initialization before use
+- ✅ Workflows that interact with stateful external services
+
+Use regular tools (without async) when:
+- ❌ Built-in Agno tools (DuckDuckGoTools, HackerNewsTools, etc.)
+- ❌ Custom @tool decorated functions (unless they use MCP internally)
+- ❌ Simple stateless API calls
+
 ### 2.5. Human-in-the-Loop (User Confirmation)
 
 Add user confirmation for sensitive operations using Agno's built-in `requires_confirmation` pattern.
