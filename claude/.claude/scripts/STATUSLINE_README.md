@@ -2,7 +2,9 @@
 
 ## Current Setup
 
-**Active Statusline:** claudia-statusline (high-performance Rust-based with SQLite persistence)
+**Active Statusline:** claudia-statusline + current prompt (2-line display)
+- Line 1: claudia-statusline (high-performance Rust-based with SQLite persistence)
+- Line 2: Current prompt preview (captured via UserPromptSubmit hook)
 
 ## Backups
 
@@ -30,10 +32,16 @@
 {
   "statusLine": {
     "type": "command",
-    "command": "/Users/smian/.local/bin/statusline",
+    "command": "$HOME/.claude/scripts/statusline-with-prompt.sh",
     "padding": 0
   }
 }
+```
+
+**Output format:**
+```
+Line 1: ~/dotfiles • main ~13 ?25 • day: $131.55
+Line 2: 💬 Can we add this capture-prompt to 2nd line...
 ```
 
 **Customization:**
@@ -51,7 +59,17 @@ curl -fsSL https://raw.githubusercontent.com/hagan/claudia-statusline/main/scrip
 
 **Documentation:** https://github.com/hagan/claudia-statusline
 
-## Quick Restore
+## Switch Between Configurations
+
+### Use claudia-statusline only (single line):
+```bash
+jq '.statusLine.command = "/Users/smian/.local/bin/statusline"' ~/.claude/settings.json > /tmp/settings.json && mv /tmp/settings.json ~/.claude/settings.json
+```
+
+### Use claudia-statusline + prompt preview (2 lines, current):
+```bash
+jq '.statusLine.command = "$HOME/.claude/scripts/statusline-with-prompt.sh"' ~/.claude/settings.json > /tmp/settings.json && mv /tmp/settings.json ~/.claude/settings.json
+```
 
 ### Restore original custom statusline:
 ```bash
@@ -202,4 +220,10 @@ Edit `~/.claude/settings.json`:
 
 </details>
 
-**Last Updated:** 2025-11-12 (Cleaned up alternatives, focusing on claudia-statusline with 11 themes)
+## Requirements
+
+**For prompt preview on line 2:**
+- `capture-prompt.py` hook must be enabled in UserPromptSubmit hooks
+- Hook writes current prompt to `/tmp/claude-{project}-current-prompt.txt`
+
+**Last Updated:** 2025-11-12 (Added 2-line statusline: claudia-statusline + prompt preview)

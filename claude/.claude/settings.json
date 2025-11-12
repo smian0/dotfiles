@@ -170,7 +170,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "/Users/smian/.local/bin/statusline",
+    "command": "$HOME/.claude/scripts/statusline-with-prompt.sh",
     "padding": 0
   },
   "enabledPlugins": {
