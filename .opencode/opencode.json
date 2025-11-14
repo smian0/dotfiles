@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "model": "github-copilot/claude-sonnet-4",
   "mcp": {
     "web-search-prime": {
       "type": "remote",
@@ -21,10 +22,34 @@
         "Z_AI_API_KEY": "a24f09170ffc4a16958a9986c475561b.MWYL7fnGDHQesuuR",
         "Z_AI_MODE": "ZAI"
       }
+    },
+    "yfinance": {
+      "command": [
+        "npx",
+        "reloaderoo",
+        "proxy",
+        "--",
+        "uv",
+        "run",
+        "--script",
+        "/Users/smian/dotfiles/mcp_servers/yfinance/yfinance_mcp.py"
+      ],
+      "type": "local",
+      "enabled": true,
+      "environment": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      }
+    },
+    "graphiti": {
+      "type": "remote",
+      "url": "http://localhost:8000/mcp/",
+      "enabled": true
     }
   },
   "tools": {
+    "mcp__graphiti__*": true,
     "mcp__web_search_prime__*": true,
+    "mcp__yfinance__*": true,
     "mcp__zai_mcp_server__*": true
   }
 }

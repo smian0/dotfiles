@@ -1,6 +1,6 @@
 ---
 name: agno-workflow-builder
-description: Build Agno AI agents and workflows. Use for simple CLI agents (single-agent chat/Q&A) OR complex workflows (multi-step, parallel processing, orchestration). Covers minimal CLI agents (~10 lines) to production workflows with debugging and optimization. Examples: "create a CLI chatbot", "build a research workflow", "add parallel processing".
+description: "Build Agno AI agents and workflows. Use for simple CLI agents (single-agent chat/Q&A) OR complex workflows (multi-step, parallel processing, orchestration). Covers minimal CLI agents (~10 lines) to production workflows with debugging and optimization."
 ---
 
 # Agno Agent & Workflow Builder
@@ -103,6 +103,35 @@ agent = Agent(debug_mode=True)
 workflow = Workflow(debug_mode=True)
 ```
 
+### Structured Outputs (Recommended for Workflows)
+```python
+from pydantic import BaseModel, Field
+
+class MyOutput(BaseModel):
+    result: str
+    count: int
+
+agent = Agent(
+    output_schema=MyOutput,  # Enforces Pydantic validation
+    instructions="Return MyOutput with result and count fields"
+)
+```
+→ See [Structured Outputs Guide](./references/structured_outputs_guide.md) for complete pattern
+
+### Output Control (Production vs Development)
+```python
+# Production: Clean output
+result = await workflow.arun(input)
+
+# Development: Rich formatted output
+await workflow.aprint_response(
+    input=input,
+    show_step_details=True,  # Show structured outputs
+    show_time=True,          # Show execution time
+)
+```
+→ See [Output Control Patterns](./references/output_control_patterns.md) for implementation
+
 ## Key Patterns
 
 ### MCP Tools Integration
@@ -177,6 +206,9 @@ agent = Agent(
 |------|---------|
 | [Workflow Patterns](./references/workflow_patterns.md) | Parallel processing, factories, caching, optimization |
 | [Debug Guide](./references/debug_guide.md) | Troubleshooting, performance analysis, common issues |
+| [Structured Outputs Guide](./references/structured_outputs_guide.md) | **NEW** Pydantic models, type-safe workflows, validation best practices |
+| [Output Control Patterns](./references/output_control_patterns.md) | **NEW** Production vs development modes, aprint_response(), CLI flags |
+| [Model Selection Patterns](./references/model_selection_patterns.md) | **NEW** Data-driven model selection, task-based optimization |
 
 ## Common Workflows
 
@@ -189,9 +221,12 @@ agent = Agent(
 1. Consult Context7 MCP for latest patterns
 2. Copy `assets/workflow_template.py`
 3. Read [Workflow Patterns](./references/workflow_patterns.md)
-4. Implement steps (Sequential, Parallel, Condition, Loop, Router)
-5. Enable debug mode during development
-6. See [Debug Guide](./references/debug_guide.md) for optimization
+4. **Design structured outputs** with Pydantic models ([Structured Outputs Guide](./references/structured_outputs_guide.md))
+5. **Select optimal models** per agent using `@ollama-model-selector` ([Model Selection Patterns](./references/model_selection_patterns.md))
+6. Implement steps (Sequential, Parallel, Condition, Loop, Router)
+7. **Add output control** with CLI flags ([Output Control Patterns](./references/output_control_patterns.md))
+8. Enable debug mode during development
+9. See [Debug Guide](./references/debug_guide.md) for optimization
 
 ### Add MCP Tools
 1. For basic: See `examples/agno_mcp.py`
@@ -218,9 +253,12 @@ agent = Agent(
 - Monitor performance with debug exports
 
 **Model Selection:**
-- **Tool calling**: glm-4.6:cloud (198K context, excellent tools)
-- **JSON parsing**: gpt-oss:120b-cloud (fast, reliable)
-- **General**: Check Context7 for latest recommendations
+- **ALWAYS consult**: `@ollama-model-selector` skill for data-driven recommendations
+- **Parsing/extraction**: glm-4.6:cloud (192 tok/s, fastest)
+- **Validation/reasoning**: deepseek-v3.1:671b-cloud (76 tok/s, hybrid thinking)
+- **Tool calling**: glm-4.6:cloud (192 tok/s, excellent tool support)
+- **Code generation**: qwen3-coder:480b-cloud (54 tok/s, code-focused)
+→ See [Model Selection Patterns](./references/model_selection_patterns.md) for task-based optimization
 
 ---
 

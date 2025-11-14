@@ -74,10 +74,18 @@ needs_transform() {
 # Parse arguments: support short switch -T (and --no-transform) to skip pre-launch transform
 SKIP_TRANSFORM=false
 FORWARD_ARGS=()
+HAS_MODEL_ARG=false
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -T|--no-transform)
             SKIP_TRANSFORM=true
+            ;;
+        -m|--model)
+            HAS_MODEL_ARG=true
+            FORWARD_ARGS+=("$1")
+            shift
+            FORWARD_ARGS+=("$1")
             ;;
         --)
             shift
@@ -93,6 +101,11 @@ while [[ $# -gt 0 ]]; do
     esac
     shift
 done
+
+# Add default model if not specified
+if [[ "$HAS_MODEL_ARG" == "false" ]]; then
+    FORWARD_ARGS=("-m" "github-copilot/claude-sonnet-4" "${FORWARD_ARGS[@]}")
+fi
 
 # If -T/--no-transform was provided and no other args remain, default to 'help'
 if [[ "$SKIP_TRANSFORM" == "true" && ${#FORWARD_ARGS[@]} -eq 0 ]]; then
@@ -123,13 +136,23 @@ else
 fi
 
 # Launch opencode with environment variables available
-OPENCODE_BINARY="/Users/smian/.npm-global/bin/opencode"
+# Try to find opencode in PATH first, then fall back to known locations
+OPENCODE_BINARY=""
 
-if [[ -x "$OPENCODE_BINARY" ]]; then
+if command -v opencode >/dev/null 2>&1; then
+    OPENCODE_BINARY=$(command -v opencode)
+elif [[ -x "$HOME/.local/bin/opencode" ]]; then
+    OPENCODE_BINARY="$HOME/.local/bin/opencode"
+elif [[ -x "$HOME/.npm-global/bin/opencode" ]]; then
+    OPENCODE_BINARY="$HOME/.npm-global/bin/opencode"
+fi
+
+if [[ -n "$OPENCODE_BINARY" && -x "$OPENCODE_BINARY" ]]; then
     [[ "$DEBUG_MODE" == "true" ]] && echo "Using opencode binary: $OPENCODE_BINARY"
     exec "$OPENCODE_BINARY" "${FORWARD_ARGS[@]}"
 else
-    echo "Error: opencode not found at $OPENCODE_BINARY" >&2
+    echo "Error: opencode not found in PATH or known locations" >&2
+    echo "Searched: PATH, ~/.local/bin, ~/.npm-global/bin" >&2
     echo "Install with: npm install -g opencode-ai@latest" >&2
     exit 1
 fi
