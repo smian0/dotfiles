@@ -1,27 +1,112 @@
 ---
 name: zen-workflow
-description: Cost-optimized Zen MCP orchestration with Ollama Cloud preference for research, decisions, and debugging
+description: Progressive disclosure router for Zen MCP workflows - automatically detects user intent and routes to specialized workflows (zen-plan, zen-debug, research, decision) with cost-optimized Ollama Cloud models
 ---
 
-# Zen Workflow Orchestration
+# Zen Workflow Router
 
-**Purpose**: Execute multi-step Zen MCP workflows with intelligent model selection, preferring free Ollama Cloud models before escalating to paid alternatives.
+**Purpose**: Smart router that detects user intent and automatically selects the appropriate Zen MCP workflow with cost-optimized model selection.
 
-## When to Use
+## How It Works (Progressive Disclosure)
 
-Use this skill when you need:
-- **Deep research** across multiple sources (consensus → thinkdeep → synthesis)
-- **Critical decisions** with multiple perspectives (challenge → consensus → recommendation)
-- **Complex debugging** requiring systematic investigation (thinkdeep → debug → validation)
+This skill uses a **3-tier detection system** to determine which workflow to execute:
 
-**Triggers**:
-- User says "zen research", "deep research", or "research workflow"
-- User says "zen decide", "critical decision", or "evaluate options"
-- User says "zen debug", "complex bug", or "systematic investigation"
+1. **Priority 1: Explicit Triggers** (highest priority)
+   - User says "zen plan" → Planning workflow
+   - User says "zen debug" → Debug workflow
+   - User says "zen research" → Research workflow
+   - User says "zen decide" → Decision workflow
+
+2. **Priority 2: Context Detection** (fallback when no explicit trigger)
+   - Planning keywords ("implement", "build", "design", "architect") → Planning workflow
+   - Error keywords ("bug", "error", "broken", "failing", "not working") → Debug workflow
+   - Analysis keywords ("research", "compare", "evaluate", "analyze") → Research workflow
+   - Decision keywords ("decide", "should we", "choose", "which option") → Decision workflow
+
+3. **Priority 3: General Chat** (fallback)
+   - No clear intent → Use cost-optimized chat tool
+
+## Intent Detection & Routing
+
+### Step 1: Detect User Intent
+
+Read the user's message and classify it:
+
+```
+IF message contains "zen plan" → PLAN workflow
+ELSE IF message contains "zen debug" → DEBUG workflow
+ELSE IF message contains "zen research" → RESEARCH workflow
+ELSE IF message contains "zen decide" → DECIDE workflow
+ELSE IF message has planning keywords → PLAN workflow
+ELSE IF message has error keywords → DEBUG workflow
+ELSE IF message has analysis keywords → RESEARCH workflow
+ELSE IF message has decision keywords → DECIDE workflow
+ELSE → GENERAL chat with cost-optimized model
+```
+
+### Step 2: Execute Workflow
+
+Once intent is detected, execute the appropriate workflow:
+
+#### PLAN Workflow
+**Triggers**: "zen plan", planning keywords
+**Specialized Skill**: `/zen-plan` (if available in project)
+**Fallback**: Embedded planning workflow
+
+**When to use zen-plan skill**:
+- Project has `.claude/skills/zen-plan/SKILL.md`
+- Need interactive planning with multi-phase consensus validation
+- Want automatic save to Serena memory
+- Require post-implementation validation (Phase 4)
+
+**Execute**:
+```
+If zen-plan skill exists:
+  Skill(skill="zen-plan")
+Else:
+  See workflows/plan.md for embedded fallback
+```
+
+#### DEBUG Workflow
+**Triggers**: "zen debug", error keywords
+**Specialized Skill**: `/zen-debug-consensus` (if available in project)
+**Fallback**: Embedded debug workflow
+
+**When to use zen-debug-consensus skill**:
+- Project has `.claude/skills/zen-debug-consensus/SKILL.md`
+- Debugging external library issues (Context7 lookup available)
+- Need multi-model consensus debugging
+- Complex multi-file bugs
+
+**Execute**:
+```
+If zen-debug-consensus skill exists:
+  Skill(skill="zen-debug-consensus")
+Else:
+  See workflows/debug.md for embedded fallback
+```
+
+#### RESEARCH Workflow
+**Triggers**: "zen research", analysis keywords
+**Workflow**: See `workflows/research.md`
+
+Multi-source research with:
+- Initial consensus (3 models)
+- Deep analysis (thinkdeep)
+- Synthesis (large context model)
+
+#### DECIDE Workflow
+**Triggers**: "zen decide", decision keywords
+**Workflow**: See `workflows/decision.md`
+
+Critical decision analysis with:
+- Challenge assumptions
+- Multi-model consensus
+- Final recommendation
 
 ## Cost Optimization Strategy
 
-**Free Tier (Ollama Cloud)** - Use first:
+**Free Tier (Ollama Cloud)** - Always try first:
 - `deepseek-v3.1:671b-cloud` - Best reasoning (intelligence: 16, 76 tok/s, 160K context)
 - `kimi-k2:1t-cloud` - Largest context (intelligence: 19, 33 tok/s, 256K context)
 - `qwen3-coder:480b-cloud` - Best for code (intelligence: 18, 54 tok/s, 256K context)
@@ -35,174 +120,11 @@ Use this skill when you need:
 
 **Escalation Triggers**:
 - Ollama model fails or returns poor quality
-- Task explicitly requires extended thinking beyond Ollama capabilities
+- Task requires extended thinking beyond Ollama capabilities
 - Context size exceeds Ollama limits (>256K tokens)
 - Time-critical work requiring fastest premium models
 
-## Workflows
-
-### Research Workflow
-**Purpose**: Comprehensive research with multiple perspectives
-
-**Steps**:
-1. **Initial consensus** (3 Ollama models: deepseek, kimi, glm-4.6)
-   - Gather diverse perspectives quickly
-   - 3 stances: for/neutral/against or 3 different aspects
-
-2. **Deep analysis** (thinkdeep with deepseek-v3.1)
-   - Systematic investigation of findings
-   - Hypothesis testing and evidence gathering
-
-3. **Synthesis** (chat with kimi-k2 for large context)
-   - Combine all findings
-   - Present coherent recommendations
-
-**Escalation**: Use gpt-5 or gemini-2.5-pro for synthesis if context >256K
-
-### Decision Workflow
-**Purpose**: Critical thinking and multi-angle evaluation
-
-**Steps**:
-1. **Challenge assumptions** (challenge with deepseek-v3.1)
-   - Devil's advocate analysis
-   - Identify blind spots and risks
-
-2. **Multi-model consensus** (3 models: deepseek for/qwen3-coder neutral/kimi against)
-   - Structured debate with different stances
-   - Comprehensive pro/con analysis
-
-3. **Final recommendation** (thinkdeep with deepseek-v3.1)
-   - Synthesize all perspectives
-   - Clear decision with rationale
-
-**Escalation**: Use o3 or gpt-5 if decision requires extreme reasoning depth
-
-### Debug Workflow
-**Purpose**: Systematic code investigation
-
-**Steps**:
-1. **Initial investigation** (thinkdeep with qwen3-coder)
-   - Code analysis and hypothesis formation
-   - 3-5 investigation steps
-
-2. **Deep debugging** (debug with qwen3-coder)
-   - Root cause identification
-   - Evidence gathering across files
-
-3. **Validation** (codereview with deepseek-v3.1)
-   - Verify proposed fixes
-   - Ensure no regressions
-
-**Escalation**: Use gpt-5 for codereview if codebase >100K LOC
-
-## Usage Examples
-
-### Research Workflow
-```
-User: "zen research: analyze the trade-offs of microservices vs monoliths"
-
-Claude: I'm using the zen-workflow skill for comprehensive research.
-
-Step 1: consensus with 3 Ollama models
-- deepseek-v3.1 (for microservices)
-- kimi-k2 (neutral/balanced)
-- glm-4.6 (for monoliths)
-
-[Execute consensus with 3 models]
-
-Step 2: thinkdeep with deepseek-v3.1
-- Analyze patterns across all 3 perspectives
-- Test hypotheses about scalability, complexity, cost
-
-[Execute thinkdeep analysis]
-
-Step 3: chat with kimi-k2
-- Synthesize findings with large context window
-- Present final research summary
-
-[Execute synthesis]
-
-Cost: $0 (all Ollama Cloud models)
-```
-
-### Decision Workflow
-```
-User: "zen decide: should we migrate from REST to GraphQL?"
-
-Claude: I'm using the zen-workflow skill for critical decision analysis.
-
-Step 1: challenge with deepseek-v3.1
-- Question assumptions about GraphQL benefits
-- Identify migration risks and costs
-
-[Execute challenge]
-
-Step 2: consensus with 3 Ollama models
-- deepseek-v3.1 (for GraphQL)
-- qwen3-coder (neutral/technical)
-- kimi-k2 (for REST/cautious)
-
-[Execute consensus]
-
-Step 3: thinkdeep with deepseek-v3.1
-- Synthesize all arguments
-- Provide clear recommendation with rationale
-
-[Execute thinkdeep]
-
-Cost: $0 (all Ollama Cloud models)
-```
-
-### Debug Workflow
-```
-User: "zen debug: authentication flow broken across 5 files"
-
-Claude: I'm using the zen-workflow skill for systematic debugging.
-
-Step 1: thinkdeep with qwen3-coder
-- Code analysis across all 5 files
-- Hypothesis formation about auth flow
-
-[Execute thinkdeep investigation]
-
-Step 2: debug with qwen3-coder
-- Root cause identification
-- Evidence gathering from logs/code
-
-[Execute debug]
-
-Step 3: codereview with deepseek-v3.1
-- Verify proposed fix
-- Check for security issues
-
-[Execute codereview]
-
-Cost: $0 (all Ollama Cloud models)
-```
-
-## Model Selection Logic
-
-**For each Zen tool call:**
-
-1. **Check task requirements**:
-   - Context size needed?
-   - Extended thinking required?
-   - Code-specific or general reasoning?
-
-2. **Start with Ollama Cloud**:
-   - Use task-appropriate model from free tier
-   - Execute and evaluate quality
-
-3. **Escalate if needed**:
-   - Poor quality response → Try premium model
-   - Context too large → Use gemini-2.5-pro (1M context)
-   - Requires extended thinking → Use o3 or gpt-5
-
-4. **Report costs**:
-   - Track which models used (free vs paid)
-   - Report total cost at end: "Cost: $0 (all Ollama)" or "Cost: ~$0.15 (1 paid call)"
-
-## Task-to-Model Mapping
+## Model Selection by Task
 
 **Research/General**:
 - First: `deepseek-v3.1:671b-cloud` or `kimi-k2:1t-cloud`
@@ -229,23 +151,59 @@ Cost: $0 (all Ollama Cloud models)
 - **When to use**: Repository-aware tasks, file operations, CLI tool access
 - **Example**: `mcp__zen__clink(cli_name="opencode", model="github-copilot/claude-sonnet-4.5", prompt="...")`
 
-## Integration with DEFAULT_MODEL=auto
+## Usage Examples
 
-**This skill enhances (not overrides) DEFAULT_MODEL=auto**:
+### Example 1: Planning
+```
+User: "zen plan: implement user authentication system"
 
-1. When DEFAULT_MODEL=auto is set:
-   - Skill applies Ollama-first bias
-   - Provides explicit model parameter to Zen tools
-   - Auto mode still handles fallback if model unavailable
+Claude: I'm using the zen-workflow router.
+→ Detected: "zen plan" (explicit trigger)
+→ Routing to: PLAN workflow
+→ Checking for zen-plan skill...
+→ Found! Using /zen-plan skill
 
-2. When specific model requested:
-   - User preference takes precedence
-   - Skill doesn't override explicit model choice
+[Executes zen-plan workflow with interactive planning + consensus validation]
+```
 
-3. Transparency:
-   - Always announce which model being used
-   - Report if escalating from free to paid
-   - Show cost summary at end
+### Example 2: Debugging
+```
+User: "I have a bug where authentication fails for some users"
+
+Claude: I'm using the zen-workflow router.
+→ Detected: "bug", "fails" (error keywords)
+→ Routing to: DEBUG workflow
+→ Checking for zen-debug-consensus skill...
+→ Found! Using /zen-debug-consensus skill
+
+[Executes zen-debug-consensus with Context7 + multi-model debugging]
+```
+
+### Example 3: Research
+```
+User: "zen research: microservices vs monoliths trade-offs"
+
+Claude: I'm using the zen-workflow router.
+→ Detected: "zen research" (explicit trigger)
+→ Routing to: RESEARCH workflow
+→ Using embedded research workflow
+
+[Executes: consensus → thinkdeep → synthesis]
+Cost: $0 (all Ollama Cloud models)
+```
+
+### Example 4: Decision
+```
+User: "Should we migrate from REST to GraphQL?"
+
+Claude: I'm using the zen-workflow router.
+→ Detected: "should we", "migrate" (decision keywords)
+→ Routing to: DECIDE workflow
+→ Using embedded decision workflow
+
+[Executes: challenge → consensus → recommendation]
+Cost: $0 (all Ollama Cloud models)
+```
 
 ## Implementation Details
 
@@ -303,6 +261,14 @@ cost_msg = f"Cost: $0 (all Ollama)" if paid_calls == 0 else f"Cost: ~${paid_call
 - Financial calculations (use o3 or gpt-5 for precision)
 - Security audits (use gemini-2.5-pro or gpt-5)
 
+## Workflow Definitions
+
+Detailed workflow definitions are in the `workflows/` directory:
+- `workflows/plan.md` - Planning workflow with zen-plan reference
+- `workflows/debug.md` - Debug workflow with zen-debug-consensus reference
+- `workflows/research.md` - Research workflow (embedded)
+- `workflows/decision.md` - Decision workflow (embedded)
+
 ## Notes
 
 - **Ollama Cloud requires**: Ollama v0.12+, active internet connection
@@ -310,5 +276,5 @@ cost_msg = f"Cost: $0 (all Ollama)" if paid_calls == 0 else f"Cost: ~${paid_call
 - **Context optimization**: Use Ollama for <256K context, premium for larger
 - **Cost transparency**: Always report model usage and estimated costs
 - **User control**: Respect explicit model requests, don't override
-
-See [workflows/](./workflows/) for detailed workflow definitions.
+- **Progressive disclosure**: Router automatically determines best workflow
+- **Graceful degradation**: Falls back to embedded workflows if specialized skills unavailable
