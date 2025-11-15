@@ -32,7 +32,9 @@ description: "Zen workflow orchestrator: invoke this whenever user mentions 'zen
 **⚡ Quick Comparison: Search vs Research**
 | User says | Action | Time | What happens |
 |-----------|--------|------|--------------|
-| "zen web search X" | Direct websearch tool | ~30s | Just returns web search results (no analysis) |
+| "zen web X" | Direct websearch tool | ~30s | Just returns web search results (no analysis) |
+| "zen web search X" | Direct websearch tool | ~30s | Same as above - just search results |
+| "zen search X" | Direct websearch tool | ~30s | Same as above - just search results |
 | "zen research X" | Full research workflow | 4-30m | Web search + consensus + deep analysis + synthesis |
 | "latest X" (no zen) | Web research workflow | 4-7m | Auto-detects web need, runs workflow |
 
@@ -43,19 +45,19 @@ This skill uses a **3-tier detection system** to determine which workflow to exe
 1. **Priority 1: Explicit Triggers** (highest priority)
    - User says "zen plan" → Planning workflow
    - User says "zen debug" → Debug workflow
-   - User says "zen web search" OR "zen search" → Direct websearch tool (no workflow)
+   - User says "zen web" OR "zen web search" OR "zen search" → Direct websearch tool (no workflow)
    - User says "zen research" → Research workflow
    - User says "zen decide" → Decision workflow
 
 2. **Priority 2: Context Detection** (fallback when no explicit trigger)
    - Formal research keywords ("research paper", "need citations", "publish", "formal research") → Research skill (rigorous)
-   - Web research keywords ("latest", "current", "recent", "2024", "2025", "quick research") WITHOUT "zen search" → Web Research workflow (fast)
+   - Web research keywords ("latest", "current", "recent", "2024", "2025", "quick research") WITHOUT "zen web/search" → Web Research workflow (fast)
    - Planning keywords ("implement", "build", "design", "architect") → Planning workflow
    - Error keywords ("bug", "error", "broken", "failing", "not working") → Debug workflow
    - Analysis keywords ("research", "compare", "evaluate", "analyze") → Research workflow
    - Decision keywords ("decide", "should we", "choose", "which option") → Decision workflow
 
-**Note**: If user says "zen web search" or "zen search", this OVERRIDES Priority 2 detection and calls websearch tool directly (no workflow).
+**Note**: If user says "zen web", "zen web search", or "zen search", this OVERRIDES Priority 2 detection and calls websearch tool directly (no workflow).
 
 3. **Priority 3: General Chat** (fallback)
    - No clear intent → Use cost-optimized chat tool
@@ -69,11 +71,11 @@ Read the user's message and classify it:
 ```
 IF message contains "zen plan" → PLAN workflow
 ELSE IF message contains "zen debug" → DEBUG workflow
-ELSE IF message contains "zen web search" OR "zen search" → Call websearch tool directly (no workflow)
+ELSE IF message contains "zen web" OR "zen web search" OR "zen search" → Call websearch tool directly (no workflow)
 ELSE IF message contains "zen research" → Ask user for research depth (quick vs formal)
 ELSE IF message contains "zen decide" → DECIDE workflow
 ELSE IF message has formal research keywords → RESEARCH SKILL (rigorous, citations)
-ELSE IF message has web research keywords (without "zen" prefix) → WEB RESEARCH workflow (fast)
+ELSE IF message has web research keywords (without "zen web/search" prefix) → WEB RESEARCH workflow (fast)
 ELSE IF message has planning keywords → PLAN workflow
 ELSE IF message has error keywords → DEBUG workflow
 ELSE IF message has analysis keywords ("research", "compare", "evaluate") → RESEARCH workflow (knowledge-based)
@@ -124,7 +126,7 @@ Else:
 ```
 
 #### WEBSEARCH (Direct Tool Call - NO Workflow)
-**Triggers**: "zen web search", "zen search"
+**Triggers**: "zen web", "zen web search", "zen search"
 **Tool**: `mcp__zen__websearch` (direct call, no workflow overhead)
 
 **When to use**:
@@ -147,11 +149,14 @@ Return results directly - no further processing
 
 **Examples**:
 ```
-User: "zen web search latest Next.js features"
+User: "zen web latest Next.js features"
 → mcp__zen__websearch(query="latest Next.js features", focus="docs")
 
-User: "zen search today's tech news"
+User: "zen web search today's tech news"
 → mcp__zen__websearch(query="today's tech news", focus="news")
+
+User: "zen search github copilot updates"
+→ mcp__zen__websearch(query="github copilot updates", focus="github")
 ```
 
 #### RESEARCH Workflow
@@ -308,17 +313,17 @@ Claude: I'm using the zen-workflow router.
 
 ### Example 3: Web Search (Direct - No Workflow)
 ```
-User: "zen web search latest Next.js features"
+User: "zen web get today's china news"
 
 Claude: I'm using the zen-workflow router.
-→ Detected: "zen web search" (explicit trigger - Priority 1)
+→ Detected: "zen web" (explicit trigger - Priority 1)
 → Action: Call websearch tool DIRECTLY (no workflow)
 
 [Single tool call - no multi-model consensus or deep analysis]
 mcp__zen__websearch(
-  query="latest Next.js features",
+  query="get today's china news",
   max_results=8,
-  focus="docs"
+  focus="news"
 )
 
 Tool automatically injects:
@@ -329,15 +334,20 @@ November 15, 2025 at 02:30 PM PST
 
 Results returned immediately:
 - 8 search results with URLs
-- Official Next.js docs (Nov 2025)
-- Recent release notes (Nov 14, 2025)
-- GitHub discussions (this week)
+- Reuters China news (today)
+- South China Morning Post (latest)
+- Bloomberg Asia (Nov 15, 2025)
 
 Cost: $0 (GLM CLI via websearch tool)
 Time: ~30 seconds (single tool call)
 ```
 
-**Key difference**: "zen web search" = Just search, no analysis workflow!
+**Key difference**: "zen web" = Just search, no analysis workflow!
+
+**All these trigger direct websearch**:
+- "zen web [query]" ✓
+- "zen web search [query]" ✓  
+- "zen search [query]" ✓
 
 ### Example 3a: Quick Research (Knowledge-Based)
 ```
