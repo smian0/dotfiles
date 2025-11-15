@@ -75,6 +75,28 @@
       "purpose": "documentation",
       "scope": "library",
       "type": "stdio"
+    },
+    "yfinance": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "reloaderoo",
+        "proxy",
+        "--",
+        "uv",
+        "run",
+        "--script",
+        "/Users/smian/dotfiles/mcp_servers/yfinance/yfinance_mcp.py"
+      ],
+      "description": "Yahoo Finance MCP server for stock data, company info, and financial statements",
+      "env": {
+        "MCPDEV_PROXY_AUTO_RESTART": "true"
+      }
+    },
+    "graphiti": {
+      "type": "http",
+      "url": "http://localhost:8000/mcp/",
+      "description": "Graphiti temporal knowledge graph for building and querying context-aware knowledge graphs"
     }
   }
 }
