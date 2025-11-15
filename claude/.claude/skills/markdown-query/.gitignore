@@ -1,0 +1,20 @@
+# Generated outputs
+output/
+*.log
+logs/
+
+# State and cache
+.state/
+cache/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# OS files
+.DS_Store
+Thumbs.db
+

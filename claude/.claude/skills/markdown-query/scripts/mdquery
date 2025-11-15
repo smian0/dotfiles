@@ -1,0 +1,333 @@
+#!/usr/bin/env python3
+"""
+Markdown Query CLI - Command-line interface for markdown processing
+
+High-performance markdown processing with MQ selectors, Obsidian features, and linting.
+
+Usage:
+    mdquery query <file> <selector>
+    mdquery bulk <path> <selector>
+    mdquery wiki <file>
+    mdquery lint <file>
+    mdquery fix <file> [--types <types>]
+
+Examples:
+    mdquery query README.md .h1
+    mdquery bulk /vault .h2
+    mdquery wiki note.md
+    mdquery lint document.md
+    mdquery fix document.md --types headers,whitespace
+"""
+
+import sys
+import json
+from pathlib import Path
+
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
+
+import click
+from cli import (
+    query, bulk_query, find_wiki_links, lint_document, auto_fix,
+    get_performance_stats, generate_toc, analyze_docs, task_stats,
+    build_vault_graph, get_document_outline, extract_dataview_fields,
+    find_callouts
+)
+
+
+@click.group()
+def cli():
+    """Markdown Query - High-performance markdown processing.
+    
+    Process markdown files with MQ-style selectors, Obsidian features,
+    and intelligent linting. Run 'mdquery COMMAND --help' for details.
+    """
+    pass
+
+
+@cli.command(name='query')
+@click.argument('file_path', type=click.Path(exists=True))
+@click.argument('selector')
+@click.option('--format', type=click.Choice(['json', 'markdown']), default='json',
+              help='Output format')
+def query_cmd(file_path, selector, format):
+    """Query single file with MQ selector.
+    
+    Extract structured data using jq-like selectors.
+    
+    Available selectors:
+      .h1, .h2, .h3, .h4, .h5, .h6  - Headers
+      .code                          - Code blocks
+      .link, .link.url, .link.text   - Links
+      .list, .table, .task, .tag     - Other elements
+      .frontmatter                   - YAML frontmatter
+    
+    Examples:
+        mdquery query README.md .h1
+        mdquery query file.md .code
+        mdquery query doc.md .link.url --format markdown
+    """
+    result = query(file_path, selector, format)
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('path', type=click.Path(exists=True))
+@click.argument('selector')
+@click.option('--max-files', type=int, help='Maximum files to process')
+def bulk(path, selector, max_files):
+    """Query multiple files or directory.
+    
+    Process all markdown files in a directory with the same selector.
+    
+    Examples:
+        mdquery bulk /vault .h2
+        mdquery bulk /docs .code
+        mdquery bulk /project .task --max-files 100
+    """
+    result = bulk_query(path, selector)
+    
+    if max_files and isinstance(result, list) and len(result) > max_files:
+        result = result[:max_files]
+        click.echo(f"Note: Limited to {max_files} files", err=True)
+    
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('file_path', type=click.Path(exists=True))
+@click.option('--target', help='Filter by specific wiki link target')
+def wiki(file_path, target):
+    """Find wiki links in file.
+    
+    Detects [[wiki links]] and [[target|alias]] syntax.
+    
+    Examples:
+        mdquery wiki note.md
+        mdquery wiki note.md --target "Important Page"
+    """
+    result = find_wiki_links(file_path, target)
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('file_path', type=click.Path(exists=True))
+def lint(file_path):
+    """Detect markdown issues.
+    
+    Analyzes document for formatting problems and categorizes them
+    as auto-fixable or requiring manual review.
+    
+    Examples:
+        mdquery lint document.md
+        mdquery lint README.md
+    """
+    result = lint_document(file_path)
+    
+    # Pretty print summary
+    if 'summary' in result:
+        summary = result['summary']
+        click.echo(click.style(f"\n📊 Lint Summary for {file_path}", bold=True))
+        click.echo(f"   Total issues: {summary.get('total_issues', 0)}")
+        click.echo(f"   Auto-fixable: {summary.get('auto_fixable', 0)}")
+        click.echo(f"   Review required: {summary.get('review_required', 0)}")
+        click.echo()
+    
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('file_path', type=click.Path(exists=True))
+@click.option('--types', help='Comma-separated fix types: headers,whitespace,tasks')
+@click.option('--dry-run', is_flag=True, help='Show what would be fixed without applying')
+def fix(file_path, types, dry_run):
+    """Auto-fix markdown issues.
+    
+    Apply deterministic fixes to common formatting problems.
+    
+    Fix types:
+      headers     - Header spacing and consistency
+      whitespace  - Trailing spaces, blank lines
+      tasks       - Task list formatting
+    
+    Examples:
+        mdquery fix document.md
+        mdquery fix document.md --types headers,whitespace
+        mdquery fix document.md --dry-run
+    """
+    fix_types = types.split(',') if types else None
+    
+    if dry_run:
+        # First lint to show what would be fixed
+        result = lint_document(file_path)
+        auto_fixable = result.get('issues', {}).get('auto_fixable', [])
+        
+        if auto_fixable:
+            click.echo(click.style(f"Would fix {len(auto_fixable)} issues:", fg='yellow'))
+            for issue in auto_fixable:
+                click.echo(f"  - {issue.get('type')} (line {issue.get('line')})")
+        else:
+            click.echo(click.style("No auto-fixable issues found", fg='green'))
+        return
+    
+    result = auto_fix(file_path, fix_types)
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('file_path', type=click.Path(exists=True))
+@click.option('--depth', type=int, default=3, help='Maximum heading depth')
+def toc(file_path, depth):
+    """Generate table of contents.
+    
+    Creates navigable TOC from document headers.
+    
+    Examples:
+        mdquery toc README.md
+        mdquery toc doc.md --depth 2
+    """
+    result = generate_toc(file_path, depth)
+    
+    # Display formatted TOC
+    if 'toc_markdown' in result:
+        click.echo(click.style("\n📋 Table of Contents:", bold=True))
+        click.echo(result['toc_markdown'])
+        click.echo()
+    
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('file_path', type=click.Path(exists=True))
+def outline(file_path):
+    """Get document outline.
+    
+    Extract headers as navigable symbols.
+    
+    Examples:
+        mdquery outline README.md
+    """
+    result = get_document_outline(file_path)
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('path', type=click.Path(exists=True))
+def analyze(path):
+    """Analyze documentation structure.
+    
+    Get comprehensive statistics across markdown files.
+    
+    Examples:
+        mdquery analyze /docs
+        mdquery analyze /project
+    """
+    result = analyze_docs(path)
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('path', type=click.Path(exists=True))
+def tasks(path):
+    """Get task completion statistics.
+    
+    Aggregate task completion across files.
+    
+    Examples:
+        mdquery tasks /project
+        mdquery tasks /vault
+    """
+    result = task_stats(path)
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('path', type=click.Path(exists=True))
+def graph(path):
+    """Build vault connection graph.
+    
+    Analyze wiki links and connections across vault.
+    
+    Examples:
+        mdquery graph /vault
+    """
+    result = build_vault_graph(path)
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('file_path', type=click.Path(exists=True))
+@click.option('--callout-type', help='Filter by callout type (note, warning, tip, etc.)')
+def callouts(file_path, callout_type):
+    """Find callout/admonition blocks.
+    
+    Detects > [!type] syntax.
+    
+    Examples:
+        mdquery callouts note.md
+        mdquery callouts note.md --callout-type warning
+    """
+    result = find_callouts(file_path, callout_type)
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.argument('file_path', type=click.Path(exists=True))
+@click.option('--field', help='Filter by specific field name')
+def dataview(file_path, field):
+    """Extract Dataview inline fields.
+    
+    Finds field:: value syntax.
+    
+    Examples:
+        mdquery dataview note.md
+        mdquery dataview note.md --field status
+    """
+    result = extract_dataview_fields(file_path, field)
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+def stats():
+    """Get performance statistics.
+    
+    Display cache hit ratios and performance metrics.
+    
+    Examples:
+        mdquery stats
+    """
+    result = get_performance_stats()
+    
+    # Pretty print stats
+    if 'cache_performance' in result:
+        cache = result['cache_performance']
+        click.echo(click.style("\n📊 Performance Statistics:", bold=True))
+        click.echo(f"   Cache hit ratio: {cache.get('hit_ratio', 0):.1%}")
+        click.echo(f"   Total hits: {cache.get('total_hits', 0)}")
+        click.echo(f"   Total misses: {cache.get('total_misses', 0)}")
+        click.echo()
+    
+    click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.option('--type', 'cache_type', 
+              type=click.Choice(['all', 'content', 'results', 'bulk']),
+              default='all',
+              help='Cache type to clear')
+def clear(cache_type):
+    """Clear performance caches.
+    
+    Reset caches to free memory or force refresh.
+    
+    Examples:
+        mdquery clear
+        mdquery clear --type content
+    """
+    from cli import clear_cache
+    result = clear_cache(cache_type)
+    click.echo(click.style(f"✅ {result.get('message', 'Cache cleared')}", fg='green'))
+
+
+if __name__ == "__main__":
+    cli()
