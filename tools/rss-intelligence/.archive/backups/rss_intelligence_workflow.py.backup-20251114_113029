@@ -1,0 +1,2078 @@
+#!/usr/bin/env python3
+"""
+RSS Intelligence Workflow - Simplified MVP
+
+Architecture:
+- Agno-native scheduling (while True + time.sleep)
+- Single-model pattern (no parser complexity)
+- Newspaper4kTools for content extraction
+- Free Ollama Cloud models only
+- Persistent URL deduplication via JSON file (processed_urls.json)
+- Parallel analysis for entity/sentiment/topic extraction
+"""
+
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "agno",
+#     "feedparser",
+#     "fastapi",
+#     "newspaper4k",
+#     "lxml_html_clean",
+#     "ollama",
+#     "mcp",
+#     "sqlalchemy",
+# ]
+# ///
+
+import asyncio
+import json
+import time
+from datetime import datetime
+from typing import List, Dict, Optional
+from pathlib import Path
+
+import feedparser
+from pydantic import BaseModel, Field, ConfigDict
+
+from agno.agent import Agent
+from agno.db.sqlite import SqliteDb
+from agno.models.ollama import Ollama
+from agno.tools.newspaper4k import Newspaper4kTools
+from agno.tools.mcp import MCPTools
+from agno.workflow import Workflow
+from agno.workflow.parallel import Parallel
+from agno.workflow.step import Step, StepInput, StepOutput
+
+# ============================================================================
+# Data Models
+# ============================================================================
+
+class Article(BaseModel):
+    """RSS article with metadata"""
+    title: str
+    url: str
+    summary: str
+    published: str
+    content: Optional[str] = None  # Full content extracted via Newspaper4k
+
+
+class ExtractedEntity(BaseModel):
+    """Entity with type and context"""
+    model_config = ConfigDict(populate_by_name=True)  # Allow both 'type' and 'entity_type'
+
+    name: str
+    entity_type: str = Field(alias="type")  # person, organization, location, event, concept
+    context: str
+    confidence: float = Field(ge=0.0, le=1.0)
+
+
+class SentimentAnalysis(BaseModel):
+    """Sentiment with scores"""
+    overall_sentiment: str  # positive, negative, neutral
+    confidence: float = Field(ge=0.0, le=1.0)
+    key_emotions: List[str] = Field(default_factory=list)
+
+
+class TopicClassification(BaseModel):
+    """Topic with relevance"""
+    topic: str
+    relevance: float = Field(ge=0.0, le=1.0)
+
+
+class ExtractedData(BaseModel):
+    """Combined analysis results"""
+    entities: List[ExtractedEntity] = Field(default_factory=list)
+    sentiment: Optional[SentimentAnalysis] = None
+    topics: List[TopicClassification] = Field(default_factory=list)
+
+
+class Newsletter(BaseModel):
+    """Generated newsletter output"""
+    title: str
+    summary: str
+    top_stories: List[Dict[str, str]]
+    key_entities: List[str]
+    generated_at: str
+
+
+# ============================================================================
+# Intelligence Analysis Models (Knowledge Graph)
+# ============================================================================
+
+class EntityTrend(BaseModel):
+    """Entity with frequency and trend data - Phase 1 Enhanced"""
+    name: str = Field(..., description="Entity name")
+    mention_count: int = Field(..., description="Number of episodes mentioning this entity")
+    change_percent: float | None = Field(None, description="Percent change vs previous period (null if first appearance)")
+    entity_type: str = Field(..., description="Type of entity (person, organization, location, etc.)")
+
+    # Phase 1: Anomaly Detection
+    anomaly_score: float | None = Field(None, description="Z-score for anomaly detection (>3.0 = anomaly)")
+    is_anomaly: bool = Field(False, description="True if entity shows anomalous surge")
+
+    # Phase 1: Temporal Velocity
+    velocity: float | None = Field(None, description="Rate of change in mentions (first derivative)")
+    acceleration: float | None = Field(None, description="Rate of change in velocity (second derivative)")
+    is_burst: bool = Field(False, description="True if entity is in Kleinberg burst state")
+
+    # Phase 1: Network Metrics
+    centrality_score: float | None = Field(None, description="PageRank centrality (0-1)")
+    betweenness_score: float | None = Field(None, description="Betweenness centrality (0-1)")
+
+
+class RelationshipNetwork(BaseModel):
+    """Relationship network around a central entity - Phase 1 Enhanced"""
+    entity_name: str = Field(..., description="Central entity name")
+    connection_count: int = Field(..., description="Number of connected entities")
+    relationship_types: List[str] = Field(..., description="Types of relationships (e.g., DENIES_MEETING, PHOTOGRAPHED_WITH)")
+    key_connections: List[str] = Field(..., description="Names of key connected entities")
+
+    # Phase 1: Network Metrics
+    community_id: int | None = Field(None, description="Community cluster ID from Leiden algorithm")
+    centrality_rank: int | None = Field(None, description="Rank by centrality (1=highest)")
+
+
+class AnomalyAlert(BaseModel):
+    """Phase 1: Anomaly detection alert"""
+    entity_name: str = Field(..., description="Entity showing anomalous behavior")
+    anomaly_type: str = Field(..., description="Type: 'frequency_surge', 'unexpected_connection', 'centrality_jump'")
+    severity: str = Field(..., description="Severity: 'low', 'medium', 'high', 'critical'")
+    z_score: float = Field(..., description="Statistical z-score (standard deviations from mean)")
+    description: str = Field(..., description="Human-readable explanation of anomaly")
+
+
+class IntelligenceInsights(BaseModel):
+    """Structured intelligence analysis from knowledge graph - Phase 1 Enhanced"""
+    trending_entities: List[EntityTrend] = Field(
+        default_factory=list,
+        description="Top 10 entities by mention frequency with trend data"
+    )
+    key_networks: List[RelationshipNetwork] = Field(
+        default_factory=list,
+        description="Relationship networks for top 5 entities"
+    )
+    emerging_topics: List[str] = Field(
+        default_factory=list,
+        description="Topics/entities that appeared for the first time this cycle"
+    )
+    recurring_topics: List[str] = Field(
+        default_factory=list,
+        description="Topics/entities that appear consistently over multiple cycles"
+    )
+
+    # Phase 1: Anomaly Detection
+    anomaly_alerts: List[AnomalyAlert] = Field(
+        default_factory=list,
+        description="Detected anomalies requiring attention"
+    )
+
+    # Phase 1: Temporal Intelligence
+    burst_entities: List[str] = Field(
+        default_factory=list,
+        description="Entities in Kleinberg burst state (sustained surges)"
+    )
+    velocity_leaders: List[str] = Field(
+        default_factory=list,
+        description="Entities with highest velocity (fastest growing)"
+    )
+
+    # Phase 1: Network Intelligence
+    centrality_jumps: List[str] = Field(
+        default_factory=list,
+        description="Entities with significant centrality increases"
+    )
+    bridge_entities: List[str] = Field(
+        default_factory=list,
+        description="Entities connecting different communities (high betweenness)"
+    )
+
+    analysis_timestamp: str = Field(
+        ...,
+        description="ISO timestamp of when this analysis was performed"
+    )
+    total_entities: int = Field(..., description="Total number of entities in knowledge graph")
+    total_facts: int = Field(..., description="Total number of facts (relationships) in knowledge graph")
+
+
+# ============================================================================
+# Executor Functions (Custom Transformations)
+# ============================================================================
+
+def fetch_rss_feeds(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Fetch articles from multiple RSS feeds with URL deduplication.
+    Stores processed URLs in persistent JSON file to avoid re-processing across runs.
+    """
+    feeds = [
+        "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+        "https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best",
+        "https://www.theguardian.com/world/rss",
+    ]
+
+    # Load persistent URL tracking from JSON file
+    persistent_file = Path("processed_urls.json")
+    if persistent_file.exists():
+        with open(persistent_file, 'r') as f:
+            seen_urls = set(json.load(f))
+    else:
+        seen_urls = set()
+
+    initial_count = len(seen_urls)
+    new_articles = []
+
+    print(f"\n📡 Fetching from {len(feeds)} RSS feeds...")
+    print(f"📊 Already tracked: {initial_count} articles")
+
+    for feed_url in feeds:
+        try:
+            parsed = feedparser.parse(feed_url)
+            for entry in parsed.entries:
+                url = entry.get("link", "")
+                if url and url not in seen_urls:
+                    new_articles.append(Article(
+                        title=entry.get("title", "Untitled"),
+                        url=url,
+                        summary=entry.get("summary", ""),
+                        published=entry.get("published", datetime.now().isoformat())
+                    ))
+                    seen_urls.add(url)
+        except Exception as e:
+            print(f"⚠️  Error fetching {feed_url}: {e}")
+
+    # Limit to 10 articles per cycle to control costs
+    new_articles = new_articles[:10]
+
+    # Save persistent URL tracking to JSON file
+    with open(persistent_file, 'w') as f:
+        json.dump(list(seen_urls), f, indent=2)
+
+    # Update session state for this workflow run
+    session_state["new_articles"] = [a.model_dump() for a in new_articles]
+
+    print(f"✅ Found {len(new_articles)} NEW articles (total tracked: {len(seen_urls)}, +{len(seen_urls) - initial_count} this run)")
+
+    return StepOutput(
+        content=f"Fetched {len(new_articles)} new articles from {len(feeds)} feeds"
+    )
+
+
+def log_rss_articles(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Create audit log of new RSS articles discovered in this run.
+
+    Saves a timestamped markdown document with all new articles for:
+    - Data integrity verification
+    - Historical audit trail
+    - Debugging and comparison
+    - Compliance documentation
+    """
+    articles = session_state.get("new_articles", [])
+
+    if not articles:
+        print("📋 No new articles to log")
+        return StepOutput(content="No new articles to log")
+
+    # Create rss_logs directory if it doesn't exist
+    log_dir = Path("rss_logs")
+    log_dir.mkdir(exist_ok=True)
+
+    # Generate timestamp for filename
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file = log_dir / f"rss_articles_{timestamp}.md"
+
+    # Build markdown content
+    md_content = f"""# RSS Articles Audit Log
+Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+## Summary
+- **Total New Articles**: {len(articles)}
+- **Workflow Run**: {timestamp}
+
+## Articles
+
+"""
+
+    for i, article in enumerate(articles, 1):
+        md_content += f"""### {i}. {article.get('title', 'Untitled')}
+
+- **URL**: {article.get('url', 'N/A')}
+- **Published**: {article.get('published', 'N/A')}
+- **Summary**: {article.get('summary', 'No summary available')}
+
+---
+
+"""
+
+    # Write to file
+    with open(log_file, 'w', encoding='utf-8') as f:
+        f.write(md_content)
+
+    print(f"📋 Audit log saved: {log_file}")
+
+    return StepOutput(
+        content=f"Logged {len(articles)} articles to {log_file}"
+    )
+
+
+def prepare_urls_for_extraction(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Format article URLs as a numbered list for content extraction.
+    """
+    articles = session_state.get("new_articles", [])
+
+    if not articles:
+        return StepOutput(content="No articles to extract content from")
+
+    # Format as numbered list of URLs
+    url_list = "\n".join([
+        f"{i+1}. {art['url']}"
+        for i, art in enumerate(articles)
+    ])
+
+    print(f"📝 Prepared {len(articles)} URLs for content extraction")
+
+    return StepOutput(content=url_list)
+
+
+def merge_extracted_content(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Merge extracted content back into articles.
+    Parses the agent's JSON response and updates session state.
+    """
+    articles = session_state.get("new_articles", [])
+    extracted_content = step_input.previous_step_content
+
+    if not articles:
+        return StepOutput(content="No articles to merge content into")
+
+    # Try to parse JSON response from content extractor
+    import json
+    import re
+
+    # Look for JSON in the response
+    json_match = re.search(r'\{[^}]*\}', extracted_content, re.DOTALL)
+    if json_match:
+        try:
+            content_map = json.loads(json_match.group())
+
+            # Merge content into articles
+            for i, article in enumerate(articles):
+                article_num = str(i + 1)
+                if article_num in content_map and content_map[article_num]:
+                    article['content'] = content_map[article_num]
+                else:
+                    article['content'] = article.get('summary', '')  # Fallback to summary
+
+            print(f"✅ Merged extracted content for {len(articles)} articles")
+        except json.JSONDecodeError:
+            print("⚠️  Failed to parse extracted content JSON, using summaries as fallback")
+            for article in articles:
+                article['content'] = article.get('summary', '')
+    else:
+        print("⚠️  No JSON found in extraction response, using summaries as fallback")
+        for article in articles:
+            article['content'] = article.get('summary', '')
+
+    session_state["new_articles"] = articles
+
+    return StepOutput(content=f"Merged content for {len(articles)} articles")
+
+
+def format_for_analysis(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Format articles with full content for parallel analysis.
+    Content should already be extracted and merged at this point.
+    """
+    articles = session_state.get("new_articles", [])
+
+    if not articles:
+        return StepOutput(content="No articles to analyze")
+
+    # Format for agents: include title, summary, and full content
+    formatted = "\n\n---\n\n".join([
+        f"**{art['title']}**\n"
+        f"URL: {art['url']}\n"
+        f"Published: {art['published']}\n\n"
+        f"Summary: {art['summary']}\n\n"
+        f"Content: {art.get('content', 'Content extraction pending')}"
+        for art in articles
+    ])
+
+    session_state["formatted_articles"] = formatted
+
+    return StepOutput(
+        content=formatted
+    )
+
+
+def prepare_newsletter_context(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Prepare article metadata, analysis results, and Phase 1 intelligence insights for newsletter generation.
+    Includes BOTH new articles from this cycle AND recent episodes from Graphiti knowledge graph.
+    This ensures newsletters aggregate intelligence from ALL feeds, not just current cycle.
+    """
+    new_articles = session_state.get("new_articles", [])
+
+    # Get Phase 1 intelligence summary from analyze_knowledge_graph step (raw text)
+    intelligence_summary: str = step_input.get_step_content("analyze_knowledge_graph")
+
+    # Get parallel analysis results
+    analysis_results = step_input.get_step_content("parallel_analysis")
+
+    # Build Phase 1 intelligence insights section
+    intelligence_text = ""
+    if intelligence_summary and "Total Entities:" in intelligence_summary:
+        intelligence_text = f"""# Phase 1 Enhanced Intelligence Insights from Knowledge Graph
+
+IMPORTANT: This intelligence analysis aggregates data from ALL {session_state.get('processed_urls', []).__len__()} articles
+tracked across all RSS feeds, not just today's new articles. The metrics reflect accumulated intelligence.
+
+{intelligence_summary}
+
+---
+
+"""
+    else:
+        intelligence_text = """# Phase 1 Enhanced Intelligence Insights from Knowledge Graph
+
+*Knowledge graph analysis not available yet. Run graphiti_ingest_async.py to populate the graph.*
+
+---
+
+"""
+
+    # Build article metadata section for NEW articles from this cycle
+    article_list = ""
+    if new_articles:
+        article_list = "\n\n".join([
+            f"**New Article {i+1} (This Cycle):**\n"
+            f"- Title: {art['title']}\n"
+            f"- URL: {art['url']}\n"
+            f"- Published: {art.get('published', 'Today')}"
+            for i, art in enumerate(new_articles)
+        ])
+
+    # Combine everything
+    newsletter_input = f"""{intelligence_text}# Analysis Results
+{analysis_results}
+
+---
+
+# Article Metadata (for citations)
+{article_list}
+
+---
+
+**Today's Date:** {datetime.now().strftime('%B %d, %Y')}
+
+**Instructions:**
+Generate newsletter using TODAY'S date, cite each story with its actual title and URL, and incorporate the intelligence insights to provide context on trends, networks, and patterns.
+"""
+
+    return StepOutput(content=newsletter_input)
+
+
+def save_newsletter(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Save generated technical newsletter to file with timestamp.
+    """
+    newsletter_content = step_input.previous_step_content
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    # Ensure newsletters directory exists
+    output_dir = Path(__file__).parent / "newsletters"
+    output_dir.mkdir(exist_ok=True)
+
+    output_path = output_dir / f"newsletter_technical_{timestamp}.md"
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(newsletter_content)
+
+    print(f"\n📰 Technical newsletter saved to: {output_path}")
+
+    # Store in session for consumer newsletter generation
+    session_state["technical_newsletter"] = newsletter_content
+    session_state["newsletter_timestamp"] = timestamp
+
+    return StepOutput(
+        content=newsletter_content  # Pass to next step for consumer translation
+    )
+
+
+def prepare_consumer_newsletter_context(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Prepare context for consumer newsletter generation from technical newsletter.
+    """
+    technical_newsletter = step_input.previous_step_content
+
+    consumer_context = f"""Technical Intelligence Analysis for {datetime.now().strftime('%Y-%m-%d')}
+
+{technical_newsletter}
+
+Translate this technical analysis into a consumer-friendly intelligence digest.
+
+REMEMBER:
+- No technical jargon (z-scores, centrality, velocity)
+- Plain language ("2x normal attention" not "z-score 2.0")
+- Answer "So what?" for every insight
+- Make it scannable and engaging
+"""
+
+    return StepOutput(content=consumer_context)
+
+
+def save_consumer_newsletter(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Save generated consumer newsletter to file with same timestamp as technical version.
+    """
+    consumer_newsletter = step_input.previous_step_content
+    timestamp = session_state.get("newsletter_timestamp", datetime.now().strftime("%Y%m%d_%H%M%S"))
+
+    # Ensure newsletters directory exists
+    output_dir = Path(__file__).parent / "newsletters"
+    output_dir.mkdir(exist_ok=True)
+
+    output_path = output_dir / f"newsletter_consumer_{timestamp}.md"
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(consumer_newsletter)
+
+    print(f"📰 Consumer newsletter saved to: {output_path}")
+
+    return StepOutput(
+        content=f"Consumer newsletter saved to {output_path}"
+    )
+
+
+# ============================================================================
+# Agent Definitions
+# ============================================================================
+
+# Content extractor using Agno's built-in Newspaper4kTools
+content_extractor = Agent(
+    name="Content Extractor",
+    model=Ollama(id="glm-4.6:cloud"),
+    tools=[Newspaper4kTools()],
+    instructions="""
+    Extract full article content from the provided URLs using the get_article_text tool.
+
+    You will receive a numbered list of article URLs. For each URL:
+    1. Call get_article_text(url) to extract the full content
+    2. Store the extracted content
+    3. If extraction fails, note the failure but continue with other URLs
+
+    Return a JSON object mapping article numbers to their extracted content:
+    {
+        "1": "extracted content here...",
+        "2": "extracted content here...",
+        ...
+    }
+
+    If a URL fails, use null for that entry.
+    Be efficient - process articles systematically.
+    """,
+    markdown=True,
+)
+
+# Entity extractor using structured output
+entity_agent = Agent(
+    name="Entity Extractor",
+    model=Ollama(id="deepseek-v3.1:671b-cloud", format="json"),  # Better for reasoning
+    instructions="""
+    Extract named entities from news articles with high precision.
+
+    Focus on:
+    - People (politicians, CEOs, public figures)
+    - Organizations (companies, governments, NGOs)
+    - Locations (countries, cities, regions)
+    - Events (summits, elections, disasters)
+    - Concepts (policies, technologies, movements)
+
+    Return ExtractedData JSON format:
+    {
+        "entities": [
+            {"name": "entity name", "entity_type": "type", "context": "context", "confidence": 0.0-1.0}
+        ],
+        "sentiment": null,
+        "topics": []
+    }
+
+    Populate ONLY the entities array. Use field name "entity_type" (not "type").
+    """,
+    output_schema=ExtractedData,
+    use_json_mode=True,
+    structured_outputs=True,
+)
+
+# Sentiment analyzer
+sentiment_agent = Agent(
+    name="Sentiment Analyzer",
+    model=Ollama(id="glm-4.6:cloud", format="json"),
+    instructions="""
+    Analyze sentiment and emotional tone of news articles.
+
+    Classify as:
+    - Positive: optimistic, hopeful, celebratory
+    - Negative: pessimistic, critical, concerning
+    - Neutral: factual, balanced, informational
+
+    Also identify key emotions: anger, fear, joy, sadness, surprise, trust.
+
+    Return ExtractedData JSON format:
+    {
+        "entities": [],
+        "sentiment": {
+            "overall_sentiment": "positive/negative/neutral",
+            "confidence": 0.0-1.0,
+            "key_emotions": ["emotion1", "emotion2"]
+        },
+        "topics": []
+    }
+
+    Populate ONLY the sentiment object.
+    """,
+    output_schema=ExtractedData,
+    use_json_mode=True,
+    structured_outputs=True,
+)
+
+# Topic classifier
+topic_agent = Agent(
+    name="Topic Extractor",
+    model=Ollama(id="glm-4.6:cloud", format="json"),
+    instructions="""
+    Classify news articles into relevant topics with relevance scores.
+
+    Common topics:
+    - Politics & Government
+    - Business & Economics
+    - Technology & Science
+    - Health & Medicine
+    - Environment & Climate
+    - Social Issues
+    - International Relations
+    - Security & Defense
+
+    Return ExtractedData JSON format:
+    {
+        "entities": [],
+        "sentiment": null,
+        "topics": [
+            {"topic": "topic name", "relevance": 0.0-1.0}
+        ]
+    }
+
+    Populate ONLY the topics array. Use field name "relevance" (not "relevance_score").
+    """,
+    output_schema=ExtractedData,
+    use_json_mode=True,
+    structured_outputs=True,
+)
+
+# Newsletter generator
+newsletter_generator = Agent(
+    name="Phase 1 Enhanced Newsletter Generator",
+    model=Ollama(id="deepseek-v3.1:671b-cloud"),
+    add_datetime_to_context=True,  # Inject today's date
+    instructions="""
+    You are an intelligence analyst creating Phase 1 enhanced daily briefs with advanced metrics.
+
+    INPUT DATA:
+    - Phase 1 Enhanced Intelligence (anomaly detection, velocity, centrality metrics)
+    - Article analysis results (entities, sentiment, topics)
+    - Article metadata with dates and sources
+
+    IMPORTANT:
+    - Use TODAY'S DATE from the input for the newsletter title
+    - Include source citations with article titles and URLs for each story
+    - Incorporate Phase 1 intelligence metrics (anomaly, velocity, centrality)
+
+    Structure:
+    1. **Title**: "Phase 1 Enhanced Intelligence Brief - [TODAY'S DATE]"
+
+    2. **Executive Summary**:
+       - Lead with BREAKING developments (last 6h) if any
+       - Highlight key patterns from each temporal layer
+       - Synthesize cross-layer signals (fresh + structural)
+
+    3. **🔴 BREAKING (Last 6 Hours)**:
+       Use "BREAKING" section from Phase 1 intelligence output
+       - List entities with facts created in last 6h
+       - Include: velocity spike, centrality changes, impact level
+       - Key development: Most significant fact from last 6h
+       - Network shift: New connections formed
+
+       If no breaking news in last 6h, say: "No breaking developments in last 6 hours. See Rising Patterns for emerging trends."
+
+    4. **📈 RISING PATTERNS (24-72 Hours)**:
+       Use "RISING PATTERNS" section from Phase 1 intelligence
+       - Entities showing sustained growth over multiple windows
+       - Momentum classification (sustained/accelerating)
+       - Cross-domain bridges forming
+       - What to watch next
+
+    5. **🌐 STRUCTURAL IMPORTANCE (Long Horizon)**:
+       Use "STRUCTURAL IMPORTANCE" section from Phase 1 intelligence
+       - Highest centrality entities regardless of timing
+       - Strategic network positions (hubs, bridges, authorities)
+       - Influence spheres and key connections
+       - Why these entities matter to the overall network
+
+    6. **🔍 HIDDEN SIGNALS (Intelligence Layer)**:
+       Use "HIDDEN SIGNALS" section from Phase 1 intelligence
+       - Statistical anomalies (z-score > 3.0)
+       - Unexpected connections across domains
+       - Narrative shifts (same entity, new relationship patterns)
+       - Non-obvious patterns invisible to frequency analysis
+
+    7. **⚡ ENHANCED INTELLIGENCE** (Phase 1+, 2+, 3):
+
+       **Velocity Inflection (Momentum Shifts)**:
+       - Entities showing acceleration or deceleration
+       - Trajectory analysis: 48h → 24h → current
+       - Forecast for next 6-12h based on momentum
+
+       **Cascade Potential (Ripple Effects)**:
+       - Entities with highest chain reaction potential
+       - Primary/secondary connection analysis
+       - Impact forecasts for potential developments
+
+       **Predictive Timelines** (if 3+ historical patterns exist):
+       - Expected follow-up events based on historical sequences
+       - Historical lag times with confidence levels
+       - When to watch for next developments
+
+       **Entity Role Transitions (Power Shifts)**:
+       - Entities changing network positions
+       - Centrality evolution over time windows
+       - Predicted future roles based on trajectories
+
+       **Coverage Asymmetry** (if 2+ sources):
+       - Entities with significant coverage imbalance
+       - Source-by-source breakdown
+       - Editorial focus or blind spot interpretation
+
+    8. **🚨 COMPOUND CRISIS ALERTS**
+
+       Use "COMPOUND_SCORE" section from Phase 1 intelligence output.
+
+       For each EXTREME_ALERT or HIGH_ALERT entity:
+
+       **{Alert Level} ({compound_score:.2f}): {Entity Name}**
+       - **Velocity**: {velocity_description} (percentile {XX}%)
+       - **Cascade**: {cascade_description} (percentile {XX}%)
+       - **Why critical**: {Fast-moving AND high-impact explanation}
+       - **Top cascade paths**: {List top 3 paths with entity names}
+       - **Action implication**: {What this means for decision-makers}
+
+       Example:
+       **EXTREME ALERT (0.92): Russia-Kyiv Attack**
+       - **Velocity**: Explosive acceleration (p95) - mentions tripled in 6h
+       - **Cascade**: High ripple risk (p97) - affects 12+ entities directly, 20+ indirectly
+       - **Why critical**: Fast-moving AND structurally dangerous = immediate crisis
+       - **Top cascade paths**:
+         1. Ukraine power grid → EU gas prices (economic dependency)
+         2. Regional security → NATO response (political escalation)
+         3. Humanitarian → International aid (resource strain)
+       - **Action implication**: Requires immediate attention and response planning
+
+    9. **Top Stories** (Fresh Article Citations):
+       - 3-5 most significant NEW articles from this cycle
+       - Connect to Phase 1 temporal layers where relevant
+       - Source citation: [Article Title](URL)
+
+    10. **Strategic Assessment**:
+       - Multi-horizon synthesis: How breaking + rising + structural converge
+       - Early warning signals across time scales
+       - What enhanced intelligence phases reveal about future developments
+       - Actionable foresight from predictive/cascade/transition metrics
+
+    Style: Professional intelligence analysis with Phase 1 metric insights.
+    Format: Markdown with clear sections and clickable links.
+
+    CRITICAL RULES:
+    1. Use REAL data from Phase 1 intelligence output - actual numbers, not placeholders
+    2. NO pseudo-code or placeholders like [count], [list], [X.XX]
+    3. If Phase 1 data has specific entity names and scores, USE THEM
+    4. If data is missing, say "data not available" rather than using brackets
+    5. Every metric must come from actual Phase 1 intelligence analysis
+
+    Example of CORRECT output:
+    "Jeffrey Epstein shows z-score of 4.2 (HIGH severity anomaly)"
+
+    Example of WRONG output:
+    "[Entity]: z=[X.XX], severity [HIGH/MED]"
+    """,
+    markdown=True,
+)
+
+# Consumer-friendly newsletter generator
+consumer_newsletter_generator = Agent(
+    name="Consumer Intelligence Digest Generator",
+    model=Ollama(id="deepseek-v3.1:671b-cloud"),
+    add_datetime_to_context=True,  # Inject today's date
+    instructions="""
+    You are a journalist translating intelligence analysis into consumer-friendly news.
+
+    INPUT: Phase 1 technical intelligence from previous newsletter (with z-scores, velocity, centrality)
+    OUTPUT: Accessible intelligence digest using plain language
+
+    === CRITICAL TRANSLATION RULES ===
+
+    ❌ NEVER USE THESE TECHNICAL TERMS:
+    - Z-score, standard deviation, statistical significance
+    - Centrality score, betweenness, PageRank
+    - Velocity, acceleration, temporal dynamics
+    - Kleinberg burst, anomaly threshold
+    - Network topology, graph metrics
+
+    ✅ ALWAYS USE PLAIN LANGUAGE INSTEAD:
+    - "Getting 2-3x more attention than normal"
+    - "Connected to X other stories"
+    - "Mentions doubled in 24 hours"
+    - "Heating up fast"
+    - "Web of connections"
+
+    === STRUCTURE ===
+
+    # Your Intelligence Digest - [TODAY'S DATE]
+
+    ## Today's Big Picture
+    [2-3 sentence narrative synthesizing breaking + rising + long-term patterns.
+    Connect temporal layers. Make it human and relatable.]
+
+    ## 🔴 JUST HAPPENED (Last 6 Hours)
+
+    Translate "BREAKING" section from Phase 1 into plain language:
+    **Russia Arctic Operations**
+    - What just happened: New intelligence activities detected in last 6 hours
+    - How fast: Activity jumped 3x in the past hours
+    - New connections: Now linked to energy markets and climate monitoring
+    - Why you should care right now: Could affect shipping routes and energy prices
+
+    If no breaking news: "Nothing major breaking in the last few hours. See what's building momentum below."
+
+    ## 📈 Building Momentum (Last 1-3 Days)
+
+    Translate "RISING PATTERNS" section into plain language:
+    **Germany Military Policy**
+    - What's happening: Defense spending announcements gaining steam over 2 days
+    - Pattern: Started small, now spreading to 7+ major outlets
+    - Cross-connections: Linking to EU policy, Ukraine support, NATO discussions
+    - What to watch next: Other European countries' responses
+
+    ## 🌐 The Big Picture (What Really Matters)
+
+    Translate "STRUCTURAL IMPORTANCE" section into plain language:
+    **Israel-Hamas Conflict**
+    - Why it dominates: Connected to 12+ different major issues
+    - Web of influence: Touches diplomacy, aid, energy, regional stability
+    - How long: Been central for 15+ days straight
+    - Why it's different: Few conflicts maintain this level of cross-domain impact
+
+    ## 🔍 Under the Radar (What Most People Miss)
+
+    Translate "HIDDEN SIGNALS" section into plain language:
+    **Tobacco Lobbying in Africa**
+    - What's unusual: African regulations being targeted when same rules exist in Europe
+    - Why it's surprising: Corporate influence happening in opposite direction than expected
+    - What it signals: Shows regulatory arbitrage across regions
+    - Why you should know: Pattern could repeat in other industries
+
+    ## 🚨 CRISIS ALERT BOARD
+
+    Translate "COMPOUND_SCORE" section into plain language:
+
+    **{Alert Badge}: {Story Name}**
+    - **What's happening**: {Simple description}
+    - **Why urgent**: Both fast-moving AND high-impact
+    - **Speed**: {Velocity in plain language - "Activity tripled in 6 hours"}
+    - **Reach**: {Cascade in plain language - "Could directly affect 12+ areas"}
+    - **Chain reaction risk**: {List top 3 cascade paths in plain English}
+    - **What it means for you**: {Practical implication}
+
+    Example:
+    **🔴 EXTREME CRISIS: Russia's Kyiv Attack**
+    - **What's happening**: Every district attacked simultaneously
+    - **Why urgent**: Situation is both escalating rapidly AND has far-reaching consequences
+    - **Speed**: Attack intensity tripled in past 6 hours
+    - **Reach**: Directly affects Ukrainian cities, indirectly impacts European security
+    - **Chain reaction risk**:
+      1. Power infrastructure damage → Energy crisis
+      2. Security response → Military coordination across Europe
+      3. Refugee movement → Humanitarian systems under strain
+    - **What it means for you**: Major international crisis requiring attention
+
+    ## ⚡ Advanced Intelligence (What's Coming Next)
+
+    Translate "ENHANCED INTELLIGENCE" sections into plain language:
+
+    **Momentum Shifts** (if available):
+    - Which stories are speeding up or slowing down
+    - "Entity X momentum is accelerating - expect more developments in next 6-12 hours"
+    - "Entity Y hype is fading - activity dropped 40% compared to yesterday"
+
+    **Ripple Effects** (if available):
+    - Which stories could trigger chain reactions
+    - "New Entity X developments could directly affect Y entities and indirectly impact Z more"
+    - "HIGH ripple risk - small changes here could create big waves across multiple areas"
+
+    **What to Watch For** (if predictive timelines available):
+    - Expected follow-up events based on historical patterns
+    - "Based on past patterns, expect Entity Y response in about N hours"
+    - "Historically, Entity A events lead to Entity B reactions within X hours"
+
+    **Power Shifts** (if role transitions available):
+    - Which players are becoming more or less influential
+    - "Entity X rising rapidly - went from minor player to major hub in 2 days"
+    - "Entity Y losing influence - connections dropped 50% this week"
+
+    **Coverage Gaps** (if asymmetry data available):
+    - Stories getting very different coverage across news sources
+    - "Guardian covering Entity X 5x more than BBC - suggests editorial focus"
+    - "Reuters barely covering Entity Y while everyone else is - potential blind spot"
+
+    ## ⚠️ Needs Your Attention
+
+    Combine signals across temporal layers:
+    **Climate Summit Negotiations**
+
+    This story spans all time horizons:
+    ✓ Just happened: Gender definition dispute emerged 6 hours ago
+    ✓ Building: Negotiations accelerating over 3 days
+    ✓ Structural: Connected to 8+ long-term issues
+    ✓ Hidden signal: Social issues now blocking environmental progress
+
+    **What this means**: Fast development on a structurally important issue with surprising dynamics
+
+    **What to watch**: Whether compromise emerges or entire package gets delayed
+
+    ## What to Watch Tomorrow
+
+    **Sudan Crisis** - Fresh developments expected in next 12-24 hours based on current momentum
+
+    CRITICAL RULES:
+    1. Use ACTUAL entity names from Phase 1 data
+    2. Use ACTUAL numbers (not placeholders like [N], [X], [Y])
+    3. If you don't have real data for a section, SKIP that section
+    4. NO brackets, NO placeholders, NO pseudo-code
+    5. Every number must come from Phase 1 intelligence output
+
+    === TONE & STYLE ===
+
+    - Informative but accessible (8th grade reading level)
+    - Professional but conversational
+    - Data-driven but human
+    - No fear-mongering, honest about significance
+    - Use "you" to engage readers
+    - Short paragraphs (2-3 sentences max)
+    - Active voice
+    - Concrete examples over abstract concepts
+
+    === QUALITY CHECKS ===
+
+    Before finishing, verify:
+    1. ✓ Zero technical jargon (no z-scores, centrality, etc.)
+    2. ✓ Every insight answers "So what?"
+    3. ✓ Clear visual hierarchy (icons, short sections)
+    4. ✓ Narrative flow (tells a story)
+    5. ✓ Actionable (what to watch tomorrow)
+
+    CRITICAL: Your grandmother should understand this newsletter without
+    needing a statistics degree. Translate the intelligence, don't just
+    simplify it.
+    """,
+    markdown=True,
+)
+
+# ============================================================================
+# Graphiti Knowledge Graph Integration
+# ============================================================================
+#
+# Note: Graphiti MCP Tools require async context manager initialization,
+# which Agno workflows don't support at module level. Episodes are prepared
+# by the workflow and ingested via separate async script: graphiti_ingest_async.py
+#
+# This is the proper Agno native pattern for MCP tools that require async setup.
+# ============================================================================
+
+
+def prepare_graphiti_episodes(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Prepare articles as Graphiti episodes for knowledge graph ingestion.
+
+    This function creates structured episode data that will be added to
+    Graphiti's knowledge graph, enabling cross-article entity tracking,
+    temporal pattern recognition, and relationship network analysis.
+    """
+    from datetime import datetime
+    import json
+    from pathlib import Path
+
+    articles = session_state.get("new_articles", [])
+
+    if not articles:
+        return StepOutput(content="No articles to add to knowledge graph")
+
+    print(f"\n📊 Preparing {len(articles)} articles as Graphiti episodes...")
+
+    # Create episodes for each article
+    episodes = []
+    for i, article in enumerate(articles):
+        # Create episode name and body
+        episode_name = f"News: {article['title'][:80]}"
+
+        # Structure episode body with full article data
+        episode_data = {
+            "title": article['title'],
+            "source": article.get('link', article.get('url', 'Unknown')),
+            "published_date": article.get('published', str(datetime.now())),
+            "summary": article.get('summary', ''),
+            "content": article.get('content', article.get('summary', ''))[:3000],
+        }
+
+        # Convert to JSON for structured ingestion
+        episode_body = json.dumps(episode_data, indent=2)
+
+        episodes.append({
+            "name": episode_name,
+            "body": episode_body,
+            "source_type": "json",
+            "article_index": i
+        })
+
+        print(f"  📝 Episode {i+1}: {episode_name}")
+
+    # Store episodes in session state for the Graphiti step
+    session_state["graphiti_episodes"] = episodes
+
+    # Also save to a JSON file for Claude Code to process
+    episodes_file = Path("graphiti_episodes_pending.json")
+    with open(episodes_file, "w") as f:
+        json.dump(episodes, f, indent=2)
+
+    print(f"💾 Saved episodes to {episodes_file} for Graphiti ingestion")
+
+    # Create summary for next step
+    summary = f"""Prepared {len(episodes)} episodes for Graphiti knowledge graph:
+
+{chr(10).join([f"{i+1}. {ep['name']}" for i, ep in enumerate(episodes)])}
+
+Episodes saved to: {episodes_file}
+
+These episodes will be ingested into Graphiti to:
+- Extract entities (people, organizations, locations, events)
+- Build relationship graphs between entities across articles
+- Enable temporal pattern tracking
+- Support cross-article intelligence queries
+
+⚠️  NOTE: Episodes are prepared but not yet ingested.
+    Run 'python graphiti_ingestion.py' or have Claude Code ingest them using mcp__graphiti__add_memory.
+"""
+
+    print(f"✅ Prepared {len(episodes)} episodes for knowledge graph ingestion")
+
+    return StepOutput(content=summary)
+
+
+async def ingest_graphiti_episodes(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Ingest prepared episodes into Graphiti knowledge graph using MCP tools via Agent.
+
+    This function takes episodes from session_state and adds them to Graphiti,
+    enabling immediate intelligence analysis on the new data.
+    """
+    from agno.tools.mcp import MCPTools
+    from agno.agent import Agent
+
+    episodes = session_state.get("graphiti_episodes", [])
+
+    if not episodes:
+        return StepOutput(
+            step_name="ingest_graphiti_episodes",
+            content="No episodes to ingest",
+            success=True,
+        )
+
+    print(f"\n📊 Ingesting {len(episodes)} episodes into Graphiti knowledge graph...")
+
+    # Initialize Graphiti MCP tools (same pattern as intelligence step)
+    graphiti_mcp = MCPTools(
+        url="http://localhost:8000/mcp/",
+        transport="streamable-http",
+        timeout_seconds=60,
+    )
+
+    ingested_count = 0
+    failed_count = 0
+
+    # CRITICAL: Use async context manager
+    async with graphiti_mcp:
+        await graphiti_mcp.initialize()
+        print("✓ Graphiti MCP tools initialized\n")
+
+        # Create a simple agent to use MCP tools
+        ingestion_agent = Agent(
+            name="Graphiti Ingestion Agent",
+            model=Ollama(id="glm-4.6:cloud"),  # Fast model for simple tool calls
+            tools=[graphiti_mcp],
+            instructions="""You are a Graphiti ingestion assistant. When given episode data, use the add_memory tool to ingest it into Graphiti.
+
+            Call add_memory with these exact parameters:
+            - name: The episode name provided
+            - episode_body: The episode body JSON provided
+            - source: "json"
+            - source_description: "RSS news article"
+            - group_id: "rss-intelligence"
+
+            Return "SUCCESS" if ingestion succeeds, or describe the error if it fails.""",
+            markdown=False,
+        )
+
+        # Ingest each episode using the agent
+        for i, episode in enumerate(episodes):
+            episode_name = episode["name"]
+            episode_body = episode["body"]
+
+            try:
+                print(f"  📝 Ingesting episode {i+1}/{len(episodes)}: {episode_name[:60]}...")
+
+                # Use agent to call add_memory tool
+                prompt = f"""Ingest this episode into Graphiti:
+
+Episode Name: {episode_name}
+Episode Body: {episode_body}
+
+Use the add_memory tool with the parameters specified in your instructions."""
+
+                result = await ingestion_agent.arun(prompt)
+
+                if result and "SUCCESS" in str(result.content).upper():
+                    ingested_count += 1
+                    print(f"    ✅ Episode {i+1} ingested successfully")
+                else:
+                    failed_count += 1
+                    print(f"    ❌ Episode {i+1} failed: {result.content if result else 'No response'}")
+
+            except Exception as e:
+                failed_count += 1
+                print(f"    ❌ Episode {i+1} failed: {e}")
+
+        # Summary
+        summary = f"""Graphiti Ingestion Complete:
+
+✅ Successfully ingested: {ingested_count}/{len(episodes)} episodes
+❌ Failed: {failed_count}/{len(episodes)} episodes
+
+Episodes are queued for Graphiti processing (async extraction of entities and relationships).
+"""
+
+        print()
+        print("=" * 80)
+        print(summary)
+        print("=" * 80)
+
+        # Note: Graphiti processes episodes asynchronously in the background.
+        # The intelligence analysis step will query the most up-to-date graph state,
+        # so no explicit polling is needed here. Graphiti's async processing ensures
+        # entities and facts are extracted from episodes continuously.
+
+    return StepOutput(
+        step_name="ingest_graphiti_episodes",
+        content=summary,
+        success=ingested_count > 0,
+    )
+
+
+def create_intelligence_step() -> Step:
+    """
+    Create knowledge graph intelligence analysis step.
+
+    Uses async MCP tools within a synchronous workflow step.
+    Follows pattern from agno-workflow-builder/examples/agno_mcp_structured.py
+    """
+
+    async def async_intelligence_executor(step_input: StepInput) -> StepOutput:
+        """Async executor that handles MCP context manager"""
+
+        print("\n" + "=" * 80)
+        print("Knowledge Graph Intelligence Analysis")
+        print("=" * 80 + "\n")
+
+        # Initialize Graphiti MCP tools
+        graphiti_mcp = MCPTools(
+            url="http://localhost:8000/mcp/",
+            transport="streamable-http",
+            timeout_seconds=60,
+        )
+
+        # CRITICAL: Use async context manager
+        async with graphiti_mcp:
+            await graphiti_mcp.initialize()
+
+            print(f"✓ MCP tools initialized")
+            print(f"  Available: {list(graphiti_mcp.functions.keys())}\n")
+
+            # Create Phase 1 Enhanced Intelligence agent with raw markdown output
+            intelligence_agent = Agent(
+                name="Phase 1 Enhanced Intelligence Analyst",
+                model=Ollama(
+                    id="glm-4.6:cloud",
+                    options={"num_ctx": 198000}
+                ),
+                tools=[graphiti_mcp],
+                exponential_backoff=True,
+                retries=3,
+                delay_between_retries=90,  # 90s to overcome 60s Ollama timeout
+                instructions="""
+                You are a Phase 1 Enhanced Intelligence Analyst with advanced capabilities:
+                - Anomaly Detection (z-score outlier identification)
+                - Temporal Velocity Analysis (rate of change tracking)
+                - Network Graph Metrics (centrality, communities)
+
+                === CORE WORKFLOW ===
+
+                1. ENTITY FREQUENCY ANALYSIS:
+                   - Use search_nodes to find all entities in rss-intelligence group
+                   - Count how many episodes each entity appears in (check entity summaries)
+                   - Identify top 10 most mentioned entities
+
+                2. PHASE 1: ANOMALY DETECTION:
+                   For the top 10 entities:
+                   - Calculate baseline: mean = sum(mention_counts) / count
+                   - Calculate std_dev = sqrt(sum((count - mean)^2) / count)
+                   - Compute z-score for each entity: (entity_count - mean) / std_dev
+                   - Flag entities with z-score > 3.0 as anomalies
+                   - Severity: z > 5 = HIGH, z > 3 = MEDIUM
+
+                3. PHASE 1: TEMPORAL VELOCITY (REAL TIME-SERIES):
+                   For each top entity:
+                   a) Get all facts mentioning the entity: search_memory_facts(entity_name, max_facts=100)
+                   b) Extract created_at timestamps from facts
+                   c) Calculate time buckets:
+                      - Last 6 hours: count facts created in last 6h
+                      - Previous 6 hours: count facts from 6-12h ago
+                      - Last 24 hours: count facts created in last 24h
+                      - Previous 24 hours: count facts from 24-48h ago
+                   d) Calculate velocity metrics:
+                      - Short-term velocity = (last_6h / previous_6h) if previous_6h > 0 else "NEW"
+                      - Daily velocity = (last_24h / previous_24h) if previous_24h > 0 else "NEW"
+                   e) Velocity classification:
+                      - EXPLOSIVE: velocity > 5.0 (5x increase)
+                      - HIGH: velocity > 2.0 (2x increase)
+                      - MEDIUM: velocity 1.0-2.0 (steady growth)
+                      - LOW: velocity < 1.0 (declining)
+                      - NEW: no historical data (first appearance)
+                   f) Identify top 5 by velocity score
+
+                3A. PHASE 1+: VELOCITY INFLECTION DETECTION (ACCELERATION):
+                    CRITICAL: This adds predictive power by showing momentum direction
+                    For top velocity entities:
+                    a) Calculate 3 consecutive velocity windows:
+                       - velocity_48h_ago = facts(48-42h ago) / 6h
+                       - velocity_24h_ago = facts(24-18h ago) / 6h
+                       - velocity_current = facts(6h-now) / 6h
+                    b) Calculate acceleration:
+                       - acceleration = (velocity_current - velocity_24h_ago) / velocity_24h_ago
+                       - trend = "accelerating" if acceleration > 0.2 else "decelerating" if acceleration < -0.2 else "stable"
+                    c) Inflection point detection:
+                       - If velocity_48h < velocity_24h < velocity_current: "EXPLOSIVE ACCELERATION"
+                       - If velocity_48h > velocity_24h > velocity_current: "RAPID DECELERATION"
+                       - Else: track trend
+                    d) Forecast next window:
+                       - If accelerating: "Likely to continue growing in next 6-12h"
+                       - If decelerating: "Momentum fading, may stabilize soon"
+
+                3B. PHASE 2: ENTITY ROLE TRANSITIONS (POWER SHIFTS):
+                    Track centrality changes over time to detect emerging players
+                    For each top entity:
+                    a) Calculate centrality across time windows:
+                       - centrality_48h = (unique_entities_in_facts_48h) / max_entities
+                       - centrality_24h = (unique_entities_in_facts_24h) / max_entities
+                       - centrality_current = (unique_entities_in_facts_6h) / max_entities
+                    b) Detect role transition:
+                       - role_change_rate = (centrality_current - centrality_48h) / centrality_48h
+                       - If role_change > 0.5: "RAPID ASCENT - peripheral → bridge"
+                       - If role_change < -0.5: "POWER LOSS - hub → peripheral"
+                    c) Classify trajectory:
+                       - "Ascending" if centrality increasing
+                       - "Descending" if centrality decreasing
+                       - "Stable" if within 20% range
+                    d) Predict role:
+                       - If trajectory="ascending" AND current < 0.3: "EMERGING"
+                       - If trajectory="ascending" AND current > 0.3: "RISING TO HUB"
+                       - If centrality > 0.7: "DOMINANT HUB"
+
+                4. RELATIONSHIP NETWORK ANALYSIS:
+                   - For top 5 entities by frequency:
+                     * Use search_memory_facts with entity name as query
+                     * Count total connections from results
+                     * List relationship types from fact names
+                     * List key connected entity names
+
+                5. PHASE 1: NETWORK METRICS (Simplified):
+                   For each entity with connections:
+                   - Estimate centrality_score = connection_count / max_connections
+                   - Normalize to 0-1 range
+                   - Entities with 5+ connections = bridge entities
+                   - Flag entities where connection_count > 2x average = centrality jumps
+
+                5A. PHASE 1+: CASCADE POTENTIAL SCORING (RIPPLE EFFECTS):
+                    Quantify how big a story could get based on network structure
+                    For top entities by centrality:
+                    a) Primary connections:
+                       - Count direct connections (entities mentioned with this entity)
+                       - primary_connections = unique entities in search_memory_facts(entity)
+                    b) Secondary exposure:
+                       - For each primary connection, count THEIR connections
+                       - secondary_connections = sum(connections of each primary)
+                    c) Calculate cascade score:
+                       - cascade_score = (primary * 2 + secondary) / max_possible
+                       - Normalize to 0-1 range
+                    d) Risk classification:
+                       - Score > 0.8: "EXTREME CASCADE RISK - 80%+ probability of chain reactions"
+                       - Score 0.6-0.8: "HIGH CASCADE RISK - Likely to trigger multiple domains"
+                       - Score 0.4-0.6: "MODERATE CASCADE RISK - May affect adjacent entities"
+                       - Score < 0.4: "LOW CASCADE RISK - Contained impact"
+                    e) Bridge path identification:
+                       - Identify critical connection paths (entity A → B → C → D)
+                       - Count how many paths pass through this entity (betweenness proxy)
+                    f) Impact forecast:
+                       - "New developments could directly affect [N] entities and indirectly affect [M] more"
+
+                5B. PHASE 2+: PREDICTIVE TIMELINE FORECASTING (WHEN NEXT):
+                    Use historical patterns to predict when follow-up developments will occur
+                    IMPORTANT: This requires querying episode history
+                    a) Historical sequence detection:
+                       - Query get_episodes(max_episodes=200) for historical data
+                       - Look for pattern: "Entity A mentioned" → "Entity B responds"
+                       - Example: "Document release" → "Political statement" lag times
+                    b) Calculate lag statistics:
+                       - For each historical pattern, measure time lag
+                       - lag_times = [time_diff between event A and event B across history]
+                       - mean_lag = average(lag_times)
+                       - std_lag = standard_deviation(lag_times)
+                       - confidence = 1 - (std_lag / mean_lag) if mean_lag > 0 else 0
+                    c) Generate prediction:
+                       - expected_time = now + mean_lag
+                       - confidence_level = "HIGH" if confidence > 0.7 else "MEDIUM" if confidence > 0.5 else "LOW"
+                    d) Output format:
+                       - "Based on X historical patterns, expect [Event B] in [N] hours (confidence: [%])"
+                       - "Historical lag: [min]-[max] hours, average: [mean] hours"
+                    NOTE: If insufficient historical data (<3 patterns), output "Insufficient data for prediction"
+
+                5C. PHASE 3: COVERAGE ASYMMETRY (MEDIA BIAS & BLIND SPOTS):
+                    Detect editorial focus differences and under-reported stories
+                    a) Query episodes with source metadata:
+                       - episodes = get_episodes(max_episodes=300)
+                       - Stratify by source URL (guardian, bbc, nytimes, reuters)
+                    b) Entity coverage by source:
+                       - For top entities, count mentions per feed
+                       - Example: Sudan → Guardian: 12, BBC: 2, NYT: 3, Reuters: 1
+                    c) Calculate imbalance metrics:
+                       - coverage_ratio = max(counts) / min(counts)
+                       - coefficient_variation = std_dev(counts) / mean(counts)
+                    d) Blind spot detection:
+                       - If ratio > 5x: "HIGH IMBALANCE - Potential editorial bias or blind spot"
+                       - If ratio > 3x: "MODERATE IMBALANCE - Divergent editorial priorities"
+                       - If ratio < 2x: "BALANCED COVERAGE - Similar attention across feeds"
+                    e) Interpretation guidance:
+                       - "Guardian prioritizing [Entity] with 6x more coverage suggests editorial focus on [domain]"
+                       - "Limited mainstream coverage (ratio > 5x) may indicate under-reported story"
+                    NOTE: Only report if we have 2+ sources with data
+
+                6. TEMPORAL TREND DETECTION:
+                   - New entities: created today
+                   - Recurring: multiple references in summaries
+
+                7. AGGREGATE STATISTICS:
+                   - Count total entities
+                   - Count total facts from all searches
+                   - Record timestamp
+
+                === OUTPUT FORMAT ===
+
+                Provide a structured data summary with TEMPORAL STRATIFICATION:
+
+                SUMMARY:
+                Total Entities: [count]
+                Total Facts: [count]
+                Timestamp: [ISO]
+
+                === BREAKING (LAST 6H - FRESHNESS) ===
+                Identify entities with facts created in last 6 hours AND high velocity:
+                - Query: search_memory_facts for each entity, filter created_at > (now - 6h)
+                - Criteria: 6h_velocity > 2.0 OR z_score > 2.5 OR centrality_delta > 0.3
+                - Output format:
+                  1. [Entity]: [fact_count_6h] new facts, velocity=[X.XX]x, centrality=[0.XX], impact=[HIGH/MED]
+                  - Key development: [most significant fact from last 6h]
+                  - Network shift: [new connections formed, if any]
+
+                === RISING PATTERNS (24-72H - MOMENTUM) ===
+                Identify entities showing sustained growth over multiple time windows:
+                - Criteria: 24h_velocity > 1.5 AND connection_growth > 2 AND persistence > 24h
+                - Look for: Cross-domain bridges, narrative shifts, emerging clusters
+                - Output format:
+                  1. [Entity]: momentum=[sustained/accelerating], connections=[N new], domains=[list]
+                  - Trend: [description of pattern evolution]
+                  - Watch signal: [what to monitor next]
+
+                === STRUCTURAL IMPORTANCE (LONG HORIZON - INFLUENCE) ===
+                Identify highest centrality entities regardless of timing:
+                - Criteria: centrality > 0.5 OR total_connections > 10 OR bridge_entity = true
+                - Output format:
+                  1. [Entity]: centrality=[0.XX], connections=[N], days_active=[N], role=[hub/bridge/authority]
+                  - Strategic position: [why this entity matters to the network]
+                  - Influence sphere: [list of key connected entities]
+
+                === HIDDEN SIGNALS (INTELLIGENCE LAYER - NON-OBVIOUS) ===
+                Identify anomalies and surprise connections:
+                - Statistical anomalies: z_score > 3.0
+                - Unexpected connections: Entities from distant domains now linked
+                - Narrative shifts: Same entity, changed relationship types
+                - Output format:
+                  1. [Entity/Pattern]: signal_type=[anomaly/surprise/shift], confidence=[HIGH/MED]
+                  - What's unusual: [description]
+                  - Why it matters: [potential implications]
+
+                TOP 10 ENTITIES (OVERALL):
+                1. [Name] ([type]): [mentions] mentions, z-score [X.XX], centrality [0.XX], velocity=[X.XX]x
+                2. ...
+
+                VELOCITY LEADERS (REAL TIME-SERIES DATA):
+                1. [Entity]: 6h_velocity=[X.XX]x ([last_6h] facts vs [prev_6h]), 24h_velocity=[X.XX]x ([last_24h] vs [prev_24h]), status=[EXPLOSIVE/HIGH/MEDIUM/LOW/NEW]
+                2. [Entity]: 6h_velocity=[X.XX]x ([last_6h] facts vs [prev_6h]), 24h_velocity=[X.XX]x ([last_24h] vs [prev_24h]), status=[EXPLOSIVE/HIGH/MEDIUM/LOW/NEW]
+                3. ...
+
+                Note: Use ACTUAL counts from created_at timestamps, not estimates
+
+                KEY NETWORKS:
+                [Entity]: [connections] connections, centrality [0.XX], bridge [Yes/No]
+                Types: [list]
+                Connected to: [entities]
+
+                CENTRALITY JUMPS:
+                - [Entity]: [connections] connections (>[2x] average)
+
+                === COMPOUND CRISIS SCORING ===
+
+                For all entities with both velocity and cascade metrics:
+
+                COMPOUND_SCORE:
+                1. {Entity}: score={0.XX}, alert={EXTREME_ALERT/HIGH_ALERT/MONITOR/NORMAL}
+                   - Velocity: {description} (p{XX}%)
+                   - Cascade: {description} (p{XX}%)
+                   - Rationale: {explanation}
+                   - Top cascade paths:
+                     * {Entity A} → {Entity B} ({type})
+                     * {Entity C} → {Entity D} ({type})
+                     * {Entity E} → {Entity F} ({type})
+
+                Example:
+                COMPOUND_SCORE:
+                1. Russia: score=0.92, alert=EXTREME_ALERT
+                   - Velocity: Explosive acceleration (p95) - 6h activity 3x baseline
+                   - Cascade: High ripple risk (p97) - 12 direct, 20+ indirect connections
+                   - Rationale: Fast-moving crisis with structural danger across multiple domains
+                   - Top cascade paths:
+                     * Ukraine → European Union (political response)
+                     * Energy infrastructure → EU gas markets (economic)
+                     * Humanitarian crisis → NATO (security escalation)
+
+                EMERGING/RECURRING:
+                Emerging: [list]
+                Recurring: [list]
+
+                === ENHANCED INTELLIGENCE (PHASE 1+, 2+, 3) ===
+
+                VELOCITY INFLECTION (ACCELERATION METRICS):
+                Entities showing momentum shifts (accelerating or decelerating):
+                1. [Entity]: acceleration=[+X.XX%], trend=[EXPLOSIVE ACCELERATION/RAPID DECELERATION/stable]
+                   - Velocity trajectory: 48h=[X.XX]x → 24h=[X.XX]x → current=[X.XX]x
+                   - Inflection point: [description of momentum change]
+                   - Forecast: [likely trajectory for next 6-12h]
+
+                CASCADE POTENTIAL (RIPPLE EFFECT SCORING):
+                Entities with highest potential for chain reactions:
+                1. [Entity]: cascade_score=[0.XX], risk=[EXTREME/HIGH/MODERATE/LOW]
+                   - Primary connections: [N] entities
+                   - Secondary exposure: [M] entities (2nd degree)
+                   - Impact forecast: "Developments could directly affect [N] entities, indirectly affect [M] more"
+
+                PREDICTIVE TIMELINES (HISTORICAL PATTERNS):
+                Expected follow-up developments based on historical sequences:
+                1. Pattern: "[Entity A event]" → "[Entity B response]"
+                   - Historical lag: [N] hours (±[std] hours)
+                   - Confidence: [HIGH/MEDIUM/LOW] ([X]%)
+                   - Expected time: [timestamp] ([N] hours from now)
+                   - Source: [X] historical patterns
+
+                Note: Only include if 3+ historical patterns exist
+
+                ENTITY ROLE TRANSITIONS (POWER SHIFTS):
+                Entities showing significant changes in network position:
+                1. [Entity]: role_change=[+X.XX%], trajectory=[RAPID ASCENT/POWER LOSS/stable]
+                   - Centrality evolution: 48h=[0.XX] → 24h=[0.XX] → current=[0.XX]
+                   - Role classification: [EMERGING/RISING TO HUB/DOMINANT HUB/peripheral]
+                   - Predicted role: [future network position based on trajectory]
+
+                COVERAGE ASYMMETRY (MEDIA BIAS & BLIND SPOTS):
+                Entities showing significant coverage imbalance across sources:
+                1. [Entity]: imbalance=[HIGH/MODERATE/BALANCED]
+                   - Coverage by source: Guardian=[N], BBC=[N], NYT=[N], Reuters=[N]
+                   - Coverage ratio: [X.X]x (max/min)
+                   - Interpretation: "[Source] prioritizing with [X]x more coverage - [editorial focus/blind spot]"
+
+                Note: Only report if 2+ sources have data
+
+                6. CROSS-PHASE CORRELATION (COMPOUND CRISIS DETECTION):
+                   CRITICAL: Correlates velocity with cascade to identify true emergencies
+
+                   a) Collect entities with BOTH velocity and cascade metrics:
+                      - Must have 6h velocity data AND cascade score
+                      - Minimum 10 entities for reliable percentile ranking
+
+                   b) Normalize to percentiles (0-1 range):
+                      - velocity_values = [entity['velocity_6h'] for all entities]
+                      - cascade_values = [entity['cascade_score'] for all entities]
+                      - Sort each list, assign percentile rank: (position - 0.5) / total_count
+                      - Result: p_velocity and p_cascade for each entity
+
+                   c) Compute compound score:
+                      - compound_score = p_velocity × p_cascade
+                      - Range: 0.0 (both low) to 1.0 (both extreme)
+
+                   d) Classify alert level:
+                      - compound_score ≥ 0.85: EXTREME_ALERT
+                      - compound_score ≥ 0.70: HIGH_ALERT
+                      - compound_score ≥ 0.50: MONITOR
+                      - compound_score < 0.50: NORMAL
+
+                   e) Generate rationale for EXTREME or HIGH alerts:
+                      - Velocity description: "Explosive (p{XX}%)" or "Rapid (p{XX}%)"
+                      - Cascade description: "High ripple risk (p{XX}%)" or "Moderate (p{XX}%)"
+                      - Compound explanation: "Fast-moving AND structurally dangerous = compound crisis"
+                      - Top 3 cascade paths: entity → entity (connection type)
+
+                   f) Output in COMPOUND_SCORE section (format below)
+
+                   NOTE: Skip if fewer than 10 entities have both metrics
+                """,
+                markdown=False,
+            )
+
+            try:
+                # Execute Phase 1 intelligence analysis
+                result = await intelligence_agent.arun(
+                    "Analyze the rss-intelligence knowledge graph with Phase 1 enhancements"
+                )
+
+                # result.content is raw text with Phase 1 metrics
+                intelligence_summary = result.content
+
+                print("✓ Phase 1 intelligence analysis complete")
+
+                # Extract summary statistics from text for display
+                import re
+                entities_match = re.search(r'Total Entities:\s*(\d+)', intelligence_summary)
+                facts_match = re.search(r'Total Facts:\s*(\d+)', intelligence_summary)
+
+                if entities_match:
+                    print(f"  Entities analyzed: {entities_match.group(1)}")
+                if facts_match:
+                    print(f"  Facts analyzed: {facts_match.group(1)}")
+
+                # Check for anomalies
+                if "ANOMALIES:" in intelligence_summary:
+                    anomaly_section = intelligence_summary.split("ANOMALIES:")[1].split("\n\n")[0]
+                    anomaly_count = len([line for line in anomaly_section.split("\n") if line.strip().startswith("-")])
+                    if anomaly_count > 0:
+                        print(f"  🚨 Anomalies detected: {anomaly_count}")
+
+                # Check for velocity leaders
+                if "VELOCITY LEADERS:" in intelligence_summary:
+                    velocity_section = intelligence_summary.split("VELOCITY LEADERS:")[1].split("\n\n")[0]
+                    velocity_count = len([line for line in velocity_section.split("\n") if line.strip() and line.strip()[0].isdigit()])
+                    if velocity_count > 0:
+                        print(f"  🚀 Velocity leaders: {velocity_count}")
+
+                # Check for centrality jumps
+                if "CENTRALITY JUMPS:" in intelligence_summary:
+                    centrality_section = intelligence_summary.split("CENTRALITY JUMPS:")[1].split("\n\n")[0]
+                    centrality_count = len([line for line in centrality_section.split("\n") if line.strip().startswith("-")])
+                    if centrality_count > 0:
+                        print(f"  🌐 Centrality jumps: {centrality_count}")
+
+                return StepOutput(
+                    step_name="analyze_knowledge_graph",
+                    content=intelligence_summary,  # Raw Phase 1 analysis text
+                    success=True,
+                )
+
+            except Exception as e:
+                print(f"❌ Phase 1 intelligence analysis failed: {e}")
+                import traceback
+                traceback.print_exc()
+
+                # Return empty analysis on failure
+                return StepOutput(
+                    step_name="analyze_knowledge_graph",
+                    content="Phase 1 analysis failed - no data available",
+                    success=False,
+                )
+
+    # Return async step directly (Agno workflows support async executors)
+    return Step(
+        name="analyze_knowledge_graph",
+        executor=async_intelligence_executor,
+        description="Query Graphiti knowledge graph for intelligence insights using MCP tools",
+    )
+
+
+# ============================================================================
+# Visualization Generation (Phase 2)
+# ============================================================================
+
+async def generate_visualizations(step_input: StepInput, session_state: dict) -> StepOutput:
+    """
+    Generate network visualizations for top compound crisis alerts.
+
+    Parses COMPOUND_SCORE section from intelligence output and creates:
+    - Cascade path diagrams showing ripple effect chains
+    - Network graphs with entity connections
+    - Color-coded edge types (economic, political, security, humanitarian)
+
+    Saves PNG files to visualizations/ directory.
+    """
+    import re
+    from pathlib import Path
+
+    intelligence_summary = session_state.get('intelligence_summary', '')
+
+    # Check if COMPOUND CRISIS ALERTS section exists (supports both formats)
+    has_compound_section = (
+        'COMPOUND_SCORE:' in intelligence_summary or
+        'COMPOUND CRISIS ALERTS' in intelligence_summary or
+        'COMPOUND CRISIS ALERT' in intelligence_summary
+    )
+
+    if not has_compound_section:
+        print("⚠️ No COMPOUND CRISIS ALERTS section found - skipping visualizations")
+        return StepOutput(
+            step_name="generate_visualizations",
+            content="No compound scores available for visualization",
+            success=True,
+        )
+
+    # Create visualizations directory if it doesn't exist
+    viz_dir = Path("visualizations")
+    viz_dir.mkdir(exist_ok=True)
+
+    try:
+        # Import visualization libraries
+        import matplotlib
+        matplotlib.use('Agg')  # Non-interactive backend
+        import matplotlib.pyplot as plt
+        import networkx as nx
+        from datetime import datetime
+
+        # Parse COMPOUND CRISIS ALERTS section (try multiple formats)
+        if 'COMPOUND_SCORE:' in intelligence_summary:
+            compound_section = intelligence_summary.split('COMPOUND_SCORE:')[1].split('\n\n')[0]
+            # Old format: "1. Entity: score=0.88, alert=EXTREME_ALERT"
+            alert_pattern = r'(\d+)\.\s+([^:]+):\s+score=([0-9.]+),\s+alert=(EXTREME_ALERT|HIGH_ALERT)'
+            alerts = re.findall(alert_pattern, compound_section)
+        else:
+            # New format: "## 🚨 COMPOUND CRISIS ALERTS\n\n**EXTREME ALERT (0.88): Russia-Kyiv Attack**"
+            compound_section_match = re.search(
+                r'##\s+🚨\s+COMPOUND CRISIS ALERTS(.*?)(?=##|$)',
+                intelligence_summary,
+                re.DOTALL
+            )
+            if compound_section_match:
+                compound_section = compound_section_match.group(1)
+                # Extract markdown alerts: **EXTREME ALERT (0.88): Entity Name**
+                alert_pattern = r'\*\*(EXTREME ALERT|HIGH ALERT)\s+\(([0-9.]+)\):\s+([^*]+)\*\*'
+                raw_alerts = re.findall(alert_pattern, compound_section)
+                # Convert to old format for compatibility: (rank, entity_name, score, alert_level)
+                alerts = [(str(i+1), entity.strip(), score, level.replace(' ', '_'))
+                          for i, (level, score, entity) in enumerate(raw_alerts)]
+            else:
+                alerts = []
+
+        if not alerts:
+            print("⚠️ No EXTREME_ALERT or HIGH_ALERT entities found")
+            return StepOutput(
+                step_name="generate_visualizations",
+                content="No high-priority alerts for visualization",
+                success=True,
+            )
+
+        visualization_paths = []
+
+        # Limit to top 3 alerts
+        for idx, (rank, entity_name, score, alert_level) in enumerate(alerts[:3], 1):
+            print(f"📊 Generating visualization {idx}/3: {entity_name} ({alert_level})")
+
+            # Extract cascade paths for this entity
+            # Try old format first, then new markdown format
+            entity_section_pattern = rf'{rank}\.\s+{re.escape(entity_name)}:.*?(?=\n\d+\.|$)'
+            entity_match = re.search(entity_section_pattern, compound_section, re.DOTALL)
+
+            if not entity_match:
+                # Try new markdown format: **ALERT (score): Entity Name**
+                entity_pattern = rf'\*\*{re.escape(alert_level.replace("_", " "))}[^*]*{re.escape(entity_name)}\*\*.*?(?=\*\*|##|$)'
+                entity_match = re.search(entity_pattern, compound_section, re.DOTALL | re.IGNORECASE)
+
+            if not entity_match:
+                print(f"  ⚠️ Could not find entity section for {entity_name}")
+                continue
+
+            entity_text = entity_match.group(0)
+
+            # Parse cascade paths - try both formats
+            # New format: "1. Source → Target (type)"
+            # Old format: "* Source → Target (type)"
+            path_pattern = r'(?:\d+\.\s+|\*\s+)([^→]+)\s+→\s+([^(]+)\s+\(([^)]+)\)'
+            paths = re.findall(path_pattern, entity_text)
+
+            if not paths:
+                print(f"  ⚠️ No cascade paths found for {entity_name}")
+                continue
+
+            # Create network graph
+            G = nx.DiGraph()
+
+            # Add center node (the alert entity)
+            G.add_node(entity_name, node_type='center')
+
+            # Add cascade paths
+            for source, target, edge_type in paths:
+                source = source.strip()
+                target = target.strip()
+                edge_type = edge_type.strip().lower()
+
+                # Add nodes if not exists
+                if source not in G.nodes():
+                    G.add_node(source, node_type='related')
+                if target not in G.nodes():
+                    G.add_node(target, node_type='related')
+
+                # Add edge
+                G.add_edge(source, target, edge_type=edge_type)
+
+            # Create visualization
+            plt.figure(figsize=(12, 9))
+
+            # Layout: spring layout for nice distribution
+            pos = nx.spring_layout(G, k=2, iterations=50, seed=42)
+
+            # Separate center node from others
+            center_nodes = [n for n, attr in G.nodes(data=True) if attr.get('node_type') == 'center']
+            other_nodes = [n for n in G.nodes() if n not in center_nodes]
+
+            # Draw center node (red, large)
+            if center_nodes:
+                nx.draw_networkx_nodes(G, pos, nodelist=center_nodes,
+                                      node_color='#FF4444', node_size=1500, alpha=0.9,
+                                      node_shape='s')  # Square for center
+
+            # Draw other nodes (blue, medium)
+            nx.draw_networkx_nodes(G, pos, nodelist=other_nodes,
+                                  node_color='#4A90E2', node_size=800, alpha=0.7)
+
+            # Draw edges with different colors for types
+            edge_colors = {
+                'economic': '#2ECC71',      # Green
+                'political': '#3498DB',     # Blue
+                'security': '#E74C3C',      # Red
+                'humanitarian': '#F39C12',  # Orange
+                'dependency': '#9B59B6',    # Purple
+                'response': '#1ABC9C',      # Teal
+            }
+
+            # Group edges by type and draw with appropriate colors
+            for edge_type, color in edge_colors.items():
+                edges = [(u, v) for u, v, attr in G.edges(data=True)
+                        if attr.get('edge_type', '').lower() == edge_type]
+                if edges:
+                    nx.draw_networkx_edges(G, pos, edgelist=edges,
+                                          edge_color=color, width=2.5, alpha=0.7,
+                                          arrows=True, arrowsize=25, arrowstyle='->')
+
+            # Draw labels
+            nx.draw_networkx_labels(G, pos, font_size=9, font_weight='bold',
+                                   font_color='white',
+                                   bbox=dict(boxstyle='round,pad=0.3', facecolor='black', alpha=0.7))
+
+            # Title
+            plt.title(f"Cascade Analysis: {entity_name}\n{alert_level} (Score: {score})",
+                     fontsize=16, fontweight='bold', pad=20)
+
+            # Legend
+            legend_elements = [
+                plt.Line2D([0], [0], marker='s', color='w', markerfacecolor='#FF4444', markersize=12, label='Crisis Entity'),
+                plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#4A90E2', markersize=10, label='Connected Entity'),
+            ]
+            for edge_type, color in edge_colors.items():
+                legend_elements.append(
+                    plt.Line2D([0], [0], color=color, linewidth=3, label=edge_type.title())
+                )
+            plt.legend(handles=legend_elements, loc='upper right', fontsize=9, framealpha=0.9)
+
+            plt.axis('off')
+            plt.tight_layout()
+
+            # Save
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            safe_name = re.sub(r'[^\w\s-]', '', entity_name).replace(' ', '_')
+            filepath = viz_dir / f"cascade_{safe_name}_{timestamp}.png"
+            plt.savefig(filepath, dpi=150, bbox_inches='tight', facecolor='white')
+            plt.close()
+
+            visualization_paths.append(str(filepath))
+            print(f"  ✅ Saved: {filepath}")
+
+        print(f"\n📊 Generated {len(visualization_paths)} visualizations")
+
+        # Store paths in session state for newsletter reference
+        session_state['visualization_paths'] = visualization_paths
+
+        return StepOutput(
+            step_name="generate_visualizations",
+            content=f"Generated {len(visualization_paths)} cascade visualizations",
+            success=True,
+        )
+
+    except ImportError as e:
+        print(f"⚠️ Visualization libraries not available: {e}")
+        print("   Install with: pip install matplotlib networkx")
+        return StepOutput(
+            step_name="generate_visualizations",
+            content="Visualization libraries not installed",
+            success=False,
+        )
+    except Exception as e:
+        print(f"❌ Visualization generation failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return StepOutput(
+            step_name="generate_visualizations",
+            content=f"Visualization failed: {str(e)}",
+            success=False,
+        )
+
+
+# ============================================================================
+# Workflow Definition
+# ============================================================================
+
+def create_rss_workflow() -> Workflow:
+    """
+    Create the RSS intelligence workflow with parallel analysis and knowledge graph.
+
+    Flow:
+    1. Fetch RSS feeds (deduplicated)
+    2. Log new articles to audit trail (timestamped markdown in rss_logs/)
+    3. Prepare URLs for extraction
+    4. Extract full content (Newspaper4k)
+    5. Merge extracted content back into articles
+    6. Format for analysis
+    7. Parallel analysis (entities, sentiment, topics)
+    8. Prepare Graphiti episodes (saved to graphiti_episodes_pending.json)
+    9. Ingest episodes into Graphiti knowledge graph (automatic using MCP tools)
+    10. Analyze knowledge graph (intelligence insights with MCP tools)
+    11. Generate network visualizations for compound crisis alerts
+    12. Prepare newsletter context (metadata + intelligence insights + visualization paths)
+    13. Generate technical newsletter with Phase 1 intelligence metrics
+    14. Save technical newsletter to file
+    15. Prepare consumer newsletter context (translate technical → consumer)
+    16. Generate consumer-friendly intelligence digest
+    17. Save consumer newsletter to file
+
+    Note: Audit logging (Step 2) creates timestamped markdown files for data integrity verification.
+    Graphiti ingestion (Step 9) happens automatically within the workflow.
+    Episodes are ingested immediately before intelligence analysis for fresh temporal data.
+    Intelligence analysis (Step 10) uses async MCP to query the knowledge graph.
+    Visualizations (Step 11) generate cascade diagrams for EXTREME/HIGH alerts.
+    Both technical and consumer newsletters generated with same timestamp for comparison.
+    """
+    return Workflow(
+        name="RSS Intelligence",
+        steps=[
+            # Step 1: Fetch new articles from RSS feeds
+            Step(
+                name="fetch_feeds",
+                executor=fetch_rss_feeds,
+                description="Fetch articles from RSS feeds with deduplication",
+            ),
+
+            # Step 2: Log new articles to audit trail
+            Step(
+                name="log_rss_articles",
+                executor=log_rss_articles,
+                description="Create timestamped audit log of new articles for data integrity verification",
+            ),
+
+            # Step 3: Prepare URLs for extraction
+            Step(
+                name="prepare_urls",
+                executor=prepare_urls_for_extraction,
+                description="Format article URLs as numbered list",
+            ),
+
+            # Step 4: Extract full article content
+            Step(
+                name="extract_content",
+                agent=content_extractor,
+                description="Extract full content from article URLs using Newspaper4k",
+            ),
+
+            # Step 5: Merge extracted content
+            Step(
+                name="merge_content",
+                executor=merge_extracted_content,
+                description="Merge extracted content back into articles",
+            ),
+
+            # Step 6: Format articles for analysis
+            Step(
+                name="format_articles",
+                executor=format_for_analysis,
+                description="Format articles with full content for analysis",
+            ),
+
+            # Step 7: Parallel analysis (entities, sentiment, topics)
+            Parallel(
+                Step(name="extract_entities", agent=entity_agent),
+                Step(name="analyze_sentiment", agent=sentiment_agent),
+                Step(name="extract_topics", agent=topic_agent),
+                name="parallel_analysis",
+            ),
+
+            # Step 8: Prepare Graphiti episodes
+            Step(
+                name="prepare_graphiti_episodes",
+                executor=prepare_graphiti_episodes,
+                description="Prepare articles as Graphiti episodes (saved to JSON)",
+            ),
+
+            # Step 9: Ingest episodes into Graphiti knowledge graph
+            Step(
+                name="ingest_graphiti_episodes",
+                executor=ingest_graphiti_episodes,
+                description="Ingest prepared episodes into Graphiti using MCP tools for immediate analysis",
+            ),
+
+            # Step 10: Analyze knowledge graph (Intelligence layer)
+            create_intelligence_step(),
+
+            # Step 11: Generate network visualizations for compound crisis alerts
+            Step(
+                name="generate_visualizations",
+                executor=generate_visualizations,
+                description="Generate cascade path diagrams for top compound crisis alerts",
+            ),
+
+            # Step 12: Prepare newsletter context with metadata, intelligence, and visualizations
+            Step(
+                name="prepare_newsletter_context",
+                executor=prepare_newsletter_context,
+                description="Prepare article metadata, intelligence insights, and visualization paths for newsletter",
+            ),
+
+            # Step 13: Generate technical newsletter from analysis
+            Step(
+                name="generate_newsletter",
+                agent=newsletter_generator,
+                description="Generate newsletter with proper dates, citations, and intelligence insights",
+            ),
+
+            # Step 14: Save technical newsletter to file
+            Step(
+                name="save_newsletter",
+                executor=save_newsletter,
+                description="Save generated technical newsletter to file",
+            ),
+
+            # Step 15: Prepare consumer newsletter context
+            Step(
+                name="prepare_consumer_newsletter_context",
+                executor=prepare_consumer_newsletter_context,
+                description="Prepare technical newsletter for consumer translation",
+            ),
+
+            # Step 16: Generate consumer-friendly newsletter
+            Step(
+                name="generate_consumer_newsletter",
+                agent=consumer_newsletter_generator,
+                description="Generate consumer-friendly intelligence digest",
+            ),
+
+            # Step 17: Save consumer newsletter to file
+            Step(
+                name="save_consumer_newsletter",
+                executor=save_consumer_newsletter,
+                description="Save consumer newsletter to file",
+            ),
+        ],
+        db=SqliteDb(
+            session_table="rss_intelligence_sessions",
+            db_file="rss_intelligence.db",
+        ),
+    )
+
+
+# ============================================================================
+# Main Loop (Agno-Native Scheduling)
+# ============================================================================
+
+async def main():
+    """
+    Main loop with Agno-native scheduling.
+
+    Runs every 2 hours (7200 seconds).
+    For testing: comment out while True loop and run once.
+    """
+    workflow = create_rss_workflow()
+
+    print("🚀 RSS Intelligence Workflow Starting...")
+    print("📊 Using free Ollama Cloud models: glm-4.6, deepseek-v3.1")
+    print("⏰ Cycle interval: 2 hours\n")
+
+    # For testing: comment out while True and run once
+    # Uncomment for continuous operation
+    # while True:
+    try:
+        print(f"\n{'='*60}")
+        print(f"⏰ Cycle started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"{'='*60}\n")
+
+        # Run workflow
+        await workflow.arun(
+            input="Process all RSS feeds",
+            session_state={"processed_urls": []},  # Initialize on first run (list is JSON-serializable)
+        )
+
+        print(f"\n{'='*60}")
+        print(f"✅ Cycle completed at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"{'='*60}\n")
+
+        # print("💤 Sleeping for 2 hours...")
+        # time.sleep(7200)  # 2 hours
+
+    except KeyboardInterrupt:
+        print("\n\n🛑 Workflow stopped by user")
+        # break
+    except Exception as e:
+        print(f"\n⚠️  Error in workflow cycle: {e}")
+        import traceback
+        traceback.print_exc()
+        # print("💤 Sleeping for 2 hours before retry...")
+        # time.sleep(7200)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

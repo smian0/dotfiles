@@ -1,0 +1,2262 @@
+{
+  "entities": [
+    {
+      "uuid": "0be5785a-7405-424c-a4e0-bdc86fc5bb0f",
+      "name": "F.B.I.",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T18:42:31.330433+00:00",
+      "summary": "FBI assisting local police investigating organized burglary rings targeting Asian immigrant business owners. Trump to order FBI investigation into Epstein's involvement and relationship with Clinton, Larry Summers, and major banks.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "81339846-ba99-4adc-9cf9-f6960bddeeb0",
+      "name": "BHP",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T20:18:22.295618+00:00",
+      "summary": "London High Court found BHP liable for 2015 Brazil dam collapse that killed 19. Samarco joint venture with Vale faces \u00a336bn lawsuit from 600,000+ claimants. BHP plans appeal.",
+      "group_id": "rss-intelligence",
+      "activities": [],
+      "attributes": {}
+    },
+    {
+      "uuid": "f83bf5ca-70df-4790-baad-e6cf9fbd09fc",
+      "name": "boys",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T20:12:17.566347+00:00",
+      "summary": "Jon Ruben, 76, pleaded guilty to drugging and sexually assaulting two boys aged 9 and 10 at Stathern Lodge summer camp in Leicestershire on 14 Nov 2025.",
+      "group_id": "rss-intelligence",
+      "activities": [],
+      "attributes": {}
+    },
+    {
+      "uuid": "f4b17c28-f02f-4167-90c5-b54a3e4ffaf6",
+      "name": "Azerbaijan",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T21:37:58.251642+00:00",
+      "summary": "Azerbaijan hosted Cop29 climate talks in Baku with 1,773 fossil fuel lobbyists.",
+      "group_id": "rss-intelligence",
+      "activities": [],
+      "attributes": {}
+    },
+    {
+      "uuid": "ef24f43b-1388-4f02-ac83-2c0c6ddd39bd",
+      "name": "Bahrain",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T13:12:07.279939+00:00",
+      "summary": "Bahrain was suggested as a stopover on a Gulf Air flight by Jeffrey Epstein to Steve Bannon in November 2018.",
+      "group_id": "rss-intelligence",
+      "activities": [],
+      "attributes": {}
+    },
+    {
+      "uuid": "efa73386-5073-4be5-ad20-9be434951737",
+      "name": "Men in Black 3",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T15:56:00.355003+00:00",
+      "summary": "Men in Black 3 had its Moscow premiere in 2012 where a Ukrainian TV prankster kissed Will Smith.",
+      "group_id": "rss-intelligence",
+      "activities": [],
+      "attributes": {}
+    },
+    {
+      "uuid": "b39df84a-2285-4d02-8a05-4066219f3e2b",
+      "name": "Boris Johnson",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T23:32:39.763975+00:00",
+      "summary": "Boris Johnson may be required to give evidence to the Manston asylum inquiry. He was mentioned in 2018 messages between Steve Bannon and Jeffrey Epstein discussing Brexit and UK politics.",
+      "group_id": "rss-intelligence",
+      "activities": [],
+      "attributes": {}
+    },
+    {
+      "uuid": "0839cbf0-6610-4d37-8515-012e0751b273",
+      "name": "Burundi",
+      "labels": [
+        "Entity"
+      ],
+      "starting_at": "2025-11-14T22:39:00.422853+00:00",
+      "summary": "Burundi subject to partial US travel ban; citizens cannot permanently enter US or receive certain visas.",
+      "group_id": "rss-intelligence",
+      "activities": [],
+      "attributes": {}
+    },
+    {
+      "uuid": "5ae8cd5f-34bc-4686-a923-cf7368cc91ac",
+      "name": "Britain",
+      "labels": [
+        "Entity"
+      ],
+      "starting_at": "2025-11-14T19:10:30.655186+00:00",
+      "summary": "Britain: Xu Chao sentenced to life as prolific sex offender in London; senior staff suspended at Kent's Manston asylum centre over misconduct; Tate galleries leaked job applicants' personal data online.",
+      "group_id": "rss-intelligence",
+      "activities": [],
+      "attributes": {}
+    },
+    {
+      "uuid": "68f34377-3eaf-4075-8ede-2ce34161e78e",
+      "name": "Barbara Lee",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2022025-11-14T17:38:14.805218+00:00",
+      "summary": "Oakland mayor Barbara Lee called the Laney College campus shooting 'incredibly heavy for our city,' noting it was the second campus shooting in two days and advocating for gun control.",
+      "group_id": "rss-intelligence",
+      "activities": [],
+      "attributes": {}
+    },
+    {
+      "uuid": "54898e78-18ee-4b8a-8728-dc6e8fcc695d",
+      "name": "Melanie C",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T23:41:21.632799+00:00",
+      "summary": "Former Spice Girl Melanie C performed at the finish line of Sara Cox's Children in Need marathon challenge on 14 Nov 2025, celebrating Cox's 135-mile run.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "68e63859-8178-40ef-940d-adb368625d69",
+      "name": "Carbon Brief",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T17:46:48.704895+00:00",
+      "summary": "Collaborated with The Guardian to analyze UN submissions and OECD data on billions in climate finance going to China, Saudi Arabia, and UAE.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "1e174705-22ad-44b7-8552-0f51bc23f4cf",
+      "name": "US military regional Centcom command",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T21:50:04.508071+00:00",
+      "summary": "US military Centcom command drew plans earlier this month placing British, French, German soldiers at core of Gaza international stabilisation force under Trump's peace plan.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "94135621-c7b5-44ad-8324-ac0ef1b142a1",
+      "name": "CCM",
+      "labels": [
+        "Entity"
+      ],
+      "connectedTo": [],
+      "created_at": "2025-11-14T20:54:11.074691+00:00",
+      "summary": "Tanzania's ruling party CCM. President Samia Suluhu Hassan won October 2025 election with 98% of vote. Opposition leaders blocked, at least 240 charged with treason. CCM systematically eliminated competition before election.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "b172b111-db60-429b-a62a-648fc8624868",
+      "name": "CBS",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T20:24:57.718044+00:00",
+      "summary": "CBS '60 Minutes' broadcast Witkoff interview Oct. 19 about condolences to Hamas official al-Hayya. Paramount Global paid $16m in July to settle Trump's legal dispute over Kamala Harris interview.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "4c5d0d8a-20cb-44bf-8193-1fc3724822e4",
+      "name": "Cielke Sijben",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T15:56:00.354959+00:00",
+      "summary": "Cielke Sijben handcuffed herself to Hugh Grant at a 2007 premiere of Music and Lyrics; firefighters freed them.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "c7b50a74-6ccb-4738-8513-5eae208ed5ac",
+      "name": "commanders",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T15:10:30.666883+00:00",
+      "summary": "Israeli military commanders say they need government authorization for harsher measures to crack down on settler violence during West Bank olive harvest.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "45402556-e7cd-402d-951d-5cc8bf20a75b",
+      "name": "Claude Code",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T19:56:33.522774+00:00",
+      "summary": "Anthropic's coding tool Claude Code was manipulated by Chinese state-sponsored hackers in September to attack 30 entities, with 80-90% of operations performed without human intervention after subverting guardrails - claimed as first largely autonomous AI cyberattack.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "3ae2a86e-aeac-44f9-83c5-ac7c117898df",
+      "name": "Republic of Congo",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T22:39:00.422822+00:00",
+      "summary": "Republic of Congo on Trump's June travel ban (12 countries), barring citizens from US travel. New policy makes green cards harder; USCIS considers ban factors as 'significant negative factors'.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "e0cda9c4-e3e7-4b7d-ae9f-a659eb373c2f",
+      "name": "Peralta community college district",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T17:38:14.805192+00:00",
+      "summary": "Peralta community college district oversees Laney College. After campus shooting, officials called it 'a frightening moment' and confirmed campus reopened with no active threat.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "1c0943ab-cf7e-4237-8613-5861c3790319",
+      "name": "Democrats",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-13T21:29:02.083609+00:00",
+      "summary": "Democrats signed discharge petition with four House Republicans to release Epstein files.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "name": "Donald Trump",
+      "labels": [
+        "Entity"
+      ],
+      "_created_at": "2025-11-13T21:21:20.704919+00:00",
+      "summary": "Trump plans Gaza division with British/French/German ISF, rules out US troops/funding; expands travel ban limiting green cards; rolls back food tariffs; plans $1-5bn BBC lawsuit; cuts ties with Marjorie Taylor Greene over Epstein files.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "3a69bd3f-67ee-4fb2-8fec-9504592958fa",
+      "name": "Democratic lawmakers",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T19:46:59.661841+00:00",
+      "summary": "Democratic lawmakers released Epstein estate emails suggesting Epstein believed Trump was aware of Ghislaine Maxwell's conduct.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "ed3e5af0-d36e-48e5-aed5-f6e0a7869316",
+      "name": "Department of Education",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T16:07:17.751459+00:00",
+      "summary": "Department of Education officials told Senate inquiry no modelling done on reversing JRG scheme, didn't list its reform in interim Atec's work, and said timing is government's decision.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "83566798-c1e6-4996-a2b3-2cf7d206cd3e",
+      "name": "Delhi",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T19:19:38.535943+00:00",
+      "summary": "Delhi car explosion killed 13 during rush hour Monday outside significant monument. Attack treated as terror incident linked to Kashmir module, one of deadliest in capital in over a decade.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "d797ed74-78ee-4673-92f2-1007e6fc3865",
+      "name": "Distinguished Service Order",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T23:56:12.359832+00:00",
+      "summary": "The Distinguished Service Order (DSO) is the second-highest military award for gallantry.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "f67ec01c-a75b-4fa5-9426-0b7455bd337a",
+      "name": "Dungeness",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T16:50:14.649080+00:00",
+      "summary": "Plastic beads from Camber Sands spill found along Sussex coast from Hastings to Dungeness.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "87a5be73-f552-4f6a-a366-a23471d177fe",
+      "name": "Dubai",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T23:03:45.419549+00:00",
+      "summary": "Dubai hosted Cop28 climate talks with 2,456 fossil fuel lobbyists attending.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "2e56be9b-9a74-463b-afe0-a16364a10860",
+      "name": "X",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T17:53:34.764168+00:00",
+      "summary": "MP Adnan Hussain announced via X he quit Your Party over infighting. US Senator Chris Murphy warned on X about AI cyber-attack threats.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "e1ce7eee-1bde-40f1-b4ed-0090e13d7b0e",
+      "name": "Claude",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T19:56:33.522779+00:00",
+      "summary": "Chinese state-sponsored hackers manipulated Anthropic's Claude coding tool in September to attack 30 entities, executing 80-90% of operations without human intervention in the first documented large-scale AI-driven cyber-attack.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "37e2b001-6b28-443a-aa30-2ba36f038e10",
+      "name": "Edward Brandt",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T18:50:09.213155+00:00",
+      "summary": "Edward Brandt, 61, found guilty by jury of stalking former Conservative MP Penny Mordaunt. Bombarded her with emails/calls and jumped security barrier at office. Southampton crown court, Nov 14, 2025.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "b190e054-1a8d-4307-850f-306dcc83dd4d",
+      "name": "Europe",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-13T21:24:40.985259+00:00",
+      "summary": "Germany reinstating conscription for EU plan to build world's strongest army within 5 years, responding to Russia's Ukraine invasion. Napoleon's Waterloo brooch sold for $4.4M in Geneva auction.",
+      "graph_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "50e3ba09-4971-4f26-9b5b-d29e25f039d1",
+      "name": "Jaish-e-Mohammad",
+      "labels": [
+        "Entity"
+      ],
+      "active_at": "2025-11-14T19:19:38.536020+00:00",
+      "summary": "Pakistan-backed armed terror group Jaish-e-Mohammad promoted in Srinagar, Kashmir. Investigated as part of terror module linked to Delhi car blast that killed 13. Group part of militant insurgency in region since 1990s.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "75a71cba-4278-4889-a4d6-a24c9dff55ce",
+      "name": "European Union",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-13T21:24:40.985208+00:00",
+      "summary": "China expressed extreme disappointment with Dutch minister over China-EU chip supply row; Beijing's Nexperia export ban nearly halted global car industry. US cut tariffs on Switzerland to 15%, aligning with EU rates.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "03014c8b-fd20-48fb-9587-0e6aa38d4a71",
+      "name": "European forces",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T21:50:04.508080+00:00",
+      "summary": "European forces\u2014hundreds of British, French, and German soldiers\u2014form the core of the US-planned International Stabilisation Force for Gaza's 'green zone'.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "20b71bce-af68-4d0c-9d55-ae6fc4805f7c",
+      "name": "Ecuador",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T14:15:06.338092+00:00",
+      "summary": "Indigenous people from Ecuador's Andes attended COP30 in Bel\u00e9m, Brazil. Youth leader Katty Gualinga, 25, advocated for forest protection.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "17b933ef-d560-49a7-a209-e2a39af96fb5",
+      "name": "Germany",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-11T20:42:28.429393+00:00",
+      "summary": "Germany moves to reinstate military conscription as Defence Minister Boris Pistorius predicts EU will have world's strongest army within five years, responding to Russia's invasion of Ukraine.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "68b89926-e90a-4059-ae89-fa0668cad673",
+      "name": "el-Fasher",
+      "labels": [
+        "Entity"
+      ],
+      "developed_at": "2025-11-14T17:58:37.511646+00:00",
+      "summary": "El Fasher, Darfur city captured by RSF after 18-month siege. UN investigating mass killings and sexual violence; RSF accused of massacring 460 in maternity hospital. Aid blocked, starvation emerging.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "7eb62739-f0fe-498b-a823-9e2aea1d77f4",
+      "name": "European countries",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T22:30:04.522295+00:00",
+      "summary": "European countries including France sought clarity on Gaza peace plan governance; British, French, and German soldiers would form core of planned international stabilization force.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "59f9b0d4-c74e-4255-861c-adccbfacf20a",
+      "name": "Eugene, Ore.",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T18:42:31.330471+00:00",
+      "summary": "Eugene, Ore. Asian immigrant business owners targeted by organized South American burglary rings. Police Chief Chris Skinner addressing community at Korean church.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "fb8c763a-b726-4126-9ac0-73a1a3aeb7f6",
+      "name": "AI",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T18:57:16.629652+00:00",
+      "summary": "AI sector market correction on Nov 14, 2025: tech stocks sold off after AI rally peaked, Nvidia fell 3.6% on overvaluation fears.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "52b1279d-df11-4e4c-90b6-7cbab5f9d9ae",
+      "name": "people",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T22:39:00.422919+00:00",
+      "summary": "Munduruku Indigenous people blockaded COP30 entrance demanding Brazil president audience. Tanzania president promised election protest deaths probe. UN investigating Sudan civil war atrocities. Russia/China countered US Gaza plan at UN.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "83502b70-0e91-474e-878b-fc3be42f36a0",
+      "name": "Instagram",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T15:56:00.355077+00:00",
+      "summary": "Johnson Wen posts on Instagram as @pyjamamann, documenting his history of invading concert stages, including his recent incident grabbing Ariana Grande.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "c2584e48-29f1-4537-86cd-4c92621f2afc",
+      "name": "International Media Investments (IMI)",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T11:14:19.368831+00:00",
+      "summary": "UAE fund owned by Abu Dhabi's Sheikh Mansour. Controls Telegraph via RedBird IMI joint venture. Dropped \u00a3500m Telegraph acquisition bid on 14 Nov 2025 due to UK foreign ownership laws.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "5249462f-a51a-4f30-b724-fc0fc2a79fa5",
+      "name": "Wicked: For Good",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T15:56:00.354893+00:00",
+      "summary": "Wicked: For Good sequel starring Ariana Grande and Cynthia Erivo premiered Universal Studios Singapore 13 Nov 2025, releases 21 Nov 2025.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "6ddea631-1905-4784-843d-44635e8fad58",
+      "name": "India",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T19:19:38.535961+00:00",
+      "summary": "India: Delhi car explosion killed 13, treated as terror incident. Raids in Kashmir over Pakistan-backed Jaish-e-Mohammad links. 2,900kg explosives seized. PM Modi called it a conspiracy.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "568747e4-15c6-40b8-9d9c-ddd9e2d7991a",
+      "name": "RedBird IMI",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T17:14:19.368887+00:00",
+      "summary": "RedBird IMI, joint venture between RedBird Capital and UAE's International Media Investments (controlled by Sheikh Mansour bin Zayed al-Nahyan), currently controls the Telegraph.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "1af1bd96-2074-4efb-8015-0ac0ce9bf01c",
+      "name": "Luiz In\u00e1cio Lula da Silva",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T20:32:01.716539+00:00",
+      "summary": "Brazil's President Lula opened Cop30 in Bel\u00e9m, declaring it the 'Cop of truth' while disavowing disinformation, as 1,600+ fossil fuel lobbyists outnumbered all delegations except Brazil's.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "c910ed05-affd-4a16-8207-c849eb465bc9",
+      "name": "birds",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T16:36:33.450435+00:00",
+      "summary": "Birds at Camber Sands and Rye Harbour nature reserve risk death from eating toxic plastic bio-beads spilled by Southern Water. Beads attract algae, smell like food, and can be fatal.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "2ea4cc8b-1c10-4f8c-b535-7e439c499298",
+      "name": "Janjaweed",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T17:58:37.511702+00:00",
+      "summary": "Janjaweed militia committed genocide in Darfur 20 years ago. The Rapid Support Forces (RSF) paramilitary group traces its origins to Janjaweed and is currently accused of similar atrocities in Darfur, targeting non-Arab groups.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "78caea36-f3b8-446c-980a-eca90b4cde7b",
+      "name": "international court of justice (ICJ)",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T23:03:45.419524+00:00",
+      "summary": "In July, the ICJ ruled that continued fossil fuel expansion, extraction, consumption and subsidies may constitute an internationally wrongful act.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "9a3ecf27-f2b0-4782-ba6a-e56e0549f102",
+      "name": "Jamaica",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T23:03:45.419561+00:00",
+      "summary": "Jamaica's COP30 delegation outnumbered 40:1 by fossil fuel lobbyists; Hurricane Melissa recovery expected to cost billions and take years.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "6221f5d3-d1e8-4e97-bd92-af78edd464d6",
+      "name": "Johnson Wen",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T15:56:00.354872+00:00",
+      "summary": "Johnson Wen, 26, charged with public nuisance for grabbing Ariana Grande at Singapore Wicked: For Good premiere. Pleaded guilty, faces S$2,000 fine. Known as Instagram's 'pyjamamann' for stage invasions.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "a59e7cca-d493-4870-91ab-6e15923551b5",
+      "name": "JP Morgan",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T19:52:30.989873+00:00",
+      "summary": "Trump plans to order investigation into Jeffrey Epstein's alleged ties with JP Morgan and other major banks.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "aa19b2ae-e7b3-4dd3-9ae1-4157424b12d5",
+      "name": "Jon Ruben",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T20:12:17.566297+00:00",
+      "summary": "Jon Ruben, 76, pleaded guilty to drugging and sexually assaulting two boys aged 9 and 10 at Stathern Lodge summer camp in Leicestershire, which he ran for 27 years.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "00f72134-d24e-4ab8-80e4-baaf0f10362a",
+      "name": "John Thornton",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T17:14:19.369004+00:00",
+      "summary": "RedBird Capital chair whose \u00a3500m Telegraph bid collapsed amid newsroom concerns about Chinese state influence.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "1668eaf6-6e8a-48dc-a7e1-5939af1dfeaa",
+      "name": "John Beam",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T17:38:14.804997+00:00",
+      "summary": "John Beam, American football coach featured in Netflix's 'Last Chance U' and director of athletics at Oakland's Laney College, critically injured in campus shooting on Nov 14, 2025. Police searching for suspect.",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    },
+    {
+      "uuid": "e6ed1ffd-28ea-411c-9c7c-6e12fea30ede",
+      "name": "Neymar Jr",
+      "labels": [
+        "Entity"
+      ],
+      "created_at": "2025-11-14T18:26:13.008557+00:00",
+      "summary": "",
+      "group_id": "rss-intelligence",
+      "attributes": {}
+    }
+  ],
+  "facts": [
+    {
+      "uuid": "06e725f0-c9a9-452d-8296-f15e25633d93",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "e42bd18f-15e6-4fe9-9c4f-6a03272b3d80",
+      "target_node_uuid": "c11b9232-dd98-47b9-98c5-8d328e7391db",
+      "created_at": "2025-11-14T17:34:32.033651Z",
+      "name": "DIRECTOR_OF",
+      "fact": "Cat Hobbs is the director of We Own It.",
+      "episodes": [
+        "edfd6d79-7136-4438-be07-9828daadab3d"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T17:30:02.657754Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "7b49ea8a-b4bf-4e93-97bf-86664502ef01",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "1af1bd96-2074-4efb-8015-0ac0ce9bf01c",
+      "target_node_uuid": "4b283092-df00-49ff-88a1-b14a41012406",
+      "created_at": "2025-11-14T21:45:50.561067Z",
+      "name": "PRESIDENT_OF",
+      "fact": "Luiz In\u00e1cio Lula da Silva is President of Brazil",
+      "episodes": [
+        "cbefdc1c-f372-439a-a499-9cf8e5e5e31b",
+        "3754014a-42e4-47af-acde-3560354bbc83"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T05:00:20Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "b35af46a-3aa1-4dac-8b9f-369785b48896",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "target_node_uuid": "ad011dd2-a0e8-4588-a679-26c2ec3773e9",
+      "created_at": "2025-11-14T20:09:34.966330Z",
+      "name": "IS_PRESIDENT_OF",
+      "fact": "Donald Trump is President of the United States.",
+      "episodes": [
+        "d0652959-cf37-46ad-b219-aeef8ffc3d8e"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T20:02:45.700191Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "135a3d9c-7a14-4724-bd76-d1d099b6c835",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "target_node_uuid": "9cc8584d-6aac-4434-bb4c-5d5b9143bb81",
+      "created_at": "2025-11-15T12:57:06.169157Z",
+      "name": "DENIES_WRONGDOING_REGARDING",
+      "fact": "Trump has consistently denied any wrongdoing in relation to Epstein",
+      "episodes": [
+        "972be30b-d71d-49e4-93f7-b4316a9bd95b"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-15T12:49:41.149702Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "83a83248-e56e-4cfa-a623-d28e54310366",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "d5800d06-d65d-428e-ac79-dc5c6ce51199",
+      "target_node_uuid": "e01342b7-7925-45d3-a325-c6148c1ac6b8",
+      "created_at": "2025-11-14T19:50:22.056598Z",
+      "name": "FORMER_PRESIDENT_OF",
+      "fact": "Larry Summers was a former president of Harvard University who lost his position after making sexist comments about female academics",
+      "episodes": [
+        "6e0d95e1-e22c-49f9-a3df-256fb515fe2f"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "78889d3c-d43d-4ed6-aa08-6f8a482eb034",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "6fc37d8d-1a00-4f2e-80da-ca5529ec38b3",
+      "target_node_uuid": "80e25a43-f28f-4ccf-9103-e6b4c0015c12",
+      "created_at": "2025-11-15T13:17:25.457067Z",
+      "name": "DISCUSSED_SURVIVAL_WITH_EPSTEIN",
+      "fact": "Steve Bannon discussed whether Theresa May would survive as prime minister with Jeffrey Epstein on November 16, 2018",
+      "episodes": [
+        "d0c057ec-c818-474d-87e6-e87b3da1da01"
+      ],
+      "expired_at": null,
+      "valid_at": "2018-11-16T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "43995e16-e8b7-49ef-a882-dfc03ab055c3",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "d5800d06-d65d-428e-ac79-dc5c6ce51199",
+      "target_node_uuid": "c5a90fec-44e8-440c-911f-b556f8fd829a",
+      "created_at": "2025-11-14T19:50:22.056788Z",
+      "name": "SPOKESPERSON_DID_NOT_RESPOND_TO",
+      "fact": "Larry Summers's spokesperson has not yet responded to a request for comment from The Guardian",
+      "episodes": [
+        "6e0d95e1-e22c-49f9-a3df-256fb515fe2f"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "938a8c39-4fbb-496e-9167-44550f0939dc",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "dcf3bf8e-759b-4a99-8739-22278dfe5ca7",
+      "target_node_uuid": "ee591d64-66e1-453b-96ce-7b0638f88156",
+      "created_at": "2025-11-14T23:36:34.940230Z",
+      "name": "DIED_FROM",
+      "fact": "Hussein Haseeb Ahmed died in hospital after contracting diphtheria on 19 November 2022.",
+      "episodes": [
+        "29d64e2c-eef8-4e3d-8f2d-87a6085174dd"
+      ],
+      "expired_at": null,
+      "valid_at": "2022-11-19T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "004c9e61-7c79-43cc-a54a-6411d351f24c",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "1c94cd51-b56e-4bb6-b3bf-daaea1bca770",
+      "target_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "created_at": "2025-11-14T19:00:38.349299Z",
+      "name": "WORKS_FOR",
+      "fact": "Kevin Hassett serves as director in Donald Trump's administration",
+      "episodes": [
+        "a0b13e91-7157-4615-8082-9e3767a81db5"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "913c7a67-ae66-4c22-a3ef-3387133ececa",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "1cd65356-c978-4897-9b0c-61cf3572800d",
+      "target_node_uuid": "b3dcebd8-89b4-488e-970f-d921332159b9",
+      "created_at": "2025-11-14T16:30:10.842016Z",
+      "name": "SUCCEEDED_AS_CORRESPONDENT",
+      "fact": "Seham, Malak A Tantesh's cousin, has taken up her position as correspondent",
+      "episodes": [
+        "17077e8e-6336-4922-a6c6-bd1e639c6e2d"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "0dad4e39-541a-4efc-b578-82a6a84fd980",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "fda84c55-a30e-4a49-b3da-21b4165f4652",
+      "target_node_uuid": "17b933ef-d560-49a7-a209-e2a39af96fb5",
+      "created_at": "2025-11-14T19:41:53.918616Z",
+      "name": "LOCATED_IN",
+      "fact": "Hamburg is located in Germany.",
+      "episodes": [
+        "24f7be6d-3811-45b5-95e8-4724dacdc08e"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T17:04:33Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "91afb02b-eb58-4a8f-9875-fffc19d3da27",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "4ec7ccac-1676-420d-b056-0621b5ae1d83",
+      "target_node_uuid": "866bc9a3-dee4-4fd7-a326-0f6834a41219",
+      "created_at": "2025-11-14T17:41:12.042585Z",
+      "name": "STREAMED_ON",
+      "fact": "Last Chance U is a Netflix documentary series",
+      "episodes": [
+        "ac078513-9953-441c-b0c6-00a33b27123a"
+      ],
+      "expired_at": null,
+      "valid_at": "2020-01-01T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "4092b357-2289-4b44-91b0-b6574ccc17d6",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b3dcebd8-89b4-488e-970f-d921332159b9",
+      "target_node_uuid": "6c10d511-cbb0-41ac-adbe-c404428d3339",
+      "created_at": "2025-11-14T16:30:10.841940Z",
+      "name": "REPORTED_FROM",
+      "fact": "Malak A Tantesh reported from Gaza for 18 months",
+      "episodes": [
+        "17077e8e-6336-4922-a6c6-bd1e639c6e2d"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "b3d07bb3-35a1-4f5d-bc96-2533345f0e15",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "2edf6c46-673e-4f69-a043-a1c022d53a55",
+      "target_node_uuid": "62ca5025-c4a5-4c31-a195-d927ec5f0144",
+      "created_at": "2025-11-14T16:57:38.911570Z",
+      "name": "REPRESENTS_AS_MP",
+      "fact": "Helena Dollimore is the MP for Hastings and Rye constituency",
+      "episodes": [
+        "9ee95255-fc38-4dc7-a24d-354457d22cd5"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "43796bdb-db07-40d2-8dbe-fb3d3fad91d4",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "9cc8584d-6aac-4434-bb4c-5d5b9143bb81",
+      "target_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "created_at": "2025-11-14T19:50:22.056650Z",
+      "name": "ASSOCIATED_WITH",
+      "fact": "Jeffrey Epstein was a longtime associate of Donald Trump",
+      "episodes": [
+        "6e0d95e1-e22c-49f9-a3df-256fb515fe2f"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "72cb0cd5-6296-4f5c-85c3-c01fc9beab01",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "26257397-03a8-401f-a3b8-f3be02789cfd",
+      "target_node_uuid": "023fa4c6-0d84-46a6-89ea-0914c50f2b03",
+      "created_at": "2025-11-14T19:29:25.779511Z",
+      "name": "FORMER_MEMBER_OF",
+      "fact": "Zarah Sultana is a former Labour MP",
+      "episodes": [
+        "786916ed-2378-4380-8e69-46279da7681f"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "3e42a650-46f5-4c9e-b22b-d424fbbd9534",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "6fc37d8d-1a00-4f2e-80da-ca5529ec38b3",
+      "target_node_uuid": "6fc37d8d-1a00-4f2e-80da-ca5529ec38b3",
+      "created_at": "2025-11-15T13:17:25.457060Z",
+      "name": "DISCUSSED_WITH_EPSTEIN",
+      "fact": "Steve Bannon discussed Jacob Rees-Mogg with Jeffrey Epstein on November 16, 2018",
+      "episodes": [
+        "d0c057ec-c818-474d-87e6-e87b3da1da01"
+      ],
+      "expired_at": null,
+      "valid_at": "2018-11-16T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "5086abb5-763c-4028-b9b7-cc9033927b9d",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "33164fab-44fb-43fc-b129-192754717291",
+      "target_node_uuid": "ddd56628-e5a0-4a16-9807-cadd413bc185",
+      "created_at": "2025-11-14T17:34:32.033626Z",
+      "name": "LENDER_TO",
+      "fact": "Elliott Investment Management is one of Thames Water's lenders that have effectively taken over the business.",
+      "episodes": [
+        "edfd6d79-7136-4438-be07-9828daadab3d"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T17:30:02.657754Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "a00f445f-2711-4f10-b262-d54ccd4ccf8a",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "54898e78-18ee-4b8a-8728-dc6e8fcc695d",
+      "target_node_uuid": "b49b999a-3424-4b0f-b455-a9af09008938",
+      "created_at": "2025-11-14T23:46:50.842567Z",
+      "name": "IS_FORMER_MEMBER_OF",
+      "fact": "Melanie C is a former member of the Spice Girls",
+      "episodes": [
+        "d894acae-9e49-4592-8616-ba49913d0bb4"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T23:40:06.432052Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "9a436e0b-71fc-448f-8ce9-44b13c5a6dcd",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "2badb4db-f5a7-4758-a3da-a887e11ec553",
+      "target_node_uuid": "10b1a359-6e20-4d63-ad95-d3d7740e3fef",
+      "created_at": "2025-11-14T17:22:08.250219Z",
+      "name": "HOLDS_POSITION_IN",
+      "fact": "Sheikh Mansour bin Zayed al-Nahyan is the vice-president of the United Arab Emirates",
+      "episodes": [
+        "fa7b4671-9729-49f0-a950-c5e30356af04"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "89c4031b-9a25-470b-a4f9-8320b639f7a1",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "587a030c-caa4-460a-9c48-788e65bf9473",
+      "target_node_uuid": "6cfee293-56fa-4cd8-a39f-555f8850630f",
+      "created_at": "2025-11-14T22:06:53.735842Z",
+      "name": "HAS_TERRITORIAL_CLAIM_IN",
+      "fact": "Palestine has territorial claim in West Bank",
+      "episodes": [
+        "ef026aa2-3bd6-4136-acee-89238f03ae00"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T22:02:04.580320Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "be0e77b4-3274-4208-9574-c69e8357ef39",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "6fc37d8d-1a00-4f2e-80da-ca5529ec38b3",
+      "target_node_uuid": "b39df84a-2285-4d02-8a05-4066219f3e2b",
+      "created_at": "2025-11-15T13:17:25.457037Z",
+      "name": "DISCUSSED_WITH_EPSTEIN",
+      "fact": "Steve Bannon discussed Boris Johnson with Jeffrey Epstein on November 16, 2018",
+      "episodes": [
+        "d0c057ec-c818-474d-87e6-e87b3da1da01"
+      ],
+      "expired_at": null,
+      "valid_at": "2018-11-16T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "4adc69fc-5cc7-4376-8c4e-fcf9e171c3ea",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "target_node_uuid": "8ed1467b-da96-47f3-9b3b-5745f975aa44",
+      "created_at": "2025-11-15T12:57:06.169126Z",
+      "name": "HAS_FACED_CRITICISM_OVER_HANDLING_OF",
+      "fact": "Trump has long faced criticism from both parties over his handling of the US Department of Justice's files related to Epstein",
+      "episodes": [
+        "972be30b-d71d-49e4-93f7-b4316a9bd95b"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-15T12:49:41.149702Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "be4c2a08-14f4-4908-b5d4-ecbd8656a43f",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "dab75470-25cd-47b3-b340-9c8fca102b41",
+      "target_node_uuid": "b3609833-295c-4879-ad21-8d595b61bb6a",
+      "created_at": "2025-11-15T12:57:06.169173Z",
+      "name": "IS_MEMBER_OF",
+      "fact": "Greene is a Republican Congresswoman and one of four House Republicans who signed the Epstein petition",
+      "episodes": [
+        "972be30b-d71d-49e4-93f7-b4316a9bd95b"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-15T12:49:41.149702Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "ea2caead-8c58-4900-bd36-86686aecacb0",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "83566798-c1e6-4996-a2b3-2cf7d206cd3e",
+      "target_node_uuid": "6ddea631-1905-4784-843d-44635e8fad58",
+      "created_at": "2025-11-14T19:23:36.951046Z",
+      "name": "LOCATED_IN",
+      "fact": "Delhi is located in India",
+      "episodes": [
+        "09f5ed95-0c37-4277-9040-9ee2205578bc"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "c93a0e69-962a-4ac3-a6c0-2265c2c71bba",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c4c47656-e4e9-4d09-b91d-cec8f993793e",
+      "target_node_uuid": "64096159-ba36-440e-948f-388fe6832aa0",
+      "created_at": "2025-11-14T19:16:13.214266Z",
+      "name": "WORKS_IN_REGION",
+      "fact": "Andres White Correal is chairman of jewelry for Sotheby's in the Middle East",
+      "episodes": [
+        "5d6c929a-fc00-4e3c-b0b7-0e2ad4f9c2b4"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T19:09:34.872686Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "5503b724-fe95-4a5a-8e5a-86ca22bc59d4",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b3dcebd8-89b4-488e-970f-d921332159b9",
+      "target_node_uuid": "c5a90fec-44e8-440c-911f-b556f8fd829a",
+      "created_at": "2025-11-14T16:30:10.841925Z",
+      "name": "WORKED_AS_CORRESPONDENT_FOR",
+      "fact": "Malak A Tantesh reported for the Guardian from Gaza for 18 months",
+      "episodes": [
+        "17077e8e-6336-4922-a6c6-bd1e639c6e2d"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "c7a33e2e-4e49-482c-a4fd-7dd1fed1a16c",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "2e82fe04-795d-4850-a3f1-11b91858c1c8",
+      "target_node_uuid": "f3ab6ce5-50a1-403a-9dea-9795ef5e0486",
+      "created_at": "2025-11-14T17:51:17.630780Z",
+      "name": "IS_MAYOR_OF",
+      "fact": "Vitali Klitschko is the mayor of Kyiv.",
+      "episodes": [
+        "b68472ae-3df6-4092-9261-d5495aeca5a8"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T17:43:51.468065Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "86db9c4f-b55f-4566-90a0-9a278d3bfac4",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "d5800d06-d65d-428e-ac79-dc5c6ce51199",
+      "target_node_uuid": "e01342b7-7925-45d3-a325-c6148c1ac6b8",
+      "created_at": "2025-11-14T19:50:22.056815Z",
+      "name": "COMMENTED_ON",
+      "fact": "In a 2017 email to Jeffrey Epstein, Larry Summers wrote about Harvard University's admissions debate regarding a formerly incarcerated woman's admission to a PhD program",
+      "episodes": [
+        "6e0d95e1-e22c-49f9-a3df-256fb515fe2f"
+      ],
+      "expired_at": null,
+      "valid_at": "2017-01-01T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "ca126538-f70c-4263-862b-52308c2b6835",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "28fd1fd0-730f-4b0d-9248-a81990cdc915",
+      "target_node_uuid": "6fc37d8d-1a00-4f2e-80da-ca5529ec38b3",
+      "created_at": "2025-11-15T13:17:25.456962Z",
+      "name": "IDENTIFIED_IN_REDACTED_CHAT",
+      "fact": "The BBC identified Steve Bannon as the redacted user in an iMessage chat with Jeffrey Epstein by matching dates, events, and places mentioned",
+      "episodes": [
+        "d0c057ec-c818-474d-87e6-e87b3da1da01"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-12T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "d5200a07-fb23-4f9f-8d19-c209102cba90",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "2badb4db-f5a7-4758-a3da-a887e11ec553",
+      "target_node_uuid": "74db4b61-1712-44dc-8abd-9f3733a40bff",
+      "created_at": "2025-11-14T17:22:08.250243Z",
+      "name": "OWNS",
+      "fact": "Sheikh Mansour bin Zayed al-Nahyan owns Manchester City FC",
+      "episodes": [
+        "fa7b4671-9729-49f0-a950-c5e30356af04"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "d2db8170-f615-409c-8409-33c1cd8e24d2",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "78339476-6008-4a0a-845f-e0a24cacf318",
+      "target_node_uuid": "aea6edb1-6402-47c5-b31a-277ba8811344",
+      "created_at": "2025-11-14T19:23:36.951059Z",
+      "name": "COLLEAGUE_IN_GOVERNMENT",
+      "fact": "Narendra Modi is the Indian prime minister and Amit Shah is his home minister",
+      "episodes": [
+        "09f5ed95-0c37-4277-9040-9ee2205578bc"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T19:18:38.607026Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "28f03fcb-b918-4894-9ad6-4bed1920c9cb",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "6221f5d3-d1e8-4e97-bd92-af78edd464d6",
+      "target_node_uuid": "846d4ad8-044c-49f8-8005-7d5747dc2582",
+      "created_at": "2025-11-14T16:03:23.898966Z",
+      "name": "ALSO_KNOWN_AS",
+      "fact": "Johnson Wen regularly posts on Instagram as pyjamamann",
+      "episodes": [
+        "2783fa82-49a2-449a-9203-c4ea59b78449"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "7b2c9c49-8a36-4a3f-b816-abb1ec2956ce",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "6221f5d3-d1e8-4e97-bd92-af78edd464d6",
+      "target_node_uuid": "83502b70-0e91-474e-878b-fc3be42f36a0",
+      "created_at": "2025-11-14T16:03:23.898979Z",
+      "name": "POSTS_ON",
+      "fact": "Johnson Wen regularly posts on Instagram as pyjamamann",
+      "episodes": [
+        "2783fa82-49a2-449a-9203-c4ea59b78449"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "f08b30eb-80b4-4083-ba31-f583240f68f3",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c88e2327-5918-4fa8-8e5e-64be8da29ec7",
+      "target_node_uuid": "3082f7ed-b931-4c81-97fb-efda8d632357",
+      "created_at": "2025-11-14T17:28:16.860408Z",
+      "name": "HOUSED_AT",
+      "fact": "The triptych has been housed at St John's Almshouse since before the Reformation",
+      "episodes": [
+        "712ba32a-4935-4764-86bd-5a8f5bb9bc1e"
+      ],
+      "expired_at": null,
+      "valid_at": "1480-01-01T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "132a3717-3cd3-48e4-816a-032069c4e974",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "080c3ca0-425c-42b1-ba20-f6184d21d1e3",
+      "target_node_uuid": "05120b92-74d4-460d-a331-5799e8c6e602",
+      "created_at": "2025-11-14T20:29:13.791064Z",
+      "name": "HAS_ROLE",
+      "fact": "Hamas has Khalil al-Hayya as its chief negotiator",
+      "episodes": [
+        "6f9456b8-b6c6-4acd-81d4-cf457e8ed140"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T20:24:04Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "f9353420-d103-4784-bda6-d90c8e607031",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "26257397-03a8-401f-a3b8-f3be02789cfd",
+      "target_node_uuid": "7d8cb9c8-4685-464e-95a8-53499813c236",
+      "created_at": "2025-11-14T19:29:25.779506Z",
+      "name": "APPEARED_ON",
+      "fact": "Zarah Sultana appeared on BBC One's Question Time",
+      "episodes": [
+        "786916ed-2378-4380-8e69-46279da7681f"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-13T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "cf342959-a19d-40e3-9da9-719b5f975beb",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b3dccaa7-9499-475a-b10e-d1c5aa9bb5d6",
+      "target_node_uuid": "5c53df1d-684d-422a-b743-25aab54d871d",
+      "created_at": "2025-11-14T23:36:34.940254Z",
+      "name": "MAY_GIVE_EVIDENCE_TO_INQUIRY",
+      "fact": "Former prime minister Rishi Sunak may be required to give evidence to the independent inquiry into Manston.",
+      "episodes": [
+        "29d64e2c-eef8-4e3d-8f2d-87a6085174dd"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "f85f02f5-5c79-4d1f-8c8f-5a50b0e59438",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "e72d49c5-e79a-4fdc-a715-17069fa445e4",
+      "target_node_uuid": "f300f423-fa9e-4e60-a492-c1dbf2c2be8a",
+      "created_at": "2025-11-15T13:26:26.629959Z",
+      "name": "LOCATED_IN",
+      "fact": "Ander Louis spoke to the BBC from Lilydale",
+      "episodes": [
+        "dd25b635-4f0a-4736-a8fa-b7946ba7c784"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T22:00:42Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "614d4124-0459-422a-86fb-54040807920d",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "a18e0f35-4c62-4088-925f-a5d5641cbc0c",
+      "target_node_uuid": "7851cdf7-4b70-4363-8232-ba1b4dad4893",
+      "created_at": "2025-11-14T14:23:01.000899Z",
+      "name": "MEMBER_OF",
+      "fact": "Lucia Ixch\u00e9u is a member of the K'iche' community",
+      "episodes": [
+        "0d71b3f4-8c09-44bc-8eeb-c2501cc2581c"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T14:00:07Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "9529a39e-378a-41a8-88b6-311b7111dceb",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c4c47656-e4e9-4d09-b91d-cec8f993793e",
+      "target_node_uuid": "b190e054-1a8d-4307-850f-306dcc83dd4d",
+      "created_at": "2025-11-14T19:16:13.214261Z",
+      "name": "WORKS_IN_REGION",
+      "fact": "Andres White Correal is chairman of jewelry for Sotheby's in Europe",
+      "episodes": [
+        "5d6c929a-fc00-4e3c-b0b7-0e2ad4f9c2b4"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T19:09:34.872686Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "b57403c8-bf7b-4113-8cf9-7d372f0b5d8d",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "9750e114-b412-4a15-bea2-0927b62964d1",
+      "target_node_uuid": "0c3a5cd4-757d-4ce0-ad24-c15db8b08d07",
+      "created_at": "2025-11-14T17:11:30.374092Z",
+      "name": "IS_SENIOR_DIRECTOR_OF_UK_POLITICS_AT",
+      "fact": "Gideon Skinner is senior director of UK politics at Ipsos",
+      "episodes": [
+        "178b88fc-937b-482e-b810-e2a577e41fb7"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T15:03:02Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "be0ac192-c31e-4230-a273-36d4531cf10b",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "91ec9f24-9c2c-4194-a9de-d7ac44797bb4",
+      "target_node_uuid": "3082f7ed-b931-4c81-97fb-efda8d632357",
+      "created_at": "2025-11-14T17:28:16.860364Z",
+      "name": "TRUSTEE_OF",
+      "fact": "Mike Burks is a trustee of St John's Almshouse",
+      "episodes": [
+        "712ba32a-4935-4764-86bd-5a8f5bb9bc1e"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T17:23:53Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "e7db29f7-6bb3-46fb-8c42-a9838f81087a",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "02a6ddc9-91e8-4629-80b7-f6fd8f93a79d",
+      "target_node_uuid": "9cc8584d-6aac-4434-bb4c-5d5b9143bb81",
+      "created_at": "2025-11-14T19:50:22.056828Z",
+      "name": "REVEALED_COMMUNICATIONS_OF",
+      "fact": "The Wall Street Journal revealed a previous tranche of emails between Jeffrey Epstein and Larry Summers in a 2023 piece",
+      "episodes": [
+        "6e0d95e1-e22c-49f9-a3df-256fb515fe2f"
+      ],
+      "expired_at": null,
+      "valid_at": "2023-01-01T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "caeec508-d150-4afd-b7dc-2d90c9e5da7a",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "target_node_uuid": "9cc8584d-6aac-4434-bb4c-5d5b9143bb81",
+      "created_at": "2025-11-13T21:23:03.288711Z",
+      "name": "HAD_FALLING_OUT_WITH",
+      "fact": "Trump had a falling out with Epstein years before Epstein's 2008 conviction",
+      "episodes": [
+        "7b9d6e63-79ed-49d9-906c-b6bac175921c"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-13T21:20:56.430295Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "3a83e228-5399-4507-b8be-4b3587e1e123",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "6826a25f-01c8-4c21-b8be-817f863cd398",
+      "target_node_uuid": "84b6ba20-6966-4c93-af59-9345c2278f73",
+      "created_at": "2025-11-14T19:35:23.226736Z",
+      "name": "HAD_ROMANTIC_RELATIONSHIP_WITH",
+      "fact": "Fani Willis had a romantic relationship with special prosecutor Nathan Wade",
+      "episodes": [
+        "b047006b-df1c-453f-a071-4f617eefe2ee"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "70664e1d-ebac-42c5-9f01-cb9aeb298967",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c2fdbb0a-c1be-4e7f-9acd-db5b5da26fa8",
+      "target_node_uuid": "ddd56628-e5a0-4a16-9807-cadd413bc185",
+      "created_at": "2025-11-14T22:06:53.735811Z",
+      "name": "INVOLVED_IN_MANAGEMENT_OF",
+      "fact": "United Kingdom is involved in management of Thames Water",
+      "episodes": [
+        "ef026aa2-3bd6-4136-acee-89238f03ae00"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T22:02:04.580320Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "0669976b-4839-4cde-ac0d-3f2fdcc6d843",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c2fdbb0a-c1be-4e7f-9acd-db5b5da26fa8",
+      "target_node_uuid": "621bb2b6-6fc7-439c-b1da-ce9ae0340be8",
+      "created_at": "2025-11-14T22:06:53.735789Z",
+      "name": "INVOLVED_IN_TAKEOVER_OF",
+      "fact": "United Kingdom is involved in takeover of The Telegraph",
+      "episodes": [
+        "ef026aa2-3bd6-4136-acee-89238f03ae00"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T22:02:04.580320Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "4cd46b0a-d19c-4de4-88cc-178c3429a4c9",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "e33b8aa7-d29e-4899-b75a-464b2e44d29c",
+      "target_node_uuid": "09a8f9e7-a108-4ab5-8e76-480301d1d182",
+      "created_at": "2025-11-14T16:13:44.490701Z",
+      "name": "HAS_NOT_SEEN_LEGISLATION_FOR",
+      "fact": "The Coalition has not seen the legislation for Atec",
+      "episodes": [
+        "1292d148-0c10-41bd-a386-c6313d6305a9"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T14:00:50Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "c8f9f345-a0b2-4575-9eef-d98c8d9728e5",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "target_node_uuid": "9cc8584d-6aac-4434-bb4c-5d5b9143bb81",
+      "created_at": "2025-11-15T12:57:06.169141Z",
+      "name": "WAS_FRIENDS_WITH",
+      "fact": "Trump was a friend of Epstein's for years",
+      "episodes": [
+        "972be30b-d71d-49e4-93f7-b4316a9bd95b"
+      ],
+      "expired_at": "2025-11-15T13:00:15.682565Z",
+      "valid_at": null,
+      "invalid_at": "2004-01-01T00:00:00Z",
+      "attributes": {}
+    },
+    {
+      "uuid": "109ab9b9-ba00-43b2-92b3-5dbc1f1a7326",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b54942df-62dc-41d8-8026-7f5366185961",
+      "target_node_uuid": "70829be3-361d-4cce-87a4-83cc45be044d",
+      "created_at": "2025-11-14T18:55:13.753254Z",
+      "name": "BELIEVES_TO_BE_PROLIFIC_OFFENDER",
+      "fact": "Police believe Chao Xu to be one of the most prolific sex offenders of all time",
+      "episodes": [
+        "216d27df-05df-4f46-b94c-0198163511c1"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "890caa5e-acc3-46ac-9914-2b1595b7ed05",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "5e32f56a-1a0e-4e74-96f7-75305437992b",
+      "target_node_uuid": "df6aec14-c90c-4613-b6d3-726d690af073",
+      "created_at": "2025-11-14T15:50:07.506427Z",
+      "name": "WORKS_AT",
+      "fact": "Shoshanna Saxe is a professor of civil engineering at the University of Toronto",
+      "episodes": [
+        "83fe4ba7-06d4-4460-b66c-f0ca8d9485ad"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "6e0e0a97-1011-4e4b-a1ec-2a6d60483a96",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "4df145d0-a452-49ce-aef6-d6db5373d416",
+      "target_node_uuid": "079b0aca-c0d7-4a99-b601-224dd1a058c5",
+      "created_at": "2025-11-14T20:59:14.606311Z",
+      "name": "PRESIDENT_OF",
+      "fact": "Samia Suluhu Hassan is the President of Tanzania",
+      "episodes": [
+        "1993f667-a29e-4e1e-9efe-276aeaa71905"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T20:53:02.583911Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "65c05f43-1a76-4ea0-9957-e5bae80973f6",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "4faea420-43a1-4d26-bd61-b699caab7c19",
+      "target_node_uuid": "3082f7ed-b931-4c81-97fb-efda8d632357",
+      "created_at": "2025-11-14T17:28:16.860376Z",
+      "name": "GRANTED_CHARTER_TO",
+      "fact": "King Henry VI granted a royal charter to St John's Almshouse in 1437",
+      "episodes": [
+        "712ba32a-4935-4764-86bd-5a8f5bb9bc1e"
+      ],
+      "expired_at": null,
+      "valid_at": "1437-01-01T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "82d33c34-95eb-49e7-a70c-05d459f47f5e",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b3dcebd8-89b4-488e-970f-d921332159b9",
+      "target_node_uuid": "6225899e-034b-48fa-8779-fdecdf1d526e",
+      "created_at": "2025-11-14T16:30:10.841965Z",
+      "name": "BIRTHPLACE",
+      "fact": "Beit Lahia is Malak A Tantesh's birthplace",
+      "episodes": [
+        "17077e8e-6336-4922-a6c6-bd1e639c6e2d"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "59078fa7-4c2f-4f77-8fa1-ac1215d346ed",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "005976a5-0ebf-4c1d-b7f7-eb6dc5743433",
+      "target_node_uuid": "5c53df1d-684d-422a-b743-25aab54d871d",
+      "created_at": "2025-11-14T23:36:34.940262Z",
+      "name": "MAY_GIVE_EVIDENCE_TO_INQUIRY",
+      "fact": "Former home secretary Grant Shapps may be required to give evidence to the independent inquiry into Manston.",
+      "episodes": [
+        "29d64e2c-eef8-4e3d-8f2d-87a6085174dd"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "cab6c08d-c457-4461-a632-f8043208893e",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "6fc37d8d-1a00-4f2e-80da-ca5529ec38b3",
+      "target_node_uuid": "b3dccaa7-9499-475a-b10e-d1c5aa9bb5d6",
+      "created_at": "2025-11-15T13:17:25.456991Z",
+      "name": "DISCUSSED",
+      "fact": "Steve Bannon discussed Brexit with Jeffrey Epstein on November 16, 2018",
+      "episodes": [
+        "d0c057ec-c818-474d-87e6-e87b3da1da01"
+      ],
+      "expired_at": null,
+      "valid_at": "2018-11-16T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "e437463a-fc3d-419e-b76b-187d7717949c",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "d5800d06-d65d-428e-ac79-dc5c6ce51199",
+      "target_node_uuid": "02a6ddc9-91e8-4629-80b7-f6fd8f93a79d",
+      "created_at": "2025-11-14T19:50:22.056771Z",
+      "name": "SPOKESPERSON_COMMUNICATED_WITH",
+      "fact": "A spokesperson for Larry Summers told the Wall Street Journal in 2023 that he deeply regrets being in contact with Jeffrey Epstein after his conviction",
+      "episodes": [
+        "6e0d95e1-e22c-49f9-a3df-256fb515fe2f"
+      ],
+      "expired_at": null,
+      "valid_at": "2023-01-01T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "ec165327-33e9-43d3-9ae2-6b0ddfc0fc98",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "6826a25f-01c8-4c21-b8be-817f863cd398",
+      "target_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "created_at": "2025-11-14T19:35:23.226722Z",
+      "name": "FORMERLY_PROSECUTED",
+      "fact": "Fani Willis was previously the prosecutor in the election interference case against Donald Trump",
+      "episodes": [
+        "b047006b-df1c-453f-a071-4f617eefe2ee"
+      ],
+      "expired_at": "2025-11-14T19:35:39.347849Z",
+      "valid_at": null,
+      "invalid_at": "2025-09-01T00:00:00Z",
+      "attributes": {}
+    },
+    {
+      "uuid": "fef8c9cd-593f-4baf-b09a-7b5610c1688c",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "587a030c-caa4-460a-9c48-788e65bf9473",
+      "target_node_uuid": "6c10d511-cbb0-41ac-adbe-c404428d3339",
+      "created_at": "2025-11-14T22:06:53.735831Z",
+      "name": "INVOLVED_IN_CONFLICT_IN",
+      "fact": "Palestine is involved in conflict in Gaza",
+      "episodes": [
+        "ef026aa2-3bd6-4136-acee-89238f03ae00"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T22:02:04.580320Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "1f43c73e-d5ec-4bed-87ee-7d24e1b24aa9",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "1af1bd96-2074-4efb-8015-0ac0ce9bf01c",
+      "target_node_uuid": "079b0aca-c0d7-4a99-b601-224dd1a058c5",
+      "created_at": "2025-11-14T22:19:03.141438Z",
+      "name": "CLAIMED_DEATHS_IN_UNREST_IN",
+      "fact": "The opposition claimed that hundreds of people may have died in post-election unrest in Tanzania",
+      "episodes": [
+        "ad656333-c87a-4d79-abec-a297ea372488"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "b00840b9-857b-4b1c-9fc4-3c7dd9022197",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "e72d49c5-e79a-4fdc-a715-17069fa445e4",
+      "target_node_uuid": "42b96ed2-211f-45fe-83b0-e15e440a58dd",
+      "created_at": "2025-11-15T13:26:26.629993Z",
+      "name": "DESCRIBED_AS",
+      "fact": "Ander Louis describes Napoleon as an 'alright blok' in his translation",
+      "episodes": [
+        "dd25b635-4f0a-4736-a8fa-b7946ba7c784"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T22:00:42Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "1b522d25-6e8e-45d2-824c-7daf9c29bca9",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c4c47656-e4e9-4d09-b91d-cec8f993793e",
+      "target_node_uuid": "3f46a2ed-8d40-4fd6-adc9-c6aebc3e4256",
+      "created_at": "2025-11-14T19:16:13.214270Z",
+      "name": "WORKS_IN_REGION",
+      "fact": "Andres White Correal is chairman of jewelry for Sotheby's in Africa",
+      "episodes": [
+        "5d6c929a-fc00-4e3c-b0b7-0e2ad4f9c2b4"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T19:09:34.872686Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "6c193563-f77e-4d66-acc5-42d700d324f9",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "2f5c3960-8065-4e7c-b804-385f84e2002a",
+      "target_node_uuid": "e8397c4e-5666-4623-94a0-9dcbdbddce90",
+      "created_at": "2025-11-15T12:47:09.153377Z",
+      "name": "HOLDS_POSITION_IN",
+      "fact": "Manoj Sinha is the region's Lieutenant Governor in Indian-administered Kashmir",
+      "episodes": [
+        "a507fa89-971f-4c2a-88e4-eae74c268154"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-15T12:41:42.872503Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "a98e245f-9062-4c4e-899a-e42fe78146fa",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "a9f68fb4-5e82-4798-bd10-9be2bf55dec3",
+      "target_node_uuid": "cddd8b7e-f41d-4cf6-ae33-c103a37ae88b",
+      "created_at": "2025-11-15T00:07:30.175109Z",
+      "name": "HAS_SETTLER_POPULATION",
+      "fact": "Israel has Jewish settlers who conduct attacks in West Bank",
+      "episodes": [
+        "e77edb2a-bd96-4da4-8ebc-7651995c8f84"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "8591b49e-4c7d-4b0d-b1da-3740da93694d",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c96e1266-7352-41d7-a86c-c6461b94fbd9",
+      "target_node_uuid": "62ca5025-c4a5-4c31-a195-d927ec5f0144",
+      "created_at": "2025-11-14T21:45:50.561039Z",
+      "name": "WORKS_AT",
+      "fact": "Lien Vandamme is senior campaigner on human rights and climate change at the Center for International Environmental Law (CIEL)",
+      "episodes": [
+        "cbefdc1c-f372-439a-a499-9cf8e5e5e31b"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T05:00:20Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "696f769c-abd2-41a3-b027-d408232014cd",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "6fc37d8d-1a00-4f2e-80da-ca5529ec38b3",
+      "target_node_uuid": "c367510e-fb8c-4ff4-bca9-c3efcf692aba",
+      "created_at": "2025-11-15T13:17:25.457024Z",
+      "name": "DISCUSSED_WITH_EPSTEIN",
+      "fact": "Steve Bannon discussed Nigel Farage with Jeffrey Epstein on November 16, 2018",
+      "episodes": [
+        "d0c057ec-c818-474d-87e6-e87b3da1da01"
+      ],
+      "expired_at": null,
+      "valid_at": "2018-11-16T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "82bca640-2d20-49b9-ad98-a029661688f6",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b39df84a-2285-4d02-8a05-4066219f3e2b",
+      "target_node_uuid": "5c53df1d-684d-422a-b743-25aab54d871d",
+      "created_at": "2025-11-14T23:36:34.940250Z",
+      "name": "MAY_GIVE_EVIDENCE_TO_INQUIRY",
+      "fact": "Former prime minister Boris Johnson may be required to give evidence to the independent inquiry into Manston.",
+      "episodes": [
+        "span>29d64e2c-eef8-4e3d-8f2d-87a6085174dd"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "4c929afc-e421-4242-9dd5-43c0db234ee7",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "86893cad-1dd2-451b-abc9-df03c470acbc",
+      "target_node_uuid": "bd62ffd8-c6e6-4741-8e8a-75d6b2161bad",
+      "created_at": "2025-11-14T16:57:38.911709Z",
+      "name": "PARTICIPATED_IN_CLEANUP_OF",
+      "fact": "Anthony Skinner is one of 175 people who have spent days cleaning plastic beads from the beach",
+      "episodes": [
+        "9ee95255-fc38-4dc7-a24d-354457d22cd5"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T16:48:57.968332Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "845ebf40-004b-49db-91aa-4777d9e01039",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c96e1266-7352-41d7-a86c-c6461b94fbd9",
+      "target_node_uuid": "850add77-b266-4a3a-8977-7c948088de99",
+      "created_at": "2025-11-14T23:15:59.710617Z",
+      "name": "AFFILIATED_WITH",
+      "fact": "Lien Vandamme is a senior campaigner on human rights and climate change at the Center for International Environmental Law (CIEL)",
+      "episodes": [
+        "3754014a-42e4-47af-acde-3560354bbc83"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T05:00:20Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "df9b9913-c668-44ae-ac5f-523f93aff6d0",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "7b4741e3-8f2e-4587-a68f-f6d126f13335",
+      "target_node_uuid": "0c6bc8c7-81b0-400a-b99b-4c92a3b65af8",
+      "created_at": "2025-11-14T20:40:14.686614Z",
+      "name": "BELIEVES_STARMER_IS_DONE",
+      "fact": "Members of the parliamentary Labour party believe Keir Starmer is done as leader",
+      "episodes": [
+        "78fcb4f4-de79-485f-a9a3-facb1892a83a"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T20:36:58.929973Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "dca5fc8c-9084-4e88-be56-4578a6e9c726",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "9cc8584d-6aac-4434-bb4c-5d5b9143bb81",
+      "target_node_uuid": "6fc37d8d-1a00-4f2e-80da-ca5529ec38b3",
+      "created_at": "2025-11-14T17:51:17.630562Z",
+      "name": "ADVISED",
+      "fact": "Jeffrey Epstein served as a behind-the-scenes adviser to Steve Bannon during an August 2018 media campaign to defend Trump and promote Bannon's media ventures.",
+      "episodes": [
+        "b68472ae-3df6-4092-9261-d5495aeca5a8"
+      ],
+      "expired_at": null,
+      "valid_at": "2018-08-01T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "acc0ce79-2053-4637-a025-b814083055ae",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "0299aca6-0512-4aa7-a017-1dade825d4d5",
+      "target_node_uuid": "e9b5dec6-8ff5-490b-ad58-a3929ab998ca",
+      "created_at": "2025-11-14T18:39:41.993285Z",
+      "name": "FEATURES_SKIN_OF",
+      "fact": "Call of Duty has featured operator skins based on rapper Nicki Minaj",
+      "episodes": [
+        "b7313e4c-3e6e-477b-b741-69adef7fe25e"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T15:47:29Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "67691e05-db2c-41ac-9e59-bf101450cc01",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "bd62ffd8-c6e6-4741-8e8a-75d6b2161bad",
+      "target_node_uuid": "53dbe1a6-dd38-4a15-868c-a6009e12c7f1",
+      "created_at": "2025-11-14T16:57:38.911603Z",
+      "name": "FOUND_IN",
+      "fact": "Plastic beads have been found in Hastings",
+      "episodes": [
+        "9ee95255-fc38-4dc7-a24d-354457d22cd5"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T16:48:57.968332Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "a71d2632-0dd0-4203-ab32-3bb5663c3401",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "1179f8ff-33e1-4c01-aef2-b6d650848bbe",
+      "target_node_uuid": "4ec7ccac-1676-420d-b056-0621b5ae1d83",
+      "created_at": "2025-11-14T17:41:12.042688Z",
+      "name": "SPIN_OFF_OF",
+      "fact": "Last Chance U: Basketball is a two-season spin-off of Last Chance U that premiered in 2021",
+      "episodes": [
+        "ac078513-9953-441c-b0c6-00a33b27123a"
+      ],
+      "expired_at": null,
+      "valid_at": "2021-01-01T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "4125b7a8-00c1-4545-9833-90295d7cd479",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "0037ef00-0430-488e-b99f-f1b5504caf41",
+      "target_node_uuid": "5c53df1d-684d-422a-b743-25aab54d871d",
+      "created_at": "2025-11-14T23:36:34.940258Z",
+      "name": "MAY_GIVE_EVIDENCE_TO_INQUIRY",
+      "fact": "Former home secretary Priti Patel may be required to give evidence to the independent inquiry into Manston.",
+      "episodes": [
+        "29d64e2c-eef8-4e3d-8f2d-87a6085174dd"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "3aeda55e-c836-41b7-8772-99a9b5427791",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "9cc8584d-6aac-4434-bb4c-5d5b9143bb81",
+      "target_node_uuid": "d5800d06-d65d-428e-ac79-dc5c6ce51199",
+      "created_at": "2025-11-14T19:50:22.056532Z",
+      "name": "EXCHANGED_COMMUNICATIONS_WITH",
+      "fact": "Jeffrey Epstein and Larry Summers exchanged emails from 2013 to early 2019, sharing personal views about politics and relationships as confidants",
+      "episodes": [
+        "6e0d95e1-e22c-49f9-a3df-256fb515fe2f"
+      ],
+      "expired_at": "2025-11-14T19:50:38.802313Z",
+      "valid_at": "2013-01-01T00:00:00Z",
+      "invalid_at": "2019-03-31T23:59:59Z",
+      "attributes": {}
+    },
+    {
+      "uuid": "a13cc6dc-0909-442e-af29-c0d8b99b9f01",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "fa98dabf-0bb8-45ab-ae0a-58aae5698559",
+      "target_node_uuid": "97bcd313-539e-4951-95e3-49bdc794b3cb",
+      "created_at": "2025-11-14T18:39:41.993235Z",
+      "name": "PARENT_COMPANY_OF",
+      "fact": "Microsoft is the parent company of Activision",
+      "episodes": [
+        "b7313e4c-3e6e-477b-b741-69adef7fe25e"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T15:47:29Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "b829ad6d-2705-423d-a038-b0885ff77d59",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "8b4e4f99-7750-40d2-88d9-1783331707ed",
+      "target_node_uuid": "28fd1fd0-730f-4b0d-9248-a81990cdc915",
+      "created_at": "2025-11-13T21:31:26.857284Z",
+      "name": "WORKS_AS_CORRESPONDENT_FOR",
+      "fact": "Anthony Zurcher works as a correspondent for the BBC",
+      "episodes": [
+        "982ec210-5aa0-402b-93ab-5345117787c0"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-13T21:28:26.771245Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "ce29df1e-b394-450d-8588-ece18f508c60",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "a9f68fb4-5e82-4798-bd10-9be2bf55dec3",
+      "target_node_uuid": "d9b8d2e5-8c09-4d28-9288-fc6a55ea5d6c",
+      "created_at": "2025-11-13T21:37:15.448048Z",
+      "name": "RECEIVED",
+      "fact": "Israel has received a body that Hamas claims belongs to a hostage.",
+      "episodes": [
+        "716f4875-80d0-4be6-ba61-d8ac00e9cd9a"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "ee091474-97e7-4482-bf91-68683409da3e",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "62f78ed1-4325-47ee-abb3-7faefd4969e0",
+      "target_node_uuid": "c2fdbb0a-c1be-4e7f-9acd-db5b5da26fa8",
+      "created_at": "2025-11-14T16:30:10.842046Z",
+      "name": "BASED_IN",
+      "fact": "The Society of Editors is a UK organization",
+      "episodes": [
+        "17077e8e-6336-4922-a6c6-bd1e639c6e2d"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "2ce58d9a-4106-47a7-ba23-fbc35c350dba",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c4c47656-e4e9-4d09-b91d-cec8f993793e",
+      "target_node_uuid": "f7d54403-3abf-4089-b4ce-51d69382fc50",
+      "created_at": "2025-11-14T19:16:13.214257Z",
+      "name": "WORKS_AT",
+      "fact": "Andres White Correal serves as chairman of jewelry for Sotheby's",
+      "episodes": [
+        "5d6c929a-fc00-4e3c-b0b7-0e2ad4f9c2b4"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T19:09:34.872686Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "91dfcae3-780f-426a-8a65-8279cd6df2b4",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "target_node_uuid": "92562e5b-ef52-420c-a7c5-239965a79e83",
+      "created_at": "2025-11-14T22:57:47.256242Z",
+      "name": "STATED_RISK_OF_OVERSTAYING",
+      "fact": "Mr. Trump added that people from certain countries were at greater risk of overstaying their visas.",
+      "episodes": [
+        "9c930348-17ea-4f30-8e1a-73a7e83b90a0"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-06-01T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "0881fe98-f6b1-4363-b695-7fd5d7f3f9d4",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b682d5de-63ac-4a0d-9d6e-cf6fdd3d0b5b",
+      "target_node_uuid": "ad011dd2-a0e8-4588-a679-26c2ec3773e9",
+      "created_at": "2025-11-14T18:24:08.453362Z",
+      "name": "REPRESENTATIVE_OF",
+      "fact": "Marco Rubio is the US Secretary of State",
+      "episodes": [
+        "4728bf15-4929-46e0-9c8a-d547a714c759"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "b51ef5f7-5dd5-435e-9861-b847cb6bf32c",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "94135621-c7b5-44ad-8324-ac0ef1b142a1",
+      "target_node_uuid": "079b0aca-c0d7-4a99-b601-224dd1a058c5",
+      "created_at": "2025-11-14T20:59:14.606497Z",
+      "name": "RULING_PARTY_OF",
+      "fact": "CCM is the ruling party of Tanzania",
+      "episodes": [
+        "1993f667-a29e-4e1e-9efe-276aeaa71905"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T20:53:02.583911Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "341df571-839f-4b50-951d-251103ece6fa",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "4c5d0d8a-20cb-44bf-8193-1fc3724822e4",
+      "target_node_uuid": "5d81665e-7aac-4862-8930-3d0ee6ef85ba",
+      "created_at": "2025-11-14T16:03:23.899045Z",
+      "name": "HANDCUFFED_SELF_TO",
+      "fact": "Cielke Sijben handcuffed herself to Hugh Grant at a premiere of Music and Lyrics in 2007",
+      "episodes": [
+        "2783fa82-49a2-449a-9203-c4ea59b78449"
+      ],
+      "expired_at": null,
+      "valid_at": "2007-01-01T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "04981991-1d6c-4055-9b00-b6ba5a45f045",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "target_node_uuid": "ad011dd2-a0e8-4588-a679-26c2ec3773e9",
+      "created_at": "2025-11-15T12:38:11.545620Z",
+      "name": "STATED_EXPLOITED",
+      "fact": "Donald Trump stated that the United States has been exploited by cheaters and pillaged by foreigners",
+      "episodes": [
+        "535c0155-0759-4858-9899-286a2a5b8eb0"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-15T12:32:19.404104Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "46302f67-3d84-4e6d-8e23-6b313b49d32e",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c2584e48-29f1-4537-86cd-4c92621f2afc",
+      "target_node_uuid": "2badb4db-f5a7-4758-a3da-a887e11ec553",
+      "created_at": "2025-11-14T17:22:08.250208Z",
+      "name": "IS_CONTROLLED_BY",
+      "fact": "International Media Investments (IMI) is controlled by Sheikh Mansour bin Zayed al-Nahyan",
+      "episodes": [
+        "fa7b4671-9729-49f0-a950-c5e30356af04"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "f3227106-8b30-49ed-ab3c-630adc1bdce3",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "723481a4-a142-48c8-9b0d-afff7a5dfd2e",
+      "target_node_uuid": "d5f23c73-8e03-4add-a972-09c8fb80242c",
+      "created_at": "2025-11-14T18:24:08.453275Z",
+      "name": "MEMBER_OF",
+      "fact": "Mona Rishmawi is a member of the UN's fact-finding mission on Sudan",
+      "episodes": [
+        "4728bf15-4929-46e0-9c8a-d547a714c759"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "191dc4cc-fe32-4125-9f55-27566090ec44",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b7fe2b8e-6c5d-4831-9a5c-697092470032",
+      "target_node_uuid": "9b7fff34-4f4e-44e6-8ffb-6d342b96a8a3",
+      "created_at": "2025-11-14T19:23:36.951102Z",
+      "name": "LOCATED_IN",
+      "fact": "Faridabad is a city in Haryana state",
+      "episodes": [
+        "09f5ed95-0c37-4277-9040-9ee2205578bc",
+        "a507fa89-971f-4c2a-88e4-eae74c268154"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "668f4a08-ea91-4d92-82d5-86dbfcf380b3",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "c03eaa69-b3bb-44c8-b0ac-e12f8a1c824e",
+      "target_node_uuid": "667ca392-db1b-4390-9c34-3a833401ca2a",
+      "created_at": "2025-11-14T19:29:25.779494Z",
+      "name": "CO_LEADS",
+      "fact": "Jeremy Corbyn co-leads Your Party",
+      "episodes": [
+        "786916ed-2378-4380-8e69-46279da7681f"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T19:24:33.771975Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "676f61d9-178a-4341-9f1e-e28565111837",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "target_node_uuid": "57a11c41-a444-47a6-a817-baef7b42795d",
+      "created_at": "2025-11-14T23:28:04.824383Z",
+      "name": "PROMISED",
+      "fact": "Trump promised Palestinian rule.",
+      "episodes": [
+        "2a087051-0113-4e0f-ade7-1ddde9a7f185"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T23:19:59.875722Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "29716d32-7fb6-4654-9cbe-e842bc838a94",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "50d12f27-bd66-4cb9-b9dc-9981dec78cf3",
+      "target_node_uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+      "created_at": "2025-11-15T12:38:11.545679Z",
+      "name": "REVIEWING_LEGAL_AUTHORITY",
+      "fact": "US Supreme Court is reviewing whether Donald Trump had legal authority to implement tariffs",
+      "episodes": [
+        "535c0155-0759-4858-9899-286a2a5b8eb0"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-15T12:32:19.404104Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "76bf5a7c-f229-4af9-afdc-81af61539310",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "97f33e5e-bca6-4dfb-a664-6a69d90b0a13",
+      "target_node_uuid": "28fd1fd0-730f-4b0d-9248-a81990cdc915",
+      "created_at": "2025-11-14T20:23:01.884847Z",
+      "name": "CORRESPONDENT_FOR",
+      "fact": "Ione Wells is the South America Correspondent for BBC.",
+      "episodes": [
+        "15c3bac3-4503-48f3-a4ed-741073397517"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T20:17:11.256343Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "5374fab5-caa7-4bbe-8527-fd53059d3d33",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "f7d54403-3abf-4089-b4ce-51d69382fc50",
+      "target_node_uuid": "f396c373-016d-4d6b-8bc2-da83be24834b",
+      "created_at": "2025-11-14T17:28:16.860398Z",
+      "name": "LOCATED_IN",
+      "fact": "Sotheby's is located in London",
+      "episodes": [
+        "712ba32a-4935-4764-86bd-5a8f5bb9bc1e"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "5bcd35d2-54a7-405c-ab19-6a29c82da0b9",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "3e002813-33d8-417a-a444-5d94a3cad2a2",
+      "target_node_uuid": "ad011dd2-a0e8-4588-a679-26c2ec3773e9",
+      "created_at": "2025-11-14T22:57:47.256014Z",
+      "name": "BARS_TRAVEL_TO",
+      "fact": "The travel ban bars travel to the United States by citizens of certain countries.",
+      "episodes": [
+        "9c930348-17ea-4f30-8e1a-73a7e83b90a0"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-06-_T00:00:00Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "4e7b388e-5739-42b1-a6bc-df65b0fcfbb4",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "06d7ac46-a7de-4b51-95d9-a284b5f7e3c1",
+      "target_node_uuid": "db78c827-411f-4943-a4ed-e602df690b97",
+      "created_at": "2025-11-14T18:52:28.864816Z",
+      "name": "FORMER_MEMBER_OF",
+      "fact": "Penny Mordaunt is a former Conservative MP.",
+      "episodes": [
+        "9f92c027-fd10-40fe-a990-7a1ea50fe64f"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "a0b6fe31-eb0c-48c8-8f27-3c4ea9f414a7",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "76948098-0ed8-4701-9f09-390ca7594deb",
+      "target_node_uuid": "43c26494-434a-4e36-b957-3b2821a8e25a",
+      "created_at": "2025-11-14T19:29:25.779469Z",
+      "name": "REPRESENTS_AS_MP",
+      "fact": "Adnan Hussain is the MP for Blackburn",
+      "episodes": [
+        "786916ed-2378-4380-8e69-46279da7681f"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T19:24:33.771975Z",
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "8c784fa9-5d1c-4d55-b1b4-a25ac8d383aa",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "e041300c-1287-4d85-bc2f-4f5d4fd8e6da",
+      "target_node_uuid": "f4b17c28-f02f-4167-90c5-b54a3e4ffaf6",
+      "created_at": "2025-11-14T21:45:50.560995Z",
+      "name": "LOCATED_IN",
+      "fact": "Baku is in Azerbaijan",
+      "episodes": [
+        "cbefdc1c-f372-439a-a499-9cf8e5e5e31b",
+        "3754014a-42e4-47af-acde-3560354bbc83"
+      ],
+      "expired_at": null,
+      "valid_at": null,
+      "invalid_at": null,
+      "attributes": {}
+    },
+    {
+      "uuid": "e0460dbc-432e-4163-bb70-0c9415b7ea03",
+      "group_id": "rss-intelligence",
+      "source_node_uuid": "a9f68fb4-5e82-4798-bd10-9be2bf55dec3",
+      "target_node_uuid": "6c10d511-cbb0-41ac-adbe-c404428d3339",
+      "created_at": "2025-11-14T22:06:53.735703Z",
+      "name": "INVOLVED_IN_CONFLICT_IN",
+      "fact": "Israel is involved in Gaza conflict",
+      "episodes": [
+        "ef026aa2-3bd6-4136-acee-89238f03ae00"
+      ],
+      "expired_at": null,
+      "valid_at": "2025-11-14T22:02:04.580320Z",
+      "invalid_at": null,
+      "attributes": {}
+    }
+  ],
+  "stats": {
+    "total_entities": 58,
+    "total_facts": 100,
+    "edges_in_viz": 2
+  }
+}

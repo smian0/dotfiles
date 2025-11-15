@@ -1,0 +1,2156 @@
+[
+  {
+    "uuid": "0be5785a-7405-424c-a4e0-bdc86fc5bb0f",
+    "name": "F.B.I.",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:42:31.330433+00:00",
+    "summary": "FBI assisting local police investigating organized burglary rings targeting Asian immigrant business owners. Trump to order FBI investigation into Epstein's involvement and relationship with Clinton, Larry Summers, and major banks.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "81339846-ba99-4adc-9cf9-f6960bddeeb0",
+    "name": "BHP",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:18:22.295618+00:00",
+    "summary": "London High Court found BHP liable for 2015 Brazil dam collapse that killed 19. Samarco joint venture with Vale faces \u00a336bn lawsuit from 600,000+ claimants. BHP plans appeal.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "f83bf5ca-70df-4790-baad-e6cf9fbd09fc",
+    "name": "boys",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:12:17.566347+00:00",
+    "summary": "Jon Ruben, 76, pleaded guilty to drugging and sexually assaulting two boys aged 9 and 10 at Stathern Lodge summer camp in Leicestershire on 14 Nov 2025.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "f4b17c28-f02f-4167-90c5-b54a3e4ffaf6",
+    "name": "Azerbaijan",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T21:37:58.251642+00:00",
+    "summary": "Azerbaijan hosted Cop29 climate talks in Baku with 1,773 fossil fuel lobbyists.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "ef24f43b-1388-4f02-ac83-2c0c6ddd39bd",
+    "name": "Bahrain",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T13:12:07.279939+00:00",
+    "group_id": "rss-intelligence",
+    "summary": "Bahrain was suggested as a stopover on a Gulf Air flight by Jeffrey Epstein to Steve Bannon in November 2018.",
+    "attributes": {}
+  },
+  {
+    "uuid": "efa73386-5073-4be5-ad20-9be434951737",
+    "name": "Men in Black 3",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:56:00.355003+00:00",
+    "group_id": "rss-intelligence",
+    "summary": "Men in Black 3 had its Moscow premiere in 2012 where a Ukrainian TV prankster kissed Will Smith.",
+    "attributes": {}
+  },
+  {
+    "uuid": "b39df84a-2285-4d02-8a05-4066219f3e2b",
+    "name": "Boris Johnson",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2022025-11-14T23:32:39.763975+00:00",
+    "group_id": "rss-intelligence",
+    "summary": "Boris Johnson may be required to give evidence to the Manston asylum inquiry. He was mentioned in 2018 messages between Steve Bannon and Jeffrey Epstein discussing Brexit and UK politics.",
+    "attributes": {}
+  },
+  {
+    "uuid": "0839cbf0-6610-4d37-8515-012e0751b273",
+    "name": "Burundi",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422853+00:00",
+    "group_id": "rss-intelligence",
+    "summary": "Burundi subject to partial US travel ban; citizens cannot permanently enter US or receive certain visas.",
+    "attributes": {}
+  },
+  {
+    "uuid": "5ae8cd5f-34bc-4686-a923-cf7368cc91ac",
+    "name": "Britain",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:10:30.655186+00:00",
+    "group_id": "rss-intelligence",
+    "summary": "Britain: Xu Chao sentenced to life as prolific sex offender in London; senior staff suspended at Kent's Manston asylum centre over misconduct; Tate galleries leaked job applicants' personal data online.",
+    "attributes": {}
+  },
+  {
+    "uuid": "68f34377-3eaf-4075-8ede-2ce34161e78e",
+    "name": "Barbara Lee",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:38:14.805218+00:00",
+    "group_id": "rss-intelligence",
+    "summary": "Oakland mayor Barbara Lee called the Laney College campus shooting 'incredibly heavy for our city,' noting it was the second campus shooting in two days and advocating for gun control.",
+    "attributes": {}
+  },
+  {
+    "uuid": "1c0943ab-cf7e-4237-8613-5861c3790319",
+    "name": "Democrats",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:29:02.083609+00:00",
+    "summary": "Democrats signed discharge petition with four House Republicans to release Epstein files.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "b891e876-bf3c-4128-b983-9a1e10d16a40",
+    "name": "Donald Trump",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:21:20.704919+00:00",
+    "summary": "Trump plans Gaza division with British/French/German ISF, rules out US troops/funding; expands travel ban limiting green cards; rolls back food tariffs; plans $1-5bn BBC lawsuit; cuts ties with Marjorie Taylor Greene over Epstein files.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "3a69bd3f-67ee-4fb2-8fec-9504592958fa",
+    "name": "Democratic lawmakers",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:46:59.661841+00:00",
+    "summary": "Democratic lawmakers released Epstein estate emails suggesting Epstein believed Trump was aware of Ghislaine Maxwell's conduct.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "ed3e5af0-d36e-48e5-aed5-f6e0a7869316",
+    "name": "Department of Education",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:07:17.751459+00:00",
+    "summary": "Department of Education officials told Senate inquiry no modelling done on reversing JRG scheme, didn't list its reform in interim Atec's work, and said timing is government's decision.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "83566798-c1e6-4996-a2b3-2cf7d206cd3e",
+    "name": "Delhi",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:19:38.535943+00:00",
+    "summary": "Delhi car explosion killed 13 during rush hour Monday outside significant monument. Attack treated as terror incident linked to Kashmir module, one of deadliest in capital in over a decade.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "d797ed74-78ee-4673-92f2-1007e6fc3865",
+    "name": "Distinguished Service Order",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:56:12.359832+00:00",
+    "summary": "The Distinguished Service Order (DSO) is the second-highest military award for gallantry.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "f67ec01c-a75b-4fa5-9426-0b7455bd337a",
+    "name": "Dungeness",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:50:14.649080+00:00",
+    "summary": "Plastic beads from Camber Sands spill found along Sussex coast from Hastings to Dungeness.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "87a5be73-f552-4f6a-a366-a23471d177fe",
+    "name": "Dubai",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:03:45.419549+00:00",
+    "summary": "Dubai hosted Cop28 climate talks with 2,456 fossil fuel lobbyists attending.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "2e56be9b-9a74-463b-afe0-a16364a10860",
+    "name": "X",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:53:34.764168+00:00",
+    "summary": "MP Adnan Hussain announced via X he quit Your Party over infighting. US Senator Chris Murphy warned on X about AI cyber-attack threats.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "e1ce7eee-1bde-40f1-b4ed-0090e13d7b0e",
+    "name": "Claude",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:56:33.522779+00:00",
+    "summary": "Chinese state-sponsored hackers manipulated Anthropic's Claude coding tool in September to attack 30 entities, executing 80-90% of operations without human intervention in the first documented large-scale AI-driven cyber-attack.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "37e2b001-6b28-443a-aa30-2ba36f038e10",
+    "name": "Edward Brandt",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:50:09.213155+00:00",
+    "summary": "Edward Brandt, 61, found guilty by jury of stalking former Conservative MP Penny Mordaunt. Bombarded her with emails/calls and jumped security barrier at office. Southampton crown court, Nov 14, 2025.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "b190e054-1a8d-4307-850f-306dcc83dd4d",
+    "name": "Europe",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:24:40.985259+00:00",
+    "summary": "Germany reinstating conscription for EU plan to build world's strongest army within 5 years, responding to Russia's Ukraine invasion. Napoleon's Waterloo brooch sold for $4.4M in Geneva auction.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "50e3ba09-4971-4f26-9b5b-d29e25f039d1",
+    "name": "Jaish-e-Mohammad",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:19:38.536020+00:00",
+    "summary": "Pakistan-backed armed terror group Jaish-e-Mohammad promoted in Srinagar, Kashmir. Investigated as part of terror module linked to Delhi car blast that killed 13. Group part of militant insurgency in region since 1990s.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "75a71cba-4278-4889-a4d6-a24c9dff55ce",
+    "name": "European Union",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:24:40.985208+00:00",
+    "summary": "China expressed extreme disappointment with Dutch minister over China-EU chip supply row; Beijing's Nexperia export ban nearly halted global car industry. US cut tariffs on Switzerland to 15%, aligning with EU rates.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "03014c8b-fd20-48fb-9587-0e6aa38d4a71",
+    "name": "European forces",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T21:50:04.508080+00:00",
+    "summary": "European forces\u2014hundreds of British, French, and German soldiers\u2014form the core of the US-planned International Stabilisation Force for Gaza's 'green zone'.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "20b71bce-af68-4d0c-9d55-ae6fc4805f7c",
+    "name": "Ecuador",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T14:15:06.338092+00:00",
+    "summary": "Indigenous people from Ecuador's Andes attended COP30 in Bel\u00e9m, Brazil. Youth leader Katty Gualinga, 25, advocated for forest protection.",
+    "group_id": "rss-intelligence",
+    "entities": [
+      "Ecuador",
+      "COP30",
+      "Bel\u00e9m",
+      "Brazil",
+      "Katty Gualinga",
+      "Andes"
+    ],
+    "attributes": {}
+  },
+  {
+    "uuid": "17b933ef-d560-49a7-a209-e2a39af96fb5",
+    "name": "Germany",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:24:40.985197+00:00",
+    "summary": "Germany moves to reinstate military conscription as Defence Minister Boris Pistorius predicts EU will have world's strongest army within five years, responding to Russia's invasion of Ukraine.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "68b89926-e90a-4059-ae89-fa0668cad673",
+    "name": "el-Fasher",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:58:37.511646+00:00",
+    "summary": "El Fasher, Darfur city captured by RSF after 18-month siege. UN investigating mass killings and sexual violence; RSF accused of massacring 460 in maternity hospital. Aid blocked, starvation emerging.",
+    "group_id": "rss-intelligence",
+    "entities": [
+      "el-Fasher",
+      "Darfur",
+      "RSF",
+      "UN"
+    ],
+    "attributes": {}
+  },
+  {
+    "uuid": "7eb62739-f0fe-498b-a823-9e2aea1d77f4",
+    "name": "European countries",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:30:04.522295+00:00",
+    "summary": "European countries including France sought clarity on Gaza peace plan governance; British, French, and German soldiers would form core of planned international stabilization force.",
+    "group_id": "rss-intelligence",
+    "entities": [
+      "European countries",
+      "France",
+      "Gaza",
+      "British",
+      "French",
+      "German soldiers",
+      "International Stabilisation Force"
+    ],
+    "attributes": {}
+  },
+  {
+    "uuid": "59f9b0d4-c74e-4255-861c-adccbfacf20a",
+    "name": "Eugene, Ore.",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:42:31.330471+00:00",
+    "summary": "Eugene, Ore. Asian immigrant business owners targeted by organized South American burglary rings. Police Chief Chris Skinner addressing community at Korean church.",
+    "group_id": "rss-intelligence",
+    "entities": [
+      "Eugene, Ore.",
+      "Asian immigrant business owners",
+      "South American burglary rings",
+      "Chris Skinner",
+      "Korean church"
+    ],
+    "attributes": {}
+  },
+  {
+    "uuid": "5b884576-3cee-4680-ba77-e89e2cc06f7e",
+    "name": "Federal Reserve",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:57:16.629690+00:00",
+    "summary": "Federal Reserve officials signaled caution on interest rate cuts, with St. Louis Fed president Alberto Musalem stating 'We need to proceed and tread with caution' ahead of next month's meeting.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "406779fc-6a9c-4f04-a74c-bf98d7840290",
+    "name": "federal government",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:37:57.956136+00:00",
+    "summary": "Canadian federal government announced C$56bn nation-building projects including mines, natural gas, and power infrastructure to boost competitiveness and counter US trade threats.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "0bb532c2-9471-44bd-a293-12d7fbb0ec56",
+    "name": "France",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:24:59.768770+00:00",
+    "summary": "France wanted clear language supporting Palestinian statehood in UN Gaza resolution. Napoleon's diamond brooch, lost at Waterloo in 1815, sold for $4.4M.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "83a93be7-6a4f-4294-83fa-04dec36f1d4e",
+    "name": "Federal Reserve Bank of St Louis",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:57:16.629696+00:00",
+    "summary": "Alberto Musalem, president of the Federal Reserve Bank of St Louis, said the central bank needs to 'proceed and tread with caution' regarding interest rate cuts amid market uncertainty.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "f2807137-0617-4a46-88c0-1cbc4467026c",
+    "name": "Foreign forces",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T21:50:04.507795+00:00",
+    "summary": "Foreign forces to deploy with Israeli troops in east Gaza, securing 'green zone' for reconstruction. European troops (British, French, German) core of International Stabilisation Force. Trump ruled out US soldiers on ground.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "6f048782-2d30-4563-9a09-d83b073d5871",
+    "name": "foreign conflicts",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T12:51:05.696579+00:00",
+    "summary": "Congresswoman Marjorie Taylor Greene criticized President Trump's involvement in foreign conflicts and focus on foreign policy, leading to Trump withdrawing his support.",
+    "group_id": "rss-intelligence",
+    "social_media": true,
+    "attributes": {}
+  },
+  {
+    "uuid": "a529e655-3df0-48fa-9b1c-c6e8f5d98127",
+    "name": "Fred Heiding",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:56:33.522790+00:00",
+    "summary": "Harvard computing security researcher Fred Heiding said AI systems make it increasingly easy for attackers to cause real damage, following Anthropic's report on Chinese state-sponsored cyber attacks.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "79472cb7-2bb6-4223-abcd-a44810081f73",
+    "name": "Chad",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422819+00:00",
+    "summary": "Chad citizens barred from US travel under Trump's June 2025 ban. New policy makes green cards harder, expanding crackdown on nations lacking screening.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "c5a90fec-44e8-440c-911f-b556f8fd829a",
+    "name": "The Guardian",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T04:11:07.786257+00:00",
+    "summary": "Guardian reported: US military Gaza 'green zone' plan; senior staff suspended at Manston migrant centre; 1,600 fossil fuel lobbyists at Cop30; Sara Cox raised \u00a37m for Children in Need.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "67bb058a-db99-4c8d-adb8-e2a7fe393774",
+    "name": "GB News",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:14:19.368923+00:00",
+    "summary": "GB News investor Sir Paul Marshall acquired The Spectator for \u00a3100m last September and had previously expressed interest in Telegraph Media Group.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "c6f2c04f-6fb0-4028-af1b-c1a00f52d659",
+    "name": "Equatorial Guinea",
+    "labels": [
+      "Entity"
+    ]
+  },
+  {
+    "uuid": "e12abec1-6602-4461-b4c9-204e2e845c65",
+    "name": "Gen Z",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:54:11.074703+00:00",
+    "summary": "Tanzania's election protests drew parallels with global Gen Z-led mobilizations against entrenched leadership and unresponsive governments.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "85bfbc1b-58d5-4346-8d9b-7ff3477617d0",
+    "name": "Georgia",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:31:55.520995+00:00",
+    "summary": "Pete Skandalakis, head of Georgia's Prosecuting Attorneys' council, appointed himself prosecutor in Trump's election case; Georgia Rep. Marjorie Taylor Greene criticized Trump's Epstein files handling.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "242dce46-c4a5-4679-8dc4-ce102b907216",
+    "name": "global stock markets",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:57:16.629655+00:00",
+    "summary": "Global stock markets reached record highs on AI rally, then fell sharply Thursday. Wall Street's worst day in a month: S&P 500 and Dow -1.7%, Nasdaq -2.3%. Nvidia declined 3.6% amid fears tech firms are overvalued.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "ad246cf4-3ea2-4f7d-9029-e5660203069e",
+    "name": "Guatemala",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T14:15:06.338199+00:00",
+    "summary": "Guatemalan land rights activist Lucia Ixch\u00e9u (K'iche' community) attended COP30 climate talks in Bel\u00e9m, Brazil.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "b89305a4-6ae3-45a7-916e-054ad5d22de8",
+    "name": "Paramount Global",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T12:24:21.715032+00:00",
+    "summary": "Paramount Global agreed to pay $16m (\u00a313.5m) in July 2024 to settle legal dispute with Trump over 60 Minutes interview with Kamala Harris.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "e01342b7-7925-45d3-a325-c6148c1ac6b8",
+    "name": "Harvard University",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:46:59.661790+00:00",
+    "summary": "Harvard's 2017 PhD admissions debate for formerly incarcerated woman was discussed by ex-president Larry Summers in Epstein emails; Summers lost presidency over sexist comments.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "df955b91-8aa2-4469-9046-e5399140736d",
+    "name": "Hecs",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:07:17.751442+00:00",
+    "summary": "Australia's Hecs debt grew $10bn+ between 2021-2024 due to Job Ready Graduates scheme, leaving arts students with $50,000 degrees.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "9b7fff34-4f4e-44e6-8ffb-6d342b96a8a3",
+    "name": "Haryana",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:19:38.536076+00:00",
+    "summary": "Haryana: Police raided a doctor's Faridabad home, seizing 2,900kg explosives linked to Delhi blast. Explosives from Faridabad later caused accidental Kashmir blast, killing 9.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "dc177ffa-7026-48c7-af88-702f945a71dd",
+    "name": "Hyundai",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:19:38.536086+00:00",
+    "summary": "White Hyundai car used in Delhi terror attack on Nov 10, killing 13. Vehicle traveled from Haryana, exploded in central Delhi during rush hour; allegedly driven by Kashmiri doctor.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "5d81665e-7aac-4862-8930-3d0ee6ef85ba",
+    "name": "Hugh Grant",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:56:00.354967+00:00",
+    "summary": "Hugh Grant was handcuffed by podcaster Cielke Sijben at a 2007 premiere of Music and Lyrics; firefighters freed them.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "5215c6c8-e469-4aca-a6e8-1893708f2b04",
+    "name": "Haiti",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422832+00:00",
+    "summary": "Haiti in Trump's June travel ban: US travel barred for citizens, green cards harder due to insufficient vetting.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "fda84c55-a30e-4a49-b3da-21b4165f4652",
+    "name": "Hamburg",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:37:10.267259+00:00",
+    "summary": "Hamburg hosts Nexperia subsidiary factory. Dutch government seized control of Chinese-owned chip maker Nexperia amid concerns about IP theft and potential production relocation from Hamburg to China, triggering global chip supply crisis.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "ec302fdc-707b-43ea-8865-a4c3427e8a16",
+    "name": "UN High Commissioner for Human Rights",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:11:35.204647+00:00",
+    "summary": "Volker T\u00fcrk, UN High Commissioner for Human Rights, urged Tanzania to investigate election killings and criticized inaction on Sudan atrocities.",
+    "state": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "4cf6a0fa-6a4b-47dc-9c7e-70b53115c337",
+    "name": "Hong Kong",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T16:20:11.085656+00:00",
+    "summary": "Hong Kong is a special administrative region of China.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "b0e0270b-34b5-400e-bdb0-dea17743556a",
+    "name": "WWII",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:24:40.985267+00:00",
+    "summary": "Germany's post-WWII military policy shifts as conscription is reinstated, with Defence Minister citing European security threats.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "1366504c-d2be-4193-bbae-9bf47056e47b",
+    "name": "Kath & Kim",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T13:22:41.440160+00:00",
+    "summary": "Popular Australian sitcom Kath & Kim exemplifies 'bogan' slang and culture, serving as a reference point for Aussie vernacular.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "1e0f93c3-bc94-44f5-adae-7f7a909909bb",
+    "name": "Kim Kardashian",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:56:00.355012+00:00",
+    "summary": "Kim Kardashian was flourbombed by a PETA activist at a 2012 red carpet event for her perfume launch; the activist called her a \"fur hag\".",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "7851cdf7-4b70-4363-8232-ba1b4dad4893",
+    "name": "K'iche' community",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T14:15:06.338209+00:00",
+    "summary": "K'iche' community member Lucia Ixch\u00e9u participated in COP30 climate talks in Bel\u00e9m, Brazil as a land rights activist from Guatemala.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "7a8c6acf-cb62-413c-818d-91541a39e1ab",
+    "name": "Kremlin",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:24:59.768690+00:00",
+    "summary": "Kremlin's war effort in Ukraine is fueled by energy revenues from Russia's oil infrastructure, which Ukraine is targeting with long-range strikes.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "08c56e82-e5c8-42b8-b25a-c64579f3c047",
+    "name": "Copenhagen",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:46:48.704921+00:00",
+    "summary": "Copenhagen hosted 2009 climate summit where rich nations pledged $100bn/year by 2020 for poorer countries' emissions cuts and adaptation. Target raised to $300bn/year by 2035.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "6112b56d-4465-4270-9ddd-8aa186e33dba",
+    "name": "Croatia",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:06:30.458406+00:00",
+    "summary": "Croatia: 18% satisfaction with democracy (lowest of 9 western countries), 73% fear for its future. Only country viewing democracy as contingent on quality of life. Main threats: fake news, lack of accountability, extremism, corruption.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "93d000d2-839b-489d-9dbf-92bebab6ed18",
+    "name": "Kent",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:50:14.649101+00:00",
+    "summary": "Manston asylum centre in Kent for small boat arrivals was dangerously overcrowded (4,000 vs 1,600 capacity) with disease outbreaks and one death. Two staff suspended. Hastings and Rye is Kent's most deprived constituency, tourism-dependent.",
+    "group_id": "rss-intelligence",
+    "entities": []
+  },
+  {
+    "uuid": "e6d6e614-e42f-4630-badc-9220db9cca7f",
+    "name": "Korean church",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:42:31.330465+00:00",
+    "summary": "Eugene police chief Chris Skinner held forum at local Korean church to address burglaries targeting Asian business owners, part of organized crime rings from South America.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "1c94cd51-b56e-4bb6-b3bf-daaea1bca770",
+    "name": "Kevin Hassett",
+    "labels": [
+      "Entity"
+    ],
+    "mediaType": "text/plain",
+    "created_at": "2025-11-14T18:57:16.629699+00:00",
+    "summary": "Kevin Hassett, director of Donald Trump's national economic council, said the October jobs report would show job additions/losses but not the unemployment rate.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "29b5a519-cf34-4a20-8ebe-1d0d2a0e2c99",
+    "name": "Lana Lam",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T13:22:41.440104+00:00",
+    "summary": "Lana Lam wrote a BBC article on Nov 14, 2025, about Ander Louis's 'bogan' Australian translation of War & Peace.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "18feee67-ac42-44cd-b483-ce09e869e354",
+    "name": "Los Angeles",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422882+00:00",
+    "summary": "Los Angeles to host 2028 Summer Olympics; athletes traveling for games exempt from Trump's travel ban on 12 countries.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "e72d49c5-e79a-4fdc-a715-17069fa445e4",
+    "name": "Ander Louis",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T13:22:41.440064+00:00",
+    "summary": "Ander Louis is the pen name of Melbourne IT worker Andrew Tesoriero, 39, who created a 'bogan' Australian slang version of War & Peace starting in 2018, now nearing a book deal.",
+    "group_id": "rss-intelligence",
+    "entities": [
+      {
+        "name": "Ander Louis",
+        "type": "Person"
+      },
+      {
+        "name": "Andrew Tesoriero",
+        "type": "Person"
+      },
+      {
+        "name": "Melbourne",
+        "type": "Location"
+      },
+      {
+        "name": "War & Peace",
+        "type": "Work"
+      }
+    ],
+    "attributes": {}
+  },
+  {
+    "uuid": "c48c3013-49ab-47c7-afd7-6b940c776ad6",
+    "name": "Laos",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422860+00:00",
+    "summary": "Laos is one of seven countries facing partial U.S. travel ban restrictions; citizens cannot enter permanently or receive certain visas.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "dcf69f30-4461-4816-9069-a3fc29be0a1c",
+    "name": "Tundu Lissu",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:54:11.074679+00:00",
+    "summary": "Tanzanian opposition leader detained on treason charges, blocked from October 2025 presidential poll, denies charges.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "a85d3ff7-aacd-415b-b8dd-9fa547937ed1",
+    "name": "Liechtenstein",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:04:29.133042+00:00",
+    "summary": "US tariffs on Liechtenstein cut to 15% in Nov 2025 Trump deal, matching Switzerland. Swiss government announced non-binding memorandum after bilateral talks.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "f396c373-016d-4d6b-8bc2-da83be24834b",
+    "name": "London",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:25:57.085847+00:00",
+    "summary": "London's Tate Modern and Tate Britain galleries exposed personal data of 111 job applicants in October 2023 leak, including addresses, salaries, and referees' contact details.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "6225899e-034b-48fa-8779-fdecdf1d526e",
+    "name": "Beit Lahia",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:25:57.085856+00:00",
+    "summary": "Gaza birthplace of journalist Malak A Tantesh; family's home and orchard destroyed in war, leaving memories 'crushed and buried'.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "1bb585f9-0cfa-424a-9a3b-2f8f5aa08a1a",
+    "name": "BC LNG project",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:37:57.956150+00:00",
+    "summary": "BC LNG project in British Columbia, part of C$56bn nation-building package announced by PM Mark Carney to boost Canada's competitiveness as energy superpower.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "88697636-77db-4ac7-9cc4-648ed3787320",
+    "name": "London police",
+    "labels": [
+      "Entity"
+    ],
+    "found at": "2025-11-14T19:03:34.408245+00:00",
+    "summary": "London police described Xu Chao, 33, as 'one of the most prolific sex offenders' after his life sentence for drugging and assaulting multiple female Chinese students, filming victims, with potential hundreds of victims.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "4c7935f7-4524-45d8-9be6-b8a53b5a8585",
+    "name": "Netherlands",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:06:30.458415+00:00",
+    "summary": "Netherlands: 36% satisfied with democracy, 76% feel it deteriorated, 74% worry about future, 74% see disinformation as main threat. China expressed extreme disappointment with Dutch minister Karremans over Nexperia chip export ban.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "d32ac954-bc50-4441-a6f0-1f909336502e",
+    "name": "NickMercs",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:26:13.008562+00:00",
+    "summary": "Streamer NickMercs featured as a Call of Duty operator skin.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "84b6ba20-6966-4c93-af59-9345c2278f73",
+    "name": "Nathan Wade",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:31:55.520964+00:00",
+    "summary": "Special prosecutor whose romantic relationship with Fani Willis (revealed Jan 2024) led to her disqualification from Trump Georgia election case due to conflict of interest.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "32ab0534-ee6f-4362-9380-9c370f8d4fa5",
+    "name": "Natasha Booty",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:58:37.511608+00:00",
+    "summary": "Natasha Booty is a journalist who co-authored a BBC article on 14 Nov 2025 about the UN probe into mass killings in Sudan's el-Fasher.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "5edf5817-ac3c-467a-aad8-a361d8aac7f5",
+    "name": "North Yorkshire",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:41:21.632805+00:00",
+    "summary": "Sara Cox traveled through North Yorkshire during her 135-mile, five-day marathon for Children in Need on 14 Nov 2025, raising \u00a37m.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "7e3daae0-b3d8-4ef6-9b91-49a5f0918e4d",
+    "name": "Nvidia",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:57:16.629677+00:00",
+    "summary": "Nvidia, a $4.5tn tech company, led tech stocks lower with a 3.6% decline on Thursday after SoftBank disclosed it sold its entire $5.8bn stake in the firm.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "1cd57ae6-b336-4501-b25e-1ff5a276013d",
+    "name": "Myanmar",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422841+00:00",
+    "summary": "Myanmar is one of 12 countries on Trump's travel ban. New policy makes green cards harder, treating country-specific factors as significant negative factors in immigration applications.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "5cc0b859-bfab-4eab-82ff-e9489a8471be",
+    "name": "New Brunswick",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:37:57.956117+00:00",
+    "summary": "New Brunswick included in Canada's C$56bn nation-building plan with a mine project announced by PM Mark Carney on Nov 14, 2025.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "77d6d46f-e1b2-44db-a792-5a617085380b",
+    "name": "Oscar",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:56:00.355117+00:00",
+    "summary": "Early reaction suggests Ariana Grande and Cynthia Erivo likely to receive Oscar nominations for 'Wicked: For Good'; review embargo lifts Tuesday.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "982f18a7-108f-431e-be60-65e0d9436713",
+    "name": "Oxford Union",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T13:12:07.279853+00:00",
+    "summary": "Steve Bannon gave speech at Oxford Union on 16 Nov 2018, interrupted by hundreds of protesters. Event discussed in Jeffrey Epstein emails about travel arrangements.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "7854b0a0-503d-4ccf-93b6-6728699e1ea8",
+    "name": "Mary O'Kane",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:07:17.751249+00:00",
+    "summary": "Mary O'Kane, former University Accord chair, leads Atec (Australian Tertiary Education Commission) in interim capacity; body was due to be officially established by 1 January 2026.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "7c9b7f5d-70a8-40ba-b61a-4a4499bcd053",
+    "name": "Finola O'Farrell",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:18:22.295696+00:00",
+    "summary": "Judge Finola O'Farrell ruled in London's High Court that BHP was liable for Brazil's 2015 dam collapse, finding that raising the dam's height when unsafe was the direct cause.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "0b289b3c-7df3-421b-b3ed-12c92ecb5556",
+    "name": "officers",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:46:01.531981+00:00",
+    "summary": "Officers were casualties in Rio de Janeiro police raids on Nov 13, 2025, failing to weaken gang control in favelas.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "1a119ae5-6f0f-4521-b515-bb4d912e683d",
+    "name": "Ontario",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:37:57.956108+00:00",
+    "summary": "Ontario included in Canada's C$56bn nation-building plan with nickel project. Premier Doug Ford's government spending C$9m to study proposed tunnel under busiest highway.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "ea6f6e84-5ecb-4cf0-8380-fe8e11ee11fb",
+    "name": "Ohio",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:42:31.330483+00:00",
+    "summary": "Related to burglary rings targeting Asian business owners in Ohio within the past year, part of organized crime operations across multiple states including Florida, Wisconsin, Colorado, Pennsylvania, and Oregon.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "4ec7ccac-1676-420d-b056-0621b5ae1d83",
+    "name": "Last Chance U",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:38:14.805158+00:00",
+    "summary": "Netflix documentary Last Chance U (final season 2020) featured Oakland's Laney College coach John Beam. Beam critically injured in campus shooting Nov 14, 2025. Show spawned 2021 basketball spin-off.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "c5b7a860-88da-4dbf-b616-84c7d09ce0f2",
+    "name": "Philippines",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:03:45.419552+00:00",
+    "summary": "Philippines hit by 21 storms this year. Two typhoons killed hundreds less than a week apart before Cop30. Fossil fuel lobbyists outnumber Philippine delegates 50:1 at Cop30.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "b54942df-62dc-41d8-8026-7f5366185961",
+    "name": "police",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:46:01.531966+00:00",
+    "summary": "Oakland police locked down Laney College after John Beam shooting. Swedish police arrested bus driver in fatal crash. US police investigate Colombian burglary rings.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "d6dcf2bb-06c8-4ddd-9f5a-588e418917ca",
+    "name": "Pakistan",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:19:38.536030+00:00",
+    "summary": "Pakistan accused of backing Jaish-e-Mohammad terror group and supporting Kashmir insurgency since 1990s. Foreign handlers from Pakistan linked to Delhi blast module.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "81777cd6-3b18-48fc-abe3-bb94dd6f4e11",
+    "name": "Pennsylvania",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:42:31.330489+00:00",
+    "summary": "Police reported organized burglary rings targeting Asian business owners in Pennsylvania, part of a national crime wave affecting multiple states.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "846d4ad8-044c-49f8-8005-7d5747dc2582",
+    "name": "pyjamamann",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:56:00.354933+00:00",
+    "summary": "pyjamamann (Johnson Wen, 26) charged with public nuisance for grabbing Ariana Grande at Wicked premiere in Singapore, faces S$2,000 fine. Known for invading concert stages.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "55b04e14-4f69-484f-a588-89c195818078",
+    "name": "Poland",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:06:30.458418+00:00",
+    "summary": "Poland: 40% satisfied with democracy (opinions divided), 42% say it improved in past 5 years (only positive net), 75% worried about future, 76% see disinformation as main threat.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "70ea4eb8-a583-43cd-9f23-aa7fe7c45bdd",
+    "name": "Peru",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T14:15:06.338118+00:00",
+    "summary": "Indigenous activists from Peru's Amazon rainforest attended COP30 climate talks in Bel\u00e9m, Brazil, joining thousands demanding climate action and protection of their territories from mining and drilling.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "587a030c-caa4-460a-9c48-788e65bf9473",
+    "name": "Palestine",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:32:01.716645+00:00",
+    "summary": "US envoy Steve Witkoff plans meeting with Hamas official Khalil al-Hayya to discuss Gaza cease-fire; US military planning divides Gaza into 'green' and 'red' zones; Russia counters Trump Gaza plan at UN Security Council.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "ffa2c5fb-3be0-484a-9802-4b7911bd0cb7",
+    "name": "Hilary Power",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T21:01:48.945406+00:00",
+    "summary": "Hilary Power, Human Rights Watch director in Geneva, criticized UN Sudan resolution for not explicitly calling out UAE's alleged weapons supply to RSF.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "8d670682-b000-4490-9922-13b233b95f7d",
+    "name": "Qatar",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:24:57.718076+00:00",
+    "summary": "Qatar hosted Hamas-US envoy meetings on Gaza ceasefire; Israeli missiles struck a Hamas compound there in September.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "d8874e1c-688d-4545-89ac-211a634979f6",
+    "name": "Palestinians",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:10:30.666756+00:00",
+    "summary": "260+ West Bank settler attacks in October displaced 3,200+ Palestinians since Gaza War. US Gaza plan: green/red zones displacing nearly all 2M Palestinians.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "25b6e1f6-9574-441d-9f44-14ab7954ac3c",
+    "name": "Iqaluit",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:37:57.956120+00:00",
+    "summary": "Iqaluit is site of a hydroelectric project in Canada's C$56bn nation-building plan announced by PM Mark Carney.",
+    " agreements": [
+      {
+        "uuid": "1a8b2c3d-4e5f-6g7h-8i9j-0k1l2m3n4o5p",
+        "from_node_uuid": "25b6e1f6-9574-441d-9f44-14ab7954ac3c",
+        "to_node_uuid": "3a4b5c6d-7e8f-9g0h-1i2j-3k4l5m6n7o8p",
+        "relationship_type": "LOCATED_IN",
+        "relationship_summary": "Iqaluit is located in Canada",
+        "created_at": "2025-11-14T15:37:57.956120+00:00"
+      },
+      {
+        "uuid": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
+        "from_node_uuid": "25b6e1f6-9574-441d-9f44-14ab7954ac3c",
+        "to_node_uuid": "4c5d6e7f-8g9h-0i1j-2k3l-4m5n6o7p8q9r",
+        "relationship_type": "HAS_PROJECT",
+        "relationship_summary": "Iqaluit has a hydroelectric project",
+        "created_at": "2025-11-14T15:37:57.956120+00:00"
+      }
+    ],
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "7d8cb9c8-4685-464e-95a8-53499813c236",
+    "name": "BBC One's Question Time",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:25:33.302807+00:00",
+    "summary": "Zarah Sultana appeared on BBC One's Question Time; allies claimed a statement was timed to undermine her before the appearance.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "8ed0e4aa-9ec5-4427-8348-fc5f4027cbc3",
+    "name": "Mehreen Faruqi",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:32:01.716645+00:00",
+    "summary": "Greens higher education spokesperson Mehreen Faruqi criticized Labor for delaying JRG scheme reform, saying students suffer under mountains of study debt and the education department could act now.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "66060157-202b-4598-b394-103b427fbd79",
+    "name": "Quotas",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:04:29.133106+00:00",
+    "summary": "Swiss officials committed to duty-free quotas for US goods: 500 tonnes beef, 1,000 tonnes bison, 1,500 tonnes poultry, as part of trade deal with Trump administration.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "423f9e88-16fc-436f-a793-2bd424c8fb4b",
+    "name": "Georgia supreme court",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:31:55.521037+00:00",
+    "summary": "Georgia supreme court disqualified Fulton county district attorney Fani Willis from Trump election interference case, ruling her relationship with special prosecutor Nathan Wade created impermissible appearance of conflict of interest.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "17d77d31-1fed-420a-85c5-c4cdfd426e98",
+    "name": "SVT",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:53:34.764150+00:00",
+    "summary": "Witness told SVT about fatal Stockholm bus crash on Valhallav\u00e4gen on Nov 14, 2025.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "2b0f36e3-061f-4981-a3b8-fcd4880cfa1c",
+    "name": "Singapore",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:56:00.354905+00:00",
+    "summary": "Singapore court charged Johnson Wen, 26, with public nuisance for grabbing Ariana Grande at Wicked: For Good premiere at Universal Studios Singapore; potential fine up to S$2,000.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "1cd65356-c978-4897-9b0c-61cf3572800d",
+    "name": "Seham",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:25:57.085904+00:00",
+    "summary": "Seham is Malak A Tantesh's cousin who has taken over her position as Gaza correspondent for The Guardian.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "3200b53d-630c-4807-9352-979216b316a0",
+    "name": "South China Sea",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T16:20:11.085665+00:00",
+    "summary": "South China Sea is a geographical area of strategic importance mentioned in comprehensive coverage of political, economic, and social topics related to China.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "7c879605-6105-4aaf-8e11-c5e8cb36e71a",
+    "name": "S&P 500",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:57:16.629665+00:00",
+    "summary": "S&P 500 closed down 1.7% on Thursday, part of Wall Street's worst day in a month as tech sell-off intensified amid fears firms are overvalued.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "8cab89c0-efa2-49ac-b819-2059a75f0bac",
+    "name": "Truth Social",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:46:59.661882+00:00",
+    "summary": "Trump posted on Truth Social on Nov 14, 2025, asking DOJ and FBI to investigate Epstein's relationship with Larry Summers.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "8fa54c73-eaf9-4110-8cc4-e7493e44f131",
+    "name": "South America",
+    "labels": [
+      "Entity"
+    ],
+    "crosd_at": "2025-11-14T18:42:31.330492+00:00",
+    "summary": "South American organized crime rings, particularly Colombian nationals, suspected of targeting Asian immigrant business owners in sophisticated burglary operations across multiple US states.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "475474b3-64bc-4f36-a403-961eb3c8ee7d",
+    "name": "Reuters",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T00:03:38.845477+00:00",
+    "summary": "Reuters journalist Raneen Sawafta beaten by settler with club while covering olive harvest in Beita, West Bank, leaving deep dent in her helmet.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "f7d54403-3abf-4089-b4ce-51d69382fc50",
+    "name": "Sotheby's",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:25:03.620324+00:00",
+    "summary": "Sotheby's valued a 15th-century Flemish triptych at \u00a32.5m-\u00a33.5m and sold Napoleon's diamond brooch for $4.4m at a Geneva auction.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "41d97992-348c-4959-b470-26c3775b97db",
+    "name": "Southern Water",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:36:33.450459+00:00",
+    "summary": "Southern Water took responsibility for ~10 tonnes (650m) toxic plastic beads spilled from Eastbourne sewage works after screen broke, dispersing along Sussex coast in possibly England's worst plastic pollution event.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "b3dcebd8-89b4-488e-970f-d921332159b9",
+    "name": "Malak A Tantesh",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:25:57.085743+00:00",
+    "summary": "Malak A Tantesh, 20, former Guardian Gaza correspondent, named UK young journalist of the year for 18 months of brave reporting under bombing threats and food scarcity.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "621bb2b6-6fc7-439c-b1da-ce9ae0340be8",
+    "name": "The Telegraph",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:14:19.369045+00:00",
+    "summary": "RedBird Capital consortium dropped \u00a3500m Telegraph takeover bid due to high asking price, leaving its future uncertain.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "65c50da6-4352-49a1-bf1f-145e28bfe253",
+    "name": "Taiwan",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T16:20:11.085647+00:00",
+    "summary": "Taiwan appears as a territory frequently mentioned in relation to China in RSS intelligence coverage.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "5b8f570e-29b8-4056-a9cf-3694031f0fb6",
+    "name": "Turkmenistan",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422869+00:00",
+    "summary": "Turkmenistan among seven countries under partial US travel ban; citizens cannot enter US permanently or receive certain visas.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "984456cb-7082-4893-853d-3a1ea48f4dad",
+    "name": "Volker T\u00fcrk",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:58:37.511674+00:00",
+    "summary": "UN High Commissioner for Human Rights Volker T\u00fcrk urged Tanzania to investigate election killings and told UN Human Rights Council that Sudan atrocities had 'too much pretense and performance and too little action'.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "3bbf0b44-21ba-4479-a6b1-b2df3cfa5575",
+    "name": "the Channel",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:32:39.764110+00:00",
+    "summary": "Asylum seekers cross the Channel in flimsy dinghies, suffering hypothermia, fuel burns, and trauma.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "b793fcad-409b-4b9d-89e5-07d5343e5872",
+    "name": "Big Zuu",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:41:21.632823+00:00",
+    "summary": "Big Zuu co-hosting BBC Children in Need telethon on 14 Nov 2025 with Paddy McGuinness, Mel Giedroyc, Rochelle Humes, Vernon Kay, and Lenny Rush.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "1179f8ff-33e1-4c01-aef2-b6d650848bbe",
+    "name": "Last Chance U: Basketball",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:38:14.805269+00:00",
+    "summary": "Netflix spin-off series Last Chance U: Basketball premiered in 2021, featuring two seasons about struggling college basketball teams.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "d5f23c73-8e03-4add-a972-09c8fb80242c",
+    "name": "United Nations",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T14:15:06.338181+00:00",
+    "summary": "UN Security Council: US Gaza plan vs Russia/China counter. UN Human Rights Council ordered Sudan probe. UN High Commissioner urged Tanzania election probe.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "f7d61ab2-2768-4127-b5a2-4c9a3cb2015b",
+    "name": "University Accord",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:07:17.751378+00:00",
+    "summary": "Former University Accord chair Mary O'Kane leads interim Australian Tertiary Education Commission (Atec) to reform Job Ready Graduates scheme by Jan 1, 2026.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "10b1a359-6e20-4d63-ad95-d3d7740e3fef",
+    "name": "United Arab Emirates",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:14:19.369022+00:00",
+    "summary": "UAE accused of funneling weapons to Sudan's RSF. Abu Dhabi VP Sheikh Mansour's firm dropped Telegraph takeover bid.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "c2fdbb0a-c1be-4e7f-9acd-db5b5da26fa8",
+    "name": "UK",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:25:57.085837+00:00",
+    "summary": "UK: Two senior staff suspended at Manston migrant centre; Tate galleries leaked 111 job applicants' data; man arrested for posing as rear admiral in Wales; Trump threatens BBC with $1bn lawsuit.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "ad011dd2-a0e8-4588-a679-26c2ec3773e9",
+    "name": "United States",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:38:44.527350+00:00",
+    "summary": "Trump admin restricts green cards for 12 travel ban countries; plans divided Gaza (green/red zones) with European forces, no US troops/funding; UN Gaza resolution faces Russian/Chinese veto threat; rolls back tariffs on food products.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "2b1200d9-cf1e-43bb-9c56-414983b30d59",
+    "name": "US House",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:46:48.704823+00:00",
+    "summary": "US House oversight committee released text messages showing Jeffrey Epstein advised Steve Bannon during August 2018 pro-Trump media campaign.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "5249462f-a51a-4f30-b724-fc0fc2a79fa5",
+    "name": "Wicked: For Good",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:56:00.354893+00:00",
+    "summary": "Wicked: For Good sequel starring Ariana Grande and Cynthia Erivo premiered Universal Studios Singapore 13 Nov 2025, releases 21 Nov 2025.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "b40ffdda-6e71-4748-a022-9063716ee5a4",
+    "name": "Wes Streeting",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:37:27.745667+00:00",
+    "summary": "Wes Streeting, Labour health secretary, accused of plotting to oust Keir Starmer. Seen as potential successor and No 10's 'golden child' favored by chief of staff Morgan McSweeney, though recent reports suggest waning support.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "4ab85df9-50de-4a69-af1c-4f604b7832ff",
+    "name": "Western allies",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:24:59.768725+00:00",
+    "summary": "Zelensky urges Ukraine's Western allies for Patriot air-defense systems from US, pressing European partners to fund them as Kyiv is cash-strapped after nearly four years of war with Russia.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "eef746f7-4085-4a23-b42a-1ee208c3cd5a",
+    "name": "Wisconsin",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:42:31.330480+00:00",
+    "summary": "Police reported burglary rings targeting Asian business owners in Wisconsin in the past year.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "dd94e213-d541-4cef-8315-ddc4af2c85c9",
+    "name": "Battle of Waterloo",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:10:30.654968+00:00",
+    "summary": "1815 battle where Napoleon was defeated by coalition forces led by Duke of Wellington and Marshal Bl\u00fccher, ending his reign as French emperor.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "90b8157b-e2a2-42f1-9b41-dade7d4f37ba",
+    "name": "West Yorkshire",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:41:21.632808+00:00",
+    "summary": "Sara Cox ran through West Yorkshire during her 135-mile, five-day marathon challenge, finishing in Pudsey, Leeds, raising over \u00a37m for Children in Need.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "02a6ddc9-91e8-4629-80b7-f6fd8f93a79d",
+    "name": "Wall Street Journal",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:46:59.661820+00:00",
+    "summary": "Wall Street Journal published 2023 emails between Jeffrey Epstein and Larry Summers, revealing continued contact post-conviction.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "08002ecd-165e-4de2-879f-5f1d21a406da",
+    "name": "Xbox",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:41:31.664970+00:00",
+    "summary": "Xbox faces competition from Valve's new console launching next year to rival it and PlayStation.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "ab28015a-8726-4987-a0c4-6ad043b45349",
+    "name": "Nexperia",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:37:10.267250+00:00",
+    "summary": "Dutch chip maker Nexperia, subsidiary of China's Wingtech (acquired 2018), placed under Dutch government supervision in Sept 2025. China banned Nexperia chip exports in Oct 2025, nearly halting global car industry.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "5bbc98db-2fc3-4485-8c18-610b051f375a",
+    "name": "News Xchange conference",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T13:12:07.279989+00:00",
+    "summary": "Steve Bannon participated in the News Xchange conference in Edinburgh on 14 November 2018, two days before his Oxford Union speech.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "a18e0f35-4c62-4088-925f-a5d5641cbc0c",
+    "name": "Lucia Ixch\u00e9u",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T14:15:06.338190+00:00",
+    "summary": "Lucia Ixch\u00e9u is a Guatemalan land rights activist from the K'iche' community who attended COP30 climate talks in Bel\u00e9m, Brazil, advocating for Indigenous participation.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "9730eda9-4281-460a-85e1-cf3e56ee2faa",
+    "name": "Xi Jinping",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T16:20:11.085619+00:00",
+    "summary": "Xi Jinping is President of China.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "70829be3-361d-4cce-87a4-83cc45be044d",
+    "name": "Chao Xu",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:54:07.295128+00:00",
+    "summary": "Chinese national Chao Xu, 33, jailed for life (minimum 14 years) for drugging and sexually assaulting female Chinese students in London. Admitted 24 offenses; police believe hundreds of victims.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "f1033943-b556-4bb2-be38-91aef8170dc1",
+    "name": "console",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:41:31.665032+00:00",
+    "summary": "Valve announced next-gen console to rival Xbox and PlayStation, featuring advanced graphics, backward compatibility, Steam library support, launching next year with focus on indie games.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "f7fb3667-55f7-4748-aafc-d4135d223572",
+    "name": "Quebec",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:37:57.956114+00:00",
+    "summary": "Quebec has a graphite battery project in Canada's C$56bn nation-building program announced by PM Mark Carney on 14 Nov 2025.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "a6c117f6-1f73-4147-9bc6-f6a6d0af4eca",
+    "name": "Venezuela",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422872+00:00",
+    "summary": "Venezuela faces partial US travel ban restrictions; citizens cannot enter US permanently or receive certain visas.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "131b1738-3ad4-4963-ae6a-539118f15ef9",
+    "name": "Ayssam Ma'ala",
+    "labels": [
+      "Entity"
+    ],
+    "summary": "13-year-old Ayssam Ma'ala died Nov 11 after 4-week coma from tear gas fired by Israeli soldiers while harvesting olives in Beita, West Bank on Oct 11. First harvest fatality.",
+    "created_at": "2025-11-14T15:10:30.666654+00:00",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "04df6119-90f1-42a5-a419-ddf8d9c34bb3",
+    "name": "Wales",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:37:27.745684+00:00",
+    "summary": "Potential Labour party defeat in Wales predicted for May elections alongside Scotland and English local councils.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "fb8b7f19-b598-411d-958a-efcc48bfc679",
+    "name": "Anna",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T13:22:41.440139+00:00",
+    "summary": "Anna appears in Ander Louis's 'bogan' Australian slang translation of War & Peace as a pregnant character married to Prince Andrei.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "96f9eaa4-01e7-4d01-b416-105d68b83645",
+    "name": "Mitie",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:32:39.763957+00:00",
+    "summary": "Home Office contractor Mitie confirmed suspension of two senior Manston processing centre staff for misconduct; operations continue with senior team in place.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "0478b1cb-dfce-4617-b735-fa594799a9f9",
+    "name": "Cuba",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422857+00:00",
+    "summary": "Cuba among seven countries under partial US travel ban; citizens cannot permanently enter US or receive certain visas. Trump administration plans to restrict green card approvals.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "09cd44e3-6594-4194-84c2-3c80cc0359eb",
+    "name": "Zou Zhenhao",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:03:34.083534+00:00",
+    "summary": "Chinese student jailed in June for drugging and raping multiple women and filming the abuse. Case similar to Xu Chao, though not known to be linked. Police investigating if they learned attack methods online.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "54d7a977-48cf-43bc-9106-6bb62dec3b9b",
+    "name": "Blue Zone",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T14:15:06.338217+00:00",
+    "summary": "Main conference hall at COP30 climate talks in Bel\u00e9m, Brazil, where approximately 900 Indigenous participants received official accreditation.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "8b4e4f99-7750-40d2-88d9-1783331707ed",
+    "name": "Anthony Zurcher",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:29:02.083534+00:00",
+    "summary": "",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "87914c88-029c-4056-86fa-c6c79992e234",
+    "name": "President Volodymyr Zelensky",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:24:59.768672+00:00",
+    "summary": "President Zelensky condemned Russia's Nov 14 Kyiv attack that killed 6 as deliberately calculated to harm civilians. Ukraine is responding with long-range strikes; Zelensky will visit Greece and France seeking air defenses.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "0a79e0b9-7917-43ec-b3d9-980444bdc235",
+    "name": "19th century",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:10:30.655014+00:00",
+    "summary": "Napoleon's early 19th-century diamond brooch, lost at Waterloo in 1815, sold for $4.4M. His defeat ended his reign as French emperor and European domination quest.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "79b5c701-7eb2-4ea0-b4e3-49408ea98d48",
+    "name": "No 10",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:43:31.507625+00:00",
+    "summary": "No 10 expects Labour MPs to support tough new asylum policies despite backbench opposition; scrapped income tax plans in budget as panicked attempt to protect Starmer.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "52b1279d-df11-4e4c-90b6-7cbab5f9d9ae",
+    "name": "people",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422919+00:00",
+    "summary": "Munduruku Indigenous people blockaded COP30 entrance demanding Brazil president audience. Tanzania president promised election protest deaths probe. UN investigating Sudan civil war atrocities. Russia/China countered US Gaza plan at UN.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "fb8c763a-b726-4126-9ac0-73a1a3aeb7f6",
+    "name": "AI",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:57:16.629652+00:00",
+    "summary": "AI sector market correction on Nov 14, 2025: tech stocks sold off after AI rally peaked, Nvidia fell 3.6% on overvaluation fears.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "5df338da-a041-4781-915d-19b165db1de8",
+    "name": "Fortnite",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:26:13.008427+00:00",
+    "summary": "Fortnite is an ever-popular multiplayer game famous for unlikely crossovers including pop star Sabrina Carpenter and AI-voiced Darth Vader in 2025.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "c910ed05-affd-4a16-8207-c849eb465bc9",
+    "name": "birds",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:36:33.450435+00:00",
+    "summary": "Birds at Camber Sands and Rye Harbour nature reserve risk death from eating toxic plastic bio-beads spilled by Southern Water. Beads attract algae, smell like food, and can be fatal.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "1af1bd96-2074-4efb-8015-0ac0ce9bf01c",
+    "name": "Luiz In\u00e1cio Lula da Silva",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T20:32:01.716539+00:00",
+    "summary": "Brazil's President Lula opened Cop30 in Bel\u00e9m, declaring it the 'Cop of truth' while disavowing disinformation, as 1,600+ fossil fuel lobbyists outnumbered all delegations except Brazil's.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "51239255-6fc9-4f85-97be-ac3eedb43c03",
+    "name": "BBC One",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:41:21.632840+00:00",
+    "summary": "BBC One broadcasts annual Children in Need telethon at 7pm Friday.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "0d50374b-33e6-4a02-9bf8-a2faa51c24ef",
+    "name": "Air Force One",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T12:24:21.714958+00:00",
+    "summary": "Trump told reporters on Air Force One Friday he will sue BBC for $1-5bn over Panorama edit of his 2021 speech, said he'd call UK PM Starmer.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "4c5d0d8a-20cb-44bf-8193-1fc3724822e4",
+    "name": "Cielke Sijben",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:56:00.354959+00:00",
+    "summary": "Cielke Sijben handcuffed herself to Hugh Grant at a 2007 premiere of Music and Lyrics; firefighters freed them.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "b194265a-9bd9-4858-979e-e7be7b137314",
+    "name": "America First",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T12:51:05.696491+00:00",
+    "summary": "Trump's political slogan. Rep. Marjorie Taylor Greene questioned if Trump still prioritized it, prompting Trump to withdraw support for her.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "54b398d2-65bc-4feb-bf9d-5c4761333bf0",
+    "name": "Ahmad Salman",
+    "leaders": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T00:03:38.845366+00:00",
+    "summary": "Ahmad Salman, imam at Hamida Mosque near Deir Istiya in occupied West Bank, told BBC Thursday's settler attack sent message that settlers can reach anywhere, kill civilians, and burn houses and mosques.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "8aaf277f-8389-470a-bf2c-6f1ef846c6f1",
+    "name": "Radio 2",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:41:21.632778+00:00",
+    "summary": "BBC Radio 2, home to Sara Cox's weekday Teatime show. The station's Children in Need fundraiser included her 135-mile marathon challenge raising \u00a37m.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "cfb0aa24-d575-4638-a2b9-7cb5aa7eb9d1",
+    "name": "Black Ops 2",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:26:13.008410+00:00",
+    "summary": "Call of Duty: Black Ops 2 (2012) is getting direct sequel Black Ops 7, set in 2035.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "3e4438bf-f753-41d3-a6d1-62ccaa8f9739",
+    "name": "Radio 2's Teatime show",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T23:41:21.632869+00:00",
+    "summary": "Radio 2's Teatime show, hosted by Sara Cox on weekdays, featured her 135-mile, five-day Children in Need marathon challenge raising over \u00a37m\u2014Radio 2's longest fundraiser.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "38cf3dbc-9fd2-40f2-8f72-acff3ab543f9",
+    "name": "Russia",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:24:40.985218+00:00",
+    "summary": "Russia introduced counterresolution at UN Security Council against US Gaza plan, calling for Palestinian statehood; China aligned.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "33341776-5b6e-48c6-9aa6-7c96a52f71ee",
+    "name": "fish",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:36:33.450438+00:00",
+    "summary": "Fish at Camber Sands beach risk death from eating plastic bio-beads that smell like food. Southern Water spilled millions of toxic beads due to treatment plant mechanical failure.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "2badb4db-f5a7-4758-a3da-a887e11ec553",
+    "name": "Sheikh Mansour bin Zayed al-Nahyan",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:14:19.368895+00:00",
+    "summary": "Sheikh Mansour bin Zayed al-Nahyan is UAE vice-president, Manchester City FC owner, and controls IMI which jointly owns the Telegraph via RedBird IMI.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "d4c24d30-0036-404c-9cd4-bcb89840cb29",
+    "name": "athletes",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422909+00:00",
+    "summary": "Athletes traveling to US for 2026 World Cup or 2028 Los Angeles Olympics exempt from Trump's travel ban, according to draft DHS policy.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "6221f5d3-d1e8-4e97-bd92-af78edd464d6",
+    "name": "Johnson Wen",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:56:00.354872+00:00",
+    "summary": "Johnson Wen, 26, charged with public nuisance for grabbing Ariana Grande at Singapore Wicked: For Good premiere. Pleaded guilty, faces S$2,000 fine. Known as Instagram's 'pyjamamann' for stage invasions.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "a4a0508a-bacb-4b0f-b00c-166234a1bbe9",
+    "name": "diplomatic source",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T21:50:04.508062+00:00",
+    "summary": "Diplomatic source said US wants to 'set the vision and not pay for it' on Gaza reconstruction, per US military planning for green/red zone division.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "59c5f3a3-7a0d-45af-a757-0de2280fde82",
+    "name": "Battlefield 6",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:26:13.008335+00:00",
+    "summary": "Battlefield 6 is a huge hit by Electronic Arts, drawing attention from Call of Duty. Its single-player campaign was considered underwhelming by reviewers.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "a0d29271-7317-4f18-8ccd-d2c543ac6de2",
+    "name": "1066 Country tourist board",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T16:50:14.649066+00:00",
+    "summary": "1066 Country tourist board, chaired by Sarah Broadbent, called the Camber Sands plastic bead spill \"catastrophic\" for tourism in the area, which heavily relies on beach visitors.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "5c208458-7a3e-4ff3-a5a7-143ee8750804",
+    "name": "2026 World Cup",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422885+00:00",
+    "summary": "Athletes traveling to US for 2026 World Cup exempt from Trump's travel ban on 12 countries.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "f24b188c-1395-4f82-a1ee-f1b9d6c56ecb",
+    "name": "october 7",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-13T21:33:43.268880+00:00",
+    "summary": "7 October Hamas attacks started Gaza War in 2023.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "4faea420-43a1-4d26-bd61-b699caab7c19",
+    "name": "King Henry VI",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:25:03.620361+00:00",
+    "summary": "King Henry VI granted a royal charter to St John's Almshouse in Sherborne, Dorset in 1437.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "34ba54fb-b0af-45cc-81a2-e7d177efae07",
+    "name": "Donald Trump's 6 January 2021 speech",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T12:24:21.715101+00:00",
+    "summary": "Trump's 6 Jan 2021 speech was edited by BBC Panorama, combining excerpts 50+ minutes apart to appear as continuous call to action. BBC apologized for misleading edit; Trump plans $1-5bn lawsuit.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "a1eae820-e93c-40b2-87bf-04e3d8190fa3",
+    "name": "Bogan",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-15T13:22:41.440353+00:00",
+    "summary": "Australian slang from the 1980s, originally meaning 'unsophisticated and uncultured person' but now often used as a term of endearment for flippant, irreverent Australian lingo.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "e5da2cf7-806c-4e78-b242-b1c06ab22667",
+    "name": "Black Ops 7",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T18:26:13.008401+00:00",
+    "summary": "Black Ops 7 is direct sequel to 2012's Black Ops 2, set in 2035. Story involves global terrorist threat and murky big tech company. Published by Activision, released after Microsoft increased Game Pass prices by 20%.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "00f72134-d24e-4ab8-80e4-baaf0f10362a",
+    "name": "John Thornton",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T17:14:19.369004+00:00",
+    "summary": "RedBird Capital chair whose \u00a3500m Telegraph bid collapsed amid newsroom concerns about Chinese state influence.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "99377760-313f-45d2-9324-340e036d4fde",
+    "name": "2028 Summer Olympics",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T22:39:00.422888+00:00",
+    "summary": "2028 Summer Olympics in Los Angeles. Athletes traveling for the games are exempt from Trump's travel ban.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "c120119b-5612-4fa3-8e52-78dcdb045f73",
+    "name": "\u00a3850,000",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T19:25:33.302855+00:00",
+    "summary": "\u00a3850,000 in Your Party membership donations held by Zarah Sultana, disputed by Jeremy Corbyn's faction over delayed transfer, leading to MP Adnan Hussain's resignation.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "73a55530-e233-4fa8-8976-685d40b4e7f0",
+    "name": "Cop28",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T21:37:58.251649+00:00",
+    "summary": "Cop28 in Dubai had 2,456 fossil fuel lobbyists, according to Kick Big Polluters Out coalition analysis.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  },
+  {
+    "uuid": "fe5b7160-9a5e-455d-80c8-7e05d8e69abe",
+    "name": "Ukrainians",
+    "labels": [
+      "Entity"
+    ],
+    "created_at": "2025-11-14T15:24:59.768646+00:00",
+    "summary": "Ukrainians face Russian attacks on Kyiv's power grid Nov 14, 2025, and respond with long-range strikes on Russian infrastructure.",
+    "group_id": "rss-intelligence",
+    "attributes": {}
+  }
+]

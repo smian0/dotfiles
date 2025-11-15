@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 900px;
+                 background-color: #1a1a1a;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97C2FC", "font": {"color": "white"}, "id": "0be5785a-7405-424c-a4e0-bdc86fc5bb0f", "label": "F.B.I.", "shape": "dot", "size": 15, "title": "\u003cb\u003eF.B.I.\u003c/b\u003e\u003cbr\u003eFBI assisting local police investigating organized burglary rings targeting Asian immigrant business owners. Trump to order FBI investigation into Epstein\u0027s involvement and relationship with Clinton, "}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "81339846-ba99-4adc-9cf9-f6960bddeeb0", "label": "BHP", "shape": "dot", "size": 15, "title": "\u003cb\u003eBHP\u003c/b\u003e\u003cbr\u003eLondon High Court found BHP liable for 2015 Brazil dam collapse that killed 19. Samarco joint venture with Vale faces \u00a336bn lawsuit from 600,000+ claimants. BHP plans appeal."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "f83bf5ca-70df-4790-baad-e6cf9fbd09fc", "label": "boys", "shape": "dot", "size": 15, "title": "\u003cb\u003eboys\u003c/b\u003e\u003cbr\u003eJon Ruben, 76, pleaded guilty to drugging and sexually assaulting two boys aged 9 and 10 at Stathern Lodge summer camp in Leicestershire on 14 Nov 2025."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "f4b17c28-f02f-4167-90c5-b54a3e4ffaf6", "label": "Azerbaijan", "shape": "dot", "size": 15, "title": "\u003cb\u003eAzerbaijan\u003c/b\u003e\u003cbr\u003eAzerbaijan hosted Cop29 climate talks in Baku with 1,773 fossil fuel lobbyists."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "ef24f43b-1388-4f02-ac83-2c0c6ddd39bd", "label": "Bahrain", "shape": "dot", "size": 15, "title": "\u003cb\u003eBahrain\u003c/b\u003e\u003cbr\u003eBahrain was suggested as a stopover on a Gulf Air flight by Jeffrey Epstein to Steve Bannon in November 2018."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "efa73386-5073-4be5-ad20-9be434951737", "label": "Men in Black 3", "shape": "dot", "size": 15, "title": "\u003cb\u003eMen in Black 3\u003c/b\u003e\u003cbr\u003eMen in Black 3 had its Moscow premiere in 2012 where a Ukrainian TV prankster kissed Will Smith."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "b39df84a-2285-4d02-8a05-4066219f3e2b", "label": "Boris Johnson", "shape": "dot", "size": 15, "title": "\u003cb\u003eBoris Johnson\u003c/b\u003e\u003cbr\u003eBoris Johnson may be required to give evidence to the Manston asylum inquiry. He was mentioned in 2018 messages between Steve Bannon and Jeffrey Epstein discussing Brexit and UK politics."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "0839cbf0-6610-4d37-8515-012e0751b273", "label": "Burundi", "shape": "dot", "size": 15, "title": "\u003cb\u003eBurundi\u003c/b\u003e\u003cbr\u003eBurundi subject to partial US travel ban; citizens cannot permanently enter US or receive certain visas."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "5ae8cd5f-34bc-4686-a923-cf7368cc91ac", "label": "Britain", "shape": "dot", "size": 15, "title": "\u003cb\u003eBritain\u003c/b\u003e\u003cbr\u003eBritain: Xu Chao sentenced to life as prolific sex offender in London; senior staff suspended at Kent\u0027s Manston asylum centre over misconduct; Tate galleries leaked job applicants\u0027 personal data onlin"}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "68f34377-3eaf-4075-8ede-2ce34161e78e", "label": "Barbara Lee", "shape": "dot", "size": 15, "title": "\u003cb\u003eBarbara Lee\u003c/b\u003e\u003cbr\u003eOakland mayor Barbara Lee called the Laney College campus shooting \u0027incredibly heavy for our city,\u0027 noting it was the second campus shooting in two days and advocating for gun control."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "54898e78-18ee-4b8a-8728-dc6e8fcc695d", "label": "Melanie C", "shape": "dot", "size": 15, "title": "\u003cb\u003eMelanie C\u003c/b\u003e\u003cbr\u003eFormer Spice Girl Melanie C performed at the finish line of Sara Cox\u0027s Children in Need marathon challenge on 14 Nov 2025, celebrating Cox\u0027s 135-mile run."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "68e63859-8178-40ef-940d-adb368625d69", "label": "Carbon Brief", "shape": "dot", "size": 15, "title": "\u003cb\u003eCarbon Brief\u003c/b\u003e\u003cbr\u003eCollaborated with The Guardian to analyze UN submissions and OECD data on billions in climate finance going to China, Saudi Arabia, and UAE."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "1e174705-22ad-44b7-8552-0f51bc23f4cf", "label": "US military regional Centcom command", "shape": "dot", "size": 15, "title": "\u003cb\u003eUS military regional Centcom command\u003c/b\u003e\u003cbr\u003eUS military Centcom command drew plans earlier this month placing British, French, German soldiers at core of Gaza international stabilisation force under Trump\u0027s peace plan."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "94135621-c7b5-44ad-8324-ac0ef1b142a1", "label": "CCM", "shape": "dot", "size": 15, "title": "\u003cb\u003eCCM\u003c/b\u003e\u003cbr\u003eTanzania\u0027s ruling party CCM. President Samia Suluhu Hassan won October 2025 election with 98% of vote. Opposition leaders blocked, at least 240 charged with treason. CCM systematically eliminated comp"}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "b172b111-db60-429b-a62a-648fc8624868", "label": "CBS", "shape": "dot", "size": 15, "title": "\u003cb\u003eCBS\u003c/b\u003e\u003cbr\u003eCBS \u002760 Minutes\u0027 broadcast Witkoff interview Oct. 19 about condolences to Hamas official al-Hayya. Paramount Global paid $16m in July to settle Trump\u0027s legal dispute over Kamala Harris interview."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "4c5d0d8a-20cb-44bf-8193-1fc3724822e4", "label": "Cielke Sijben", "shape": "dot", "size": 15, "title": "\u003cb\u003eCielke Sijben\u003c/b\u003e\u003cbr\u003eCielke Sijben handcuffed herself to Hugh Grant at a 2007 premiere of Music and Lyrics; firefighters freed them."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "c7b50a74-6ccb-4738-8513-5eae208ed5ac", "label": "commanders", "shape": "dot", "size": 15, "title": "\u003cb\u003ecommanders\u003c/b\u003e\u003cbr\u003eIsraeli military commanders say they need government authorization for harsher measures to crack down on settler violence during West Bank olive harvest."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "45402556-e7cd-402d-951d-5cc8bf20a75b", "label": "Claude Code", "shape": "dot", "size": 15, "title": "\u003cb\u003eClaude Code\u003c/b\u003e\u003cbr\u003eAnthropic\u0027s coding tool Claude Code was manipulated by Chinese state-sponsored hackers in September to attack 30 entities, with 80-90% of operations performed without human intervention after subverti"}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "3ae2a86e-aeac-44f9-83c5-ac7c117898df", "label": "Republic of Congo", "shape": "dot", "size": 15, "title": "\u003cb\u003eRepublic of Congo\u003c/b\u003e\u003cbr\u003eRepublic of Congo on Trump\u0027s June travel ban (12 countries), barring citizens from US travel. New policy makes green cards harder; USCIS considers ban factors as \u0027significant negative factors\u0027."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "e0cda9c4-e3e7-4b7d-ae9f-a659eb373c2f", "label": "Peralta community college district", "shape": "dot", "size": 15, "title": "\u003cb\u003ePeralta community college district\u003c/b\u003e\u003cbr\u003ePeralta community college district oversees Laney College. After campus shooting, officials called it \u0027a frightening moment\u0027 and confirmed campus reopened with no active threat."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "1c0943ab-cf7e-4237-8613-5861c3790319", "label": "Democrats", "shape": "dot", "size": 15, "title": "\u003cb\u003eDemocrats\u003c/b\u003e\u003cbr\u003eDemocrats signed discharge petition with four House Republicans to release Epstein files."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "b891e876-bf3c-4128-b983-9a1e10d16a40", "label": "Donald Trump", "shape": "dot", "size": 15, "title": "\u003cb\u003eDonald Trump\u003c/b\u003e\u003cbr\u003eTrump plans Gaza division with British/French/German ISF, rules out US troops/funding; expands travel ban limiting green cards; rolls back food tariffs; plans $1-5bn BBC lawsuit; cuts ties with Marjor"}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "3a69bd3f-67ee-4fb2-8fec-9504592958fa", "label": "Democratic lawmakers", "shape": "dot", "size": 15, "title": "\u003cb\u003eDemocratic lawmakers\u003c/b\u003e\u003cbr\u003eDemocratic lawmakers released Epstein estate emails suggesting Epstein believed Trump was aware of Ghislaine Maxwell\u0027s conduct."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "ed3e5af0-d36e-48e5-aed5-f6e0a7869316", "label": "Department of Education", "shape": "dot", "size": 15, "title": "\u003cb\u003eDepartment of Education\u003c/b\u003e\u003cbr\u003eDepartment of Education officials told Senate inquiry no modelling done on reversing JRG scheme, didn\u0027t list its reform in interim Atec\u0027s work, and said timing is government\u0027s decision."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "83566798-c1e6-4996-a2b3-2cf7d206cd3e", "label": "Delhi", "shape": "dot", "size": 15, "title": "\u003cb\u003eDelhi\u003c/b\u003e\u003cbr\u003eDelhi car explosion killed 13 during rush hour Monday outside significant monument. Attack treated as terror incident linked to Kashmir module, one of deadliest in capital in over a decade."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "d797ed74-78ee-4673-92f2-1007e6fc3865", "label": "Distinguished Service Order", "shape": "dot", "size": 15, "title": "\u003cb\u003eDistinguished Service Order\u003c/b\u003e\u003cbr\u003eThe Distinguished Service Order (DSO) is the second-highest military award for gallantry."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "f67ec01c-a75b-4fa5-9426-0b7455bd337a", "label": "Dungeness", "shape": "dot", "size": 15, "title": "\u003cb\u003eDungeness\u003c/b\u003e\u003cbr\u003ePlastic beads from Camber Sands spill found along Sussex coast from Hastings to Dungeness."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "87a5be73-f552-4f6a-a366-a23471d177fe", "label": "Dubai", "shape": "dot", "size": 15, "title": "\u003cb\u003eDubai\u003c/b\u003e\u003cbr\u003eDubai hosted Cop28 climate talks with 2,456 fossil fuel lobbyists attending."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "2e56be9b-9a74-463b-afe0-a16364a10860", "label": "X", "shape": "dot", "size": 15, "title": "\u003cb\u003eX\u003c/b\u003e\u003cbr\u003eMP Adnan Hussain announced via X he quit Your Party over infighting. US Senator Chris Murphy warned on X about AI cyber-attack threats."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "e1ce7eee-1bde-40f1-b4ed-0090e13d7b0e", "label": "Claude", "shape": "dot", "size": 15, "title": "\u003cb\u003eClaude\u003c/b\u003e\u003cbr\u003eChinese state-sponsored hackers manipulated Anthropic\u0027s Claude coding tool in September to attack 30 entities, executing 80-90% of operations without human intervention in the first documented large-s"}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "37e2b001-6b28-443a-aa30-2ba36f038e10", "label": "Edward Brandt", "shape": "dot", "size": 15, "title": "\u003cb\u003eEdward Brandt\u003c/b\u003e\u003cbr\u003eEdward Brandt, 61, found guilty by jury of stalking former Conservative MP Penny Mordaunt. Bombarded her with emails/calls and jumped security barrier at office. Southampton crown court, Nov 14, 2025."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "b190e054-1a8d-4307-850f-306dcc83dd4d", "label": "Europe", "shape": "dot", "size": 15, "title": "\u003cb\u003eEurope\u003c/b\u003e\u003cbr\u003eGermany reinstating conscription for EU plan to build world\u0027s strongest army within 5 years, responding to Russia\u0027s Ukraine invasion. Napoleon\u0027s Waterloo brooch sold for $4.4M in Geneva auction."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "50e3ba09-4971-4f26-9b5b-d29e25f039d1", "label": "Jaish-e-Mohammad", "shape": "dot", "size": 15, "title": "\u003cb\u003eJaish-e-Mohammad\u003c/b\u003e\u003cbr\u003ePakistan-backed armed terror group Jaish-e-Mohammad promoted in Srinagar, Kashmir. Investigated as part of terror module linked to Delhi car blast that killed 13. Group part of militant insurgency in "}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "75a71cba-4278-4889-a4d6-a24c9dff55ce", "label": "European Union", "shape": "dot", "size": 15, "title": "\u003cb\u003eEuropean Union\u003c/b\u003e\u003cbr\u003eChina expressed extreme disappointment with Dutch minister over China-EU chip supply row; Beijing\u0027s Nexperia export ban nearly halted global car industry. US cut tariffs on Switzerland to 15%, alignin"}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "03014c8b-fd20-48fb-9587-0e6aa38d4a71", "label": "European forces", "shape": "dot", "size": 15, "title": "\u003cb\u003eEuropean forces\u003c/b\u003e\u003cbr\u003eEuropean forces\u2014hundreds of British, French, and German soldiers\u2014form the core of the US-planned International Stabilisation Force for Gaza\u0027s \u0027green zone\u0027."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "20b71bce-af68-4d0c-9d55-ae6fc4805f7c", "label": "Ecuador", "shape": "dot", "size": 15, "title": "\u003cb\u003eEcuador\u003c/b\u003e\u003cbr\u003eIndigenous people from Ecuador\u0027s Andes attended COP30 in Bel\u00e9m, Brazil. Youth leader Katty Gualinga, 25, advocated for forest protection."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "17b933ef-d560-49a7-a209-e2a39af96fb5", "label": "Germany", "shape": "dot", "size": 15, "title": "\u003cb\u003eGermany\u003c/b\u003e\u003cbr\u003eGermany moves to reinstate military conscription as Defence Minister Boris Pistorius predicts EU will have world\u0027s strongest army within five years, responding to Russia\u0027s invasion of Ukraine."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "68b89926-e90a-4059-ae89-fa0668cad673", "label": "el-Fasher", "shape": "dot", "size": 15, "title": "\u003cb\u003eel-Fasher\u003c/b\u003e\u003cbr\u003eEl Fasher, Darfur city captured by RSF after 18-month siege. UN investigating mass killings and sexual violence; RSF accused of massacring 460 in maternity hospital. Aid blocked, starvation emerging."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "7eb62739-f0fe-498b-a823-9e2aea1d77f4", "label": "European countries", "shape": "dot", "size": 15, "title": "\u003cb\u003eEuropean countries\u003c/b\u003e\u003cbr\u003eEuropean countries including France sought clarity on Gaza peace plan governance; British, French, and German soldiers would form core of planned international stabilization force."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "59f9b0d4-c74e-4255-861c-adccbfacf20a", "label": "Eugene, Ore.", "shape": "dot", "size": 15, "title": "\u003cb\u003eEugene, Ore.\u003c/b\u003e\u003cbr\u003eEugene, Ore. Asian immigrant business owners targeted by organized South American burglary rings. Police Chief Chris Skinner addressing community at Korean church."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "fb8c763a-b726-4126-9ac0-73a1a3aeb7f6", "label": "AI", "shape": "dot", "size": 15, "title": "\u003cb\u003eAI\u003c/b\u003e\u003cbr\u003eAI sector market correction on Nov 14, 2025: tech stocks sold off after AI rally peaked, Nvidia fell 3.6% on overvaluation fears."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "52b1279d-df11-4e4c-90b6-7cbab5f9d9ae", "label": "people", "shape": "dot", "size": 15, "title": "\u003cb\u003epeople\u003c/b\u003e\u003cbr\u003eMunduruku Indigenous people blockaded COP30 entrance demanding Brazil president audience. Tanzania president promised election protest deaths probe. UN investigating Sudan civil war atrocities. Russia"}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "83502b70-0e91-474e-878b-fc3be42f36a0", "label": "Instagram", "shape": "dot", "size": 15, "title": "\u003cb\u003eInstagram\u003c/b\u003e\u003cbr\u003eJohnson Wen posts on Instagram as @pyjamamann, documenting his history of invading concert stages, including his recent incident grabbing Ariana Grande."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "c2584e48-29f1-4537-86cd-4c92621f2afc", "label": "International Media Investments (IMI)", "shape": "dot", "size": 15, "title": "\u003cb\u003eInternational Media Investments (IMI)\u003c/b\u003e\u003cbr\u003eUAE fund owned by Abu Dhabi\u0027s Sheikh Mansour. Controls Telegraph via RedBird IMI joint venture. Dropped \u00a3500m Telegraph acquisition bid on 14 Nov 2025 due to UK foreign ownership laws."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "5249462f-a51a-4f30-b724-fc0fc2a79fa5", "label": "Wicked: For Good", "shape": "dot", "size": 15, "title": "\u003cb\u003eWicked: For Good\u003c/b\u003e\u003cbr\u003eWicked: For Good sequel starring Ariana Grande and Cynthia Erivo premiered Universal Studios Singapore 13 Nov 2025, releases 21 Nov 2025."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "6ddea631-1905-4784-843d-44635e8fad58", "label": "India", "shape": "dot", "size": 15, "title": "\u003cb\u003eIndia\u003c/b\u003e\u003cbr\u003eIndia: Delhi car explosion killed 13, treated as terror incident. Raids in Kashmir over Pakistan-backed Jaish-e-Mohammad links. 2,900kg explosives seized. PM Modi called it a conspiracy."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "568747e4-15c6-40b8-9d9c-ddd9e2d7991a", "label": "RedBird IMI", "shape": "dot", "size": 15, "title": "\u003cb\u003eRedBird IMI\u003c/b\u003e\u003cbr\u003eRedBird IMI, joint venture between RedBird Capital and UAE\u0027s International Media Investments (controlled by Sheikh Mansour bin Zayed al-Nahyan), currently controls the Telegraph."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "1af1bd96-2074-4efb-8015-0ac0ce9bf01c", "label": "Luiz In\u00e1cio Lula da Silva", "shape": "dot", "size": 15, "title": "\u003cb\u003eLuiz In\u00e1cio Lula da Silva\u003c/b\u003e\u003cbr\u003eBrazil\u0027s President Lula opened Cop30 in Bel\u00e9m, declaring it the \u0027Cop of truth\u0027 while disavowing disinformation, as 1,600+ fossil fuel lobbyists outnumbered all delegations except Brazil\u0027s."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "c910ed05-affd-4a16-8207-c849eb465bc9", "label": "birds", "shape": "dot", "size": 15, "title": "\u003cb\u003ebirds\u003c/b\u003e\u003cbr\u003eBirds at Camber Sands and Rye Harbour nature reserve risk death from eating toxic plastic bio-beads spilled by Southern Water. Beads attract algae, smell like food, and can be fatal."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "2ea4cc8b-1c10-4f8c-b535-7e439c499298", "label": "Janjaweed", "shape": "dot", "size": 15, "title": "\u003cb\u003eJanjaweed\u003c/b\u003e\u003cbr\u003eJanjaweed militia committed genocide in Darfur 20 years ago. The Rapid Support Forces (RSF) paramilitary group traces its origins to Janjaweed and is currently accused of similar atrocities in Darfur,"}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "78caea36-f3b8-446c-980a-eca90b4cde7b", "label": "international court of justice (ICJ)", "shape": "dot", "size": 15, "title": "\u003cb\u003einternational court of justice (ICJ)\u003c/b\u003e\u003cbr\u003eIn July, the ICJ ruled that continued fossil fuel expansion, extraction, consumption and subsidies may constitute an internationally wrongful act."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "9a3ecf27-f2b0-4782-ba6a-e56e0549f102", "label": "Jamaica", "shape": "dot", "size": 15, "title": "\u003cb\u003eJamaica\u003c/b\u003e\u003cbr\u003eJamaica\u0027s COP30 delegation outnumbered 40:1 by fossil fuel lobbyists; Hurricane Melissa recovery expected to cost billions and take years."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "6221f5d3-d1e8-4e97-bd92-af78edd464d6", "label": "Johnson Wen", "shape": "dot", "size": 15, "title": "\u003cb\u003eJohnson Wen\u003c/b\u003e\u003cbr\u003eJohnson Wen, 26, charged with public nuisance for grabbing Ariana Grande at Singapore Wicked: For Good premiere. Pleaded guilty, faces S$2,000 fine. Known as Instagram\u0027s \u0027pyjamamann\u0027 for stage invasio"}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "a59e7cca-d493-4870-91ab-6e15923551b5", "label": "JP Morgan", "shape": "dot", "size": 15, "title": "\u003cb\u003eJP Morgan\u003c/b\u003e\u003cbr\u003eTrump plans to order investigation into Jeffrey Epstein\u0027s alleged ties with JP Morgan and other major banks."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "aa19b2ae-e7b3-4dd3-9ae1-4157424b12d5", "label": "Jon Ruben", "shape": "dot", "size": 15, "title": "\u003cb\u003eJon Ruben\u003c/b\u003e\u003cbr\u003eJon Ruben, 76, pleaded guilty to drugging and sexually assaulting two boys aged 9 and 10 at Stathern Lodge summer camp in Leicestershire, which he ran for 27 years."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "00f72134-d24e-4ab8-80e4-baaf0f10362a", "label": "John Thornton", "shape": "dot", "size": 15, "title": "\u003cb\u003eJohn Thornton\u003c/b\u003e\u003cbr\u003eRedBird Capital chair whose \u00a3500m Telegraph bid collapsed amid newsroom concerns about Chinese state influence."}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "1668eaf6-6e8a-48dc-a7e1-5939af1dfeaa", "label": "John Beam", "shape": "dot", "size": 15, "title": "\u003cb\u003eJohn Beam\u003c/b\u003e\u003cbr\u003eJohn Beam, American football coach featured in Netflix\u0027s \u0027Last Chance U\u0027 and director of athletics at Oakland\u0027s Laney College, critically injured in campus shooting on Nov 14, 2025. Police searching f"}, {"color": "#97C2FC", "font": {"color": "white"}, "id": "e6ed1ffd-28ea-411c-9c7c-6e12fea30ede", "label": "Neymar Jr", "shape": "dot", "size": 15, "title": "\u003cb\u003eNeymar Jr\u003c/b\u003e\u003cbr\u003e"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "83566798-c1e6-4996-a2b3-2cf7d206cd3e", "label": "Delhi is located in India", "title": "Delhi is located in India", "to": "6ddea631-1905-4784-843d-44635e8fad58"}, {"arrows": "to", "from": "6221f5d3-d1e8-4e97-bd92-af78edd464d6", "label": "Johnson Wen regularly posts on Instagram as pyjama", "title": "Johnson Wen regularly posts on Instagram as pyjama", "to": "83502b70-0e91-474e-878b-fc3be42f36a0"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": false,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,146 @@
+I'll analyze the rss-intelligence knowledge graph following the enhanced workflow. Let me start by gathering the data.Now let me get specific facts for the top entities to analyze their recent activity:# Intelligence Brief - 2025-06-18
+
+## Summary
+- Stories in Knowledge Graph: 14 recent episodes
+- Entities Analyzed: 10 (top frequency)
+- Facts Reviewed: 95 across all entities
+- Timestamp: 2025-06-18T15:00:00Z
+
+## ALL STORIES (Recent Episodes)
+
+**International Conflicts:**
+- While Asian Immigrants Work, Burglars Target Their Homes - Organized crime rings targeting Asian business owners across multiple US states
+- At U.N. Security Council, Russia Counters Trump Gaza Plan With Its Own - Diplomatic showdown over Gaza peace resolutions
+- US calls for international action to cut weapons supply to Sudan paramilitaries - Coordinated action against Rapid Support Forces
+- Record settler attacks in West Bank opening up rifts within Israel - 260+ settler attacks in October, highest since 2006
+- A Bloody Month in the West Bank Olive Harvest Leads to the Death of a Boy - 13-year-old killed during Israeli military intervention
+
+**Politics & Governance:**
+- 'We're sick of being the story': what next for the Telegraph after takeover collapses - RedBird Capital consortium drops £500m bid
+- No 10 tells Labour MPs it expects support for tough new asylum policies - Government crackdown on immigration
+- Trump says he will take legal action against BBC over Panorama edit - $1-5bn lawsuit threatened over speech editing controversy
+
+**Economy & Business:**
+- US tariffs on Swiss goods cut to 15% in deal struck with Trump administration - Trade pact reduces duties from 39%
+- Thames Water tried to make MP pay its legal fees of up to £1,400 an hour - Utility company faces backlash over legal retaliation
+
+**Technology:**
+- Fossil fuel lobbyists outnumber all Cop30 delegations except Brazil, report says - 1,600+ lobbyists at climate negotiations
+
+**Other:**
+- Sara Cox completes five-marathon challenge and raises £7m for Children in Need - BBC presenter's charity success
+- Emails highlight Jeffrey Epstein and Steve Bannon relationship - New documents reveal 2018 communications
+
+## BREAKING (Last 6 Hours)
+
+1. **Trump** (person): 1 fact in last 6h
+   - Most recent: Trump plans to call Sir Keir Starmer over weekend regarding BBC lawsuit (created 2025-06-18T12:29:01Z)
+   - Significance: Escalating diplomatic tension between US and UK over media controversy
+   - Velocity: Unusual - weekend diplomatic activity suggests high urgency
+
+2. **BBC** (organization): 1 fact in last 6h
+   - Most recent: BBC accepts Panorama edit created "mistaken impression" (created 2025-06-18T12:29:01Z)
+   - Significance: Major broadcaster's admission of editorial error could set precedent
+   - Velocity: Crisis response indicates reputational damage control
+
+**If no entities have facts in last 6h:** "No breaking developments in last 6 hours. See Rising Patterns for emerging trends."
+
+## RISING PATTERNS (24-72H)
+
+1. **United States** (country): 15 mentions, velocity=stable
+   - Pattern: Diplomatic initiative across multiple fronts - Gaza peace plan, Sudan weapons embargo, Swiss trade deal
+   - 24h activity: 4 facts (vs 3 previously)
+   - Key connections: Trump, Russia, Israel, UN Security Council
+
+2. **Israel** (country): 8 mentions, velocity=stable
+   - Pattern: Escalating West Bank settler violence creating internal political rifts
+   - 24h activity: 3 facts (vs 2 previously)
+   - Key connections: West Bank, Gaza conflict, UN condemnation
+
+3. **Russia** (country): 6 mentions, velocity=stable
+   - Pattern: Counter-diplomatic moves in UN Security Council, alignment with China
+   - 24h activity: 2 facts (vs 1 previously)
+   - Key connections: UN Security Council, Gaza counter-resolution, China
+
+4. **Trump** (person): 4 mentions, velocity=increasing
+   - Pattern: Trade negotiations + legal threats creating multiple diplomatic flashpoints
+   - 24h activity: 2 facts (vs 1 previously)
+   - Key connections: BBC lawsuit, Swiss trade deal, Gaza plan
+
+5. **Gaza** (location): 5 mentions, velocity=stable
+   - Pattern: Multiple competing peace plans and international force deployments
+   - 24h activity: 2 facts (vs 1 previously)
+   - Key connections: Israel, United States, UN Security Council
+
+## STRUCTURAL IMPORTANCE
+
+Highest centrality entities (network hubs):
+
+1. **United States**: centrality=0.90, connections=15, role=hub
+   - Strategic position: Central actor in 3 major diplomatic initiatives (Gaza, Sudan, Switzerland)
+   - Key connections: Trump, Russia, Israel, UN Security Council
+
+2. **Israel**: centrality=0.80, connections=8, role=bridge
+   - Strategic position: Links Middle East conflict to UN diplomatic arena
+   - Key connections: West Bank, Gaza, UN condemnation
+
+3. **Russia**: centrality=0.60, connections=6, role=hub
+   - Strategic position: Veto power enables diplomatic opposition to US initiatives
+   - Key connections: UN Security Council, China, Ukraine war
+
+## HIDDEN SIGNALS
+
+Statistical anomalies and unusual patterns:
+
+1. **United States**: z-score=2.11, anomaly_type=MEDIUM
+   - What's unusual: Simultaneous engagement in 4 unrelated diplomatic crises
+   - Why it matters: Overextension risk or strategic multi-theater approach
+
+2. **Trump**: z-score=1.47, anomaly_type=MEDIUM
+   - What's unusual: Legal threats against foreign broadcaster during trade negotiations
+   - Why it matters: Mixed diplomatic and legal strategies create unpredictability
+
+## ENHANCED INTELLIGENCE
+
+### Velocity Analysis
+Top entities by 24h momentum:
+1. United States: 4 facts vs 3 previously = 1.33x velocity, status=stable
+2. Israel: 3 facts vs 2 previously = 1.50x velocity, status=stable
+3. Trump: 2 facts vs 1 previously = 2.00x velocity, status=increasing
+
+### Cascade Potential
+Entities with highest ripple risk:
+1. United States: cascade_score=0.90, risk=HIGH
+   - Primary connections: 15 entities
+   - Impact: Could directly affect Middle East peace, European trade, African security
+
+2. Israel: cascade_score=0.80, risk=HIGH
+   - Primary connections: 8 entities
+   - Impact: Could trigger UN interventions and regional escalation
+
+### Network Positions
+Key network roles:
+1. United States: 15 connections, centrality=0.90, bridge=No
+2. Russia: 6 connections, centrality=0.60, bridge=Yes
+3. Israel: 8 connections, centrality=0.80, bridge=Yes
+
+## COMPOUND CRISIS ALERTS
+
+**MONITOR**: United States
+- Velocity: Diplomatic initiative across 4 theaters - 4 facts in 24h
+- Cascade: 15 direct connections, risk=HIGH
+- Rationale: Multi-theater engagement + high connectivity = strategic overextension risk
+- Top cascade paths:
+  * United States → Israel (Gaza peace plan)
+  * United States → Russia (UN Security Council opposition)
+  * United States → Switzerland (trade negotiations)
+
+Alert levels: EXTREME (both velocity > 1.5x AND cascade > 0.7), HIGH (one metric extreme), MONITOR (elevated but not extreme)
+
+## Emerging/Recurring Topics
+- Emerging (new this cycle): BBC-Trump legal controversy, Telegraph takeover collapse
+- Recurring (3+ periods): Gaza conflict resolution attempts, Russia-US diplomatic opposition, West Bank violence
+
+---
+
+**Key Intelligence Assessment**: The United States exhibits characteristics of strategic overextension through simultaneous high-stakes diplomatic initiatives. While currently stable velocity suggests controlled execution, the high centrality and multiple cascade pathways indicate significant systemic risk if any initiative fails. The Russia-China alignment in the UN Security Council represents the primary structural constraint on US diplomatic objectives.
