@@ -47,7 +47,8 @@
       "mcp__zen__restart_server",
       "mcp__privacy_pdf__pdf_extract_redact",
       "mcp__privacy_pdf__validate_redaction",
-      "mcp__privacy_pdf__analyze_redacted_content"
+      "mcp__privacy_pdf__analyze_redacted_content",
+      "mcp__web-search-prime__webSearchPrime"
     ],
     "deny": [
       "Read(./.env)",
@@ -143,6 +144,11 @@
             "type": "command",
             "command": "$HOME/.claude/hooks/UserPromptSubmit/capture-prompt.py",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/UserPromptSubmit/suggest-phase4-review.sh",
+            "timeout": 3
           }
         ]
       }
@@ -186,7 +192,8 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "superpowers@superpowers-marketplace": true
+    "superpowers@superpowers-marketplace": true,
+    "superpowers-chrome@superpowers-marketplace": true
   },
   "alwaysThinkingEnabled": false
 }

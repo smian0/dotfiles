@@ -18,6 +18,7 @@ This skill uses a **3-tier detection system** to determine which workflow to exe
    - User says "zen decide" → Decision workflow
 
 2. **Priority 2: Context Detection** (fallback when no explicit trigger)
+   - Web research keywords ("latest", "current", "recent", "2024", "2025", "search for") → Web Research workflow
    - Planning keywords ("implement", "build", "design", "architect") → Planning workflow
    - Error keywords ("bug", "error", "broken", "failing", "not working") → Debug workflow
    - Analysis keywords ("research", "compare", "evaluate", "analyze") → Research workflow
@@ -35,8 +36,9 @@ Read the user's message and classify it:
 ```
 IF message contains "zen plan" → PLAN workflow
 ELSE IF message contains "zen debug" → DEBUG workflow
-ELSE IF message contains "zen research" → RESEARCH workflow
+ELSE IF message contains "zen research" → RESEARCH workflow (check for web keywords)
 ELSE IF message contains "zen decide" → DECIDE workflow
+ELSE IF message has web research keywords → WEB RESEARCH workflow
 ELSE IF message has planning keywords → PLAN workflow
 ELSE IF message has error keywords → DEBUG workflow
 ELSE IF message has analysis keywords → RESEARCH workflow
@@ -88,10 +90,25 @@ Else:
 
 #### RESEARCH Workflow
 **Triggers**: "zen research", analysis keywords
-**Workflow**: See `workflows/research.md`
+**Workflow**: See `workflows/research.md` or `workflows/web-research.md`
 
-Multi-source research with:
-- Initial consensus (3 models)
+**Detection logic**:
+```
+IF "zen research" OR analysis keywords:
+  IF web keywords detected ("latest", "current", "recent", "2024", "2025", "search"):
+    → Use web-research.md (includes C-Link web search)
+  ELSE:
+    → Use research.md (knowledge-based only)
+```
+
+**Standard Research** (workflows/research.md):
+- Consensus (3 models)
+- Deep analysis (thinkdeep)
+- Synthesis (large context model)
+
+**Web-Enhanced Research** (workflows/web-research.md):
+- Web search (clink + glm-4.6:cloud)
+- Consensus (3 models + web data)
 - Deep analysis (thinkdeep)
 - Synthesis (large context model)
 
@@ -179,17 +196,54 @@ Claude: I'm using the zen-workflow router.
 [Executes zen-debug-consensus with Context7 + multi-model debugging]
 ```
 
-### Example 3: Research
+### Example 3: Research (Knowledge-Based)
 ```
 User: "zen research: microservices vs monoliths trade-offs"
 
 Claude: I'm using the zen-workflow router.
 → Detected: "zen research" (explicit trigger)
-→ Routing to: RESEARCH workflow
+→ No web keywords detected
+→ Routing to: RESEARCH workflow (knowledge-based)
 → Using embedded research workflow
 
 [Executes: consensus → thinkdeep → synthesis]
 Cost: $0 (all Ollama Cloud models)
+```
+
+### Example 3b: Research (Web-Enhanced)
+```
+User: "What are the latest AI coding tools in 2025?"
+
+Claude: I'm using the zen-workflow router.
+→ Detected: "latest" + "2025" (web research keywords)
+→ Routing to: WEB RESEARCH workflow
+→ Using embedded web-research workflow
+
+Step 0: Web Search via C-Link
+Using glm-4.6:cloud (fastest at 192 tok/s)
+[Search for latest AI coding tools...]
+
+Web findings:
+- Cursor raised Series B funding
+- GitHub Copilot Chat features expanded
+- Windsurf Editor with Cascade flow
+- Sources: TechCrunch, GitHub Blog, Product Hunt
+
+Step 1: Multi-Model Consensus (with web context)
+- deepseek-v3.1, kimi-k2, qwen3-coder
+[Analyze perspectives informed by web data...]
+
+Step 2: Deep Analysis with ThinkDeep
+Using deepseek-v3.1 for systematic investigation
+[Test hypothesis: agentic coding trend...]
+
+Step 3: Final Synthesis
+Using kimi-k2 (large context)
+[Comprehensive report with sources...]
+
+Cost: $0 (all Ollama Cloud models)
+Time: ~4-7 minutes
+Sources: 8 authoritative sources cited
 ```
 
 ### Example 4: Decision
@@ -266,7 +320,8 @@ cost_msg = f"Cost: $0 (all Ollama)" if paid_calls == 0 else f"Cost: ~${paid_call
 Detailed workflow definitions are in the `workflows/` directory:
 - `workflows/plan.md` - Planning workflow with zen-plan reference
 - `workflows/debug.md` - Debug workflow with zen-debug-consensus reference
-- `workflows/research.md` - Research workflow (embedded)
+- `workflows/research.md` - Research workflow (knowledge-based, embedded)
+- `workflows/web-research.md` - Web-enhanced research with C-Link search (embedded)
 - `workflows/decision.md` - Decision workflow (embedded)
 
 ## Notes
