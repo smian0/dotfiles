@@ -14,14 +14,14 @@ Automate a Perplexity AI search using the chrome-devtools MCP server to control 
 
 ### 1. Prerequisites Check
 
-Verify Chrome is running:
+Verify Chrome is running with debugging enabled:
 ```javascript
 try {
   const pages = await mcp__chrome-devtools__list_pages();
-  // Chrome is running
+  // Chrome is running with debug mode
 } catch (error) {
-  // Ask user to launch Chrome
-  return "❌ Chrome not running. Please run: ./scripts/launch-chrome-debug.sh 'Profile 7' 9222";
+  // Ask user to launch Chrome with debugging
+  return "❌ Chrome not running with debugging. Please run: ./scripts/launch-chrome.sh 'Profile 7' enable-debug";
 }
 ```
 

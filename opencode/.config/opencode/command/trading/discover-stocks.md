@@ -56,7 +56,7 @@ DISCOVERY_MONTH=$(date +%Y-%m)
 # Check if Comet is running on port 9223
 if ! ps aux | grep -i "comet.*9223" | grep -v grep > /dev/null; then
     echo "⚠️ Comet Browser not running. Launching..."
-    bash ~/dotfiles/scripts/launch-comet-debug.sh
+    bash ~/dotfiles/scripts/launch-comet.sh
     sleep 5
 fi
 ```

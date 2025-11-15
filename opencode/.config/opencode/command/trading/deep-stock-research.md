@@ -156,7 +156,7 @@ Track research completeness for each dimension (0-100%):
 ```bash
 # Ensure Comet Browser is running on port 9223
 # If not running, launch with:
-bash ~/dotfiles/scripts/launch-comet-debug.sh 9223 no
+bash ~/dotfiles/scripts/launch-comet.sh 9223 no
 ```
 
 **Browser Automation**:

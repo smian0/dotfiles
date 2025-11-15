@@ -1,19 +1,22 @@
 ---
-description: Launch Comet Browser with remote debugging enabled
+description: Launch Comet Browser (Perplexity's browser)
 ---
 
-Launch Comet Browser with remote debugging enabled on port 9223, using your existing Comet profile.
+Launch Comet Browser using your Default profile.
 
 Execute this command:
 ```bash
-bash ~/dotfiles/scripts/launch-comet-debug.sh 9223
+bash ~/dotfiles/scripts/launch-comet.sh
 ```
 
 This will:
 1. Stop any running Comet instances
-2. Launch Comet with your existing Default profile
-3. Enable remote debugging on port 9223
+2. Launch Comet with your Default profile
+3. Normal browser mode (no remote debugging)
 
-After launching, you can use the `comet-devtools` MCP server to automate Comet Browser.
+**To enable remote debugging** (for automation), use:
+```bash
+bash ~/dotfiles/scripts/launch-comet.sh Default enable-debug
+```
 
-**Note:** You must restart Claude Code to load the `comet-devtools` MCP server configuration.
+This enables Chrome DevTools Protocol on port 9223 for use with the `comet-devtools` MCP server.
