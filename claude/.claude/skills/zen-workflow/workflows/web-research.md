@@ -75,6 +75,7 @@ Use `mcp__zen__clink` directly:
 ```json
 {
   "cli_name": "glm",
+  "model": "sonnet",
   "prompt": "Search web for: [topic]. Provide sources with URLs."
 }
 ```
