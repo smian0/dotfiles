@@ -1,5 +1,15 @@
 {
   "mcpServers": {
+    "zen": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/Users/smian/github/zen-mcp-server",
+        "run",
+        "server.py"
+      ]
+    },
     "serena": {
       "args": [
         "--from",
@@ -7,7 +17,7 @@
         "serena",
         "start-mcp-server",
         "--context",
-        "ide-assistant",
+        "desktop-app",
         "--enable-web-dashboard",
         "false",
         "--enable-gui-log-window",
@@ -17,20 +27,6 @@
       "description": "Semantic code analysis & project memory - IDE-optimized, excludes redundant tools, symbol operations",
       "purpose": "code-analysis",
       "scope": "project"
-    },
-    "mcp_zen_proxy": {
-      "args": [
-        "reloaderoo",
-        "proxy",
-        "--",
-        "/Users/smian/github/zen-mcp-server/.zen_venv/bin/python",
-        "/Users/smian/github/zen-mcp-server/server_proxy.py"
-      ],
-      "command": "npx",
-      "env": {
-        "MCPDEV_PROXY_AUTO_RESTART": "true"
-      },
-      "type": "stdio"
     },
     "privacy_pdf": {
       "type": "stdio",

@@ -217,7 +217,8 @@ scripts/quick_validate.py <path/to/skill>
 
 **Templates** in assets/templates/:
 - `SKILL.template.md` - Main skill template
-- `example-script.template.py` - Script template
+- `example-script.template.py` - Basic script template
+- `cli-click.template.py` - **Click CLI template (preferred)**
 - `api-reference.template.md` - Reference docs template
 - `example-asset.template.txt` - Asset placeholder template
 
@@ -235,6 +236,7 @@ Load these for detailed guidance:
 - [📊 Architecture Decision Matrix](./references/architecture-decision-matrix.md) - Detailed Level 1/2/3 criteria
 - [🔗 Delegation Patterns](./references/delegation-patterns.md) - Level 2 Task() templates
 - [📦 Bundled Resources Guide](./references/bundled-resources-guide.md) - Scripts, references, assets details
+- [💻 CLI Patterns](./references/cli-patterns.md) - **Click CLI best practices (preferred for all scripts)**
 - [⚙️ Skill Organization](./references/skill-organization.md) - Symlink pattern explained
 - [🔄 Multi-Workflow Composition](./references/multi-workflow-composition.md) - Directory-based workflows pattern for 2+ specialized operations
 - [🏗️ Advanced Structure Patterns](./references/advanced-structure-patterns.md) - phases/, config/, data/, tests/, output/, .state/, cache/, archived/

@@ -38,10 +38,11 @@ scripts/
 **Script requirements**:
 - Include shebang line (`#!/usr/bin/env python3`)
 - Make executable (`chmod +x`)
-- Accept command-line arguments
+- **Use Click for CLI** - See [CLI Patterns](./cli-patterns.md) for details
+- Accept command-line arguments via Click decorators
 - Return meaningful exit codes
 - Include basic error handling
-- Document usage in comments
+- Document usage in docstrings (Click auto-generates help)
 
 ## References Directory
 
