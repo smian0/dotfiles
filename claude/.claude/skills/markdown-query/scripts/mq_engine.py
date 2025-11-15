@@ -128,9 +128,11 @@ class MQEngine:
             compact: If True, only return matched file paths for field queries (default: True)
         """
         results = {}
+        matches_list = []  # For vault integration: list of {path, frontmatter} dicts
         total_matches = 0
         matched_files = []
         is_field_query = selector.startswith('frontmatter.') and ':' in selector
+        is_frontmatter_query = selector == '.frontmatter'
 
         for file_path in file_paths:
             file_result = self.query(file_path, selector, 'json')
@@ -147,6 +149,15 @@ class MQEngine:
                     # Standard query - always include results
                     results[file_path] = file_result['results']
                     total_matches += file_result.get('count', 0)
+
+                    # For frontmatter queries, also build matches list for vault integration
+                    if is_frontmatter_query and isinstance(file_result.get('results'), dict):
+                        frontmatter_data = file_result['results']
+                        if frontmatter_data:  # Only include files with frontmatter
+                            matches_list.append({
+                                "path": file_path,
+                                "frontmatter": frontmatter_data
+                            })
             else:
                 results[file_path] = {"error": file_result['error']}
 
@@ -156,8 +167,12 @@ class MQEngine:
             "total_matches": total_matches,
         }
 
-        # For field queries in compact mode, only return matched file list
-        if is_field_query and compact:
+        # For frontmatter queries, provide both formats for compatibility
+        if is_frontmatter_query and matches_list:
+            response['matches'] = matches_list  # Vault integration format
+            response['results'] = results  # Original format for backward compatibility
+        elif is_field_query and compact:
+            # For field queries in compact mode, only return matched file list
             response['matched_files'] = matched_files
             response['note'] = 'Compact mode: only matched file paths returned. Use compact=False for full results.'
         else:
