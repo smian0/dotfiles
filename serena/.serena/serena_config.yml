@@ -20,7 +20,7 @@ web_dashboard: false
 # shows Serena's current session logs - as an alternative to the GUI log window which
 # is supported on all platforms.
 
-default_context: ide-assistant
+default_context: desktop-app
 # Default context for MCP server instances when not specified via command line
 # Available contexts: ide-assistant, desktop-app, codex, agent
 # NOTE: This may be overridden by command-line arguments in .mcp.json
