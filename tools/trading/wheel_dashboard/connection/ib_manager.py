@@ -1,6 +1,6 @@
 """IB Connection Manager with graceful fallback"""
 
-from typing import Optional, Tuple
+from typing import Optional, Tuple, TYPE_CHECKING
 import logging
 
 try:
@@ -8,6 +8,8 @@ try:
     IB_AVAILABLE = True
 except ImportError:
     IB_AVAILABLE = False
+    if TYPE_CHECKING:
+        from ib_insync import IB
 
 from .ib_config import IBConfig
 
@@ -70,7 +72,7 @@ class IBManager:
             return False
         return self.connected and self.ib and self.ib.isConnected()
 
-    def get_connection(self) -> Optional[IB]:
+    def get_connection(self) -> Optional['IB']:
         """
         Get IB connection object
 

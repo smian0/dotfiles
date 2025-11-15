@@ -19,6 +19,7 @@ Real-time options screening dashboard for the Wheel Strategy with institutional-
 - Breakeven and downside protection metrics
 - Liquidity analysis (open interest, bid/ask spreads)
 - Risk assessment (beta, market cap, dividend quality)
+- **Insider trading sentiment** - Track insider buys/sells over 90-day windows
 - Trade execution checklist
 
 ### 🎨 UI Components
@@ -204,6 +205,37 @@ KO, JNJ, PG, WMT, PEP, MCD, NEE, DUK
 - **Stock Fundamentals:** yfinance `Ticker.info`
 - **Options Chains:** yfinance `Ticker.option_chain()`
 - **Expirations:** yfinance `Ticker.options`
+- **Insider Trading:** yfinance `Ticker.insider_transactions`
+
+### Insider Sentiment Analysis
+
+**What It Tracks:**
+- Insider buy vs sell transactions over 90-day rolling window
+- Net sentiment classification (BULLISH/BEARISH/NEUTRAL)
+- Discovery score impact based on insider conviction
+
+**Sentiment Rules:**
+- **BULLISH** - Buys > Sells × 2 (boost: +3 pts per buy, max +15)
+- **BEARISH** - Sells > Buys × 2 (penalty: -2 pts per sell, max -15)
+- **NEUTRAL** - Balanced or no activity (no score impact)
+
+**Why It Matters:**
+- Insiders have non-public information about company prospects
+- Heavy buying signals conviction in future growth
+- Heavy selling may indicate concern or portfolio rebalancing
+- Data lags 2-4 business days (SEC Form 4 filing requirement)
+
+**Interpretation Guidelines:**
+- **For Wheel Strategy:** 7/10 importance - good confirmation signal
+- **BULLISH + High IV** - Strong setup for selling cash-secured puts
+- **BEARISH + High IV** - Proceed with caution, lower conviction
+- **NEUTRAL (common for mega-caps)** - No insider signal, rely on other metrics
+- **Best use case:** Mid/small caps where insider trades are more meaningful
+
+**Dashboard Display:**
+- Detailed view shows buys/sells count, sentiment, and score impact
+- Discovery reasons include 👔 emoji for insider-based signals
+- Automatic fallback to NEUTRAL if data unavailable
 
 ### Cache Strategy
 - **TTL:** 5 minutes (300 seconds)
@@ -342,4 +374,20 @@ For issues or questions:
 
 ---
 
-**Last Updated:** 2025-10-24
+**Last Updated:** 2025-10-26
+
+## Recent Updates
+
+### v1.1 - October 26, 2025
+- **Insider Trading Sentiment Analysis** - Track insider buys/sells over 90-day windows
+  - BULLISH/BEARISH/NEUTRAL classification
+  - Discovery score boost/penalty (-15 to +15 points)
+  - Visible in dashboard detailed view with 👔 emoji indicators
+- **IV/HV Ratio Analysis** - Premium opportunity indicator
+- **Quality Score** - 6-factor fundamental analysis (ROE, margins, debt, etc.)
+
+### v1.0 - October 24, 2025
+- Initial release with real-time wheel strategy screening
+- Market hours detection and auto-refresh
+- News catalyst analysis and scoring
+- Interactive Streamlit dashboard
