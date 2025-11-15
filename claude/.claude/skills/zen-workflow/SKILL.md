@@ -18,7 +18,8 @@ This skill uses a **3-tier detection system** to determine which workflow to exe
    - User says "zen decide" → Decision workflow
 
 2. **Priority 2: Context Detection** (fallback when no explicit trigger)
-   - Web research keywords ("latest", "current", "recent", "2024", "2025", "search for") → Web Research workflow
+   - Formal research keywords ("research paper", "need citations", "publish", "formal research") → Research skill (rigorous)
+   - Web research keywords ("latest", "current", "recent", "2024", "2025", "search for", "quick research") → Web Research workflow (fast)
    - Planning keywords ("implement", "build", "design", "architect") → Planning workflow
    - Error keywords ("bug", "error", "broken", "failing", "not working") → Debug workflow
    - Analysis keywords ("research", "compare", "evaluate", "analyze") → Research workflow
@@ -36,12 +37,13 @@ Read the user's message and classify it:
 ```
 IF message contains "zen plan" → PLAN workflow
 ELSE IF message contains "zen debug" → DEBUG workflow
-ELSE IF message contains "zen research" → RESEARCH workflow (check for web keywords)
+ELSE IF message contains "zen research" → Ask user for research depth (quick vs formal)
 ELSE IF message contains "zen decide" → DECIDE workflow
-ELSE IF message has web research keywords → WEB RESEARCH workflow
+ELSE IF message has formal research keywords → RESEARCH SKILL (rigorous, citations)
+ELSE IF message has web research keywords → WEB RESEARCH workflow (fast)
 ELSE IF message has planning keywords → PLAN workflow
 ELSE IF message has error keywords → DEBUG workflow
-ELSE IF message has analysis keywords → RESEARCH workflow
+ELSE IF message has analysis keywords → RESEARCH workflow (knowledge-based)
 ELSE IF message has decision keywords → DECIDE workflow
 ELSE → GENERAL chat with cost-optimized model
 ```
@@ -89,28 +91,64 @@ Else:
 ```
 
 #### RESEARCH Workflow
-**Triggers**: "zen research", analysis keywords
-**Workflow**: See `workflows/research.md` or `workflows/web-research.md`
+**Triggers**: "zen research", "research paper", analysis keywords
+**Workflows**: `research` skill (rigorous) OR `workflows/research.md` (quick) OR `workflows/web-research.md` (web-enhanced)
 
 **Detection logic**:
 ```
-IF "zen research" OR analysis keywords:
-  IF web keywords detected ("latest", "current", "recent", "2024", "2025", "search"):
-    → Use web-research.md (includes C-Link web search)
-  ELSE:
-    → Use research.md (knowledge-based only)
+IF formal research keywords ("research paper", "need citations", "publish"):
+  → Use research skill (/research)
+    - 100% citation requirement
+    - Level 3 validation (URL + quote + author)
+    - Quality scoring (8/10 threshold)
+    - 4 parallel search angles
+    - Full audit trail in .research/ directory
+    - Time: 15-30 minutes
+
+ELSE IF "zen research" (explicit trigger):
+  → Ask user: "Quick research or formal research with citations?"
+    - Quick → web-research.md or research.md
+    - Formal → research skill
+
+ELSE IF web keywords ("latest", "current", "recent", "2024", "2025", "quick research"):
+  → Use web-research.md (fast exploratory)
+    - Web search (clink + glm-4.6:cloud)
+    - Consensus (3 models + web data)
+    - Deep analysis (thinkdeep)
+    - Synthesis (large context model)
+    - Time: 4-7 minutes
+    - Cost: $0 (Ollama Cloud)
+
+ELSE IF analysis keywords ("compare", "evaluate", "analyze"):
+  → Use research.md (knowledge-based)
+    - Consensus (3 models)
+    - Deep analysis (thinkdeep)
+    - Synthesis (large context model)
+    - Time: 3-5 minutes
+    - Cost: $0 (Ollama Cloud)
 ```
 
-**Standard Research** (workflows/research.md):
-- Consensus (3 models)
-- Deep analysis (thinkdeep)
-- Synthesis (large context model)
+**Research Selection Matrix**:
 
-**Web-Enhanced Research** (workflows/web-research.md):
-- Web search (clink + glm-4.6:cloud)
-- Consensus (3 models + web data)
-- Deep analysis (thinkdeep)
-- Synthesis (large context model)
+| Need | Workflow | Time | Citations | Cost |
+|------|----------|------|-----------|------|
+| Publishing/sharing | research skill | 15-30m | 100% validated | Variable |
+| Quick current info | web-research.md | 4-7m | Informal | $0 |
+| Concept analysis | research.md | 3-5m | None | $0 |
+| Initial exploration | web-research.md | 4-7m | Informal | $0 |
+
+**Quality Comparison**:
+- **research skill**: PhD thesis quality (rigorous validation)
+- **zen-workflow**: Stack Overflow answer quality (fast, practical)
+
+**Hybrid approach** (when needed):
+```
+Step 1: Quick web-research (4-7 min)
+  ↓ Get initial findings and key sources
+Step 2: If valuable → Formal research skill (15-30 min)
+  ↓ Validate sources, 100% citation coverage
+Step 3: Publish with confidence
+```
 
 #### DECIDE Workflow
 **Triggers**: "zen decide", decision keywords
@@ -196,21 +234,22 @@ Claude: I'm using the zen-workflow router.
 [Executes zen-debug-consensus with Context7 + multi-model debugging]
 ```
 
-### Example 3: Research (Knowledge-Based)
+### Example 3a: Quick Research (Knowledge-Based)
 ```
-User: "zen research: microservices vs monoliths trade-offs"
+User: "Compare microservices vs monoliths trade-offs"
 
 Claude: I'm using the zen-workflow router.
-→ Detected: "zen research" (explicit trigger)
-→ No web keywords detected
+→ Detected: "compare" (analysis keyword)
+→ No web keywords or formal research indicators
 → Routing to: RESEARCH workflow (knowledge-based)
 → Using embedded research workflow
 
 [Executes: consensus → thinkdeep → synthesis]
 Cost: $0 (all Ollama Cloud models)
+Time: ~3-5 minutes
 ```
 
-### Example 3b: Research (Web-Enhanced)
+### Example 3b: Quick Web Research
 ```
 User: "What are the latest AI coding tools in 2025?"
 
@@ -244,6 +283,78 @@ Using kimi-k2 (large context)
 Cost: $0 (all Ollama Cloud models)
 Time: ~4-7 minutes
 Sources: 8 authoritative sources cited
+```
+
+### Example 3c: Formal Research (With Citations)
+```
+User: "I need to write a research paper on quantum error correction with proper citations"
+
+Claude: I'm using the zen-workflow router.
+→ Detected: "research paper" + "citations" (formal research keywords)
+→ Routing to: RESEARCH SKILL (rigorous validation)
+→ Using /research skill
+
+Stage 1: Parallel Search (4 angles)
+- Agent 1 (hardware): 3 results ✓
+- Agent 2 (software): 4 results ✓
+- Agent 3 (performance): 3 results ✓
+- Agent 4 (adoption): 3 results ✓
+Total: 13 search results
+
+Stage 2: Citation Extraction
+- Found 11 citations with verbatim quotes ✓
+
+Stage 3: Source Validation (Level 3)
+- 11 citations checked
+- 9 validated (avg credibility: 8.8/10)
+- 2 rejected (low credibility)
+
+Stage 4: Claim Grounding
+- 12 claims extracted
+- 100% grounding coverage ✓
+
+Stage 5: Report Writing
+- Inline citations: 12 citations
+- Self-validation: Passed ✓
+
+Stage 6: Quality Scoring
+Quality Score: 9/10 ✓ PASS
+- Grounding: 5/5 (100% cited) ✓
+- Source Quality: 2/2 (avg 8.8) ✓
+- Diversity: 1/1 (9 unique sources) ✓
+- Completeness: 1/1 ✓
+- Clarity: 1/1 ✓
+
+Research saved to: .research/2025-11-15-quantum-error-correction/
+
+Time: ~20 minutes
+Cost: Variable (depends on models used)
+Output: Formal report with verified citations ready for publishing
+```
+
+### Example 3d: User Clarification
+```
+User: "zen research: AI transformer architectures"
+
+Claude: I'm using the zen-workflow router.
+→ Detected: "zen research" (explicit trigger)
+→ Needs clarification on research depth
+
+Quick question: What type of research do you need?
+
+1. **Quick research** (4-7 min, informal sources, $0)
+   - Fast overview with web search
+   - Good for personal understanding
+
+2. **Formal research** (15-30 min, validated citations, variable cost)
+   - 100% citation coverage
+   - Ready for publishing/sharing
+   - Full audit trail
+
+User: "Just need a quick overview"
+
+→ Routing to: WEB RESEARCH workflow (fast)
+[Executes web-enhanced research workflow...]
 ```
 
 ### Example 4: Decision

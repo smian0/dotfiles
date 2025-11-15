@@ -10,19 +10,44 @@ User Request
 [Check for explicit trigger]
     ├─ "zen plan" → plan.md
     ├─ "zen debug" → debug.md
-    ├─ "zen research" → (check for web keywords)
-    │   ├─ Has web keywords → web-research.md
-    │   └─ No web keywords → research.md
+    ├─ "zen research" → Ask user: quick vs formal
+    │   ├─ Quick + web keywords → web-research.md
+    │   ├─ Quick + no web → research.md
+    │   └─ Formal → /research skill
     └─ "zen decide" → decision.md
     ↓
 [Check for context keywords]
-    ├─ Web keywords ("latest", "current", "2025") → web-research.md
+    ├─ Formal research ("research paper", "citations", "publish") → /research skill
+    ├─ Web keywords ("latest", "current", "2025", "quick research") → web-research.md
     ├─ Planning keywords ("implement", "build") → plan.md
     ├─ Error keywords ("bug", "broken") → debug.md
     ├─ Analysis keywords ("compare", "evaluate") → research.md
     └─ Decision keywords ("should we", "choose") → decision.md
     ↓
 [Fallback to general chat]
+```
+
+## Research Depth Selection
+
+**Three tiers of research quality**:
+
+| Tier | Workflow | Time | Citations | Use Case | Cost |
+|------|----------|------|-----------|----------|------|
+| **Formal** | /research skill | 15-30m | 100% validated | Publishing, sharing externally | Variable |
+| **Quick Web** | web-research.md | 4-7m | Informal sources | Current info, internal decisions | $0 |
+| **Quick Knowledge** | research.md | 3-5m | None | Concept analysis, tradeoffs | $0 |
+
+**Quality comparison**:
+- **/research skill**: PhD thesis quality (rigorous validation)
+- **zen-workflow**: Stack Overflow answer quality (fast, practical)
+
+**When to escalate from quick → formal**:
+```
+Step 1: Quick research (4-7 min) to explore
+   ↓ If findings valuable and need external validation
+Step 2: Formal research (15-30 min) to validate
+   ↓ 100% citation coverage, quality scoring
+Step 3: Publish with confidence
 ```
 
 ## Workflow Files
@@ -60,13 +85,14 @@ User Request
 ---
 
 ### research.md
-**Purpose**: Knowledge-based research with multiple perspectives
+**Purpose**: Knowledge-based research with multiple perspectives (quick, informal)
 
 **When to use**:
 - Research doesn't require current/recent information
 - Questions about general concepts, tradeoffs, best practices
+- Personal understanding (not publishing)
 - Keywords: "research", "compare", "evaluate", "analyze"
-- Explicit: "zen research" (without web keywords)
+- Explicit: "zen research" → user chooses "quick"
 
 **Workflow**:
 1. Multi-model consensus (3 perspectives)
@@ -94,13 +120,15 @@ User Request
 ---
 
 ### web-research.md
-**Purpose**: Web-enhanced research combining current information with deep analysis
+**Purpose**: Web-enhanced research combining current information with deep analysis (quick, informal)
 
 **When to use**:
 - Research requires current/recent information
-- Keywords: "latest", "current", "recent", "2024", "2025", "2026", "new"
+- Personal understanding or internal decisions (not publishing)
+- Keywords: "latest", "current", "recent", "2024", "2025", "2026", "new", "quick research"
 - Time-sensitive: "news", "trends", "developments", "updates"
 - Search intent: "search for", "look up", "find information"
+- Explicit: "zen research" → user chooses "quick" and needs current info
 
 **Workflow**:
 1. **Web search** with C-Link (glm-4.6:cloud)
@@ -133,6 +161,72 @@ User Request
 - Are sources recent (within 1-2 years)?
 - Are source URLs provided?
 - If poor quality → Retry with deepseek-v3.1:671b-cloud
+
+---
+
+### /research (Skill - Formal Research)
+**Purpose**: Rigorous research with 100% citation validation (formal, publishable)
+
+**When to use**:
+- Need to publish or share research externally
+- Require verified citations for every claim
+- Academic or professional reports
+- High-stakes decisions requiring validated sources
+- Keywords: "research paper", "need citations", "publish", "formal research"
+- Explicit: "zen research" → user chooses "formal"
+
+**Workflow**:
+1. Parallel search (4 angles, 4 agents)
+2. Citation extraction (verbatim quotes)
+3. Source validation (Level 3: URL + quote + author credentials)
+4. Claim grounding (100% coverage mandatory)
+5. Report writing (inline citations)
+6. Quality scoring (8/10 threshold required)
+7. Iteration (if needed, max 2 iterations)
+
+**Tools used**:
+- 6 specialized sub-agents (research-web-researcher, citation-extractor, source-validator, claim-grounding-mapper, report-writer, quality-scorer)
+- Task tool for orchestration
+- File system for audit trail
+
+**Quality standards**:
+- **CRAAP framework** for source evaluation
+- **100% grounding** (every claim must be sourced)
+- **Level 3 validation** (URL reachable + quote verified + author credentials)
+- **Minimum 8/10 score** (with 5/5 grounding mandatory)
+- **Fail-fast approach** (NO DATA > BAD DATA)
+
+**Output**:
+- Formal report with inline citations
+- Complete audit trail in `.research/[YYYY-MM-DD-topic]/`
+- Quality score breakdown
+- Source validation details
+
+**Cost**: Variable (depends on models used)
+**Time**: 15-30 minutes
+
+**Example queries**:
+- "I need to write a research paper on quantum error correction with proper citations"
+- "Research AI ethics for publication in academic journal"
+- "Formal research on distributed systems with validated sources"
+
+**Directory structure created**:
+```
+.research/[YYYY-MM-DD-topic]/
+├── agent-outputs/
+│   ├── research-web-researcher-1.yaml
+│   ├── research-web-researcher-2.yaml
+│   ├── research-web-researcher-3.yaml
+│   ├── research-web-researcher-4.yaml
+│   ├── citation-extractor.yaml
+│   ├── source-validator.yaml
+│   ├── claim-grounding-mapper.yaml
+│   ├── report-writer.md
+│   └── quality-scorer.yaml
+├── iterations/ (if applicable)
+├── final-report.md
+└── metadata.yaml
+```
 
 ---
 
@@ -229,11 +323,18 @@ All workflows default to **Ollama Cloud (free tier)**:
 **Quick test queries**:
 
 ```bash
-# Test web-research
+# Test formal research (rigorous)
+"I need a research paper on quantum computing with citations"
+
+# Test web-research (quick + current)
 "What are the latest developments in LLM serving?"
 
-# Test standard research
+# Test standard research (quick + knowledge)
 "Compare REST vs GraphQL architectures"
+
+# Test research depth selection
+"zen research: AI transformers"
+# Should ask: "Quick or formal research?"
 
 # Test plan
 "zen plan: implement user authentication"
