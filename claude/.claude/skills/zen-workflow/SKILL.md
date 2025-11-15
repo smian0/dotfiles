@@ -222,9 +222,17 @@ Critical decision analysis with:
 - First: `kimi-k2-thinking:cloud` (if available)
 - Otherwise: `o3` or `gpt-5`
 
+**Web Search (NEW - cost-optimized)**:
+- **Tool**: `mcp__zen__websearch` - Direct web search via GLM CLI
+- **Benefits**: Saves 60-80% tokens, uses GLM internally, $0 cost, auto-injects today's date
+- **When to use**: Any web search needs ("latest X", "current Y", news, docs)
+- **Example**: `mcp__zen__websearch(query="latest React features", max_results=8, focus="docs")`
+- **Focus options**: "docs", "news", "github", "stackoverflow", or null
+- **Note**: Automatically includes today's date in prompt for accurate "latest" searches
+
 **External CLI (clink)**:
 - **Default**: OpenCode with `github-copilot/claude-sonnet-4.5`
-- **Alternative**: OpenCode with `github-copilot/claude-sonnet-4`
+- **Alternative**: GLM CLI for web search (prefer websearch tool instead)
 - **When to use**: Repository-aware tasks, file operations, CLI tool access
 - **Example**: `mcp__zen__clink(cli_name="opencode", model="github-copilot/claude-sonnet-4.5", prompt="...")`
 

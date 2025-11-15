@@ -19,33 +19,65 @@
 
 ## Workflow Steps
 
-### Step 0: Web Search with C-Link + GLM
+### Step 0: Web Search with WebSearch Tool
 
-**Tool**: `mcp__zen__clink`
+**Tool**: `mcp__zen__websearch` (NEW - cost-optimized, direct)
 
-**Model selection**: GLM-4.6 (fastest at 192 tok/s, good for quick web searches)
+**Benefits**:
+- Saves 60-80% main model tokens
+- Uses GLM CLI via C-Link internally
+- Fast searches (GLM handles all web operations)
+- Structured output format
+- **Automatically injects today's date** for accurate "latest" searches
 
 **Parameters**:
 ```json
 {
-  "cli_name": "opencode",
-  "model": "glm-4.6:cloud",
-  "prompt": "Search the web for: [research topic]. Focus on:\n1. Current state and recent developments\n2. Key sources and authoritative references\n3. Relevant statistics or data points\n4. Recent expert opinions or consensus\n\nSummarize findings with source URLs.",
-  "role": "default"
+  "query": "[research topic] latest developments 2025",
+  "max_results": 8,
+  "focus": "news"
 }
 ```
 
+**Focus options**:
+- `"docs"` - Official documentation sites
+- `"news"` - Recent news articles (recommended for current events)
+- `"github"` - GitHub repositories and releases
+- `"stackoverflow"` - Q&A discussions
+- `null` - General search
+
+**Example**:
+```json
+{
+  "query": "latest AI coding tools developments",
+  "max_results": 8,
+  "focus": "news"
+}
+```
+
+**Note**: The tool automatically injects today's date (e.g., "November 15, 2024") into the search prompt,
+so you don't need to specify the date explicitly. Just use "latest", "recent", or "current" in your query.
+
 **Expected output**:
-- Web search results with citations
-- Key facts and recent developments
-- Source URLs for verification
-- Initial synthesis of findings
+- Formatted search results with URLs
+- Source names and relevance explanations
+- Recent authoritative sources
+- Ready for synthesis
 
 **Quality check**:
 - Are sources recent (within last 1-2 years)?
 - Do we have authoritative references?
 - Is information substantive (not generic)?
-- If poor quality → Retry with `deepseek-v3.1:671b-cloud` for deeper analysis
+- If poor quality → Can retry with different query or escalate
+
+**Fallback** (if websearch unavailable):
+Use `mcp__zen__clink` directly:
+```json
+{
+  "cli_name": "glm",
+  "prompt": "Search web for: [topic]. Provide sources with URLs."
+}
+```
 
 ### Step 1: Multi-Model Consensus (with web context)
 
@@ -125,12 +157,12 @@ User: "What are the latest developments in AI code generation tools?"
 
 Claude: I'm using the zen-workflow skill for web-enhanced research.
 
-Step 0: Web Search with C-Link (glm-4.6:cloud)
-Searching for current information on AI code generation tools...
+Step 0: Web Search with WebSearch Tool
+Using mcp__zen__websearch for cost-optimized search...
 
-[Execute clink with glm-4.6:cloud via opencode]
+[Execute websearch(query="latest AI code generation tools 2025", max_results=8, focus="news")]
 
-Web findings:
+Web findings (from GLM CLI):
 - Cursor raised $100M Series B (Oct 2024)
 - GitHub Copilot Chat expanded features (Nov 2024)
 - Claude Sonnet 4.5 with agentic coding (Dec 2024)
@@ -138,6 +170,7 @@ Web findings:
 - Replit Agent and Bolt.new gaining traction
 
 Sources: TechCrunch, GitHub Blog, Anthropic Blog, Product Hunt
+Token savings: ~500 tokens (search handled by GLM, not main model)
 
 Step 1: Multi-Model Consensus (informed by web data)
 - deepseek-v3.1: Agentic coding is the future
@@ -255,20 +288,24 @@ else:
 **If web search fails**:
 ```python
 try:
-    web_results = mcp__zen__clink(model="glm-4.6:cloud", ...)
+    web_results = mcp__zen__websearch(query="...", max_results=8)
 except Exception as e:
     # Log error
     logger.warning(f"Web search failed: {e}")
     
-    # Fallback to standard research workflow
-    print("⚠️ Web search unavailable. Proceeding with knowledge-based research.")
-    # Execute standard research.md workflow
+    # Try fallback to clink directly
+    try:
+        web_results = mcp__zen__clink(cli_name="glm", prompt="Search: ...")
+    except:
+        # Fall back to standard research workflow
+        print("⚠️ Web search unavailable. Proceeding with knowledge-based research.")
+        # Execute standard research.md workflow
 ```
 
-**If clink unavailable**:
-- Fall back to standard research workflow
-- Note limitation in final output
-- Suggest manual web search topics
+**Fallback chain**:
+1. Try `mcp__zen__websearch` (preferred)
+2. Try `mcp__zen__clink` with GLM (fallback)
+3. Use standard research workflow (knowledge-based only)
 
 ## Cost Optimization
 
