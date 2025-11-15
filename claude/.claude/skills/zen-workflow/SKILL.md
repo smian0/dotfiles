@@ -266,11 +266,11 @@ Critical decision analysis with:
 
 **Web Search (NEW - cost-optimized)**:
 - **Tool**: `mcp__zen__websearch` - Direct web search via GLM CLI
-- **Benefits**: Saves 60-80% tokens, uses GLM internally, $0 cost, auto-injects today's date
-- **When to use**: Any web search needs ("latest X", "current Y", news, docs)
+- **Benefits**: Saves 60-80% tokens, uses GLM internally, $0 cost, auto-injects date/time/timezone, strips incorrect dates
+- **When to use**: Any web search needs ("latest X", "today's Y", breaking news, current docs)
 - **Example**: `mcp__zen__websearch(query="latest React features", max_results=8, focus="docs")`
 - **Focus options**: "docs", "news", "github", "stackoverflow", or null
-- **Note**: Automatically includes today's date in prompt for accurate "latest" searches
+- **Note**: Automatically injects current date, time, and timezone (e.g., "November 15, 2025 at 02:30 PM PST") for accurate temporal searches
 
 **External CLI (clink)**:
 - **Default**: OpenCode with `github-copilot/claude-sonnet-4.5`
@@ -321,11 +321,17 @@ mcp__zen__websearch(
   focus="docs"
 )
 
+Tool automatically injects:
+🗓️ CRITICAL: CURRENT DATE & TIME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+November 15, 2025 at 02:30 PM PST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 Results returned immediately:
 - 8 search results with URLs
-- Official Next.js docs
-- Recent release notes
-- GitHub discussions
+- Official Next.js docs (Nov 2025)
+- Recent release notes (Nov 14, 2025)
+- GitHub discussions (this week)
 
 Cost: $0 (GLM CLI via websearch tool)
 Time: ~30 seconds (single tool call)

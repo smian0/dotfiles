@@ -28,7 +28,8 @@
 - Uses GLM CLI via C-Link internally
 - Fast searches (GLM handles all web operations)
 - Structured output format
-- **Automatically injects today's date** for accurate "latest" searches
+- **Automatically injects current date, time, and timezone** for accurate temporal searches
+- **Strips incorrect dates** from query parameters to prevent pollution
 
 **Parameters**:
 ```json
@@ -55,8 +56,9 @@
 }
 ```
 
-**Note**: The tool automatically injects today's date (e.g., "November 15, 2024") into the search prompt,
-so you don't need to specify the date explicitly. Just use "latest", "recent", or "current" in your query.
+**Note**: The tool automatically injects the current date, time, and timezone (e.g., "November 15, 2025 at 02:30 PM PST") 
+into the search prompt, so you don't need to specify temporal information. Just use "latest", "recent", "today", or 
+"current" in your query. The tool also strips any incorrect dates that may have been added to prevent confusion.
 
 **Expected output**:
 - Formatted search results with URLs
