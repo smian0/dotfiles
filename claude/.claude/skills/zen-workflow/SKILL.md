@@ -1,11 +1,33 @@
 ---
 name: zen-workflow
-description: Progressive disclosure router for Zen MCP workflows - automatically detects user intent and routes to specialized workflows (zen-plan, zen-debug, research, decision) with cost-optimized Ollama Cloud models
+description: "Zen workflow orchestrator: invoke this whenever user mentions 'zen' or requests research, planning, debugging, or decision-making. Automatically routes zen plan, zen debug, zen research, zen decide to optimal workflows (formal research with citations, quick web research, knowledge analysis, planning, debugging, decisions). Uses Zen MCP tools with cost-optimized Ollama Cloud models. Primary handler for all zen-prefixed commands and multi-model workflows."
 ---
 
 # Zen Workflow Router
 
+> **🎯 Primary Handler**: This skill should be invoked **automatically** whenever the user mentions:
+> - Any "zen" keyword (zen plan, zen debug, zen research, zen decide)
+> - Research requests (formal, quick, web-enhanced)
+> - Planning or implementation tasks
+> - Debugging or error investigation
+> - Decision-making or comparison analysis
+
 **Purpose**: Smart router that detects user intent and automatically selects the appropriate Zen MCP workflow with cost-optimized model selection.
+
+## When to Invoke This Skill
+
+**✅ ALWAYS invoke when user prompt contains:**
+- "zen" keyword (zen plan, zen debug, zen research, zen decide, zen workflow)
+- Research requests: "research X", "analyze X", "compare X vs Y"
+- Planning: "implement X", "build X", "design X", "plan X"
+- Debugging: "bug in X", "error with X", "fix X", "not working"
+- Decisions: "should we X", "choose between X and Y", "decide on X"
+- Multi-model workflows: "get consensus on X", "think deep about X"
+
+**❌ DO NOT invoke for:**
+- Simple questions not requiring workflows
+- Direct tool usage (user explicitly calls a specific MCP tool)
+- General chat without workflow intent
 
 ## How It Works (Progressive Disclosure)
 
